@@ -225,14 +225,18 @@ describe('OpenYida skill contracts', () => {
       businessConfirmationRequired: true,
       runtimePermissionPreferred: true,
       runtimePermissionPreconfirmation: 'forbidden',
+      confirmationFallback: 'ask_human_or_equivalent',
       executionFlag: '--confirm',
       successCondition: 'deleted=true && readbackVerified=true',
       repeatResult: 'alreadyAbsent=true && mutationPerformed=false',
       processDeleteSupported: false,
       privateApiFallbackAllowed: false,
     });
-    expect(skill).toContain('不得先调用 `ask_human`');
-    expect(skill).toContain('只有宿主没有运行时权限确认能力时');
+    expect(skill).toContain('宿主支持并会在执行删除命令前触发 runtime permission/approval');
+    expect(skill).toContain('无需且不得预先调用 `ask_human`');
+    expect(skill).toContain('宿主不支持 runtime permission/approval');
+    expect(skill).toContain('必须先通过 `ask_human` 或等价交互工具获得用户明确确认');
+    expect(skill).toContain('用户拒绝或未确认时不得执行');
   });
 
   test('login skill assigns browser ownership and waits for the original command', () => {
