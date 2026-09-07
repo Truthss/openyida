@@ -1258,9 +1258,13 @@ describe('OpenYida skill contracts', () => {
     expect(theme).toContain('严禁页面代码修改或向上层注入主题变量');
     expect(theme).toContain('workflow/output-design.md#cli-token-契约fast--plan-共用');
     expect(theme).toContain('outputs.theme');
+    expect(theme).toContain('不得用 Python、Node、Shell 或 `run_workspace_script` 脚本');
+    expect(theme).toContain('校验脚本只能读取并报告问题，不能改写主题文件');
     expect(theme).not.toContain('文件复制能力');
     expect(step2).toContain('output-design.md#cli-token-契约fast--plan-共用');
     expect(step2).toContain('Plan 复用已生成的主题 CSS');
+    expect(step2).toContain('不得用 Python、Node、Shell 或 `run_workspace_script` 脚本');
+    expect(step2).toContain('校验脚本只能读取并报告问题，不能改写主题文件');
     expect(step2).not.toContain('文件复制能力');
     expect(outputDesign).toContain('只能由上述 OpenYida CLI 契约生成或更新');
     expect(outputDesign).toContain('不得另写 Python、Node、Shell 或 `run_workspace_script` 临时脚本');
