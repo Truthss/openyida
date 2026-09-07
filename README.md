@@ -168,8 +168,9 @@ For a user-facing list of supported features and matching CLI commands, see [Ope
 ```bash
 openyida create-app --name "CRM" --desc "Customer management"
 openyida sample yida-design app-theme --output .cache/openyida/crm/app-theme.css
+openyida create-app --name "CRM" --desc "Customer management" --theme-file .cache/openyida/crm/app-theme.css --nav-theme light --logo-source appIcon --layout l_shape
+openyida app-list --type managed --page 1 --size 16
 openyida update-app APP_XXX --theme-file .cache/openyida/crm/app-theme.css --nav-theme light --logo-source appIcon --layout l_shape
-openyida app-list --size 20
 openyida corp-efficiency
 openyida create-form create APP_XXX "Customer" .cache/openyida/forms/customer-fields.json
 openyida create-form update APP_XXX FORM_XXX .cache/openyida/forms/customer-changes.json
@@ -388,7 +389,7 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 
 | Command | Description |
 |---------|-------------|
-| `openyida app-list [--size N]` | List my Yida apps |
+| `openyida app-list [--type managed\|created] [--page N] [--size N]` | Page through apps I manage or created |
 | `openyida corp-efficiency [overview\|details\|detail\|groups\|notify] [options] [--open\|--no-open]` | Query enterprise efficiency overview and detail reports |
 | `openyida create-app "<name>"\|--name <name> [options] [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | Create a Yida app |
 | `openyida design-plan init <requirement-brief.json> [--theme-id <id>] [--output-dir <dir>] [--json]` | Initialize a plan draft from confirmed requirements |
