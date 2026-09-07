@@ -602,6 +602,9 @@ export default function Page() {
         appType: 'APP_XXX',
         formUuid: 'FORM-PAGE',
         publishMode: 'canvas',
+        publishReadbackVerified: false,
+        runtimeSmokeVerified: false,
+        runtimeSmokeStatus: 'not_checked',
         healthCheck: {
           ok: false,
           expectedPublishMode: 'canvas',

@@ -17,9 +17,14 @@ module.exports = {
     cmd_env: 'اكتشاف بيئة أداة الذكاء الاصطناعي وحالة تسجيل الدخول',
     cmd_env_management: 'Manage public/private environment profiles',
     group_app: 'إدارة التطبيقات',
-    cmd_app_list: 'عرض تطبيقات Yida الخاصة بي',
+    cmd_app_list: 'عرض التطبيقات المُدارة أو المُنشأة على صفحات',
     cmd_corp_efficiency: 'استعلام عن نظرة عامة على كفاءة المؤسسة وتقارير التفاصيل',
     cmd_create_app: 'إنشاء تطبيق Yida',
+    cmd_design_plan_preview: 'تحديث مسودة الخطة حسب الوحدة',
+    design_plan_preview_invalid: 'فشل تحديث المسودة؛ تحقق من تفاصيل الخطأ',
+    cmd_design_plan_init: 'تهيئة مسودة خطة من المتطلبات المؤكدة',
+    cmd_design_plan_materialize: 'إنشاء مخرجات الخطة والتحقق منها من build-plan.json',
+    cmd_design_plan_patch: 'تعديل الخطة حسب مسار الحقل وإبطال التأكيد السابق',
     cmd_update_app: 'تحديث معلومات التطبيق',
     cmd_app_online: 'تفعيل تطبيق Yida',
     cmd_app_offline: 'تعطيل تطبيق Yida',
@@ -29,6 +34,7 @@ module.exports = {
     cmd_export: 'تصدير التطبيق (حزمة الترحيل)',
     cmd_import: 'استيراد حزمة الترحيل، إعادة بناء التطبيق',
     group_form: 'النماذج & الصفحات',
+    cmd_create_form_batch: 'إنشاء النماذج بالتوازي حسب التبعيات',
     cmd_create_form: 'إنشاء صفحة نموذج',
     cmd_list_form_icons: 'عرض رموز تنقل النماذج المتاحة',
     cmd_validate_form: 'Validate form field JSON locally',
@@ -122,6 +128,25 @@ module.exports = {
     quickstart_form_name: 'معلومات الموظف',
     docs: '📚 الوثائق:'
   },
+  app_list: {
+    usage: 'الاستخدام: openyida app-list [--type managed|created] [--page N] [--size N]',
+    options: 'الخيارات:',
+    option_type: '  --type TYPE  النطاق: managed (افتراضي) أو created',
+    option_page: '  --page N     رقم الصفحة، الافتراضي: 1',
+    option_size: '  --size N     حجم الصفحة، الافتراضي: 16',
+    option_help: '  --help, -h   عرض هذه المساعدة',
+    invalid_type: 'قيمة --type غير صالحة «{0}»؛ القيم الصالحة: {1}',
+    invalid_positive_integer: 'يجب أن تكون {0} عددًا صحيحًا موجبًا؛ القيمة المستلمة: «{1}»',
+    invalid_argument: 'وسيطة غير صالحة: {0}',
+    query_failed: 'تعذر الاستعلام عن قائمة التطبيقات: {0}',
+    auth_required: 'انتهت صلاحية تسجيل الدخول. يرجى تسجيل الدخول مجددًا.',
+    unknown_error: 'خطأ غير معروف',
+    scope_managed: 'المُدارة',
+    scope_created: 'المُنشأة',
+    found: 'التطبيقات {0}: الصفحة {1}/{2}، {3} في هذه الصفحة، الإجمالي {4}',
+    next_page: 'تتوفر تطبيقات أخرى. تابع باستخدام: {0}',
+  },
+
   cli: {
     help: '\n' +
       'openyida - Yida CLI Tool\n' +
@@ -134,7 +159,7 @@ module.exports = {
       '  copy [--force]                                               Copy project directory to current AI tool environment\n' +
       '  login                                                        Manage login credentials (cache first, then QR scan)\n' +
       '  logout                                                       Logout / switch account\n' +
-      '  create-app "<name>" [desc] [icon] [color] [theme] [nav] [layout]  Create an app, output appType\n' +
+      '  create-app "<name>" [desc] [icon] [color] [nav] [layout]  Create an app, output appType\n' +
       '  create-page <appType> "<pageName>" [--mode dashboard] [--hide-nav]        Create a custom page, output pageId\n' +
       '  create-form create <appType> "<formName>" <fieldsJSON> [--layout <layout>] [--theme <theme>] [--label-align <align>]  Create a form page\n' +
       '  create-form update <appType> <formUuid> <changesJSON>        Update a form page\n' +
@@ -405,9 +430,9 @@ module.exports = {
     create_opt_spec: '  --spec <file.json>            Use a structured flow spec for complex automation nodes (dataUpdate/route, etc.)',
     create_opt_data_form_uuid: '  --data-form-uuid <uuid>     Target form UUID for a get-single-data node',
     create_opt_data_condition: '  --data-condition <rule>     Get-data condition: targetField:label:triggerField[:component[:opCode[:valueType]]]',
-    create_opt_get_self: '  --get-self                    Insert a get-self node (pid equals trigger form instance ID)',
+    create_opt_get_self: '  --get-self                    Insert a get-self node (process runtime uses pid, designer uses proc_inst_id; ordinary forms use form_inst_id on both sides)',
     create_opt_get_self_field: '  --get-self-field <field>     Override the trigger-side system field, default __masterdata_form_inst_id',
-    create_opt_get_self_query_field: '  --get-self-query-field <f>  Override the query-side system field, default pid',
+    create_opt_get_self_query_field: '  --get-self-query-field <f>  Override the query-side system field (process: pid runtime / proc_inst_id designer; ordinary: form_inst_id)',
     create_opt_add_data_form_uuid: '  --add-data-form-uuid <uuid> Target form UUID for an add-data node',
     create_opt_add_data_assignment: '  --add-data-assignment <rule> Add-data assignment: targetField:valueType:value',
     create_opt_initiate_approval_form_uuid: '  --initiate-approval-form-uuid <uuid> Target process-form UUID for an initiate-approval node',
@@ -415,6 +440,7 @@ module.exports = {
     create_opt_initiate_approval_assignment: '  --initiate-approval-assignment <rule> Initiate-approval assignment: targetField:valueType:value',
     create_opt_connector_mode: '  --connector-mode <mode>       Connector mode; use 5 for HTTP connectors',
     create_opt_connection_id: '  --connection-id <id>          HTTP connector auth connection ID',
+    create_opt_connector_system_token_app: '  --connector-system-token-app <appType>  Bind systemToken server-side for a Yida OpenAPI action',
     create_opt_connector_display_name: '  --connector-display-name <name> Connector display name',
     create_opt_publish: '  --publish                     Publish after saving',
     create_examples_title: 'Examples:',
@@ -422,6 +448,11 @@ module.exports = {
     create_example2: '  openyida integration create APP_XXX FORM-XXX "Get self then notify" --get-self --publish',
     create_missing_args: 'Missing required arguments.',
     create_replace_required: 'Using --process-code fully replaces the existing flow. Pass --replace explicitly. Safe editing is not currently available; integration update only reports capability status.',
+    create_source_form_fetch_failed: 'Could not read the data-source form metadata; remote write stopped: {0}',
+    create_source_form_not_found: 'Could not find data-source form {0} in navigation; remote write stopped.',
+    create_source_form_type_unknown: 'Navigation did not return a verifiable data-source form type; remote write stopped.',
+    create_source_form_type_invalid: 'Navigation returned unsupported data-source form type "{0}"; remote write stopped.',
+    create_source_form_type_mismatch: 'Explicit formType={0} conflicts with navigation metadata {1}; remote write stopped.',
     create_flow_name_too_long: 'Logic-flow names cannot exceed {0} characters (received {1}).',
     create_invalid_events: 'No valid trigger event was recognized.',
     create_no_receivers: 'No notification receiver or user field specified; no message node will be generated.',
@@ -439,7 +470,7 @@ module.exports = {
     create_notify_content: 'Notification content: {0}',
     create_data_form: 'Get-data form: {0}',
     create_data_conditions: 'Get-data condition count: {0}',
-    create_get_self_summary: 'Get-self guardrail: {0} equals field {1}',
+    create_get_self_summary: 'Get-self guardrail: runtime query field {0} equals field {1}; process-form designer maps it to proc_inst_id, while ordinary forms keep the same field',
     create_op_mode_publish: 'Mode: save and publish',
     create_op_mode_draft: 'Mode: save draft only',
     create_step: '[{0}/{1}] {2}',
@@ -482,6 +513,11 @@ module.exports = {
     connector_action_not_found: 'Connector action not found by exact read-only discovery: {0}',
     connector_action_schema_missing: 'The connector action does not contain a verifiable inputs/outputs schema.',
     connector_input_unknown: 'Connector input was not found in the verified schema: {0}',
+    connector_input_ambiguous: 'Connector input exists in multiple parameter groups; use its full path: {0}',
+    connector_assignment_duplicate: 'Multiple connector assignments target the same input: {0}',
+    connector_assignment_value_required: 'Connector input assignment cannot be empty: {0}',
+    connector_required_input_missing: 'Required connector input has no assignment: {0}',
+    readback_connector_assignments_mismatch: 'Connector input assignments in the integration readback differ from the published content.',
     connector_schema_unverified: 'Connector action schema is unverified: {0}::{1}',
     runtime_case_unknown: 'Unknown integration runtime case: {0}',
     runtime_adapter_missing: 'Integration runtime adapter is not configured.',
@@ -614,9 +650,10 @@ module.exports = {
     unknown: 'unknown'
   },
   create_app: {
+    update_only_option: 'الخيار {0} مخصص لتحديث التطبيق. أنشئ التطبيق أولاً ثم استخدم openyida update-app <appType>.',
     title: '  create-app - أداة إنشاء تطبيق Yida',
-    usage: 'الاستخدام: openyida create-app "<اسم التطبيق>" أو openyida create-app --name "<اسم التطبيق>" [--desc "..."] [--theme deepBlue]',
-    example: 'مثال: openyida create-app --name "تطبيقي" --desc "وصف التطبيق" --theme deepBlue',
+    usage: 'الاستخدام: openyida create-app "<اسم التطبيق>" أو openyida create-app --name "<اسم التطبيق>" [--desc "..."]',
+    example: 'مثال: openyida create-app --name "تطبيقي" --desc "وصف التطبيق"',
     available_icons: '\nAvailable icons:',
     icons_list: '  xian-xinwen, xian-zhengfu, xian-yingyong, xian-xueshimao, xian-qiye,\n' +
       '  xian-danju, xian-shichang, xian-jingli, xian-falv, xian-baogao,\n' +
@@ -704,6 +741,7 @@ module.exports = {
     no_login: '  ❌ Unable to get valid login credentials'
   },
   create_form: {
+    batch_invalid: 'دفعة النماذج غير صالحة؛ تحقق من تفاصيل الخطأ',
     create_title: '  yida-create-form-page - Yida Form Page Creation Tool',
     update_title: '  yida-create-form-page - Yida Form Page Update Tool',
     app_id: '\n  معرّف التطبيق: {0}',
@@ -958,6 +996,9 @@ module.exports = {
     err_open_url_empty: 'لا يمكن أن يكون مسار openUrl فارغاً: {0}'
   },
   update_app: {
+    theme_preset_conflict: 'لا يمكن الجمع بين colour مسبق الإعداد وCSS أو themeColor. استخدم --colour custom أو احذف --colour.',
+    custom_theme_color_required: 'يتطلب colour=custom ملف سمة أو themeColor صالحًا. مرر --theme-file أو --theme-color.',
+    theme_not_persisted: 'تعذرت قراءة إعدادات سمة التطبيق بعد الحفظ أو لم تتطابق. لم يتم تأكيد ربط مورد CSS. افحص themeVerification وأعد المحاولة باستخدام update-app <appType> --theme-file <css>؛ لا تنشئ التطبيق مجددًا.',
     usage: 'Usage: openyida update-app <appType> [--name "New Name"] [--desc "Description"] [--layout slide|ver] [--theme deepBlue]',
     example: 'Example: openyida update-app APP_XXX --name "New App Name" --layout ver --theme deepBlue',
     options: 'Options:\n' +
@@ -1193,6 +1234,7 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_inline_css_invalid: 'يحتوي CSS قرب السطر {0} على قوس أو نص أو تعليق غير مغلق أو غير متطابق. أصلحه قبل النشر.',
     title: '  yida-publish - أداة نشر صفحات Yida',
     platform: '  المنصة: {0}',
     base_url: '\n  Platform: {0}',
@@ -1231,12 +1273,15 @@ module.exports = {
     lint_searchformdata_http_post: 'استدعاء searchFormDatas.json مباشرة يجب أن يستخدم GET + معاملات query (ضع formUuid/appType في query الخاص بعنوان URL). استخدام POST مع formUuid في الـ body يسبب «参数校验失败formUuid» وتظهر اللوحات/القوائم أصفارًا',
     lint_searchformdata_http_pagenumber: 'يستخدم searchFormDatas.json ترقيم الصفحات عبر currentPage (وليس pageNumber)؛ استخدام pageNumber يعطّل الترقيم',
     lint_searchformdata_http_unwrap: 'استجابة المتصفح من searchFormDatas.json تضع القائمة داخل content.data ({ content: { data: [...] } })؛ قراءة json.data فقط تُرجع 0 صفوف — فك التغليف عبر (json.content && json.content.data)',
+    lint_searchformdata_dynamic_order_metadata: 'لا يمكن لـ searchFormDatas.dynamicOrder استخدام حقل بيانات تعريف السجل {0}؛ استخدم معرّف حقل أعمال حقيقيًا يعيده get-schema. إذا لم يوجد حقل تاريخ أعمال قابل للفرز، فاحذف dynamicOrder ورتّب الصفحة المسترجعة فقط حسب row.createTime للعرض',
     lint_setstate_non_timestamp: 'this.setState يكتب حقلا غير timestamp. يجب أن تبقى حالة الأعمال في الصفحة المخصصة داخل _customState ويتم تحديثها عبر forceUpdate()/setCustomState(); يجب أن يحمل this.setState حقل العقد timestamp فقط',
     lint_self_binding_missing: 'renderJsx يستخدم this دون تعريف var self = this;. أضف var self = this; في بداية renderJsx واستخدم self داخل closures/callbacks لتجنب فقدان this',
     lint_echarts_dom_ready: 'echarts.init غير ملفوف داخل setTimeout؛ قد لا يكون الحاوي مركبا بعد، لذلك قد لا يتم عرض المخطط. استخدم setTimeout(function(){ /* echarts.init */ }, 300)',
     lint_yida_api_catch: 'لم يتم اكتشاف .catch() لاستدعاء API this.utils.yida؛ أضف معالجة أخطاء واعرض toast للمستخدم',
     lint_echarts_legacy_map_china: 'لم يعد ECharts 5 يدعم echarts/map/js/china.js. حمّل DataV GeoJSON واستدع echarts.registerMap("china", geoJson) بدلا من ذلك',
     lint_echarts_rich_label_formatter: 'قوالب rich text التي يعيدها ECharts label.formatter غير مستقرة في صفحات Yida المخصصة؛ يفضل استخدام formatter strings بسيطة أو نصوص تسميات محسوبة مسبقا',
+    lint_system_token_frontend_forbidden: 'يجب ألا تقرأ الصفحات المخصصة systemToken أو تمرره. استخدم أتمتة تكامل Yida لربطه بأمان على الخادم.',
+    lint_connector_runtime_name_required: 'Custom pages must invoke connectors with connectorName (Http_*); numeric connectorId is only for CLI management.',
     lint_const_let: 'يستخدم إعلان const/let، يُوصى بالتغيير إلى var (توافق بيئة تشغيل يدا)',
     lint_computed_property: 'يستخدم اسم خاصية محسوبة ES6 { [key]: value }، غير مدعوم من محرك JS يدا، يسبب فشلاً صامتاً. استخدم var obj = {}; obj[key] = value;',
     lint_pad_method: 'يستخدم String.{0}()، غير مدعوم من محرك JS يدا، يسبب انقطاعاً صامتاً لاستدعاءات Promise. استخدم المعامل الثلاثي: x < 10 ? "0" + x : "" + x',
@@ -1976,6 +2021,7 @@ Object.assign(module.exports.query_data || (module.exports.query_data = {}), {
 
 const connectorSafetyMessages = require('../../lib/core/locales/en');
 module.exports.connector_contract = connectorSafetyMessages.connector_contract;
+module.exports.connector_auth = connectorSafetyMessages.connector_auth;
 module.exports.connector_api = connectorSafetyMessages.connector_api;
 module.exports.connector_e2e = connectorSafetyMessages.connector_e2e;
 module.exports.connector_action_update = connectorSafetyMessages.connector_action_update;

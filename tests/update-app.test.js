@@ -1,7 +1,10 @@
 'use strict';
 
+const querystring = require('querystring');
+
 const {
   assertPresetThemeKey,
+  assertAppThemeKey,
   APP_THEME_TOKEN_PRESETS,
   APP_THEME_TOKEN_PRESET_KEYS,
   getAppThemeTokenPreset,
@@ -21,6 +24,17 @@ const {
 } = require('../lib/app/update-app');
 
 describe('update-app helpers', () => {
+  test('colour accepts only platform keys or custom, never CSS colors or invented keys', () => {
+    ['podBlue', 'podGreen', 'podOrange', 'black', 'custom'].forEach((key) => expect(() => assertAppThemeKey(key)).not.toThrow());
+    ['#C89B5A', 'rgb(200,155,90)', 'desertWarm', 'podBXXXX'].forEach((key) => expect(() => assertAppThemeKey(key)).toThrow());
+  });
+
+  test('explicit custom preserves existing CSS and color while preset switches clear them', () => {
+    const current = { colour: 'custom', themeColor: '#C89B5A', customThemeStyle: '{"enabled":true,"cssUrl":"https://example.com/theme.css"}' };
+    expect(buildUpdateAppPostData(parseArgs(['APP_1', '--colour', 'custom']), current, {})).toMatchObject(current);
+    expect(() => buildUpdateAppPostData(parseArgs(['APP_1', '--colour', 'custom']), {}, {})).toThrow();
+    expect(() => buildUpdateAppPostData(parseArgs(['APP_1', '--colour', 'podBlue', '--theme-file', './theme.css']), current, {})).toThrow();
+  });
   test('parseArgs supports app shell theme flags', () => {
     expect(parseArgs([
       'APP_1',
@@ -182,6 +196,43 @@ describe('update-app helpers', () => {
     expect(JSON.parse(payload.appName)).toMatchObject({
       zh_CN: 'OpenYida官方Samples展示0716',
     });
+  });
+
+  test('buildUpdateAppPostData preserves security settings without inventing defaults', () => {
+    const params = parseArgs(['APP_1', '--nav-theme', 'light']);
+    const currentApp = {
+      appName: { zh_CN: '应用' },
+      description: { zh_CN: '描述' },
+      mode: 'normal',
+      type: 'single',
+    };
+
+    const empty = buildUpdateAppPostData(
+      params,
+      { ...currentApp, addWaterMark: '', sentryMode: '' },
+      { csrfToken: 'csrf' }
+    );
+    expect(empty).toMatchObject({ addWaterMark: '', sentryMode: '' });
+    expect(querystring.stringify(empty)).toContain('addWaterMark=&sentryMode=');
+
+    const explicit = buildUpdateAppPostData(
+      params,
+      { ...currentApp, addWaterMark: 'n', sentryMode: 'y' },
+      { csrfToken: 'csrf' }
+    );
+    expect(explicit).toMatchObject({ addWaterMark: 'n', sentryMode: 'y' });
+
+    const configFallback = buildUpdateAppPostData(
+      params,
+      { ...currentApp, config: { ADDWATERMARK: 'y', SENTRY_MODE: 'n' } },
+      { csrfToken: 'csrf' }
+    );
+    expect(configFallback).toMatchObject({ addWaterMark: 'y', sentryMode: 'n' });
+
+    const absent = buildUpdateAppPostData(params, currentApp, { csrfToken: 'csrf' });
+    expect(absent).not.toHaveProperty('addWaterMark');
+    expect(absent).not.toHaveProperty('sentryMode');
+    expect(querystring.stringify(absent)).not.toMatch(/addWaterMark|sentryMode/);
   });
 
   test('buildUpdateAppPostData writes hideAppNav as y/n only when requested', () => {

@@ -207,6 +207,7 @@ trigger
 - 该节点的 `nodeId`（如 `node_ocmmzsdai63`）在后续节点中通过 `${nodeId}.fieldId` 引用其查询结果
 - 从上游节点子表取数时，spec 写 `originalType: "sub_table"`、`source` 为拓扑上游的 `getSelf` 或 `dataRetrieve` 别名、`subSourceId` 为子表 fieldId；不要再填目标表 `formUuid`
 - 编译后运行态 `sourceId` 为上游 `nodeId`；画布 `targetItem.value` 也是该 `nodeId`，`relativeItem` 指向子表，且没有 `targetItem.formItem.formUuid`
+- 来源为流程表单时，运行态 `processJson` 的实例条件字段使用 `pid`，设计器 `viewJson` 的对应字段使用 `proc_inst_id`；普通表单两侧均使用 `form_inst_id`。
 
 ---
 

@@ -53,6 +53,8 @@ PRD 写有 `pageSpecHandoff` 时，可以把 `pageSpecHandoff` 转成 `page-spec
 
 实现页面背景和卡片时必须消费 `surfaceContrast`：页面背景与卡片背景不可相近或相同。白色/浅色背景配有边框卡片；浅灰背景（如 `#F3F4F6`）配白色无边框卡片；浅彩色背景配白色无边框卡片；渐变背景配玻璃感卡片。源码不得输出浅底白卡无边框、同色背景同色卡片，或只靠弱阴影区分层级。
 
+design.md 存在“项目配色适配”时先应用该节，它高于模板默认灰阶/品牌面积约束；整体绿色风格不能只让按钮变绿。卡片背景使用 `var(--pod-card-bg-color, var(--color-white, #fff))`，边界消费 `--pod-card-border`；页面、卡片、导航、表头、文字与控件一并核对。antd 不能只设置 colorPrimary，按样式指南同步映射容器、文字、填充、边框和应用语义色。
+
 实现背景层时先写根节点和伪元素，再写内容网格：`.oy-page-root` 承载基础底色、`::before` 承载不规则顶部色块或光洗、`::after` 承载低速流光或弱纹理，`.oy-page-content` 使用 `position: relative; z-index: 1;`。背景可以不规则，内容必须规则；标题、筛选、表格、图表、按钮和列表都保持稳定栅格、对齐和对比度。
 
 数据真实性边界：
@@ -76,6 +78,10 @@ PRD 写有 `pageSpecHandoff` 时，可以把 `pageSpecHandoff` 转成 `page-spec
 
 ### 导航生成规则
 
+自定义导航按 PRD 和 `design.md` 直接实现；参考 [导航壳形态目录](../../yida-nav-shell/references/nav-shell-patterns.md) 的场景与骨架，UI 示例按需查阅。顶部默认浮导；侧边及混合布局支持折叠、恢复宽度和拖拽调宽。菜单同时记录入口用途和打开方式：管理走 workbench，填写走 submission；本页视图切状态，保留导航的表单入口更新主内容 iframe，跨页入口默认当前标签跳转。页面内新增/详情按钮沿用 FormOpenContainer。
+
+完整地址通过数据桥使用 `router.push(href, params, false, true)`；省略 URL 模式的自动识别只作兼容，详见 [路由模式与数据桥兜底](../../yida-nav-shell/references/nav-shell-patterns.md#路由模式与数据桥兜底)。导航显示参数不控制是否新开标签。
+
 | 场景 | spec 字段 | 发布后动作 |
 | --- | --- | --- |
 | 普通自定义页、工作台、门户、看板、首页 | 不写 `hideAppNav` | 保留平台应用导航 |
@@ -94,7 +100,7 @@ PRD 写有 `pageSpecHandoff` 时，可以把 `pageSpecHandoff` 转成 `page-spec
 | 表单新建/提交 | `targetType: "submission"` + `openMode: "responsive-drawer"` | PC 用 `FormOpenContainer` 右侧抽屉 iframe，URL 带 `isRenderNav=false` |
 | 表单查看详情 | `targetType: "detail"` + 目标 `formUuid` + 真实 `formInstId` 来源 | PC 用同一套抽屉宽度，详情 URL 带 `navConfig.layout=1180&isRenderNav=false` |
 
-表单提交/详情里的 `isRenderNav=false` 只隐藏原生表单页或详情页的页面导航，不用于隐藏自定义页应用导航。PC 抽屉 iframe 与移动端整页都由服务端自行加载应用主题文件；`FormOpenContainer` 不接收或同步父页面主题数据。
+表单提交/详情里的 `isRenderNav=false` 只隐藏原生表单页或详情页的页面导航，不用于隐藏自定义页应用导航。
 
 ## 官网与品牌页素材流程
 
@@ -128,9 +134,9 @@ PRD 写有 `pageSpecHandoff` 时，可以把 `pageSpecHandoff` 转成 `page-spec
 
 ## 主题实现
 
-主题色决策来自 `yida-design` 的 `design.md`，业务场景和页面边界来自 `prd.md` 或派生的 `page-spec.json`。所有页面都以当前应用主题为唯一主题来源；缺少主题证据时，按业务气质选择平台预置主题或生成应用自定义主题文件，不固定回到 `podBlue` / #1677ff。`themeProfile: { "name": "yida-app-theme" }` 表示跟随宜搭运行态主题：应用自定义主题 CSS 中的 `--color-brand1-*` 和 `--color-group` 决定页面主色、图表色组和强调色。
+主题色决策来自 `yida-design` 的 `design.md`。`app-theme.css` 只在应用级配置，由平台统一作用于整个应用。
 
-`page-spec.json` 只保存与 design.md 一致的主题摘要。design.md 必须写清应用主题模板、CSS 产物、`--color-brand1-6`、`navTheme`、`logoSource` 和 `layoutDirection`，并通过 `create-app/update-app --theme-file/--nav-theme/--logo-source/--layout` 联合保存。运行容器在自定义页面与 `FormOpenContainer` 的提交页/详情页 iframe 中加载同一应用主题文件。
+`page-spec.json` 只保存与 `design.md` 一致的主题摘要。自定义页面只在 `YidaComp` 内消费当前应用的 `--color-brand1-*`、`--color-group` 和 `--pod-*`，不向上层写入或同步主题样式。
 
 从 PRD 或派生的 `page-spec.json` 读取业务边界，从 design.md 读取应用主题 token 与视觉执行规则。全局换肤、导航与内容统一换色或新品牌色都通过应用主题 CSS、`themeColor` 和 `navTheme` 配置；单页美化沿用该应用主题并调整页面结构和视觉语言。
 
@@ -170,8 +176,7 @@ PRD 写有 `pageSpecHandoff` 时，可以把 `pageSpecHandoff` 转成 `page-spec
   "designRefs": ["themeProfile", "sceneRecipes.dashboard", "components.charts", "states.empty"],
   "themeSummary": {
     "themeColor": "青绿色应用主题",
-    "styleKeywords": ["运营洞察", "轻量玻璃感", "高密信息"],
-    "themeDelivery": "app-custom-theme-file"
+    "styleKeywords": ["运营洞察", "轻量玻璃感", "高密信息"]
   },
   "researchLevel": "none",
   "archetype": "analysis",

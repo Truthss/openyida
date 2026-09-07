@@ -1,6 +1,6 @@
 # 输出：prd.md
 
-> 本文件定义完整应用的 `prd/<项目名>/prd.md` 输出格式。`prd.md` 记录业务语义、产品设计、页面结构、资源创建顺序、页面实现交付顺序和导航顺序。PRD 不写 UI 视觉设计规范，只写应用主题色和风格摘要，并引用 `design.md` 章节。
+> 本文件定义完整应用的 `prd/<项目名>/prd.md` 输出格式。`prd.md` 记录业务语义、产品设计、页面结构、资源创建顺序、页面实现交付顺序和导航顺序。视觉部分记录应用主题色和风格摘要，通过 `design.md` 引用具体规范。业务说明使用功能与体验描述，接口字段集中在 Agent 实施交接中。
 
 ## PRD 输出格式
 
@@ -24,9 +24,11 @@
 
 | 配置项 | 值 |
 | --- | --- |
-| appType | <已有应用填真实 appType；从零创建时写“待创建后回填”> |
-| corpId | <目标组织 corpId；未知时写“待登录态确认”> |
-| baseUrl | <平台地址，如 https://www.aliwork.com 或私有化域名> |
+| 导航类型 | <平台L型导航 / 平台顶部导航 / 平台侧边导航 / 自定义导航；必须明确选择> |
+| 是否使用平台应用导航 | <前三种为是，自定义导航为否> |
+| 页面导航配置 | <自定义导航：列出本轮全部表单、流程表单、自定义页面及需配置的其他页面，统一隐藏平台页面导航；平台导航：保留页面设置，明确独立入口例外> |
+
+导航方案说明页面入口和跨页切换方式；导航配色单独说明深色或浅色。
 
 ## 3. 数据结构（业务语义，不含细节 ID）
 
@@ -61,7 +63,7 @@
 - 入口模式：<`platform-shell` / `standalone`；信息不足时必须写 `platform-shell`>
 - 页面目标：<这个页面帮助用户完成什么判断或操作>
 - 页面关系：<从哪里进入、下一步去列表 / 看板 / 表单提交 / 详情 / 报表中的哪一个>
-- 设计文件：<display-page 填 `prd/<项目名>/design.md`；普通表单 / 流程表单写“跟随应用主题文件和表单视觉引导”>
+- 设计文件：<display-page 填 `prd/<项目名>/design.md`；普通表单 / 流程表单填写表单结构与填写路径引导>
 - 设计引用：<引用 design.md 中的章节 ID，例如 themeProfile、sceneRecipes.workbench、components.table、states.empty>
 - 风格理由：<一句话说明该页面为什么采用 design.md 中的对应场景规则>
 - 主题关系：<跟随当前应用主题 / 平台预置主题 / 应用自定义主题文件；只写摘要，具体 token 与 UI 规则见 design.md>
@@ -86,8 +88,10 @@
   - themeSummary：<应用主题色 / 风格关键词 / 主题交付方式摘要；必须与 design.md 一致，不写 token 和视觉规则>
   - designFile：<prd/<项目名>/design.md>
   - designRefs：<themeProfile / sceneRecipes.<scene> / components.<name> / states.<name>>
-  - 引用规则以 [yida-design 的 join 稳定引用契约](../../yida-design/workflow/output-design.md#join-稳定引用契约) 为准；`sceneRecipes.<sceneKey>` 中的 `sceneKey` 必须逐字取自共享 `requirement-brief.json` 的对应 `pageScenes`（对象项使用其 `key`，字符串项原样使用），不得改写、翻译或重新生成。
-  - dataBinding：<form / report / connector / static-empty；真实资源 ID 由实现阶段回填>
+  - 引用规则以 [yida-design 的稳定引用规则](../../yida-design/workflow/output-design.md#稳定引用规则) 为准；`sceneRecipes.<sceneKey>` 中的 `sceneKey` 必须逐字取自 `requirement-brief.json` 的对应 `pageScenes`（对象项使用其 `key`，字符串项原样使用），不得改写、翻译或重新生成。
+  - dataBinding：<form / report / connector / static-empty；必须明确，真实资源 ID 由实现阶段回填>
+  - dataSources：<已规划的来源名称数组；form 对应业务数据模型>
+  - emptyReason：<static-empty 必填，说明为何本轮只交付空态或入口；其他绑定方式需要非空来源>
   - primaryAction：<主操作和打开方式>
 
 `entryMode=standalone` 只用于页面自身已经具备完整导航壳，或不依赖宜搭工作台导航即可完成主要业务闭环的员工自助/轻量业务入口。页面只有 tab、筛选、分段、卡片切换、普通看板，或仍依赖平台导航进入核心表单/流程时必须使用 `platform-shell`。不得根据访问者角色猜测；证据不足时默认 `platform-shell`。
@@ -103,18 +107,17 @@
 | 明暗模式 | <light 默认；dark 只在明确暗色/夜间/高对比/黑金时使用；具体色阶见 design.md> |
 | 页面设计引用 | <逐页列出 designRefs，不复制 design.md 内容> |
 | 素材策略摘要 | <官网/品牌页是否需要真实图片或生成图片；具体视觉表达见 design.md> |
-| 表单主题一致性 | <运行容器在普通表单、流程表单、提交页、formDetail 详情页、自定义页面和表单 iframe 中加载同一份应用主题 CSS> |
 | 一致性要求 | <PRD 中主题色和风格摘要必须与 design.md 保持一致；冲突时以 design.md 为准并修正 PRD 摘要> |
 
 ## 6. 业务逻辑与交互状态
+
+有业务规则时，逐项写清适用对象、触发条件、判断条件、执行结果和已知例外，例如金额阈值审批、字段联动、状态流转、计算口径与权限限制。已有流程摘要中的规则也必须保留在 PRD，确保 HTML 展示的业务要求能够交接给实施阶段。
 
 | 类型 | 规则 |
 | --- | --- |
 | 表单提交后 | <刷新列表 / 回到当前工作台 / 触发流程 / 更新状态> |
 | 新增/提交入口 | <PC 侧边抽屉 iframe 承载页面级隐藏导航的 `submission/{formUuid}?isRenderNav=false`，抽屉默认半屏 `50vw`；移动端整页或新页打开；必要时用 `update-form-config` 持久化表单设置 `isRenderNav=false`> |
 | 详情查看 | <PC 侧边抽屉 iframe 承载页面级隐藏导航的 `formDetail/{formUuid}?formInstId={formInstId}&navConfig.layout=1180&isRenderNav=false`，抽屉默认半屏 `50vw`；移动端整页或新页打开；formInstId 来自真实数据记录并优先取 row.formInstId，缺失时禁用详情入口> |
-| 应用主题文件 | <通过 `create-app/update-app --theme-file/--nav-theme/--logo-source/--layout` 联合保存，themeColor 从 CSS 的 --color-brand1-6 自动提取，提交页和详情页由服务端加载同一 CSS> |
-| 详情页样式 | <通过应用主题 CSS 的 `--pod-detail-*`、页面、卡片和字段预览 token 适配，不写表单 Schema JS> |
 | 数据变更 | <自动计算、状态流转、通知或提醒> |
 | 权限规则 | <角色能看、能改、能审批的边界> |
 | 空状态 | <无数据时的说明、主操作入口和下一步> |
@@ -140,9 +143,9 @@
 | --- | --- | --- | --- |
 | 1 | 应用 | 承载所有页面、表单、流程和导航 | `appType` |
 | 2 | 普通表单 / 流程表单 | 自定义页面需要表单 URL、字段语义和数据来源 | `formUuid`、字段映射 |
-| 3 | 应用主题文件配置 | 提交页、详情页、自定义页面和应用主题色必须一致 | `themeColor`、`navTheme`、`customThemeStyle.cssUrl` |
+| 3 | 应用主题与导航配置 | 在应用级统一配置主题，并明确是否隐藏平台导航 | `themeFile`、`themeColor`、`navTheme`、`logoSource`、`layoutDirection`、`hideAppNav` |
 | 4 | 初始示例数据 | 页面需要读取真实表单记录，完整应用默认写入 1-3 条核心业务记录 | 写入数量、抽查结果 |
-| 5 | 主自定义页面 / 业务自定义页面 | 页面消费表单入口、表单数据和主题色配置 | `displayPageFormUuid` |
+| 5 | 主自定义页面 / 业务自定义页面 | 页面消费表单入口和表单数据 | `displayPageFormUuid` |
 | 6 | 报表 / 数据看板数据源 | 看板或大屏需要汇总指标时创建 | `reportId` 或数据源信息 |
 | 7 | 发布与导航排序 | 页面发布成功后再调整导航展示 | 发布 URL、导航状态 |
 
@@ -166,7 +169,7 @@
 | 门户 / 首页 | <主页面 / 工作台 / 官网首页> | <平台导航 / 顶部导航 / 侧边导航 / 单页入口> | 第一入口放最前 |
 | 业务办理 | <流程表单 / 新增入口 / 待办相关页面> | <平台导航或页面内快捷入口> | 高频动作靠前 |
 | 数据管理 | <表单数据管理页 / 用户要求的自定义列表页 / 详情页> | <平台导航分组> | 数据录入、查询和维护集中 |
-| 经营分析 | <看板 / 报表 / 大屏> | <平台导航 / 大屏全屏入口 / 页面级隐藏导航 isRenderNav=false> | 管理者查看，放在业务操作之后或独立分组 |
+| 经营分析 | <看板 / 报表 / 大屏> | <平台导航 / 大屏全屏入口 / 隐藏平台页面导航的独立入口> | 管理者查看，放在业务操作之后或独立分组 |
 | 系统配置 | <配置表 / 字典表 / 权限说明> | <平台导航靠后分组> | 低频维护靠后 |
 
 ## 11. 验收标准
@@ -175,7 +178,7 @@
 | --- | --- |
 | 主页面访问 | <页面发布成功，打开后首屏能完成核心判断> |
 | 数据录入 | <表单能提交，提交后页面能刷新或回到正确入口> |
-| 表单主题和详情页样式 | <应用主题文件已在普通表单、流程表单、提交页、formDetail、自定义页面和表单 iframe 生效，主题色与语义变量一致> |
+| 主题配置与页面消费 | <应用主题文件已配置，自定义页面已消费对应主题变量> |
 | 初始示例数据 | <完整应用默认已为核心普通表单写入 1-3 条业务化示例记录并 query 抽查；跳过时说明原因> |
 | 数据查看 | <默认使用表单数据管理页；自定义列表 / 看板 / 详情显示真实数据或空态> |
 | 权限 / 流程 | <权限规则或流程节点生效> |
@@ -188,3 +191,26 @@
 - `yida-app` 读取 `prd/<项目名>/prd.md` 和 `prd/<项目名>/design.md` 后创建或复用资源。
 - 真实 ID 写入 `.cache/<项目名>-schema.json`。
 - 页面实现阶段读取 `prd.md` 的业务内容，并直接读取 `design.md` 的主题、布局、材质、圆角、密度、呼吸感、组件和状态规则；只有走页面生成器或需要稳定交接时才派生 `page-spec.json`，再交给 `yida-canvas-custom-page` 实现。
+
+
+### Agent 导航实施映射
+
+| 导航类型 | navigationType | layoutDirection | hideAppNav | 页面动作 |
+| --- | --- | --- | --- | --- |
+| 平台L型导航 | platform-l-shape | l_shape | n | 使用平台导航，按入口需求设置页面导航 |
+| 平台顶部导航 | platform-top | top | n | 同上 |
+| 平台侧边导航 | platform-side | side | n | 同上 |
+| 自定义导航 | custom | 保留平台布局配置 | y | 本轮涉及页面逐一设置 isRenderNav=false，加载 yida-nav-shell 实现导航 |
+
+导航类型是业务入口方案，`navTheme` 只控制导航明暗。新方案明确填写 navigationType；已有应用以确认后的导航方案为准。自定义导航的 display 页面使用 `entryMode=standalone`。实施时按 [导航壳必做配置](../../yida-nav-shell/SKILL.md#必做配置) 调用应用和页面接口，不能仅靠 URL 参数隐藏。
+
+
+应用上下文在 Agent 实施交接中按下表记录：
+
+| 字段 | 值 |
+| --- | --- |
+| appType | <已有应用填真实 appType；从零创建时写“待创建后回填”> |
+| corpId | <目标组织 corpId；未知时写“待登录态确认”> |
+| baseUrl | <平台地址，如 https://www.aliwork.com 或私有化域名> |
+
+自定义导航逐页设置 isRenderNav=false 并回读；业务说明写平台导航的显示方式及页面切换行为。
