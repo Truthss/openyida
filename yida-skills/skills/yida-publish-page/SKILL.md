@@ -96,7 +96,8 @@ openyida list-forms <appType> --keyword <页面名>
 
 ## Final 证据契约
 
-- final 中“Canvas 页面已更新 / 已重新发布 / 已上线”的依据是成功的 `openyida publish <source> <appType> <displayPageFormUuid> --canvas --health-check`，且结果包含 `publishMode=canvas`、`healthCheck.ok=true`、`healthCheck.readback.hasYidaCodeCanvas=true` 和 `runtimeCodeBytes>0`。
+- final 中“Canvas 页面已更新 / 已重新发布”的依据是成功的 `openyida publish <source> <appType> <displayPageFormUuid> --canvas --health-check`，且结果包含 `publishMode=canvas`、`publishReadbackVerified=true`、`healthCheck.ok=true`、`healthCheck.readback.hasYidaCodeCanvas=true` 和 `runtimeCodeBytes>0`。
+- `--health-check` 是发布内容读回校验，不是浏览器运行态 smoke。输出中的 `runtimeSmokeVerified=false`、`runtimeSmokeStatus=not_checked` 表示本命令没有验证页面渲染与交互；需要宣称“页面可运行”时，必须另有专项运行态证据。
 - `<source>` 必须是本轮实际 Write/Edit/Create 过的页面源码；`<displayPageFormUuid>` 必须是已解析的 display 自定义页面。发布了其他文件或其他目标页面，不满足本轮源码修改的 doneWhen。
 - 若 publish 没执行、执行失败、目标不明、登录态/组织不一致或用户要求先暂停，final 只能说“源码已修改，尚未发布”，并给出下一步需要执行的 publish 命令或阻塞原因。
 - 平台 JSX 组件页面的 `check-page` / `compile`、使用 `YidaCodeCanvas` 组件实现页面的 `compileCanvasLocal` 都是发布前 guard，不是远端完成证据。
@@ -129,7 +130,7 @@ openyida list-forms <appType> --keyword <页面名>
 ## 输出
 
 ```json
-{"success":true,"formUuid":"FORM-XXX","version":0,"publishMode":"canvas","healthCheck":{"ok":true,"mode":"publish_readback","expectedPublishMode":"canvas","displayComponentPresent":true,"publishedContentMatched":true,"readback":{"hasYidaCodeCanvas":true,"runtimeCodeBytes":1024}}}
+{"success":true,"formUuid":"FORM-XXX","version":0,"publishMode":"canvas","publishReadbackVerified":true,"runtimeSmokeVerified":false,"runtimeSmokeStatus":"not_checked","healthCheck":{"ok":true,"mode":"publish_readback","expectedPublishMode":"canvas","displayComponentPresent":true,"publishedContentMatched":true,"readback":{"hasYidaCodeCanvas":true,"runtimeCodeBytes":1024}}}
 ```
 
 ## 自动注入的 CSS

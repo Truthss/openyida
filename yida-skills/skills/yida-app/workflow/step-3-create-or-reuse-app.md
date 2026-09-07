@@ -18,14 +18,15 @@
 2. 缺少 app 且 Step 1 判定 `allowCreate=true` → 执行 `use_skill("yida-create-app", "按 PRD 创建应用并获取 appType")`，再按 PRD 创建应用。
 3. 创建或复用后提取真实 `appType`，写入 `.cache/<项目名>-schema.json` 或当前任务资源上下文。
    - Step 2 已确认的 `requirement-brief.json`、PRD 与 design 保持不变；不得仅因拿到真实 `appType` 回写需求文件或重新生成 PRD 和视觉设计。
-4. 用户确认计划或主题后立即准备 CSS，不等表单或页面完成。创建完整应用时，Plan 复用 `materialize` 返回的 `outputs.theme`。其他场景用以下命令生成或更新主题：
+4. 用户确认计划或主题且 `constraints.prohibitedActions` 不含 `theme-file` 时立即准备 CSS，不等表单或页面完成。创建完整应用时，Plan 复用 `materialize` 返回的 `outputs.theme`。其他场景用以下命令生成或更新主题：
 
    ```bash
    openyida sample yida-design app-theme --output .cache/openyida/<项目名>/app-theme.css --design-file prd/<项目名>/design.md
    ```
 
    CLI 首次复制公共模板，后续更新 token 并保留自定义样式。整体暗色方案还需按 [浮层适配](../../yida-design/references/theme/theme-token-presets.md#暗色主题浮层适配) 在该文件末尾补充必要的 class 覆盖；仅深色导航不触发此操作。
-5. 主题文件就绪且已有真实 `appType` 后，立即通过独立任务更新应用基础设置，与表单和页面开发并行：
+   若禁止 `theme-file`，不执行 sample，不复制、生成、修改或上传主题文件；已有应用沿用当前主题，新应用保留平台默认主题。
+5. 主题文件就绪、未禁止 `theme-file` 且已有真实 `appType` 后，立即通过独立任务更新应用基础设置，与表单和页面开发并行：
 
    ```bash
    openyida update-app <appType> --theme-file <app-theme.css> --colour custom --nav-theme <light|dark> --logo-source appIcon --layout <l_shape|top|side>
@@ -52,7 +53,7 @@
 - [ ] 已确认不会重复创建同类 app；
 - [ ] 已拿到真实 `appType`；
 - [ ] 已有 app 未被自动改名；
-- [ ] 主题分支已调度；其完成条件为已执行 `update-app --theme-file`，回读确认 `customThemeStyle` 资源、`colour=custom` 和 `themeColor`，并保存导航配置；不能以本地 CSS 存在或创建成功替代主题验收。
+- [ ] 未禁止 `theme-file` 时主题分支已调度并完成回读；禁止时已跳过所有主题文件写入并记录沿用平台主题，未把“跳过”写成“已换肤”。
 
 ## 下一步
 
