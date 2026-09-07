@@ -12,6 +12,8 @@
 
 回答齐全后直接保存内部需求记录并进入 2.1；不把“生成需求简报”列为独立任务，不再扩写或展示简报请用户确认。已有确认记录且需求未变化时直接复用。记录粒度、保存和校验规则统一遵守上述需求分析流程。
 
+执行规划前读取 `constraints.prohibitedActions`。PRD 与 design 必须把禁止项写成实现门禁：`theme-file` 禁止时沿用现有平台主题且不安排主题文件任务；`page-source` 禁止时只允许只读核查与非源码配置；`publish` 禁止时把发布明确标记为跳过。不得为了满足默认九步流程静默删除这些约束。
+
 ## 2.1 按已确认方式推进
 
 按 [模式路由](../../yida-design/references/design-mode.md) 读取本次选择：
@@ -46,7 +48,7 @@
 
 ## 主题文件实现指令
 
-在设计中确定配色、导航明暗和布局。Plan 使用 CLI 返回的 `outputs.theme`；Fast 按 [主题文件生成与更新](../../yida-design/workflow/output-design.md#cli-token-契约fast--plan-共用) 准备主题 CSS。用户确认计划或主题后即可启动 CSS 生成，不等待表单或页面开发；Plan 已生成当前版本的 CSS 时直接复用。拿到真实 appType 后，在应用级配置同一份主题文件，与表单创建和页面开发并行；页面组件按已确认契约消费主题 token，详见 [主题与业务资源的依赖](parallel-work.md#主题与业务资源的依赖)。
+在设计中确定配色、导航明暗和布局。未禁止 `theme-file` 时，Plan 使用 CLI 返回的 `outputs.theme`，Fast 按 [主题文件生成与更新](../../yida-design/workflow/output-design.md#cli-token-契约fast--plan-共用) 准备主题 CSS；用户确认计划或主题后即可启动 CSS 生成，不等待表单或页面开发。Plan 已生成当前版本的 CSS 时直接复用。拿到真实 appType 后，在应用级配置同一份主题文件，与表单创建和页面开发并行；页面组件按已确认契约消费主题 token。若 `theme-file` 被禁止，跳过生成、复制、修改和上传，沿用现有平台主题并在交付中说明未更改主题。详见 [主题与业务资源的依赖](parallel-work.md#主题与业务资源的依赖)。
 
 ## 产出
 

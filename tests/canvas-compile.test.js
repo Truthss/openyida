@@ -7,6 +7,7 @@ const {
   compileCanvas,
   compileCanvasLocal,
   extractImportedModules,
+  assertDependencyManifestConsistent,
   resolveWindowAlias,
 } = require('../lib/app/canvas-compile');
 const {
@@ -406,6 +407,47 @@ describe('compileCanvasLocal', () => {
     const result = compileCanvasLocal(goodSource);
     expect(JSON.parse(result.importedModules)).toEqual(['antd', 'react']);
     expect(result.runtimeCode).toContain('window.antd');
+  });
+
+  test('rejects a self-referential React dependency binding before JSX compilation', () => {
+    const observedFailureSource = `
+      var React = React;
+      var useState = React.useState;
+      export default function App() {
+        const [value] = useState('ready');
+        return <div>{value}</div>;
+      }
+    `;
+
+    expect(() => compileCanvasLocal(observedFailureSource, {
+      sourcePath: 'pages/src/observed.canvas.jsx',
+    })).toThrow(expect.objectContaining({
+      code: 'OPENYIDA_CANVAS_SELF_REFERENTIAL_DEPENDENCY_BINDING',
+      details: expect.objectContaining({
+        globalName: 'React',
+        packageName: 'react',
+      }),
+    }));
+  });
+
+  test('validates that generated runtime dependency aliases are present in importedModules', () => {
+    expect(() => assertDependencyManifestConsistent(
+      'var React = window.React; var antd = window.antd;',
+      ['react'],
+      { sourcePath: 'pages/src/mismatch.canvas.jsx' }
+    )).toThrow(expect.objectContaining({
+      code: 'OPENYIDA_CANVAS_DEPENDENCY_MANIFEST_MISMATCH',
+      details: expect.objectContaining({
+        issues: [{ alias: 'antd', packageName: 'antd' }],
+      }),
+    }));
+  });
+
+  test('dependency manifest validation ignores window aliases in comments and strings', () => {
+    expect(() => assertDependencyManifestConsistent(
+      'var note = "window.antd"; /* window.ReactDOM */',
+      []
+    )).not.toThrow();
   });
 
   test('rejects bare antd globals before publish', () => {

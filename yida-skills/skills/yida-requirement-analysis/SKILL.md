@@ -36,12 +36,13 @@ description: 识别并读取需求来源，理解和澄清用户需求，输出�
 | `resourceContext` | 已确认可复用的 app/page/form/process 业务上下文，不写猜测 ID |
 | `explicitScope` | 用户明确指定的页面、表单、流程、报表、导航项和本轮范围；没有时为 `null` |
 | `brandHints` / `colorHints` | 明确的品牌、参考页面、已有主题、偏好色与避用色 |
-| `constraints` | 组织、设备、权限、交付等约束 |
+| `constraints` | 组织、设备、权限、交付等约束；用户明确禁止的动作原文写入 `prohibitedActions`，作为后续写操作硬门禁 |
 | `assumptions` / `openQuestions` | 可安全默认的事项与会改变范围的未决问题 |
 
 ## 交付与更新
 
 - brief 必须可解析，已知的项目名、目标、用户、对象、功能、场景及范围准确且无遗漏；不为填满字段补造需求。会改变资源范围、权限或业务对象的问题写入 `openQuestions`，由编排组织确认后再进入规划；不影响范围的待设计细节由 PRD 或视觉设计补齐。
 - 用户指定的资源和范围原样保留在 `explicitScope`；真实 ID 有证据时写入 `resourceContext`。
+- “不复制/不上传主题”“不修改页面源码”“不发布”等负向要求不得改写成偏好或建议；保留原文，并分别规范化为 `theme-file`、`page-source`、`publish` 等 `constraints.prohibitedActions`。明确的禁止项不因 Fast/Plan 默认流程而失效。
 - 需求文件校验通过后保持不变。后续创建出的真实 ID 写入 schema 或当前任务资源上下文。
 - 用户需求或已确认范围实质变化时，由本技能更新 brief，并交给 `yida-app` 同步业务与视觉规划。

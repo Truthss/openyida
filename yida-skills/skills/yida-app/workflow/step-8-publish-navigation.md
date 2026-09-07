@@ -18,6 +18,8 @@ PRD 为自定义导航时，页面导航已在 Step 4 / Step 6 创建或复用�
 
 ## 操作
 
+若 `constraints.prohibitedActions` 含 `publish`，跳过本步骤的所有 `openyida publish` 写操作并记录“未发布”；不得以历史版本、编译成功或现有 URL 冒充本轮发布。若因 `page-source` 禁止而本轮没有源码变更，也不得用一次无变化发布伪造完成证据。
+
 1. 对本轮各页面执行 `use_skill("yida-publish-page", "发布已完成页面")`；`<source>` 使用本轮修改过的源码，`<displayPageFormUuid>` 使用该页真实 ID。逐页发布不触发导航排序：
 
 ```text
