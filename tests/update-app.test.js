@@ -1,5 +1,7 @@
 'use strict';
 
+const querystring = require('querystring');
+
 const {
   assertPresetThemeKey,
   assertAppThemeKey,
@@ -194,6 +196,43 @@ describe('update-app helpers', () => {
     expect(JSON.parse(payload.appName)).toMatchObject({
       zh_CN: 'OpenYida官方Samples展示0716',
     });
+  });
+
+  test('buildUpdateAppPostData preserves security settings without inventing defaults', () => {
+    const params = parseArgs(['APP_1', '--nav-theme', 'light']);
+    const currentApp = {
+      appName: { zh_CN: '应用' },
+      description: { zh_CN: '描述' },
+      mode: 'normal',
+      type: 'single',
+    };
+
+    const empty = buildUpdateAppPostData(
+      params,
+      { ...currentApp, addWaterMark: '', sentryMode: '' },
+      { csrfToken: 'csrf' }
+    );
+    expect(empty).toMatchObject({ addWaterMark: '', sentryMode: '' });
+    expect(querystring.stringify(empty)).toContain('addWaterMark=&sentryMode=');
+
+    const explicit = buildUpdateAppPostData(
+      params,
+      { ...currentApp, addWaterMark: 'n', sentryMode: 'y' },
+      { csrfToken: 'csrf' }
+    );
+    expect(explicit).toMatchObject({ addWaterMark: 'n', sentryMode: 'y' });
+
+    const configFallback = buildUpdateAppPostData(
+      params,
+      { ...currentApp, config: { ADDWATERMARK: 'y', SENTRY_MODE: 'n' } },
+      { csrfToken: 'csrf' }
+    );
+    expect(configFallback).toMatchObject({ addWaterMark: 'y', sentryMode: 'n' });
+
+    const absent = buildUpdateAppPostData(params, currentApp, { csrfToken: 'csrf' });
+    expect(absent).not.toHaveProperty('addWaterMark');
+    expect(absent).not.toHaveProperty('sentryMode');
+    expect(querystring.stringify(absent)).not.toMatch(/addWaterMark|sentryMode/);
   });
 
   test('buildUpdateAppPostData writes hideAppNav as y/n only when requested', () => {
