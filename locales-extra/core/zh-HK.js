@@ -17,9 +17,14 @@ module.exports = {
     cmd_env: '偵測 AI 工具環境和登入態',
     cmd_env_management: '管理公有雲 / 私有化環境',
     group_app: '應用程式管理',
-    cmd_app_list: '查詢我的應用程式清單',
+    cmd_app_list: '分頁查詢我管理或建立的應用程式',
     cmd_corp_efficiency: '查詢企業效能概覽和明細報表',
     cmd_create_app: '建立宜搭應用程式',
+    cmd_design_plan_preview: '按模組更新方案草稿',
+    design_plan_preview_invalid: '方案草稿更新失敗，請檢查錯誤詳情',
+    cmd_design_plan_init: '從已確認需求初始化計劃草稿',
+    cmd_design_plan_materialize: '從 build-plan.json 產生並校驗搭建計畫產物',
+    cmd_design_plan_patch: '按欄位路徑調整搭建計畫並使舊確認失效',
     cmd_update_app: '更新應用程式資料',
     cmd_app_online: '啟用宜搭應用程式',
     cmd_app_offline: '停用宜搭應用程式',
@@ -29,6 +34,7 @@ module.exports = {
     cmd_export: '匯出應用程式（產生遷移包）',
     cmd_import: '匯入遷移包，重建應用程式',
     group_form: '表單 & 頁面',
+    cmd_create_form_batch: '按依賴並行建立表單',
     cmd_create_form: '建立表單頁面',
     cmd_list_form_icons: '列出可用的表單導覽圖示',
     cmd_validate_form: '本機校驗表單欄位 JSON',
@@ -123,6 +129,25 @@ module.exports = {
     quickstart_form_name: '員工資料',
     docs: '📚 文件:'
   },
+  app_list: {
+    usage: '用法：openyida app-list [--type managed|created] [--page N] [--size N]',
+    options: '選項：',
+    option_type: '  --type TYPE  查詢範圍：managed（我管理的，預設）或 created（我建立的）',
+    option_page: '  --page N     頁碼，預設：1',
+    option_size: '  --size N     每頁數量，預設：16',
+    option_help: '  --help, -h   顯示說明',
+    invalid_type: '無效的 --type 值「{0}」，有效值：{1}',
+    invalid_positive_integer: '{0} 必須是正整數，目前值：「{1}」',
+    invalid_argument: '無效參數：{0}',
+    query_failed: '查詢應用程式清單失敗：{0}',
+    auth_required: '登入狀態已失效，請重新登入',
+    unknown_error: '未知錯誤',
+    scope_managed: '我管理的',
+    scope_created: '我建立的',
+    found: '{0}應用程式：第 {1}/{2} 頁，本頁 {3} 個，共 {4} 個',
+    next_page: '還有更多應用程式，請繼續執行：{0}',
+  },
+
   cli: {
     help: '\n' +
       'openyida - 宜搭命令列工具\n' +
@@ -579,9 +604,10 @@ module.exports = {
     unknown: '未知'
   },
   create_app: {
+    update_only_option: '{0} 僅用於更新應用設定，請先建立應用，再使用 openyida update-app <appType>。',
     title: '  openyida create-app - 宜搭應用程式建立工具',
-    usage: '用法：openyida create-app "<appName>" [description] [icon] [iconColor] [themeColor] 或 openyida create-app --name "<appName>" [--desc "..."] [--theme deepBlue]',
-    example: '範例：openyida create-app --name "考勤管理" --desc "員工考勤打卡系統" --theme deepBlue',
+    usage: '用法：openyida create-app "<appName>" [description] [icon] [iconColor] 或 openyida create-app --name "<appName>" [--desc "..."]',
+    example: '範例：openyida create-app --name "考勤管理" --desc "員工考勤打卡系統"',
     available_icons: '\n可用圖示：',
     icons_list: '  xian-xinwen, xian-zhengfu, xian-yingyong, xian-xueshimao, xian-qiye,\n' +
       '  xian-danju, xian-shichang, xian-jingli, xian-falv, xian-baogao,\n' +
@@ -663,6 +689,7 @@ module.exports = {
     no_login: '  ❌ 无法获取有效登录态'
   },
   create_form: {
+    batch_invalid: '表單批量任務設定無效，請檢查錯誤詳情',
     create_title: '  yida-create-form-page - 宜搭表单页面创建工具',
     update_title: '  yida-create-form-page - 宜搭表单页面更新工具',
     app_id: '\n  应用 ID:    {0}',
@@ -903,6 +930,9 @@ module.exports = {
     err_open_url_chars: 'openUrl 路徑部分只支援 a-z A-Z 0-9 _ -，可用 / 分隔多級路徑，目前值：{0}'
   },
   update_app: {
+    theme_preset_conflict: '平台預置 colour 不能與自訂 CSS 或 themeColor 同傳；請使用 --colour custom 或省略 --colour。',
+    custom_theme_color_required: 'colour=custom 需要主題檔案或有效 themeColor；請傳 --theme-file 或 --theme-color。',
+    theme_not_persisted: '應用主題儲存後回讀不一致或查詢失敗，CSS 資源尚未確認綁定。請查看 themeVerification，並使用 update-app <appType> --theme-file <css> 重試；不要重複建立應用。',
     usage: '用法: openyida update-app <appType> [--name "新名称"] [--desc "描述"] [--layout slide|ver] [--theme deepBlue]',
     example: '示例: openyida update-app APP_XXX --name "新应用名称" --layout ver --theme deepBlue',
     options: '选项:\n' +
@@ -1132,6 +1162,7 @@ module.exports = {
     failed: '页面规范检查失败'
   },
   publish: {
+    canvas_inline_css_invalid: '第 {0} 行附近的內嵌 CSS 存在未閉合或不匹配的括號、字串或註解，請修復後再發佈。',
     title: '  yida-publish - 宜搭頁面發布工具',
     platform: '  平台位址：{0}',
     base_url: '\n  平台位址：{0}',

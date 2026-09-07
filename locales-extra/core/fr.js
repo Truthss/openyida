@@ -17,9 +17,14 @@ module.exports = {
     cmd_env: "Détecter l'environnement IA et l'état de connexion",
     cmd_env_management: "Gérer les profils d'environnement public/privé",
     group_app: 'Gestion des applications',
-    cmd_app_list: 'Lister mes applications Yida',
+    cmd_app_list: 'Parcourir les applications gérées ou créées',
     cmd_corp_efficiency: "Consulter l'aperçu de l'efficacité entreprise et les rapports détaillés",
     cmd_create_app: 'Créer une application Yida',
+    cmd_design_plan_preview: 'Actualiser le brouillon par module',
+    design_plan_preview_invalid: 'Échec de mise à jour du brouillon ; consultez les détails',
+    cmd_design_plan_init: 'Créer un brouillon de plan à partir des besoins confirmés',
+    cmd_design_plan_materialize: 'Générer et valider les livrables depuis build-plan.json',
+    cmd_design_plan_patch: 'Modifier le plan par chemin et invalider la confirmation précédente',
     cmd_update_app: "Mettre à jour les infos de l'application",
     cmd_app_online: "Activer une application Yida",
     cmd_app_offline: "Désactiver une application Yida",
@@ -29,6 +34,7 @@ module.exports = {
     cmd_export: "Exporter l'application (package de migration)",
     cmd_import: 'Importer un package de migration',
     group_form: 'Formulaires & Pages',
+    cmd_create_form_batch: 'Créer des formulaires en parallèle selon leurs dépendances',
     cmd_create_form: 'Créer une page de formulaire',
     cmd_list_form_icons: 'Lister les icônes de navigation de formulaire disponibles',
     cmd_validate_form: 'Validate form field JSON locally',
@@ -122,6 +128,25 @@ module.exports = {
     quickstart_form_name: 'Info employé',
     docs: '📚 Docs :'
   },
+  app_list: {
+    usage: 'Utilisation : openyida app-list [--type managed|created] [--page N] [--size N]',
+    options: 'Options :',
+    option_type: '  --type TYPE  Portée : managed (par défaut) ou created',
+    option_page: '  --page N     Numéro de page, valeur par défaut : 1',
+    option_size: '  --size N     Taille de page, valeur par défaut : 16',
+    option_help: '  --help, -h   Afficher cette aide',
+    invalid_type: 'Valeur --type non valide « {0} » ; valeurs valides : {1}',
+    invalid_positive_integer: '{0} doit être un entier positif ; valeur reçue : « {1} »',
+    invalid_argument: 'Argument non valide : {0}',
+    query_failed: 'Échec de la récupération de la liste des applications : {0}',
+    auth_required: 'La connexion a expiré. Veuillez vous reconnecter.',
+    unknown_error: 'Erreur inconnue',
+    scope_managed: 'Gérées',
+    scope_created: 'Créées',
+    found: 'Applications {0} : page {1}/{2}, {3} sur cette page, {4} au total',
+    next_page: 'D’autres applications sont disponibles. Continuez avec : {0}',
+  },
+
   cli: {
     help: '\n' +
       'openyida - Yida CLI Tool\n' +
@@ -134,7 +159,7 @@ module.exports = {
       '  copy [--force]                                               Copy project directory to current AI tool environment\n' +
       '  login                                                        Manage login credentials (cache first, then QR scan)\n' +
       '  logout                                                       Logout / switch account\n' +
-      '  create-app "<name>" [desc] [icon] [color] [theme] [nav] [layout]  Create an app, output appType\n' +
+      '  create-app "<name>" [desc] [icon] [color] [nav] [layout]  Create an app, output appType\n' +
       '  create-page <appType> "<pageName>" [--mode dashboard] [--hide-nav]        Create a custom page, output pageId\n' +
       '  create-form create <appType> "<formName>" <fieldsJSON> [--layout <layout>] [--theme <theme>] [--label-align <align>]  Create a form page\n' +
       '  create-form update <appType> <formUuid> <changesJSON>        Update a form page\n' +
@@ -614,9 +639,10 @@ module.exports = {
     unknown: 'unknown'
   },
   create_app: {
+    update_only_option: '{0} sert uniquement à la mise à jour. Créez l’application puis utilisez openyida update-app <appType>.',
     title: "  create-app - Outil de création d'application Yida",
-    usage: 'Utilisation : openyida create-app "<nom app>" ou openyida create-app --name "<nom app>" [--desc "..."] [--theme deepBlue]',
-    example: 'Exemple : openyida create-app --name "Mon App" --desc "Description app" --theme deepBlue',
+    usage: 'Utilisation : openyida create-app "<nom app>" ou openyida create-app --name "<nom app>" [--desc "..."]',
+    example: 'Exemple : openyida create-app --name "Mon App" --desc "Description app"',
     available_icons: '\nAvailable icons:',
     icons_list: '  xian-xinwen, xian-zhengfu, xian-yingyong, xian-xueshimao, xian-qiye,\n' +
       '  xian-danju, xian-shichang, xian-jingli, xian-falv, xian-baogao,\n' +
@@ -704,6 +730,7 @@ module.exports = {
     no_login: '  ❌ Unable to get valid login credentials'
   },
   create_form: {
+    batch_invalid: 'Lot de formulaires invalide ; consultez les détails',
     create_title: '  yida-create-form-page - Yida Form Page Creation Tool',
     update_title: '  yida-create-form-page - Yida Form Page Update Tool',
     app_id: "\n  ID de l'app :    {0}",
@@ -960,6 +987,9 @@ module.exports = {
     err_open_url_empty: 'Le chemin openUrl ne peut pas être vide : {0}'
   },
   update_app: {
+    theme_preset_conflict: 'Un colour prédéfini ne peut pas être combiné avec CSS ou themeColor. Utilisez --colour custom ou omettez --colour.',
+    custom_theme_color_required: 'colour=custom nécessite un fichier de thème ou un themeColor valide. Utilisez --theme-file ou --theme-color.',
+    theme_not_persisted: 'Les paramètres du thème n’ont pas pu être confirmés après enregistrement. Consultez themeVerification et réessayez avec update-app <appType> --theme-file <css> ; ne recréez pas l’application.',
     usage: 'Usage: openyida update-app <appType> [--name "New Name"] [--desc "Description"] [--layout slide|ver] [--theme deepBlue]',
     example: 'Example: openyida update-app APP_XXX --name "New App Name" --layout ver --theme deepBlue',
     options: 'Options:\n' +
@@ -1195,6 +1225,7 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_inline_css_invalid: 'Le CSS près de la ligne {0} contient un délimiteur, une chaîne ou un commentaire non fermé ou incorrect. Corrigez avant publication.',
     title: '  yida-publish - Outil de publication de page Yida',
     platform: '  Plateforme : {0}',
     base_url: '\n  Platform: {0}',

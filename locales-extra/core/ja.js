@@ -17,9 +17,14 @@ module.exports = {
     cmd_env: 'AI ツール環境とログイン状態を検出',
     cmd_env_management: 'パブリック/プライベート環境プロファイルを管理',
     group_app: 'アプリ管理',
-    cmd_app_list: '自分の Yida アプリ一覧を表示',
+    cmd_app_list: '管理中または作成済みのアプリをページ表示',
     cmd_corp_efficiency: '企業効率の概要と明細レポートを取得',
     cmd_create_app: '宜搭アプリを作成',
+    cmd_design_plan_preview: 'モジュールごとに計画草稿を更新',
+    design_plan_preview_invalid: '草稿の更新に失敗しました。詳細を確認してください',
+    cmd_design_plan_init: '確認済みの要件から計画の下書きを作成',
+    cmd_design_plan_materialize: 'build-plan.json から設計計画成果物を生成・検証',
+    cmd_design_plan_patch: 'フィールドパスで計画を更新し以前の確認を無効化',
     cmd_update_app: 'アプリ情報を更新',
     cmd_app_online: 'Yida アプリを有効化',
     cmd_app_offline: 'Yida アプリを無効化',
@@ -29,6 +34,7 @@ module.exports = {
     cmd_export: 'アプリをエクスポート（移行パッケージ生成）',
     cmd_import: '移行パッケージをインポート、アプリを再構築',
     group_form: 'フォーム & ページ',
+    cmd_create_form_batch: '依存関係に従ってフォームを並列作成',
     cmd_create_form: 'フォームページを作成',
     cmd_list_form_icons: '利用可能なフォームナビゲーションアイコンを一覧表示',
     cmd_validate_form: 'フォームフィールド JSON をローカル検証',
@@ -122,6 +128,25 @@ module.exports = {
     quickstart_form_name: '従業員情報',
     docs: '📚 ドキュメント:'
   },
+  app_list: {
+    usage: '使用方法：openyida app-list [--type managed|created] [--page N] [--size N]',
+    options: 'オプション：',
+    option_type: '  --type TYPE  範囲：managed（管理中、既定）または created（作成済み）',
+    option_page: '  --page N     ページ番号、既定：1',
+    option_size: '  --size N     1 ページの件数、既定：16',
+    option_help: '  --help, -h   ヘルプを表示',
+    invalid_type: '無効な --type 値「{0}」。有効値：{1}',
+    invalid_positive_integer: '{0} は正の整数である必要があります。現在値：「{1}」',
+    invalid_argument: '無効な引数：{0}',
+    query_failed: 'アプリ一覧の取得に失敗しました：{0}',
+    auth_required: 'ログインの有効期限が切れました。再度ログインしてください。',
+    unknown_error: '不明なエラー',
+    scope_managed: '管理中',
+    scope_created: '作成済み',
+    found: '{0}アプリ：{1}/{2} ページ、このページ {3} 件、合計 {4} 件',
+    next_page: 'さらにアプリがあります。次を実行してください：{0}',
+  },
+
   cli: {
     help: '\n' +
       'openyida - Yida CLI ツール\n' +
@@ -586,9 +611,10 @@ module.exports = {
     unknown: '不明'
   },
   create_app: {
+    update_only_option: '{0} は更新用のオプションです。アプリ作成後に openyida update-app <appType> を使用してください。',
     title: '  openyida create-app - Yida アプリ作成ツール',
-    usage: 'Usage: openyida create-app "<appName>" [description] [icon] [iconColor] [themeColor] または openyida create-app --name "<appName>" [--desc "..."] [--theme deepBlue]',
-    example: '例: openyida create-app --name "勤怠管理" --desc "従業員勤怠システム" --theme deepBlue',
+    usage: 'Usage: openyida create-app "<appName>" [description] [icon] [iconColor] または openyida create-app --name "<appName>" [--desc "..."]',
+    example: '例: openyida create-app --name "勤怠管理" --desc "従業員勤怠システム"',
     available_icons: '\n利用可能なアイコン:',
     icons_list: '  xian-xinwen, xian-zhengfu, xian-yingyong, xian-xueshimao, xian-qiye,\n' +
       '  xian-danju, xian-shichang, xian-jingli, xian-falv, xian-baogao,\n' +
@@ -670,6 +696,7 @@ module.exports = {
     no_login: '  ❌ Unable to get valid login credentials'
   },
   create_form: {
+    batch_invalid: 'フォームのバッチ設定が無効です。エラー詳細を確認してください',
     create_title: '  yida-create-form-page - Yida フォームページ作成ツール',
     update_title: '  yida-create-form-page - Yida フォームページ更新ツール',
     app_id: '\n  アプリ ID:    {0}',
@@ -912,6 +939,9 @@ module.exports = {
     err_open_url_chars: 'openUrl のパス部分は a-z A-Z 0-9 _ - と区切り文字 / のみ使用できます。現在の値: {0}'
   },
   update_app: {
+    theme_preset_conflict: 'プリセット colour と CSS または themeColor は併用できません。--colour custom を指定するか --colour を省略してください。',
+    custom_theme_color_required: 'colour=custom にはテーマファイルまたは有効な themeColor が必要です。--theme-file または --theme-color を指定してください。',
+    theme_not_persisted: '保存後のアプリテーマ設定を確認できませんでした。themeVerification を確認し、update-app <appType> --theme-file <css> で再試行してください。アプリを作り直さないでください。',
     usage: 'Usage: openyida update-app <appType> [--name "New Name"] [--desc "Description"] [--layout slide|ver] [--theme deepBlue]',
     example: 'Example: openyida update-app APP_XXX --name "New App Name" --layout ver --theme deepBlue',
     options: 'Options:\n' +
@@ -1144,6 +1174,7 @@ module.exports = {
     failed: 'Page lint check failed'
   },
   publish: {
+    canvas_inline_css_invalid: '{0} 行付近の CSS に閉じていない、または対応しない括弧、文字列、コメントがあります。公開前に修正してください。',
     title: '  yida-publish - Yida ページ公開ツール',
     platform: '  プラットフォーム: {0}',
     base_url: '\n  プラットフォーム: {0}',
