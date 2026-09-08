@@ -415,9 +415,8 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 | `openyida create-form create <appType> "<formTitle>" <fieldsJsonFile> [--icon auto\|<iconName>] [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | Create a form page |
 | `openyida create-form icons [--json]` | List available form navigation icons |
 | `openyida create-form validate-fields <fieldsJsonOrFile> [--json]` | Validate form field JSON locally |
-| `openyida create-form update <appType> ... [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | Update a form page |
-| `openyida create-form update <appType> <formUuid> --data-file <changes.json>` | Update a form page using an explicit file option |
-| `openyida create-form resume <appType> <formUuid> <fieldsJsonOrFile> --json` | Safely complete a partially created form after readback |
+| `openyida create-form update <appType> <formUuid> (<changesJsonOrFile> \| --data-file <changesJsonOrFile>) [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | Update a form page |
+| `openyida create-form resume <appType> <formUuid> <fieldsJsonOrFile> [--json]` | Update a form page |
 | `openyida create-form patch <appType> <formUuid> <patchJsonOrFile> [--open\|--no-open]` | Update a form page |
 | `openyida create-form rule <appType> <formUuid> <rulesJsonOrFile> [--open\|--no-open]` | Update a form page |
 | `openyida create-form validation <appType> <formUuid> <validationsJsonOrFile> [--open\|--no-open]` | Update a form page |
