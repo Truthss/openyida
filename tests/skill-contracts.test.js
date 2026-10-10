@@ -28,6 +28,26 @@ function isSampleRoutingGuidanceFile(file) {
 }
 
 describe('OpenYida skill contracts', () => {
+  test('legacy theme upgrade routes directly to its independent application skill', () => {
+    const index = JSON.parse(readSkill('yida-skills/skills-index.json'));
+    const upgrade = index.skills.find(skill => skill.name === 'yida-upgrade-app-theme');
+    expect(upgrade).toMatchObject({
+      category: 'yida-skills/app', path: 'skills/yida-upgrade-app-theme/SKILL.md',
+      command_ids: ['upgrade-app-theme', 'update-app', 'get-schema', 'publish', 'create-form.patch'],
+    });
+    const matchingGroups = index.route_groups.filter(group => group.signals.includes('升级新版主题'));
+    expect(matchingGroups.map(group => group.name)).toEqual(['yida-skills/app']);
+    for (const file of ['yida-skills/SKILL.md', 'scripts/postinstall.js']) {
+      const rows = readSkill(file).split('\n').filter(line => line.startsWith('| '));
+      expect(rows.find(line => line.includes('yida-skills/app'))).toContain('yida-upgrade-app-theme');
+      expect(rows.find(line => line.includes('yida-skills/design'))).not.toContain('yida-upgrade-app-theme');
+    }
+    expect(readSkill('yida-skills/skills/yida-design/SKILL.md')).not.toContain('upgrade-app-theme');
+    const skill = readSkill('yida-skills/skills/yida-upgrade-app-theme/SKILL.md');
+    expect(skill).not.toContain('yida-design');
+    expect(skill).toContain('ask_human');
+  });
+
   test('Fast and Plan share three visual directions while Plan requires a style choice', () => {
     const shared = readSkill('yida-skills/skills/yida-design/references/theme-selection.md');
     const plan = readSkill('yida-skills/skills/yida-app/workflow/plan/workflow.md');
@@ -1423,7 +1443,8 @@ describe('OpenYida skill contracts', () => {
     expect(createApp).toContain('主题颜色不受平台预置 key 限制');
     expect(createApp).not.toContain('| `deepBlue` | 深蓝 |');
     expect(pageUiux).not.toContain('| `deepBlue` | 深蓝 |');
-    expect(pageUiux).toContain('先根据行业、品牌、业务情绪和视觉目标做创意色彩判断');
+    expect(pageUiux).toContain('先按主要任务、使用频率和信息密度判断适配性，再结合品牌证据和视觉目标做色彩判断');
+    expect(pageUiux).toContain('行业名词不能直接决定配色或材质');
     expect(theme).toContain('应用主题统一');
     expect(theme).toContain('`YidaCodeCanvas` 页面只在 `YidaComp` 内消费');
     expect(theme).toContain('严禁页面代码修改或向上层注入主题变量');
