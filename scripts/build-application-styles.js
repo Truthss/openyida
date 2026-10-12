@@ -10,7 +10,6 @@ const { applyDesignTokens, readDesignTokens } = require('../lib/app/theme-from-d
 const { writeFiles } = require('../lib/design-plan/files');
 const { rootDeclarations } = require('../lib/core/theme-brand-scale');
 const { auditPalette } = require('../lib/design/palette-contrast');
-const { preservePairedRules } = require('../lib/app/paired-theme-css');
 const platformCss = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, 'references/theme/app-custom-theme-template.css'), 'utf8');
 
 /** Serialize template metadata without inserting user text into token expressions. */
@@ -23,6 +22,14 @@ function yaml(value, depth = 0) {
 
 /** Compile the complete authored theme into scoped CSS, retaining brand placeholders. */
 function cssTemplate(markdown, rules = '', pairedCss) {
+  // Existing paired files are authored sources, not generated output. A token
+  // mismatch is not authorization to rewrite their declarations or selectors.
+  if (pairedCss !== undefined) {
+    if (!rules.trim()) {return pairedCss;}
+    const block = `/* openyida-extra-rules:start */\n${rules.trim()}\n/* openyida-extra-rules:end */`;
+    const managed = /\/\* openyida-extra-rules:start \*\/[\s\S]*?\/\* openyida-extra-rules:end \*\//;
+    return managed.test(pairedCss) ? pairedCss.replace(managed, () => block) : `${pairedCss.trimEnd()}\n\n${block}\n`;
+  }
   // Resolve only to reuse the platform's scope/recipe writer, then restore every
   // project-dependent value. The temporary seed never becomes a template default.
   const metadata = parseDesignDocument(markdown).metadata;
@@ -43,7 +50,7 @@ function cssTemplate(markdown, rules = '', pairedCss) {
     '--color-brand-3': 'var(--color-brand1-6)', '--color-brand-4': 'var(--color-brand1-9)',
     '--color-group': [6, 1, 5, 2, 9, 3].map(slot => `var(--color-brand1-${slot})`).join(', '),
   };
-  let base = preservePairedRules(pairedCss === undefined ? platformCss : pairedCss);
+  let base = platformCss;
   const managed = /\/\* openyida-extra-rules:start \*\/[\s\S]*?\/\* openyida-extra-rules:end \*\//;
   const block = rules.trim() ? `/* openyida-extra-rules:start */\n${rules.trim()}\n/* openyida-extra-rules:end */` : '';
   base = managed.test(base) ? base.replace(managed, () => block) : block ? `${base.trimEnd()}\n\n${block}\n` : base;
@@ -74,7 +81,7 @@ function build({ root = DESIGN_SKILL_ROOT, themes = loadThemeIndex().themes, che
     const metadata = parseDesignDocument(markdown).metadata;
     if (metadata.applicationStyle?.mode === 'creative') {delete metadata.applicationStyle;}
     const design = resolveThemeColors(`---\n${yaml(metadata)}\n---\n`.replace(/\{\{PRIMARY_COLOR\}\}/g, '#2C73A9'));
-    const resolved = applyDesignTokens(css, design);
+    const resolved = applyDesignTokens(css, design, markdown, { paired: true });
     const audit = auditPalette(rootDeclarations(resolved.replace(/\/\*[\s\S]*?\*\//g, '')), { css: resolved });
     if (audit.issues.length || audit.unresolved.length) {paletteIssues.push({ themeId: theme.themeId, ...audit });}
     return [output, css];

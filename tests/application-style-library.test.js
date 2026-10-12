@@ -93,7 +93,7 @@ test('every named theme keeps main navigation tokens without imposing an unrelat
     const css = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.cssTemplatePath), 'utf8');
     for (const [name, value] of Object.entries(navigation)) {
       const actual = require('../lib/core/theme-brand-scale').rootDeclarations(css.replace(/\/\*[\s\S]*?\*\//g, ''))[name];
-      expect(actual.replace(/\s+/g, ' ')).toBe(String(value).replace(/\s+/g, ' '));
+      expect(actual.replace(/\s+/g, ' ').toLowerCase()).toBe(String(value).replace(/\s+/g, ' ').toLowerCase());
     }
     palettes.add(NAVIGATION_COLOR_TOKENS.map(token => navigation[token]).join('|'));
   });
@@ -129,7 +129,8 @@ test.each(themeIndex.filter(theme => theme.mode !== 'creative'))('$themeId bundl
   blocks.filter(([, selector]) => selector === ':root').forEach(([, , body]) => read(body));
   blocks.filter(([, selector]) => [`.pod-premium.nav-${theme.navTheme}`, `.pod-premium.is-${theme.navTheme}`].includes(selector))
     .forEach(([, , body]) => read(body));
-  expect(values).toMatchObject(expected);
+  const normalize = values => Object.fromEntries(Object.entries(values).map(([name, value]) => [name, String(value).replace(/\s+/g, ' ').toLowerCase()]));
+  expect(normalize(values)).toMatchObject(normalize(expected));
 });
 
 test('all nineteen form-layout starters use supported types and direct capability language', () => {

@@ -4,7 +4,6 @@
   "themes": [
     {
       "themeId": "dark-rail-fine-lines",
-      "supportedNavigationLayouts": ["side"],
       "label": "深色侧栏 · 白底细线",
       "contentTone": "light",
       "navTheme": "dark",
@@ -57,7 +56,6 @@
     },
     {
       "themeId": "hairline-soft-blocks",
-      "supportedNavigationLayouts": ["side"],
       "label": "细线白面 · 浅灰拼块",
       "contentTone": "light",
       "navTheme": "light",
@@ -71,7 +69,6 @@
     },
     {
       "themeId": "ink-glow-soft-panels",
-      "supportedNavigationLayouts": ["top"],
       "label": "墨底微光 · 柔圆面板",
       "contentTone": "light",
       "navTheme": "light",
@@ -111,7 +108,6 @@
     },
     {
       "themeId": "soft-inset-surfaces",
-      "supportedNavigationLayouts": ["side"],
       "label": "柔灰嵌白",
       "contentTone": "light",
       "navTheme": "light",

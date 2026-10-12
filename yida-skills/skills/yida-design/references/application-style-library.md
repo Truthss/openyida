@@ -45,7 +45,7 @@ openyida sample yida-design application-style --style-id free-creative --output 
 
 `--style-id` 只用于三文件导出，`--design-file` 只用于主题生成。`--var KEY=VALUE` 用于其他代码示例的占位替换；应用主题的品牌色和导航值写入 `design.md`。`app-theme` 的 `--output` 缺省为 `.cache/samples/app-theme.css`；省略 `--design-file` 会用公共模板重置目标 CSS。三文件导出中的占位 CSS 先经过主题生成，再上传。
 
-`--nav-theme` 选择平台导航明暗，`--layout` 选择结构。平台兼容参数还接受 `white` / `gray`，正式设计使用模板派生的 `light` / `dark`。菜单圆角、普通/悬停/选中边框、选中阴影、项高、内距与间距是[导航 token](application-theme-consistency.md#导航与应用框架)，在 Fast 的设计 token 或 Plan 的 `visualStyle.tokens` 中填写。CLI 读取设计文件后生成消费样式；这些值没有单独的命令行开关。较早的 CSS 在设计提供菜单边框 token 后会补齐缺失的菜单形状规则。四种差异明显的组合及访问态验收方式见[案例经验](application-theme-consistency.md#导航形状与密度的案例经验)。
+`--nav-theme` 选择平台导航明暗，`--layout` 选择结构。平台兼容参数还接受 `white` / `gray`，正式设计使用模板派生的 `light` / `dark`。菜单圆角、普通/悬停/选中边框、选中阴影、项高、内距与间距是[导航 token](application-theme-consistency.md#导航与应用框架)，在 Fast 的设计 token 或 Plan 的 `visualStyle.tokens` 中填写。CLI 读取设计文件后生成消费样式；这些值没有单独的命令行开关。只有自由创意或历史公共骨架路径按 token 补齐菜单形状规则；命名模板保留原有选择器，不额外追加通用导航规则。四种差异明显的组合及访问态验收方式见[案例经验](application-theme-consistency.md#导航形状与密度的案例经验)。
 
 ## 主题明暗双轴
 
@@ -86,6 +86,8 @@ Plan 的 `visualStyle.tokens` 必须显式提供：画布 `--pod-page-bg-color`�
 
 看应用整体，覆盖导航、自定义页、提交、编辑、详情、数据管理内嵌、抽屉和移动端，核对正文/底栏对齐、背景连续、hover/focus、禁用/错误和窄屏布局。应用主题与表单组件树共同作为验收基线。命名主题同时对照原模板与获批方案，检查浏览器实际生效的图片、圆角、阴影、分割线及导航展开/折叠；不能仅凭 token、CSS 文件存在或上传成功判定通过。
 
-每个主题目录的 `design.md` 与 `app_theme.css` 配对维护：设计文档记录 token 与视觉约束，配对 CSS 保留实际选择器规则。导航、应用框架、自定义页面、表单和详情的颜色、边框、hover、圆角、阴影、字体与密度在同一文件中定义。`form-layout.json` 维护表单结构，`app_theme.css` 的既有专属选择器是维护来源；也可在同目录 `theme-rules.css` 独立维护新增规则，构建时合入独立样式块；不另建导航配色库或应用风格配置覆盖它们。修改设计后运行 `node scripts/build-application-styles.js`，脚本在现有配对 CSS 上更新 token，保留图片、浮岛等专属规则；仅缺少配对 CSS 的新模板使用公共骨架。脚本不改写设计正文、Token、表单结构或索引。`npm run check:themes`（即 `node scripts/build-application-styles.js --check`）检查索引内配对 CSS 的同步及配色问题，已接入 `check:quick` 和 CI。新增或恢复模板时添加三文件目录和索引项；未登记模板可保留在目录中，但不参与选型、导出、Plan 生成和默认 CSS 同步检查。已有 Plan 若引用已移出索引的主题，需要恢复该索引记录后才能继续物化；已生成的项目设计和 CSS 可继续使用。随后运行模板、Plan/Fast、原生布局测试及 `check:skills`。该脚本仅用于仓库维护，应用搭建使用上述 CLI。
+每个主题目录的 `design.md` 与 `app_theme.css` 配对维护：设计文档记录 token 与视觉约束，配对 CSS 保留实际选择器规则。导航、应用框架、自定义页面、表单和详情的颜色、边框、hover、圆角、阴影、字体与密度在同一文件中定义。`form-layout.json` 维护表单结构，`app_theme.css` 的既有专属选择器是维护来源；也可在同目录 `theme-rules.css` 独立维护新增规则，构建时合入独立样式块；不另建导航配色库或应用风格配置覆盖它们。修改设计后运行 `node scripts/build-application-styles.js`，脚本保留现有配对 CSS 原文，不因设计 token 与 CSS 不同就覆盖声明；仅缺少配对 CSS 的新模板使用公共骨架。脚本不改写设计正文、Token、表单结构或索引。`npm run check:themes`（即 `node scripts/build-application-styles.js --check`）检查索引内配对 CSS 的同步及配色问题，已接入 `check:quick` 和 CI。新增或恢复模板时添加三文件目录和索引项；未登记模板可保留在目录中，但不参与选型、导出、Plan 生成和默认 CSS 同步检查。已有 Plan 若引用已移出索引的主题，需要恢复该索引记录后才能继续物化；已生成的项目设计和 CSS 可继续使用。随后运行模板、Plan/Fast、原生布局测试及 `check:skills`。该脚本仅用于仓库维护，应用搭建使用上述 CLI。
 
 配色检查不自动改色，也不降低 4.5:1 的正文对比度要求。确定的低对比与图片、渐变等无法静态判断的底面分别报告；存在未解决项时模板构建和检查停止，保留原文件。图片导航须在浏览器核对普通、悬停、选中及折叠状态，静态 token 通过不代表视觉验收通过。
+
+模板目录的 `design.md`、JSON 和 CSS 以原模板为准；导航兼容限制属于消费规则，不反写模板。项目生成只实例化品牌占位和相对模板的项目覆盖，保留其余声明、选择器和规则顺序，不自动补入 `--color-group` 或导航样式块。设计与 CSS 有差异时保留 CSS 实现并报告，不擅自改写任一模板源。局部未声明的变量可能由平台运行时提供，不能据此删除、替换或补默认值；疑似引用问题先核验并确认。

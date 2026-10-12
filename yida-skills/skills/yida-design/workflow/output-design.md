@@ -176,7 +176,7 @@ Fast 与 Plan 按同一规则记录背景，先确定作用范围：
 
 `tokens` 的格式与变量契约见 [frontmatter 规范](#frontmatter-规范)。需要改变平台表现的圆角、字体、间距等必须落实为 CSS token，不能只写正文。
 
-Fast 或单独更新主题时，执行 `openyida sample yida-design app-theme --output .cache/openyida/<项目名>/app-theme.css --design-file prd/<项目名>/design.md`。首次按 `themeProfile.sourceThemeId` 读取命名主题配对 CSS，自由创意使用公共骨架；同主题已有 CSS 只更新变化的 token，保留其他 token 和自定义样式。换主题或来源不明时使用新输出路径，按[模板来源约束](../references/application-style-library.md#模板来源与重复生成)迁移定制。CLI 自动保存更新记录，内容相同时跳过写入，写入失败回滚。省略 `--design-file` 会用公共模板重置目标 CSS。
+Fast 或单独更新主题时，执行 `openyida sample yida-design app-theme --output .cache/openyida/<项目名>/app-theme.css --design-file prd/<项目名>/design.md`。首次按 `themeProfile.sourceThemeId` 读取命名主题配对 CSS，保留其原有声明与规则，只实例化品牌及相对原模板的项目覆盖，不按设计默认值覆盖模板 CSS 的差异；自由创意使用公共骨架；同主题已有 CSS 只更新变化的 token，保留其他 token 和自定义样式。换主题或来源不明时使用新输出路径，按[模板来源约束](../references/application-style-library.md#模板来源与重复生成)迁移定制。CLI 自动保存更新记录，内容相同时跳过写入，写入失败回滚。省略 `--design-file` 会用公共模板重置目标 CSS。
 
 主题生成前校验输入 CSS 的括号、字符串和注释闭合，生成后与上传前复用同一检查；纯模板导出也须通过。出现 `THEME_CSS_STRUCTURE_INVALID` 时按错误行修复源模板或已有 CSS，再重试；生成失败保留原 CSS 和 token 更新记录，不能靠重置模板覆盖已有定制。新增全局及页面语义 token 写入包含顶层 `:root` 的统一声明块；light、dark、white、gray 选择器消费同一套项目颜色。
 

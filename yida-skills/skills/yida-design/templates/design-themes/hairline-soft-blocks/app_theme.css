@@ -54,7 +54,7 @@
   /* 边界、填充与文字颜色 */
   --color-line1-1: #EFEFEF;
   --color-line1-2: #E5E5E5;
-  --color-fill1-1: #F8F8F8;
+  --color-fill1-1: #f8f8f8;
   --color-fill1-2: #F2F2F2;
   --color-fill1-3: #EAEAEA;
   --color-fill1-5: #FFFFFF;
@@ -118,7 +118,7 @@
   --pod-app-root-bg-image: none;
   --pod-page-bg-color: #FFFFFF;
   --pod-card-bg-color: #FFFFFF;
-  --pod-table-cell-color: #FFFFFF;
+  --pod-table-cell-color: #fff;
   --color-white: var(--pod-card-bg-color);
 
   /* 应用 Shell */
@@ -157,7 +157,7 @@
   /* 卡片 */
   --pod-card-padding: 20px;
   --pod-card-border-radius: var(--pod-xl-border-radius, 20px);
-  --pod-card-border: 1px solid var(--color-line1-1);
+  --pod-card-border: 1px solid var(--color-line1-1)    ;
   --pod-card-spacing: var(--pod-md-gap-pad-margin);
 
   /* 导航：顶导与侧导布局 */
@@ -339,7 +339,7 @@
   --table-cell-border: var(--color-line1-1, #efefef);
   --table-border: var(--color-line1-2, #e5e5e5);
   --table-header-bg: var(--color-fill1-1, #ffffff);
-  --table-cell-bg: #FFFFFF;
+  --table-cell-bg: #fff;
   --page-bg: var(--pod-page-bg-color, #fff);
   --card-bg: var(--pod-card-bg-color, #fff);
   --popup-bg: var(--color-fill1-5, #fff);
@@ -756,7 +756,7 @@ body.pod-premium .flow-steps .next-step-dot
   background: var(--color-fill1-1,);
 }
 
-/* openyida-template-navigation:start */
+/* openyida-navigation-shape:start */
 /*
  * Side/L navigation and top tabs share the same theme-defined menu shape.
  * Border widths stay constant between states; border-box keeps row height stable.
@@ -887,32 +887,5 @@ body.pod-premium .flow-steps .next-step-dot
 /* 导航搜索下边距 */
 .pod-premium .vc-shell.nav-type-slide .deep-shell-ver-nav-search-wrap {
   margin-bottom: 8px;
-}
-/* openyida-template-navigation:end */
-
-/* openyida-paired-css */
-
-/* openyida-navigation-shape:start */
-.pod-premium .deep-shell-nav-menu-content .next-nav-item,
-.pod-premium .deep-shell-nav-tab-list .next-nav-item {
-  box-sizing: border-box;
-  border: var(--pod-nav-menu-item-border, none);
-}
-.pod-premium .deep-shell-nav-menu-content .next-nav-item:hover,
-.pod-premium .deep-shell-nav-tab-list .next-nav-item:hover {
-  box-sizing: border-box;
-  border: var(--pod-nav-menu-item-hover-border, var(--pod-nav-menu-item-border, none));
-}
-.pod-premium .deep-shell-nav-menu-content .next-nav-item.next-selected,
-.pod-premium .deep-shell-nav-tab-list .next-nav-item.next-selected {
-  box-sizing: border-box;
-  border: var(--pod-nav-menu-item-selected-border, var(--pod-nav-menu-item-border, none));
-}
-/* Fit native inner rows only when the project opts into borders. */
-.vc-shell.pod-premium .next-nav.next-line.next-ver.deep-shell-nav-menu-content:not(.next-icon-only) .next-nav-item.next-menu-item > .next-menu-item-inner,
-.vc-shell.pod-premium .next-shell-header .next-shell-navigation .next-nav.next-line.next-hoz.deep-shell-nav-tab-list .next-nav-item.next-menu-item > .next-menu-item-inner {
-  box-sizing: border-box;
-  height: 100% !important;
-  min-height: 0 !important;
 }
 /* openyida-navigation-shape:end */

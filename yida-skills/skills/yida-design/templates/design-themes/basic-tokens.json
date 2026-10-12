@@ -105,6 +105,8 @@
     "--s-9": "36px",
     "--s-10": "40px",
     "--color-fill1-10": "#262626",
-    "--color-text1-5": "#FFFFFF"
+    "--color-text1-5": "#FFFFFF",
+    "--pod-table-cell-color": "var(--pod-card-bg-color)",
+    "--color-white": "var(--pod-card-bg-color)"
   }
 }

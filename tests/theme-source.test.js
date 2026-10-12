@@ -140,7 +140,8 @@ test('template-specific source rules survive rebuild and are exported in paired 
   fs.writeFileSync(designFile, fs.readFileSync(designFile, 'utf8').replace(/("--pod-nav-menu-item-height": )"[^"]+"/, '$1"36px"'));
   build({ root: directory, themes: [theme] });
   expect(fs.readFileSync(cssFile, 'utf8')).toContain(rules.trim());
-  expect(fs.readFileSync(cssFile, 'utf8')).toContain('--pod-nav-menu-item-height: 36px;');
+  // Editing design alone must not rewrite the independently authored CSS.
+  expect(fs.readFileSync(cssFile, 'utf8')).not.toContain('--pod-nav-menu-item-height: 36px;');
 });
 
 test.each(loadThemeIndex().themes.filter(theme => theme.mode === 'template'))('$themeId preserves every authored selector on first and repeated generation', theme => {
@@ -149,7 +150,13 @@ test.each(loadThemeIndex().themes.filter(theme => theme.mode === 'template'))('$
   const paired = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.cssTemplatePath), 'utf8');
   const css = generateThemeCss(design);
   const compiled = cssTemplate(source, '', paired);
+  expect(compiled).toBe(paired);
   expect(cssTemplate(source, '', compiled)).toBe(compiled);
+  const tokens = require('../lib/app/theme-from-design').readDesignTokens(design);
+  const instantiated = paired.replace(/^([ \t]*)(--[\w-]+)(\s*:\s*)([^;\n]+);/gm,
+    (line, indent, name, separator, value) => /\{\{|<生成实际色值：/.test(value)
+      ? `${indent}${name}${separator}${tokens[name]};` : line);
+  expect(css).toBe(`/* openyida-theme-source: ${theme.themeId} */\n${instantiated}`);
   const rules = topLevelRules(css);
   const compiledRules = topLevelRules(compiled);
   const canonical = value => value.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').trim();
@@ -166,15 +173,29 @@ test('the main picture rail survives legacy navigation markers and repeated comp
   const theme = loadThemeIndex().themes.find(item => item.themeId === 'soft-inset-surfaces');
   const markdown = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8');
   const paired = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.cssTemplatePath), 'utf8');
-  const { preservePairedRules } = require('../lib/app/paired-theme-css');
-  const historical = paired.replace('/* openyida-paired-css */', '')
-    .replaceAll('openyida-template-navigation:', 'openyida-navigation-shape:');
-  const protectedCss = preservePairedRules(historical);
-  expect(preservePairedRules(protectedCss)).toBe(protectedCss);
   const design = resolveThemeColors(markdown.replaceAll('{{PRIMARY_COLOR}}', '#245B57'));
-  const css = require('../lib/app/theme-from-design').applyDesignTokens(protectedCss, design);
+  const css = generateThemeCss(design);
+  expect(css).toContain('/* openyida-navigation-shape:start */');
+  expect(css.split('/* openyida-navigation-shape:start */')).toHaveLength(2);
+  expect(cssTemplate(markdown, '', paired)).toBe(paired);
   expect(css).toContain('O1CN01YOwO9y84p7E1IZQm_');
   expect(css).toContain('border-radius: 16px;');
   expect(css).toContain('box-shadow: var(--shadow-3);');
   expect(css).toContain('background-color: #181c1f;');
+});
+
+// Upstream may intentionally rely on platform tokens or authored local scopes.
+test('paired generation retains external variables, transparent surfaces and original gradients', () => {
+  for (const id of ['inset-frame-pixel-rhythm', 'ink-glow-soft-panels', 'soft-inset-surfaces', 'soft-outline-rhythm']) {
+    const theme = loadThemeIndex().themes.find(item => item.themeId === id);
+    const design = resolveThemeColors(fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8').replaceAll('{{PRIMARY_COLOR}}', '#245B57'));
+    const css = generateThemeCss(design);
+    if (id === 'inset-frame-pixel-rhythm') {
+      expect(css).toContain('--pod-page-bg-color: radial-gradient(circle at 12% 0%, var(--oy-brand-soft), transparent 26%), var(--pod-page-bg-color);');
+      expect(css).not.toContain('--oyd-page-bg-image:');
+      expect(css).toContain('--pod-nav-menu-item-selected-shadow: var(--shadow-1);');
+    }
+    if (id === 'ink-glow-soft-panels') {expect(css).toContain('--oyd-page-bg: rgba(255, 255, 255, 0);');}
+    if (['soft-inset-surfaces', 'soft-outline-rhythm'].includes(id)) {expect(css).not.toContain('--color-group:');}
+  }
 });
