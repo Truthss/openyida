@@ -1,4 +1,4 @@
-# `ask_human` 完整视觉方向候选规则
+# 完整视觉方向候选规则
 
 ## 用途
 
@@ -78,7 +78,7 @@
 
 展示图片时统一注明“效果参考图，实际内容、布局和品牌色按本次方案调整”。展示方式按 [名称与效果图展示规则](../../../references/theme-selection.md#选择时展示名称与效果图) 适配宿主；下例为有图候选的逻辑结构，无图候选删除 `previewImage`；该字段不能直接传给不支持它的工具。文字选项宿主先展示对应图文卡片，再用相同编号和名称提问。
 
-`themeId`、`templatePath` 和模板匹配结果保存在内部实施记录中。
+`themeId`、`templatePath` 和模板匹配结果保存在内部实施记录中；千问组件的自然语言回传按共享规则携带 `themeId`，供 Agent 绑定选择，卡片不展示模板路径。
 
 ```json
 {
@@ -146,7 +146,7 @@
 }
 ```
 
-`build-plan.json` 保存选中方案；完整候选保留在 `ask_human` 问答历史中。命名模板由 CLI 补入 `navigationStyle.tone` 和 `toneSource=theme_derived`；自由创意在 visual.json 中明确编写 tone=light|dark，CLI 标记 toneSource=project_defined，后续可通过 patch 修改该 tone。上例只展示选择事实，已选方向需要的画布、字体、辅助色等差异还须写入同级 `tokens`，见 [共用主题示例](../../../references/application-theme-consistency.md#先把风格落到变量)。
+`build-plan.json` 保存选中方案；完整候选保留在本轮选择记录中（千问组件的候选数据和自然语言回传，或其他环境的 `ask_human` 问答）。命名模板由 CLI 补入 `navigationStyle.tone` 和 `toneSource=theme_derived`；自由创意在 visual.json 中明确编写 tone=light|dark，CLI 标记 toneSource=project_defined，后续可通过 patch 修改该 tone。上例只展示选择事实，已选方向需要的画布、字体、辅助色等差异还须写入同级 `tokens`，见 [共用主题示例](../../../references/application-theme-consistency.md#先把风格落到变量)。
 
 ## 直接选择与自定义输入
 

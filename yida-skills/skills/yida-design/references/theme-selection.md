@@ -47,7 +47,7 @@ Fast 与 Plan 使用下面同一套三方向生成规则和候选字段，不得
 
 1. **形成三套方向**：先排除最先想到的默认方案，再围绕相同业务任务重新推演三套具有不同层次和构图的可实现方案；被排除方案不计入三套候选；不因装饰更多或色彩更强就优先推荐。每套都写 `directionId`、`directionLabel`、`description`、`recommendationReason`、`themeId`、`primaryColor` 和 `primaryColorName`；导航结构沿用业务规划，命名模板的导航明暗不作为候选输入；自由创意选定后按项目设计明确填写导航明暗与配套 Token。
 2. **保证真实差异**：每个方向在构图、字体层级、表面层次、色彩关系中至少两项有明显差异；用已有内容建立重点，保留字段、操作、权限和状态。三套方向分别绑定三个不同的合法主题，其中第三项使用 free-creative 独立推演，主题索引摘要负责说明导航和内容界面的明暗。
-3. **按流程选择**：Fast 在排除第一直觉后内部比较三套新方向并选择更适合的一套；Plan 在用户没有明确完整风格时必须展示同样三套方向并通过 `ask_human` 选择。
+3. **按流程选择**：Fast 在排除第一直觉后内部比较三套新方向并选择更适合的一套；Plan 在用户没有明确完整风格时必须展示同样三套方向并按下方宿主展示规则获得用户选择。
 4. **把质感写成具体做法**：说明主次区域、数字与标题层级、背景与容器关系、间距与对齐、主操作与状态色的用法。高级感来自这些细节的一致性；表格、批量操作和异常识别保持清晰高效。
 5. **一次交接**：将选定风格及业务理由写入 `visualDirection.description`，主色、背景和强调色的关系写入 `colorStrategy.usage`；AI 决定标记 `ai_default`。比较在本轮规划内完成，后续直接复用。Fast 只对用户展示选定风格和适用场景；Plan 在无明确完整风格时展示三套候选并请用户选择。
 
@@ -55,7 +55,7 @@ Fast 与 Plan 使用下面同一套三方向生成规则和候选字段，不得
 
 ## 选择时展示名称与效果图
 
-通过 `ask_human` 请用户选择风格时，每个候选展示风格名称和一句适用说明；有对应效果图时附图，无图时只展示文字，不留图片占位、不提示缺图，也不为此补图或阻塞选择。有图时展示图片本身，不能只给裸链接。优先读取 `openyida design-plan catalog --json` 的 `themes[].label` 与 `previewImage.url/alt`；直接读取索引时，按 `themeId` 关联 [效果图映射](theme-preview-images.json)，不得按候选顺序猜图或借用其他主题图片。
+请用户选择风格时，千问环境走下方图片选择器，其他环境使用 `ask_human`。每个候选展示风格名称和一句适用说明；有对应效果图时附图，无图时只展示文字，不留图片占位、不提示缺图，也不为此补图或阻塞选择。有图时展示图片本身，不能只给裸链接。优先读取 `openyida design-plan catalog --json` 的 `themes[].label` 与 `previewImage.url/alt`；直接读取索引时，按 `themeId` 关联 [效果图映射](theme-preview-images.json)，不得按候选顺序猜图或借用其他主题图片。
 
 - 展示“编号 · 风格名称（可附项目方向）＋一句适用说明＋效果图（有则展示）”，图片带对应风格的替代文字，选项沿用相同编号和名称。展示图片时统一注明“效果参考图，实际内容、布局和品牌色按本次方案调整”；图片不代替配对模板，也不能据图增加业务模块或绕过导航约束。
 - 宿主支持图片选项时，按实际工具 schema 将图片绑定到对应选项。仅支持文字选项时，在同一轮先展示同名图文卡片，再立即用 `ask_human` 提供对应选择；支持附件预览时也可附同名图文对照页。不能向工具硬塞不支持的 `imageUrl` 字段，或把未显示的 URL 当作图片已展示。
@@ -76,12 +76,33 @@ Fast 与 Plan 使用下面同一套三方向生成规则和候选字段，不得
 
 用户明确指定的完整风格、品牌约束、参考材料或已有满意主题优先保留，不属于需要排除的 AI 第一直觉；只给定主色时，保留主色，在其余可自主决定的维度执行排除规则。
 
+## 千问环境的图片风格选择器
+
+先检查 `openyida env --json` 的 `active.toolId`；值为 `qwenwork`（包括 `qwenwork_web` 和 `qwenwork_desktop`）时使用本流程。以当前活跃环境为准，不能因为存在千问安装目录就切换交互。仅在需要用户选择风格时展示，已有明确选择或 Fast 内部选型不额外打断用户。
+
+1. 读取 [主题索引](../templates/design-themes/index.json) 和 [效果图映射](theme-preview-images.json)，按 `themeId` 合并。也可直接使用 `openyida design-plan catalog --json` 的同源数据；导航兼容范围以该命令的 `supportedNavigationLayouts` 为准。
+2. 先完成本页的候选筛选，再组装 `{themes: [{id, name, img, desc, tags, selected}]}`。`id` 取 `themeId`，`name` 取 `label`（可附项目方向），`desc` 根据 `styleSummary` 简述效果、适用理由和本项目配色；`img` 只取同 ID 的图片 URL，无图省略；`tags` 为简短说明数组，可含“推荐”；`selected` 只表示初始选中，不代表用户已确认。Plan 仍展示两个命名主题方向和 `free-creative`，不能把全目录或仅有图片的历史主题直接作为候选。
+3. 调用当前宿主的 `qoder_show_widget`，`widget_path` 指向本 Skill 安装目录下 [templates/theme-selector.html](../templates/theme-selector.html) 的绝对路径，`data` 传入上述对象（按实际工具 schema 序列化）。模板从 `window.__WIDGET_DATA__.themes` 读取，不向 HTML 拼入数据或硬编码主题。
+4. 等待用户点击确认。模板通过 `window.__bridge.sendToAgent()` 回传自然语言字符串：`已选择「深色侧栏 · 白底细线」风格（themeId: dark-rail-fine-lines），请继续下一步`。不回传 `{action, themeId, themeName}` JSON，也不把预选、组件打开或工具执行成功当作用户确认。用户仍可直接在对话中描述其他偏好。
+5. 从回传文本的 `themeId: …` 提取 ID，并核对属于本轮展示的候选；按 ID 找回对应的完整视觉方向和配色，沿用 Plan 的选择事实写入方式继续 `design-plan`。无 ID、未知 ID 或旧一轮选择与当前候选不符时，重新核对选择，不猜测。风格选择不代替后续搭建方案或美化实施的确认。
+
+调用结构示意（字段类型以宿主实际 schema 为准）：
+
+```text
+qoder_show_widget(
+  widget_path = <当前 yida-design 安装目录>/templates/theme-selector.html,
+  data = {themes: <本轮已筛选的候选数组>}
+)
+```
+
+千问缺少该工具或组件调用失败时，说明当前无法打开图片选择器，降级为同名文字选项并保留原候选；有可用图片展示能力再附图，不能宣称图片已展示。组件回传失败时允许重试，未收到明确选择前不继续。其他环境仍按上方名称与效果图规则使用 `ask_human`。
+
 ## 三种流程的消费方式
 
 | 流程 | 选择与执行 |
 | --- | --- |
 | Fast | 按上面的共用规则排除第一直觉后生成三套方向，在内部选出推荐项并写入 brief；命名模板读取选中模板，自由创意独立编写设计与 Token，直接维护项目 `design.md`，不增加方案确认步骤 |
-| Plan | 按 [Plan 视觉候选规则](../sub_skill/yida-design-plan/references/visual-theme-selection.md) 展示同一组三套方向（两个模板方向和一个独立自由创意选项）；没有明确完整风格时固定通过 `ask_human` 选择；由 CLI 派生项目文档 |
+| Plan | 按 [Plan 视觉候选规则](../sub_skill/yida-design-plan/references/visual-theme-selection.md) 展示同一组三套方向（两个模板方向和一个独立自由创意选项）；没有明确完整风格时按宿主展示规则获得用户选择；由 CLI 派生项目文档 |
 | 单页设计 | 先读当前应用 `design.md` 和主题证据；沿用已确认主题，只补当前页面。尚无主题契约且需选型时读取同一索引，保持现有业务功能与应用主题 |
 | 已有应用/页面美化 | 由 [ui-improve](../sub_skill/ui-improve/SKILL.md) 编排；局部修改或已有满意主题直接复用。确实需要重新选型时才使用本文件的比较规则，随后确认具体美化方案；不因选型增加重复确认或重新搭建 |
 

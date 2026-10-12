@@ -53,8 +53,12 @@ describe('OpenYida skill contracts', () => {
     const plan = readSkill('yida-skills/skills/yida-app/workflow/plan/workflow.md');
     const interaction = readSkill('yida-skills/skills/yida-design/references/ask-human-interaction-contract.md');
     expect(shared).toContain('Fast 与 Plan 使用下面同一套三方向生成规则和候选字段');
-    expect(shared).toContain('Plan 在用户没有明确完整风格时必须展示同样三套方向并通过 `ask_human` 选择');
+    expect(shared).toContain('Plan 在用户没有明确完整风格时必须展示同样三套方向并按下方宿主展示规则获得用户选择');
     expect(plan).toContain('获得选择或已有明确完整风格后，再继续主题映射和初始化');
+    expect(shared).toContain('`active.toolId`');
+    expect(shared).toContain('`qoder_show_widget`');
+    expect(shared).toContain('其他环境使用 `ask_human`');
+    expect(interaction).toContain('theme-selection.md#千问环境的图片风格选择器');
     expect(interaction).toContain('必须使用“应用设计风格”交互展示共用规则生成的三套候选');
   });
 
