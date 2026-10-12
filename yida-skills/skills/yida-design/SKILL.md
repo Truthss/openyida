@@ -1,14 +1,14 @@
 ---
 name: yida-design
 description: >
-  设计应用外观、美化页面、调整主题色，或解决导航与页面风格不一致时使用。
-  读取已有需求和设计，创建或更新 design.md，让导航、应用框架、表单、详情和自定义页面使用同一套主题。
-  调整现有导航的颜色和样式也用本技能；需要自己编写导航菜单时才用 yida-nav-shell。本技能不写 PRD 或页面源码。
+  设计或美化宜搭页面、应用外观和主题。读取整理后的用户需求；已有资源先确认视觉方案、备份，再只改 UI，不满意时恢复。本技能不写 PRD 或页面源码。
 ---
 
 # yida-design
 
 宜搭应用和页面视觉设计技能，输出 `design.md`。后续主题生成和页面开发都按这份设计实现。
+
+已有资源的 UI 调整和美化后恢复，先进入 [ui-improve](sub_skill/ui-improve/SKILL.md)，再按其确认、备份和业务保留约束使用下方设计规则。
 
 先读已有需求、设计和应用主题，确定哪些地方需要调整。优先使用平台已有的主题变量，只在表达不了所需效果时新增变量，并写清哪些组件使用它；见 [主题扩展规则](references/application-theme-consistency.md#平台基础变量是应用主题基础框架)。
 
@@ -22,7 +22,7 @@ description: >
 
 **品牌变量必须完整，导航装饰可以省略。** `design.md` 提供 PC 品牌色阶 `--color-brand1-1/2/3/5/6/9/10`，CLI 同时生成移动端 `--color-brand-1`、`--color-brand-2`、`--color-brand-3`、`--color-brand-4`。最终 CSS 必须在全局 `:root` 中提供这 11 个可用颜色；移动端映射不必在 design.md 重复填写。生成和上传都会检查缺失、无效颜色及循环引用。报错时修复设计后重新生成，不能只替换主色后上传模板。
 
-确定风格前，按[设计方向比较](references/theme-selection.md#设计方向比较)先排除第一直觉方案，再生成三套在构图和信息表达上有实质差异的新方向，按任务适配性选择，在当前规划轮次内选定。已有明确视觉要求时，在其范围内完善设计。
+需要选择风格时，读取 [共享主题选择规则](references/theme-selection.md)；选型方法和适用条件只在该文件维护。
 
 向用户说明设计时，写风格和适用场景：“设计主题风格为轻盈媒体栅格，适合产品展示型品牌官网。”风格名称与场景按当前项目填写；建议阶段使用“建议采用……风格”。
 
@@ -30,7 +30,7 @@ description: >
 
 Fast、Plan 和单页设计使用相同的 UI 设计规则、主题变量和质量检查；流程只在编写方式与确认时机上有区别。共用 [主题索引](templates/design-themes/index.json)，按 [共享主题选择规则](references/theme-selection.md) 先读摘要、选中后读一份完整主题。
 
-完整应用沿用需求分析阶段确认的模式与风格，按 [设计模式路由](references/design-mode.md) 推进。Fast 使用下方视觉流程；Plan 使用 [视觉分支](sub_skill/yida-design-plan/SKILL.md) 维护视觉事实，由 `yida-app` 生成方案并请用户确认；业务规划始终归 `yida-prd`。单页设计和主题调整直接继续。
+完整应用沿用需求分析阶段确认的模式与风格，按 [设计模式路由](references/design-mode.md) 推进。Fast 使用下方视觉流程；Plan 使用 [视觉分支](sub_skill/yida-design-plan/SKILL.md) 维护视觉事实，由 `yida-app` 生成方案并请用户确认；业务规划始终归 `yida-prd`。新页面设计直接继续；已有页面或应用外观调整先进入 ui-improve。
 
 ---
 
@@ -40,6 +40,7 @@ Fast、Plan 和单页设计使用相同的 UI 设计规则、主题变量和质�
 
 | 用户诉求 | 判定为 | 唯一动作 |
 | --- | --- | --- |
+| 已有页面/应用美化、优化 UI、太乱、不好看、局部间距、风格统一、换肤，或美化后不满意/恢复 | 已有资源 UI-only 美化（优先匹配） | 读 [ui-improve](sub_skill/ui-improve/SKILL.md)，先展示并确认方案、备份，再交接实施；不满意则恢复 |
 | 完整应用、多个角色、多页面、导航分组、首页/入口页、官网 + 看板 + 后台 | 完整应用视觉设计 | Fast 执行下方视觉流程；Plan 执行 [视觉分支](sub_skill/yida-design-plan/SKILL.md) |
 | 单个自定义页要求好看、高级、品牌化、去 AI 味、页面太丑、不够惊艳 | 单页设计 | 读 [page-design](sub_skill/page-design/SKILL.md)，确认当前页面和应用主题后输出设计补充 |
 | 应用主题色、品牌色、全局换肤、`--color-brand1-*`、自定义主题 CSS、`themeColor`、`navTheme` | 主题色和 token 设计 | 读 `workflow/step-2-theme-system.md` 和 `workflow/step-6-handoff.md`，输出 themeProfile、应用主题文件和 token 契约 |
@@ -69,7 +70,7 @@ Fast、Plan 和单页设计使用相同的 UI 设计规则、主题变量和质�
 
 ## 核心规则
 
-修改已有设计时，只读取并更新相关章节、页面记录和 token。Plan 统一按 [局部调整](../yida-app/workflow/plan/step-4-deliver.md#4-处理调整) 执行；Fast 直接修改当前 `design.md`，再按主题更新命令同步已有 CSS，保留未改的正文和自定义样式。
+修改已有设计时，只读取并更新相关章节、页面记录和 token。首次搭建尚未实施的 Plan 按 [局部调整](../yida-app/workflow/plan/step-4-deliver.md#4-处理调整) 执行；首次搭建 Fast 修改当前 `design.md`。已有资源美化必须先走 ui-improve，在确认和备份后才更新有效设计与 CSS，保留未改的正文和自定义样式。
 
 1. **平台能力优先**：数据录入、提交、编辑、审批、权限、字段校验走宜搭表单/流程；自定义页负责展示数据、呈现分析结果、放置业务入口、打开详情页，并串联表单、流程、报表和导航入口。
 2. **美感提升保持功能契约**：页面美化、视觉升级和页面重构默认只调整颜色、布局、密度、间距、视觉层级、素材和图标表达；现有数据源、字段映射、按钮动作、筛选逻辑、提交 URL、权限和业务状态保持原样。
@@ -77,7 +78,7 @@ Fast、Plan 和单页设计使用相同的 UI 设计规则、主题变量和质�
 4. **同应用页面入口归导航**：同应用页面优先放入平台导航或导航分组；自定义页内容区放当前页动作、原生表单新建/查看、外部链接和跨应用资源。
 5. **表单入口响应式**：新增/提交页 URL 默认使用页面级隐藏导航的 `submission/{formUuid}?isRenderNav=false`；详情页 URL 默认使用 `formDetail/{formUuid}?formInstId={formInstId}&navConfig.layout=1180&isRenderNav=false`，且 `formInstId` 必须来自真实数据记录并优先取 `row.formInstId`；PC 端默认在侧边抽屉中用 iframe 承载宜搭原生表单，抽屉默认半屏 `50vw`，提交页和详情页使用同一宽度规则；移动端整页或新页打开。
 6. **主题文件**：**旧主题注入确认**：应用层 CSS 上传前必须按 [旧主题应用的样式作用域与确认](references/application-style-library.md#旧主题应用的样式作用域与确认) 检查实际主题能力。旧主题或能力未知时默认仅做页面局部样式；只有用户明确确认目标应用的全局注入后才传 `--confirm-legacy-app-style`。用户要求停用应用级 `appCustomTheme` 时使用 `update-app --disable-custom-theme` 并回读核验，不切换主题色。 主题目录统一包含设计、CSS、表单布局三个文件，导出和生成参数见 [命令与参数](references/application-style-library.md#命令与参数)。Plan 使用 CLI 返回的 `outputs.theme`；Fast 和已有主题调整按 [主题文件生成与更新](workflow/output-design.md#cli-token-契约fast--plan-共用) 执行。按 [共用主题规则](references/application-theme-consistency.md) 将已选风格落实为 token，并核对生成的 CSS。修改变量要回到设计源后重新生成、上传；仅 CLI 未覆盖且已核实选择器的样式覆盖可在 CSS 末尾小范围追加，不另写脚本生成或重写主题文件。
-7. **默认主题先做业务判断**：工作台、门户、列表、详情、普通看板和数据大屏默认都是浅底 / light 模式，但主色不固定为 `podBlue` 或 #1677ff；用户委托 AI 选型时，按 [拒绝第一直觉](references/theme-selection.md#拒绝第一直觉) 排除原方案后再比较新方向、确定推荐项；先按主要任务、使用频率和信息密度判断适配性，再结合品牌证据和视觉目标做色彩判断；行业名词不能直接决定配色或材质，主题色可以是任意合法 CSS 颜色。只有用户明确说暗色/深色/夜间/高对比时才用深色沉浸。
+7. **默认主题先做业务判断**：工作台、门户、列表、详情、普通看板和数据大屏默认都是浅底 / light 模式，但主色不固定为 `podBlue` 或 #1677ff；用户委托 AI 选型时，按 [共享主题选择规则](references/theme-selection.md) 执行；先按主要任务、使用频率和信息密度判断适配性，再结合品牌证据和视觉目标做色彩判断；行业名词不能直接决定配色或材质，主题色可以是任意合法 CSS 颜色。只有用户明确说暗色/深色/夜间/高对比时才用深色沉浸。
 8. **页面布局要到可实现粒度**：每个页面至少写清顶部/左侧/主体/右侧/底部区域、核心组件、信息密度、主操作位置、PC/移动端差异和空/载/错态。
 9. **页面丰富度建议**：工作台沿用 PRD 已确定的内容和业务关系。综合工作台参考 8-10 个有独立业务价值的区块，不作为硬门槛；按任务覆盖和信息增量衡量丰富度，不用重复记录、入口或装饰凑数。区块依据信息关系采用不同且合适的表现形式，不要求每块换一种组件。
 10. **工作台禁低密大卡片套路**：工作台 / 业务首页不能用“标题 + 4 个等宽大 KPI 白卡 + 图标快捷卡 + 大空态白卡”撑首屏。按已确定的业务内容和信息关系安排主视图、分析区、操作区及快捷入口，不指定统一列表组合或固定双栏。空态保留该视图所需的上下文与可执行下一步，不铺大块空白卡片。
@@ -102,6 +103,7 @@ Fast、Plan 和单页设计使用相同的 UI 设计规则、主题变量和质�
 | [UI 视觉和状态设计](workflow/step-5-visual-states.md) | 设计风格选择、视觉特征、主题换肤、素材图标、空/载/错态、去 AI 味 | 输出前自检 |
 | [写入 design.md](workflow/step-6-handoff.md) | `design.md` 必填内容、稳定引用和完成条件 | 输出前 |
 | [page-design 单页设计](sub_skill/page-design/SKILL.md) | 单页主题证据、页面级设计流程、输出补充字段 | 单个自定义页设计 |
+| [ui-improve 页面与应用美化](sub_skill/ui-improve/SKILL.md) | 视觉方案、ask_human 确认、UI-only 实施、备份和不满意恢复 | 已有资源外观调整优先读取 |
 | [design.md 输出格式](workflow/output-design.md) | `design.md` 字段示例 | Fast 写入前；Plan 定制时按需 |
 | [共享主题选择规则](references/theme-selection.md) | Fast、Plan、单页共用的摘要选型、项目化和读取边界 | 主题选择与生成 |
 | [视觉结构配方库](references/visual-scaffold-recipes.md) | 把真实内容组织为可实现的布局、表面与响应式安排 | UI 视觉设计 |

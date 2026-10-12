@@ -5,6 +5,10 @@ description: JSX 自定义页面开发规范（React 16 平台 Jsx 组件、expo
 
 # JSX 自定义页面开发
 
+已有页面美化先进入 [ui-improve](../yida-design/sub_skill/ui-improve/SKILL.md)：视觉方案经 `ask_human` 确认、备份可恢复后才修改。沿用获批范围和功能契约，保留原 JSX 运行时、业务表达式、数据源、事件及入口行为；下文的新开发默认规则不用于顺手重构已有业务。不满意时由该流程恢复本轮前状态。
+
+UI 组件及 JSX 展示结构允许替换，业务函数及业务状态实现不允许改写；按 ui-improve 的组件替换边界保留原处理函数、参数语义与触发次数，核验值类型、筛选分页和未提交内容。只用当前 JSX 运行时支持的展示组件，不为更换 UI 迁移运行时或重构业务。
+
 平台导航下的管理页面默认只实现业务内容，跨模块由平台菜单切换；同任务分类可用页内 Tab。维护 JSX 页同样遵守[管理页面边界](../yida-canvas-custom-page/references/navigation-and-entry-guide.md#平台导航下的管理页面)，不默认追加自绘导航或隐藏平台导航。
 
 ## Resource-First 页面开发
