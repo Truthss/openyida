@@ -64,7 +64,7 @@ Fast、Plan 和单页设计使用相同的 UI 设计规则、主题变量和质�
 | 2 | [选择主题色和 token](workflow/step-2-theme-system.md) | 确定主色、辅助色、中性色、字体层级、组件基调和宜搭 token 作用域 | `themeProfile` |
 | 3 | [页面结构和交互设计](workflow/step-4-wireframe-interaction.md) | 根据用户需求中的页面场景确定布局骨架、区块、主操作、状态和响应式规则 | 低保真结构 + 交互路径 |
 | 4 | [UI 视觉和状态设计](workflow/step-5-visual-states.md) | 从业务任务、信息拓扑和视觉特征选择设计风格 | `design.md` 内容草稿 |
-| 5 | [写入 design.md](workflow/step-6-handoff.md) | 写入唯一视觉事实源和稳定 `designRefs` | `prd/<项目名>/design.md` |
+| 5 | [写入 design.md](workflow/step-6-handoff.md) | 写入项目视觉契约和稳定 `designRefs` | `prd/<项目名>/design.md` |
 
 完整应用输出一份应用级 `design.md`，包含主题、布局、组件、状态和响应式规则，三种流程共用 [唯一输出契约](workflow/output-design.md)：frontmatter 保存机器数据与 anchor 索引，完整规则只写在五章正文。Fast 手写并执行 `check-design`，Plan 使用紧凑契约由 CLI 生成并执行同一校验。页面实现同时读取业务 PRD 和视觉契约。
 
@@ -87,7 +87,7 @@ Fast、Plan 和单页设计使用相同的 UI 设计规则、主题变量和质�
 11. **按主题保持形状、密度与呼吸感**：`design.md` 正文写清圆角、密度与呼吸节奏的具体消费方式和必要数值，优先采用选中主题的容器/控件形状与内距、组间距、列表行高。通用业务页参考值只补主题未定义项，不能用固定大圆角、padding 或 gap 覆盖主题。呼吸感来自对齐、分组、层级和节奏，不来自超宽空 KPI 框或空白卡。
 12. **背景与内容层次清晰**：正文说明主题如何用色差、细边界、共容器、留白或材质区分内容。同色画布与面板可通过明确边界和分组成立；渐变、玻璃、阴影按主题规则启用，不强制添加。
 13. **模板与自由创意并列**：始终支持[自由创意](references/application-style-library.md)，根据业务独立推演，不要求从模板选择。使用模板时，先按业务任务、信息拓扑选择风格，再按用户确认的色彩氛围协调页面、卡片、导航、填充、边界和交互。布局、圆角与材质可保留，模板固定灰阶和品牌色面积限制不能覆盖用户要求。“自然绿意”等整体风格不能缩减成只有按钮和 logo 变绿；明确只改强调色或忠实中性参考时才保持原画布。文字保留可读的中性层级，状态保留独立语义。
-14. **应用主题统一**：模板或项目 `design.md` 是整套视觉的唯一来源，导航的颜色、border、hover、radius、shadow 与其他界面一起定义；业务决定结构和交互需求，外观由整体主题表达。优先复用平台已有变量绑定，仅声明必要的导航覆盖，不要求完整变量清单或最低数量。不额外选择导航风格包，也不强制所有颜色由主色派生。按 [整体主题规则](references/application-theme-consistency.md#导航与应用框架) 一起设计导航、应用框架、提交/编辑表单、记录详情和自定义页面。`app-theme.css` 保存完整主题变量与消费样式。`YidaCodeCanvas` 页面只在 `YidaComp` 内消费 `--color-brand1-*`、`--color-group` 和 `--pod-*`；严禁页面代码修改或向上层注入主题变量。应用包含表单或详情页时，读取 [表单风格规则](references/native-form-styles.md)，将组件布局和只读详情样式写入 `design.md`；视觉值写入应用主题 CSS，结构写入表单配置。
+14. **应用主题统一**：命名主题以同目录 `design.md`、JSON 和 CSS 为完整基线，保留配对 CSS 的原有声明和规则；项目 `design.md` 记录获批的视觉决定与覆盖，导航的颜色、border、hover、radius、shadow 与其他界面一起定义；业务决定结构和交互需求，外观由整体主题表达。优先复用平台已有变量绑定，仅声明必要的导航覆盖，不要求完整变量清单或最低数量。不额外选择导航风格包，也不强制所有颜色由主色派生。按 [整体主题规则](references/application-theme-consistency.md#导航与应用框架) 一起设计导航、应用框架、提交/编辑表单、记录详情和自定义页面。`app-theme.css` 保存完整主题变量与消费样式。`YidaCodeCanvas` 页面只在 `YidaComp` 内消费 `--color-brand1-*`、`--color-group` 和 `--pod-*`；严禁页面代码修改或向上层注入主题变量。应用包含表单或详情页时，读取 [表单风格规则](references/native-form-styles.md)，将组件布局和只读详情样式写入 `design.md`；视觉值写入应用主题 CSS，结构写入表单配置。
 15. **参考转成可执行选择**：参考 Dribbble / 优秀案例时，落到主色、背景素材、首屏构图、信息密度、动线、区块数量和反默认点。
 16. **页面文案和图标使用专业表达**：渲染文案使用纯文本；图标只使用 `lucide-react` 或 `@ant-design/icons` 的具体组件，默认选择 `lucide-react`，并在 `design.md` 的 `iconSystem` 中写清业务动作、状态、导航和空态到图标组件的映射。emoji 不能改成 CSS 形状、字母占位、Unicode 符号或临时 SVG；如果需要图标，必须映射到上述两类库的具体组件。
 17. **实现交接明确**：设计产物只定义页面结构、视觉系统和验收标准；常规业务图表使用 `yida-rechart`；ECharts 例外只用于用户明确要求复杂 ECharts option 或维护旧图表。

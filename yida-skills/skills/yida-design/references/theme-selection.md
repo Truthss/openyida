@@ -39,7 +39,7 @@ Fast、Plan 和单页设计共用 [主题索引](../templates/design-themes/inde
 
 ## 设计方向比较
 
-比较前先按 [主题与导航兼容规则](navigation-decision.md#主题与导航兼容规则) 读取目录的 `supportedNavigationLayouts`，排除与已确定布局不兼容的命名主题。用户只指定主题时按其允许布局规划；主题与明确布局冲突时先解决冲突，再进入候选比较。Fast、Plan、单页和美化共用该规则。
+比较前先按 [主题与导航兼容规则](navigation-decision.md#主题与导航兼容规则) 读取`openyida design-plan catalog --json` 返回的 `supportedNavigationLayouts`，排除与已确定布局不兼容的命名主题。用户只指定主题时按其允许布局规划；主题与明确布局冲突时先解决冲突，再进入候选比较。Fast、Plan、单页和美化共用该规则。
 
 比较过程只使用索引摘要，遵守上述完整模板读取边界。
 

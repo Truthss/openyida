@@ -11,7 +11,7 @@ openyida sample yida-design application-style --style-id soft-inset-surfaces --o
 openyida sample yida-design application-style --style-id free-creative --output prd/my-app/creative-start
 ```
 
-选型先读取目录的 `supportedNavigationLayouts`，按 [主题与导航兼容规则](navigation-decision.md#主题与导航兼容规则) 与实际布局匹配；`navTheme` 不能代替布局限制。
+选型先读取`openyida design-plan catalog --json` 返回的 `supportedNavigationLayouts`，按 [主题与导航兼容规则](navigation-decision.md#主题与导航兼容规则) 与实际布局匹配；`navTheme` 不能代替布局限制。
 
 每套导出 `design.md`、`app_theme.css`、`form-layout.json`；目标目录中任一同名文件已存在时，CLI 报错并保留原文件。每份 `design.md` 同时包含自定义页面的逐页设计引导，以及表单的组件位置、布局、样式、状态和响应式引导。设计与 CSS 中的品牌颜色保留占位：`--color-brand1-6` 使用 `{{PRIMARY_COLOR}}`，`--color-brand1-1` 按主色生成悬停色，其余品牌档位保持同源。项目占位符与空字段布局是项目化起点；使用时替换真实项目内容、完成最终设计并生成项目主题与表单布局。上传主题时使用项目实际生成的 CSS 路径，`app-theme.css` 与 `app_theme.css` 均可。
 

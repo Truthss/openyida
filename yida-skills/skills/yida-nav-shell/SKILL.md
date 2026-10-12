@@ -5,7 +5,7 @@ description: 为应用或独立前台页面编写自己的顶部、侧边等导�
 
 # yida-nav-shell
 
-导航形态必须与所选主题兼容：按 [主题与导航兼容规则](../yida-design/references/navigation-decision.md#主题与导航兼容规则) 核对目录的 `supportedNavigationLayouts`。自绘菜单也按实际 `variant` 检查；只支持侧边的主题不能改成顶部或 mixed，不能通过隐藏平台导航绕过限制。
+导航形态必须与所选主题兼容：按 [主题与导航兼容规则](../yida-design/references/navigation-decision.md#主题与导航兼容规则) 核对`openyida design-plan catalog --json` 返回的 `supportedNavigationLayouts`。自绘菜单也按实际 `variant` 检查；只支持侧边的主题不能改成顶部或 mixed，不能通过隐藏平台导航绕过限制。
 
 ## 先判断
 
