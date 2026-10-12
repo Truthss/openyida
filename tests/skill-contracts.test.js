@@ -1420,7 +1420,7 @@ describe('OpenYida skill contracts', () => {
       },
     };
 
-    expect(presets).toContain('从任务、品牌与视觉证据比较候选并复核第一直觉');
+    expect(presets).toContain('先拒绝第一直觉，再依据任务、品牌与视觉证据比较新候选');
     expect(presets).toContain('不能套用“科技=蓝、宠物=橙、法律=蓝”这类行业刻板配色');
     expect(presets).toContain('本文件是 `yida-design` 确定 OpenYida 应用主题色阶和 token 修改清单时使用的参考');
     expect(presets).toContain('## 色盘参考清单');
@@ -1571,9 +1571,14 @@ describe('OpenYida skill contracts', () => {
     expect(dashboardTheme).not.toContain('白底商务风（DEFAULT）');
     expect(dashboardTheme).not.toMatch(/primary:\s*['"]#/);
     const selection = readSkill('yida-skills/skills/yida-design/references/theme-selection.md');
-    expect(selection).toContain('## 第一直觉复核');
+    expect(selection).toContain('## 拒绝第一直觉');
+    expect(selection).toContain('被排除方案不计入三套候选');
+    expect(selection).toContain('不得仅改名称、微调色值或调换候选顺序后重新引入原方案');
+    expect(selection).toContain('用户明确指定的完整风格、品牌约束、参考材料或已有满意主题优先保留');
+    expect(visualThemeSelection).toContain('被排除方案不得出现在候选中');
     expect(selection).toContain('不能三套都是同一蓝色底稿只换名称');
-    expect(selection).toContain('不强制淘汰首选');
+    expect(selection).not.toContain('不强制淘汰首选');
+    expect(selection).not.toContain('第一直觉有依据可以胜出');
     expect(dashboardTheme).not.toContain('深色紫蓝科技风（DEFAULT）');
     expect(chartSpec).toContain('大屏不等于暗色');
   });
