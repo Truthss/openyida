@@ -46,9 +46,13 @@ beforeEach(() => {
     ? `<script>window.pageConfig = ${JSON.stringify(context)};</script>` : ok({ icon }));
   httpPost.mockReset().mockImplementation(serve);
 });
-afterEach(() => fs.rmSync(root, { recursive: true, force: true }));
+afterEach(() => {
+  jest.restoreAllMocks();
+  fs.rmSync(root, { recursive: true, force: true });
+});
 
 test('snapshots raw old theme, disabled CSS bytes, missing/empty distinctions and no credentials', async () => {
+  const writeFile = jest.spyOn(fs, 'writeFileSync');
   config.HOMEPAGELOGO = '';
   const result = await take();
   const doc = loadSnapshot(result.snapshot);
@@ -58,7 +62,12 @@ test('snapshots raw old theme, disabled CSS bytes, missing/empty distinctions an
   expect(result).toMatchObject({ runtimeVerified: false, supportsIconRestore: false, supportsPageRestore: false });
   expect(result.cannotClearKeys).toContain('HOMEPAGELOGO');
   expect(fs.readFileSync(result.snapshot, 'utf8')).not.toContain('secret');
-  expect(fs.statSync(result.snapshot).mode & 0o777).toBe(0o600);
+  expect(writeFile).toHaveBeenCalledWith(result.snapshot, expect.any(String), { mode: 0o600, flag: 'wx' });
+  // Windows stat mode does not represent POSIX owner/group permissions.
+  // Check the requested creation mode everywhere and actual bits on POSIX.
+  if (process.platform !== 'win32') {
+    expect(fs.statSync(result.snapshot).mode & 0o777).toBe(0o600);
+  }
   expect(writes()).toHaveLength(0);
 });
 
