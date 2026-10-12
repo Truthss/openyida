@@ -2648,7 +2648,12 @@ test('command and agent navigation policies align with AI intake decisions', () 
     expect(route.navigation_policy).not.toContain('offer exactly two');
     expect(route.design_mode_policy).toBe(workflow.design_mode_policy);
     expect(route.design_mode_policy).toContain('Fast and Plan share one three-direction visual generation rule');
-    expect(route.design_mode_policy).toContain('generate exactly three directions and use ask_human');
+    expect(route.design_mode_policy).toContain('generate exactly three directions and follow visual_decision_policy.themeSelection');
+    expect(route.design_mode_policy).toContain('use qoder_show_widget when active.toolId is qwenwork, and ask_human on other hosts');
+    expect(route.design_mode_policy).not.toContain('use ask_human for the style choice');
+    const catalog = JSON.parse(runOk(['design-plan', 'catalog', '--json']));
+    expect(catalog.themeSelection).toEqual(route.visual_decision_policy.themeSelection);
+    expect(catalog.themeSelection.qwenwork).toMatchObject({ activeToolId: 'qwenwork', tool: 'qoder_show_widget', response: 'natural_language_with_themeId' });
     expect(route.design_mode_policy).not.toContain('Confirm unresolved navigation');
     expect(route.product_design_policy).toBe(workflow.product_design_policy);
     expect(route.product_design_policy).toContain('Fast, Plan and single-page design share yida-design/templates/design-themes');

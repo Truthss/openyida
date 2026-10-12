@@ -80,7 +80,7 @@ Fast 与 Plan 使用下面同一套三方向生成规则和候选字段，不得
 
 先检查 `openyida env --json` 的 `active.toolId`；值为 `qwenwork`（包括 `qwenwork_web` 和 `qwenwork_desktop`）时使用本流程。以当前活跃环境为准，不能因为存在千问安装目录就切换交互。仅在需要用户选择风格时展示，已有明确选择或 Fast 内部选型不额外打断用户。
 
-1. 读取 [主题索引](../templates/design-themes/index.json) 和 [效果图映射](theme-preview-images.json)，按 `themeId` 合并。也可直接使用 `openyida design-plan catalog --json` 的同源数据；导航兼容范围以该命令的 `supportedNavigationLayouts` 为准。
+1. 读取 [主题索引](../templates/design-themes/index.json) 和 [效果图映射](theme-preview-images.json)，按 `themeId` 合并。也可直接使用 `openyida design-plan catalog --json` 的同源数据及 `themeSelection` 交互指引；导航兼容范围以该命令的 `supportedNavigationLayouts` 为准。
 2. 先完成本页的候选筛选，再组装 `{themes: [{id, name, img, desc, tags, selected}]}`。`id` 取 `themeId`，`name` 取 `label`（可附项目方向），`desc` 根据 `styleSummary` 简述效果、适用理由和本项目配色；`img` 只取同 ID 的图片 URL，无图省略；`tags` 为简短说明数组，可含“推荐”；`selected` 只表示初始选中，不代表用户已确认。Plan 仍展示两个命名主题方向和 `free-creative`，不能把全目录或仅有图片的历史主题直接作为候选。
 3. 调用当前宿主的 `qoder_show_widget`，`widget_path` 指向本 Skill 安装目录下 [templates/theme-selector.html](../templates/theme-selector.html) 的绝对路径，`data` 传入上述对象（按实际工具 schema 序列化）。模板从 `window.__WIDGET_DATA__.themes` 读取，不向 HTML 拼入数据或硬编码主题。
 4. 等待用户点击确认。模板通过 `window.__bridge.sendToAgent()` 回传自然语言字符串：`已选择「深色侧栏 · 白底细线」风格（themeId: dark-rail-fine-lines），请继续下一步`。不回传 `{action, themeId, themeName}` JSON，也不把预选、组件打开或工具执行成功当作用户确认。用户仍可直接在对话中描述其他偏好。

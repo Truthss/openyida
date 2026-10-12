@@ -114,7 +114,8 @@ test('current CLI catalog supplies optional images to template without requiring
   expect(ui.nodes('input')).toHaveLength(themes.length);
   expect(ui.nodes('img')).toHaveLength(result.themes.filter(theme => theme.previewImage).length);
   expect(ui.nodes('input').some(radio => radio.value === 'free-creative')).toBe(true);
-  const policy = getVisualDecisionPolicy().themeSelection;
+  const policy = result.themeSelection;
+  expect(policy).toEqual(getVisualDecisionPolicy().themeSelection);
   expect(policy.qwenwork).toMatchObject({ activeToolId: 'qwenwork', tool: 'qoder_show_widget', response: 'natural_language_with_themeId' });
   expect(policy.otherHosts).toBe('ask_human');
   expect(fs.existsSync(path.join(__dirname, '..', policy.qwenwork.template))).toBe(true);

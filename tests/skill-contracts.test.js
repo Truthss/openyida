@@ -59,6 +59,9 @@ describe('OpenYida skill contracts', () => {
     expect(shared).toContain('`qoder_show_widget`');
     expect(shared).toContain('其他环境使用 `ask_human`');
     expect(interaction).toContain('theme-selection.md#千问环境的图片风格选择器');
+    const handoff = readSkill('yida-skills/skills/yida-requirement-analysis/references/handoff.md');
+    expect(handoff).toContain('theme-selection.md#选择时展示名称与效果图');
+    expect(handoff).not.toContain('Plan 在没有明确完整风格时通过 `ask_human` 选择');
     expect(interaction).toContain('必须使用“应用设计风格”交互展示共用规则生成的三套候选');
   });
 
