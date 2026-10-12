@@ -974,7 +974,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - HTTP GET 请求工具支持显式读取文本响应，以兼容文档 Markdown 接口。
-- 文档读取命令自动识别并解包 tianshu 返回的 JSON 文本响应，同时保留对直接 Markdown 和 JSON 形态文档正文的兼容。
+- 文档读取支持多种返回格式，可正确提取 Markdown 或 JSON 中的正文内容。
 
 ### Tests
 - 新增文档与听记 CLI 单元测试，覆盖接口路径和参数、文档 URL 与听记 ID 校验、Markdown 响应解包、失败响应及听记结构解析。
@@ -1104,7 +1104,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - 本版本面向国内 `aliwork.com` 链路；海外版宜搭暂无法通过新的 OAuth token 方式登录。需要继续使用海外版宜搭的用户，请安装低于 `2026.7.14-2` 的版本，例如 `npm install -g openyida@2026.7.13`。
 
 ### Changed
-- `openyida login`、`openyida auth` 默认进入 token 登录态管理，不再要求 CLI 感知或保存 `ai_app_user_auth_token`、`tianshu_csrf_token` 等 Web Cookie。
+- 登录与身份验证改用授权登录，无需读取或保存浏览器 Cookie。
 - 所有宜搭 HTTP API 调用统一从本地 token session 读取 `base_url` 和 access token，并由请求层自动封装 Bearer 鉴权头。
 - `openyida org list` 改为通过 token 请求 `/query/userservice/listCorpInfos.json` 获取可访问组织；`openyida org switch --corp-id <corpId>` 通过 OAuth 重新登录并校验目标组织。
 - MCP Server、批处理、环境诊断、技能文档和命令清单同步使用 token 登录态语义。

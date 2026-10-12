@@ -617,7 +617,7 @@ module.exports = {
     waiting_login: '  ログイン完了を待機中（最大 10 分）...',
     login_timeout: '  ⏰ ログインがタイムアウトしました（10 分）。再試行してください。',
     login_success: '  ✅ ログインに成功しました！',
-    no_csrf_in_cookie: '  ❌ ログインは成功しましたが Cookie に tianshu_csrf_token がありません。再試行してください。',
+    no_csrf_in_cookie: '  ❌ トークンによるログインで有効なユーザー情報を取得できませんでした。再試行してください。',
     no_cookie_cache: '  ❌ 有効なローカル token がありません。再ログインが必要です。',
     no_csrf_in_cache: '  ❌ 有効なローカル token がありません。再ログインが必要です。',
     csrf_extracted: '  ✅ csrf_token を取得しました: {0}...',
