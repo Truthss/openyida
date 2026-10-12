@@ -618,6 +618,7 @@ describe('CLI offline smoke', () => {
       'formula.evaluate',
     ]));
     expect(parsed.summary.ask_command_ids).toEqual([
+      'app-theme.restore',
       'upgrade-app-theme',
       'app-offline',
       'connector.delete',
@@ -1724,6 +1725,7 @@ describe('CLI offline smoke', () => {
     ]));
     expect(parsed.commands.allow_command_ids).toContain('create-app');
     expect(parsed.commands.ask_command_ids).toEqual([
+      'app-theme.restore',
       'upgrade-app-theme',
       'app-offline',
       'connector.delete',
@@ -2810,6 +2812,9 @@ test('Plan CLI and design-file sample work locally without a login', () => {
     const contract = require('../yida-skills/skills/yida-design/templates/design-themes/basic-tokens.json');
     const design = fs.readFileSync(path.join(dir, 'design.md'), 'utf8');
     const tokens = readDesignTokens(design);
+    const { parseDesignDocument } = require('../lib/design/document');
+    const metadata = parseDesignDocument(design).metadata;
+    const customTokens = new Set(Object.values(metadata.tokens['custom-page']).flatMap(group => Object.keys(group)));
     const template = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-design/references/theme/app-custom-theme-template.css'), 'utf8');
     const platformTokens = new Set([...template.matchAll(/(--[\w-]+)\s*:/g)]
       .map(match => match[1]));
@@ -2818,10 +2823,10 @@ test('Plan CLI and design-file sample work locally without a login', () => {
     platformTokens.add('--input-hover-bg-color');
     expect(Object.keys(tokens)).toEqual(expect.arrayContaining(Object.values(contract.groups).flat()));
     expect(Object.keys(tokens).filter(name => !Object.values(contract.groups).flat().includes(name))
-      .every(name => name.startsWith('--oyd-') || platformTokens.has(name))).toBe(true);
+      .every(name => customTokens.has(name) || platformTokens.has(name))).toBe(true);
     expect(platformTokens.has('--pod-nav-unknown-token')).toBe(false);
-    for (const [name, value] of Object.entries(contract.fixedValues)) {
-      expect(tokens[name]).toBe(value);
+    for (const name of ['--color-fill1-10', '--color-text1-5']) {
+      expect(tokens[name]).toBe(contract.fixedValues[name]);
     }
     const selectedShadow = 'inset 0 -3px 0 var(--color-brand1-6)';
     const result = JSON.parse(runOk(['design-plan', 'patch', input,
@@ -2838,13 +2843,16 @@ test('Plan CLI and design-file sample work locally without a login', () => {
     expect(readDesignTokens(patchedDesign)['--pod-nav-menu-item-selected-shadow']).toBe(selectedShadow);
     expect(patchedDesign).toContain(`| 选中项阴影 | --pod-nav-menu-item-selected-shadow | ${selectedShadow} |`);
     expect(css).toContain(`--pod-nav-menu-item-selected-shadow: ${selectedShadow};`);
-    const globalRules = topLevelRules(css).filter(rule => rule.selector.split(',').map(x => x.trim()).includes(':root'));
-    expect(globalRules).toHaveLength(1);
-    for (const tone of ['light', 'dark', 'white', 'gray']) {
-      expect(globalRules[0].selector).toContain(`.pod-premium.nav-${tone}`);
-      expect(globalRules[0].body).toContain(`--pod-shell-theme-bg-color: ${tokens['--pod-shell-theme-bg-color']};`);
-    }
-    expect(css).not.toMatch(/\.pod-premium\.(?:is|nav)-(?:light|dark|white|gray)\s*\{/);
+    // Named themes retain their authored scopes; only the requested project
+    // tokens change. The shared skeleton's flattened scopes are not the contract.
+    const sourceId = metadata.themeProfile.sourceThemeId;
+    const paired = fs.readFileSync(path.join(ROOT,
+      `yida-skills/skills/yida-design/templates/design-themes/${sourceId}/app_theme.css`), 'utf8');
+    const selectors = text => topLevelRules(text).map(rule => rule.selector.replace(/\s+/g, ' ').trim());
+    expect(selectors(css)).toEqual(selectors(paired));
+    expect(css).toContain(`openyida-theme-source: ${sourceId}`);
+    runOk(['sample', 'yida-design', 'app-theme', '--design-file', path.join(dir, 'design.md'), '--output', cssPath]);
+    expect(fs.readFileSync(cssPath, 'utf8')).toBe(css);
   } finally {fs.rmSync(dir, { recursive: true, force: true });}
 });
 

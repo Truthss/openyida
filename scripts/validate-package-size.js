@@ -24,7 +24,9 @@ const path = require('path');
 // past the previous 2128 KiB ratchet (CI Node 20 gzip runs ~2 KiB heavier than newer Node).
 // Retain modest growth headroom and round budgets to 16 KiB boundaries.
 const MAX_TARBALL_BYTES = 2144 * 1024;
-const MAX_UNPACKED_BYTES = 8000 * 1024;
+// UI improvement/restore adds eight net runtime and guidance files. Node 20
+// dry-run is ~8054 KiB unpacked; retain 16 KiB rounding, no tarball/cap increase.
+const MAX_UNPACKED_BYTES = 8064 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -32,10 +34,17 @@ const MAX_UNPACKED_BYTES = 8000 * 1024;
 // removing the application-styles/navigation-styles catalogs offsets two files.
 // App theme upgrades add two CLI modules and an independent skill with its migration guide.
 // Group creation isolates icon persistence from the near-1000-line navigation module.
-const MAX_ENTRY_COUNT = 611;
+const MAX_ENTRY_COUNT = 619;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
+  'lib/app/app-theme.js',
+  'lib/app/theme-source.js',
+  'lib/app/nav-group-create.js',
+  'yida-skills/skills/yida-design/references/responsive-layout.md',
+  'yida-skills/skills/yida-design/sub_skill/ui-improve/SKILL.md',
+  ...['application-coverage', 'backup-and-restore', 'component-replacement', 'confirmation']
+    .map(name => `yida-skills/skills/yida-design/sub_skill/ui-improve/references/${name}.md`),
   'lib/app/upgrade-app-theme.js',
   'lib/app/prepare-app-theme-upgrade.js',
   'yida-skills/skills/yida-upgrade-app-theme/SKILL.md',

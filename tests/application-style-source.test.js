@@ -15,7 +15,7 @@ const fixture = require('./fixtures/design-plan.json');
 const template = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, 'templates/design-themes/app-amber/design.md'), 'utf8');
 const platformCss = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, 'references/theme/app-custom-theme-template.css'), 'utf8');
 
-test('main palette issues remain blocking and are reported together instead of recolored', () => {
+test('strict audit reports and blocks main palette findings without recoloring', () => {
   expect(() => build({ check: true })).toThrow(expect.objectContaining({ code: 'THEME_PALETTE_REVIEW_REQUIRED' }));
 });
 

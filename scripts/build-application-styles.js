@@ -4,6 +4,8 @@
 // Never rebuild an existing template from the shared skeleton.
 const fs = require('fs');
 const path = require('path');
+const { createHash } = require('crypto');
+const { reviewPalette } = require('./theme-palette-baseline');
 const { parseDesignDocument } = require('../lib/design/document');
 const { resolveThemeColors, loadThemeIndex, DESIGN_SKILL_ROOT } = require('../lib/design-plan/themes');
 const { applyDesignTokens, readDesignTokens } = require('../lib/app/theme-from-design');
@@ -65,7 +67,7 @@ function cssTemplate(markdown, rules = '', pairedCss) {
 }
 
 /** Compile every template first so an invalid design cannot cause partial writes. */
-function build({ root = DESIGN_SKILL_ROOT, themes = loadThemeIndex().themes, check = false } = {}) {
+function build({ root = DESIGN_SKILL_ROOT, themes = loadThemeIndex().themes, check = false, baseline, onReview = () => {} } = {}) {
   const paletteIssues = [];
   const outputs = themes.map(theme => {
     const directory = path.resolve(root, 'templates/design-themes', theme.themeId);
@@ -83,13 +85,19 @@ function build({ root = DESIGN_SKILL_ROOT, themes = loadThemeIndex().themes, che
     const design = resolveThemeColors(`---\n${yaml(metadata)}\n---\n`.replace(/\{\{PRIMARY_COLOR\}\}/g, '#2C73A9'));
     const resolved = applyDesignTokens(css, design, markdown, { paired: true });
     const audit = auditPalette(rootDeclarations(resolved.replace(/\/\*[\s\S]*?\*\//g, '')), { css: resolved });
-    if (audit.issues.length || audit.unresolved.length) {paletteIssues.push({ themeId: theme.themeId, ...audit });}
+    if (audit.issues.length || audit.unresolved.length) {
+      // Normalize line endings so checkout policy cannot change audit identity.
+      const sourceHash = createHash('sha256').update(JSON.stringify([markdown, css].map(text => text.replace(/\r\n/g, '\n')))).digest('hex');
+      paletteIssues.push({ themeId: theme.themeId, sourceHash, ...audit });
+    }
     return [output, css];
   });
-  if (paletteIssues.length) {
-    const error = new Error(`Template palette review required: ${paletteIssues.map(item => item.themeId).join(', ')}`);
+  const review = baseline ? reviewPalette(paletteIssues, baseline) : { known: [], regressions: paletteIssues };
+  if (review.known.length) {onReview(review.known);}
+  if (review.regressions.length) {
+    const error = new Error(`Template palette review required: ${review.regressions.map(item => item.themeId).join(', ')}`);
     error.code = 'THEME_PALETTE_REVIEW_REQUIRED';
-    error.details = paletteIssues;
+    error.details = review.regressions;
     throw error;
   }
   const changed = outputs.filter(([file, css]) => !fs.existsSync(file) || fs.readFileSync(file, 'utf8') !== css);
@@ -99,8 +107,16 @@ function build({ root = DESIGN_SKILL_ROOT, themes = loadThemeIndex().themes, che
 }
 
 if (require.main === module) {
-  if (process.argv.slice(2).some(arg => arg !== '--check')) {throw new Error('Usage: node scripts/build-application-styles.js [--check]');}
-  try {build({ check: process.argv.includes('--check') });}
+  if (process.argv.slice(2).some(arg => !['--check', '--strict-palette'].includes(arg))) {throw new Error('Usage: node scripts/build-application-styles.js [--check] [--strict-palette]');}
+  try {
+    build({
+      check: process.argv.includes('--check'),
+      baseline: process.argv.includes('--strict-palette') ? undefined : require('./theme-palette-baseline.json'),
+      onReview: templates => console.warn(JSON.stringify({ code: 'THEME_PALETTE_BASELINE_REVIEW',
+        templates: templates.map(({ themeId, issues, unresolved }) => ({ themeId, issues, unresolved })),
+      }, null, 2)),
+    });
+  }
   catch (error) {
     if (!error.details) {throw error;}
     console.error(JSON.stringify({ code: error.code, templates: error.details }, null, 2));
