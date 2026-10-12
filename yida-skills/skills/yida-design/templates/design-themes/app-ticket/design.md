@@ -68,8 +68,8 @@ tokens:
       "--color-brand1-6": "{{PRIMARY_COLOR}}"
       "--color-brand1-9": "<生成实际色值：--color-brand1-6 76% + #000000 24%，sRGB 逐通道混合>"
       "--color-brand1-10": "<生成实际色值：--color-brand1-6 26% + #202020 74%，sRGB 逐通道混合>"
-      "--color-line1-1": "<生成实际色值：--color-brand1-6 8% + #7C7C7C 92%，sRGB 逐通道混合>"
-      "--color-line1-2": "<生成实际色值：--color-brand1-6 8% + #7C7C7C 92%，sRGB 逐通道混合>"
+      "--color-line1-1": "<生成实际色值：--color-brand1-6 8% + #6C6C6C 92%，sRGB 逐通道混合>"
+      "--color-line1-2": "<生成实际色值：--color-brand1-6 8% + #626262 92%，sRGB 逐通道混合>"
       "--color-fill1-1": "<生成实际色值：--color-brand1-6 4% + #EEEEEE 96%，sRGB 逐通道混合>"
       "--color-fill1-2": "<生成实际色值：--color-brand1-6 4% + #DEDEDE 96%，sRGB 逐通道混合>"
       "--color-fill1-3": "<生成实际色值：--color-brand1-6 8% + #7C7C7C 92%，sRGB 逐通道混合>"
@@ -160,6 +160,8 @@ themeProfile:
 ## 2. 页面视觉系统
 
 ### 2.1 表面、区块与层次
+
+弱分隔线使用 `--color-line1-1`，常规边框使用 `--color-line1-2`；两档边界分别配色，不与 `--color-fill1-3` 的 active 填充共用色值或生成公式。边界同时用于普通表面与 active 表面时，需保留可辨识的明暗差；组件已单独定义的材质边框继续沿用原设计。
 
 页面外衬使用浅纸色，单据使用更亮的暖纸面；棕色用于文字、印章和细线，不作为正文背后的大面积橙棕底。
 

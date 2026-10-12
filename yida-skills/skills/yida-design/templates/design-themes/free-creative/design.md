@@ -67,8 +67,8 @@ tokens:
       "--color-brand1-6": "{{PRIMARY_COLOR}}"
       "--color-brand1-9": "<生成实际色值：--color-brand1-6 76% + #000000 24%，sRGB 逐通道混合>"
       "--color-brand1-10": "<生成实际色值：--color-brand1-6 26% + #202020 74%，sRGB 逐通道混合>"
-      "--color-line1-1": "#cccccc"
-      "--color-line1-2": "#cccccc"
+      "--color-line1-1": "#B4B4B4"
+      "--color-line1-2": "#9C9C9C"
       "--color-fill1-1": "#f6f6f6"
       "--color-fill1-2": "#f6f6f6"
       "--color-fill1-3": "#cccccc"
@@ -154,6 +154,8 @@ applicationStyle:
 ## 2. 页面视觉系统
 
 ### 2.1 表面、区块与层次
+
+弱分隔线使用 `--color-line1-1`，常规边框使用 `--color-line1-2`；两档边界分别配色，不与 `--color-fill1-3` 的 active 填充共用色值或生成公式。边界同时用于普通表面与 active 表面时，需保留可辨识的明暗差；组件已单独定义的材质边框继续沿用原设计。
 
 根据真实内容确定画布、内容面、边界、留白和信息层级。主次区域通过宽度、位置、表面和排版建立关系；每个容器都承载明确内容，不为丰富版式增加空卡片或虚构数据。
 

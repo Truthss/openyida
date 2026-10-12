@@ -4,7 +4,7 @@
 
 ## 找到和导出
 
-`openyida design-plan catalog --json` 返回模板 `themes` 与独立的 `creativeOption`。当前索引包含 14 套模板与独立的自由创意入口，均采用三文件目录并可用 `application-style` 导出。18 套 `app-*` 模板暂时移出索引，文件保留，待优化后恢复索引记录；候选只从当前索引取得。目录元数据提供完整设计、CSS 和原生布局的相对路径，可直接定位对应文件。
+`openyida design-plan catalog --json` 返回模板 `themes` 与独立的 `creativeOption`。当前索引包含 13 套模板与独立的自由创意入口，均采用三文件目录并可用 `application-style` 导出。18 套 `app-*` 模板及 `dark-inset-hairline` 暂未列入索引，文件保留；候选只从当前索引取得。目录元数据提供完整设计、CSS 和原生布局的相对路径，可直接定位对应文件。
 
 ```bash
 openyida sample yida-design application-style --style-id soft-inset-surfaces --output prd/my-app/style-start

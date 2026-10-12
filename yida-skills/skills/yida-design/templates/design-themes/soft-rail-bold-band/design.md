@@ -12,23 +12,39 @@ tokens:
         "--pod-page-bg-color": "#FFFFFF" # neutral-gray；内容画布
         "--pod-card-bg-color": "#FFFFFF" # neutral-gray；内容面板和表单表面
         "--pod-table-cell-color": "var(--pod-card-bg-color)" # 表格正文单元格跟随卡片表面
+        "--pod-card-border": "0.5px solid var(--color-line1-1, #efefef)"
       navigation:
         "--pod-nav-sub-divider-color": "#DEDEDE"
-        "--pod-shell-theme-bg-color": "#F5F5F5"
-        "--pod-nav-item-text-color": "#181818"
+        "--pod-shell-theme-bg-color": "#F4F6F8" # 固定冷灰框架；独立于品牌派生灰
+        "--pod-nav-item-text-color": "var(--color-text1-3)"
         "--pod-nav-item-text-hover-color": "var(--color-text1-4)"
-        "--pod-nav-item-text-selected-color": "var(--color-text1-4)"
+        "--pod-nav-item-text-selected-color": "var(--color-brand1-6)"
         "--pod-nav-menu-bg-hover-color": "#EFEFEF"
         "--pod-nav-menu-bg-selected-color": "#FFFFFF"
-        "--pod-nav-menu-item-height": "40px"
-        "--pod-nav-menu-item-radius": "4px"
+        "--pod-nav-menu-item-height": "36px"
+        "--pod-nav-menu-item-radius": "var(--corner-3)"
         "--pod-nav-menu-item-selected-font-weight": "500"
         "--pod-nav-popup-bg-color": "var(--pod-shell-theme-bg-color)"
+        "--pod-nav-slide-aside-padding": "8px 8px 8px 8px"
+        "--pod-nav-logo-img-size": "32px"
+        "--pod-nav-logo-text": "var(--color-brand1-6)"
+        "--pod-nav-search-menu-gap": "12px"
+        "--pod-nav-menu-item-selected-shadow": "var(--shadow-1)"
+        "--pod-nav-menu-item-gap": "8px"
+        "--pod-nav-search-bg-color": "#FFFFFF"
+        "--pod-nav-search-bg-hover-color": "#FFFFFF"
+        "--pod-nav-search-bg-active-color": "#FFFFFF"
+        "--pod-nav-search-placeholder-color": "var(--color-text1-2)"
+        "--pod-nav-search-icon-color": "var(--color-text1-2)"
+        "--pod-nav-menu-item-border": "none"
+        "--pod-nav-menu-item-hover-border": "var(--pod-nav-menu-item-border)"
+        "--pod-nav-menu-item-selected-border": "var(--pod-nav-menu-item-border)"
+        "--pod-nav-menu-gap": "8px"
       native-form:
         "--form-element-medium-corner": "var(--corner-2)"
         "--form-element-medium-height": "var(--s-8)"
         "--form-element-medium-font-size": "var(--font-size-body-1)"
-        "--input-bg-color": "var(--color-fill1-1)"
+        "--input-bg-color": "transparent"
         "--input-border-width": "1px"
         "--input-border-color": "var(--color-line1-2)"
         "--input-hover-border-color": "var(--color-brand1-6)"
@@ -36,7 +52,7 @@ tokens:
         "--input-hover-bg-color": "var(--input-bg-color)"
         "--input-focus-bg-color": "var(--input-bg-color)"
         "--pod-form-label-color": "var(--color-text1-4)"
-        "--form-top-label-margin-b": "var(--s-2)"
+        "--form-top-label-margin-b": "4px"
         "--yida-divider-secondary-color": "var(--color-brand1-2)"
         "--yida-form-content-bgcolor": "var(--pod-page-bg-color)"
         "--pod-page-footer-bg-color": "var(--pod-card-bg-color)"
@@ -45,7 +61,7 @@ tokens:
         "--pod-field-preview-min-height": "var(--form-element-medium-height)"
         "--pod-field-preview-padding": "0 8px"
         "--pod-field-preview-gap": "var(--s-1)"
-        "--pod-field-preview-bg-color": "var(--color-fill1-1)"
+        "--pod-field-preview-bg-color": "#F4F6F8"
         "--pod-field-preview-border-radius": "var(--corner-2)"
         "--pod-field-preview-indicator-color": "var(--color-fill1-3)"
         "--pod-field-preview-shadow": "none"
@@ -62,7 +78,7 @@ tokens:
       "--color-brand1-10": "<生成实际色值：--color-brand1-6 26% + #FFFFFF 74%，sRGB 逐通道混合>" # 品牌交互禁用
       "--color-line1-1": "<生成实际色值：--color-brand1-6 3% + #EBEBEB 97%，sRGB 逐通道混合>" # theme-gray；弱边界、表格分隔、图表辅助线
       "--color-line1-2": "<生成实际色值：--color-brand1-6 4% + #DDDDDD 96%，sRGB 逐通道混合>" # theme-gray；输入与按钮常规边框
-      "--color-fill1-1": "<生成实际色值：--color-brand1-6 1% + #FAFAFA 99%，sRGB 逐通道混合>" # theme-gray；比 fill1-2 更浅的品牌微染输入表面与中性悬停填充
+      "--color-fill1-1": "<生成实际色值：--color-brand1-6 1% + #FAFAFA 99%，sRGB 逐通道混合>" # theme-gray；品牌微染中性悬停与次级操作底，编辑输入另用透明底
       "--color-fill1-2": "<生成实际色值：--color-brand1-6 2% + #F5F5F5 98%，sRGB 逐通道混合>" # theme-gray；按下、选中、分段控件底面
       "--color-fill1-3": "<生成实际色值：--color-brand1-6 3% + #E9E9E9 97%，sRGB 逐通道混合>" # theme-gray；较重填充、骨架和进度轨道
       "--color-fill1-5": "#FFFFFF" # neutral-gray；下拉、浮层、气泡、抽屉、弹窗与图表读数
@@ -105,12 +121,12 @@ tokens:
     rounded:
       "--corner-zero": 0px # 拼接表格与贴边分隔
       "--corner-1": 4px # 小徽标、条形图端角
-      "--corner-2": 8px # 输入、按钮、菜单项和分段选项
+      "--corner-2": 8px # 输入、按钮和分段选项；菜单使用专属圆角
       "--corner-3": 10px # 下拉、气泡、弹窗外轮廓
       "--corner-4": 12px # 图形图标盒、局部实体卡片
       "--corner-5": 16px # 一级面板、横幅与抽屉外轮廓
-      "--corner-circle": "var(--corner-2)" # 等宽高头像、图例圆点
-      "--corner-semicircle": 500px # 开关轨道、进度圆头；不作为普通按钮默认圆角
+      "--corner-circle": "500px" # 圆头像与等宽高圆标；实际半径受组件尺寸限制
+      "--corner-semicircle": "var(--corner-3)" # 轨道与工具端角；不再作为通用胶囊半径
     shadow:
       "--shadow-1": "0px 2px 4px 0px rgba(0, 0, 0, 0.12)"
       "--shadow-2": "0px 4px 20px -1px rgba(0, 0, 0, 0.16)"
@@ -176,23 +192,21 @@ tokens:
 | 图表读数浮卡                                 | `--color-fill1-5`；标签用 `--color-text1-10`，数值用主文字色，图例点对应数据序列           | `--corner-3`，`--shadow-1`；不继承深色横幅表面                           |
 | 短提示 Tooltip                               | `--color-fill1-10` 配 `--color-text1-5`                                                    | `--corner-3`，保持固定深底浅字，与白色数据浮卡区分                       |
 
-局部轻抬起表面采用弱阴影 `0 2px 4px rgba(0,0,0,0.06)`，仅用于自绘导航选中项、已有身份卡和分段控件的当前项，不扩展至所有面板。`--shadow-3` 保留为完整平台档位，本主题无默认使用对象。深色横幅是内容强调表面，不代表内容区进入深色模式，周围输入继续使用品牌微染近白面，覆盖层保持白色。
+局部轻抬起表面采用弱阴影 `0 2px 4px rgba(0,0,0,0.06)`，用于已有身份卡和分段控件的当前项；原生导航当前项按专属 Token 使用 `--shadow-1`，不扩展至所有面板。`--shadow-3` 保留为完整平台档位，本主题无默认使用对象。深色横幅是内容强调表面，不代表内容区进入深色模式，周围编辑输入保持透明底，承接所在容器，只读字段使用固定冷灰底，覆盖层保持白色。
+
+菜单下拉以弱分隔色绘制 1px 外框；账户菜单边框沿用气泡表面角色，保持低对比轮廓。这是原生菜单的局部规则，不要求所有内容容器使用同样的边框。
 
 ### 2.2 应用导航
 
-浅灰导航托起白色选中菜单，搜索和分组使用轻量层次，菜单形状与内容按钮、输入保持一致。
+固定冷灰 Shell 托起白色当前菜单与白色搜索框。普通菜单使用说明前景，当前文字关联品牌主色，selected 采用 `--shadow-1` 轻阴影。高度、圆角及项间留白分别消费专属导航 Token。
 
-常驻导航优先沿用平台原始样式，通过主题文字、背景与字重区分状态。菜单 border、box-shadow 是可选覆盖，没有明确用途就不声明；不为了统一风格给每项加框或投影。普通入口融入同一侧栏，按连续目录组织；分组靠留白与文字层级，不把导航复制成输入框、独立按钮或卡片堆叠。内容卡片、主按钮和表单可以使用更强的形状与材质，同一主题不意味着所有组件装饰强度相同。业务确有触控或特殊展示需求时，在本 design.md 调整并验收，不在运行时限制项目自定义值。
+侧栏四边内距、品牌图尺寸和品牌文字色使用各自 Token。搜索与菜单间保留 `--pod-nav-search-menu-gap`，搜索圆角与菜单一致。导航 placeholder 与图标的浅灰值需核对辨识度，正文输入不沿用这组导航前景。
 
-菜单圆角可通过 --pod-nav-menu-item-radius 与内容层级配套。只有明确需要自定义边界时才声明 --pod-nav-menu-item-border、--pod-nav-menu-item-hover-border、--pod-nav-menu-item-selected-border，并检查状态切换不引起文字跳动；省略时保留平台原始表现。
+侧栏搜索下方保留 12px 局部间距，搜索圆角与菜单圆角配套；顶部容器若采用独立形状，必须补齐其高度、内距与底面的实际绑定，未声明变量不能视为已生效。
 
-导航与应用框架、表单、自定义页面和详情页共用设计语言。先按业务入口安排菜单、分组、搜索、品牌区与常用操作，再一起确定导航与正文的明暗、表面、字体、边界、圆角和密度。平台导航使用真实页面菜单；自绘导航按同一套导航 Token 实现。导航外观属于这份完整应用主题，颜色、三态边框、圆角、阴影与表单、详情和自定义页面一起设计。业务决定入口组织、操作频率与交互需求；主题决定这些需求的视觉表达。主色只是颜色角色之一，辅助色和材质色可以独立存在；仅显式 var 引用建立联动，不按主色批量染色。项目更换配色时，回到同一份 design.md 成组调整实际受影响的 Token，并核对五类界面的整体搭配。
+平台导航使用真实页面菜单，业务决定分组与入口，主题定义文字、底面、形状与状态。普通、hover 与 selected 的前景和背景按 navigation Token 成组消费；顶部与侧栏切换保持尺寸稳定，选中优先于 hover。已有品牌区、搜索和折叠操作保留真实能力，不为造型增加无功能入口。
 
-导航底色使用 --pod-shell-theme-bg-color；普通、悬停和选中文字分别使用 --pod-nav-item-text-color、--pod-nav-item-text-hover-color、--pod-nav-item-text-selected-color；悬停和选中背景使用 --pod-nav-menu-bg-hover-color、--pod-nav-menu-bg-selected-color。图标跟随对应文字状态，当前入口同时用背景或字重表达。
-
-菜单高度、圆角与间距使用 --pod-nav-menu-item-height、--pod-nav-menu-item-radius、--pod-nav-menu-gap；搜索、品牌区、分组和操作优先沿用平台已有的变量绑定，navigation 分组只声明本主题需要覆盖的差异。弹出菜单的底色、文字与搜索状态成组配套，导航与内容可以分别选择明暗。选中项通常沿用平台样式；仅需额外位置标记时才声明 --pod-nav-menu-item-selected-shadow，显式 none 用于有意关闭阴影。省略时不生成额外 box-shadow 规则；该 Token 独立于导航明暗。菜单高度、文字行高、内距和框架留白一起调整，给外阴影、长标题与键盘焦点留出空间。
-
-桌面检查菜单、搜索、选中态与表单的协调；折叠后保留可识别图标和入口名称；窄屏保持菜单可展开、当前页面可定位、键盘焦点可见。提交、编辑、详情与自定义页都沿用这一导航设计。
+菜单边框、圆角与选中阴影属于原生导航的主题覆盖，自绘导航也沿用同一角色。折叠及窄屏保留入口名称、当前项和键盘焦点，长标题不能被固定高度裁掉。弹出菜单需按自己的背景核对文字，不直接复制侧栏前景。
 
 ### 2.3 页面标题与操作
 
@@ -220,7 +234,7 @@ tokens:
 
 页面外边距使用 `--s-6` 或 `--s-8`，主要区块间距使用 `--s-4` 或 `--s-5`；面板内边距使用 `--s-5` 或 `--s-6`。标题与主体之间使用 `--s-5` 或 `--s-6`，文字、图标与辅助标签之间使用 `--s-2`。内容较多时可收紧到相邻档位，不能通过缩小全局字体提高密度。实际列数、宽度、面板高度和等高对象在逐页方案中明确。
 
-圆角按用途区分：连续拼接用 `--corner-zero`，小徽标和柱形端角用 `--corner-1`，按钮、输入和菜单项用 `--corner-2`，覆盖层用 `--corner-3`，较大的图标盒和实体展示卡用 `--corner-4`，一级面板与横幅用 `--corner-5`。头像、事件底圆用 `--corner-circle`，开关轨道和进度圆头用 `--corner-semicircle`。普通按钮不采用胶囊外形。
+圆角按用途区分：连续拼接用 `--corner-zero`，小徽标和柱形端角用 `--corner-1`，按钮和输入用 `--corner-2`，菜单项用专属 `--corner-3` 引用，覆盖层用 `--corner-3`，较大的图标盒和实体展示卡用 `--corner-4`，一级面板与横幅用 `--corner-5`。头像、事件底圆用 `--corner-circle`，开关轨道和进度圆头用 `--corner-semicircle`。普通按钮不采用胶囊外形。
 
 ### 2.5 色彩、图标与点缀
 
@@ -252,13 +266,15 @@ tokens:
 
 ### 输入、范围工具与分段控件
 
-输入默认表面使用 `--color-fill1-1`，使用比 `--color-fill1-2` 更浅的品牌微染填充，不引用卡片或 pop-up 的纯白背景。高度采用 `--s-8` 至 `--s-10` 三档，边框用 `--color-line1-2`，圆角用 `--corner-2`，placeholder 用 `--color-text1-10`。搜索图标在输入内左侧，快捷键提示只有在功能真正实现时出现，不复制截图中的键位作为装饰。
+编辑输入消费 `--input-bg-color` 透明底，承接所在容器，只读框使用固定冷灰；两者不随品牌微染填充变化，覆盖层保持独立。高度采用 `--s-8` 至 `--s-10` 三档，边框用 `--color-line1-2`，圆角用 `--corner-2`，placeholder 用 `--color-text1-10`。搜索图标在输入内左侧，快捷键提示只有在功能真正实现时出现，不复制截图中的键位作为装饰。
 
 日期范围与预设合并时共享控件高度与外轮廓，拼接内角直角，中间用一条细边线隔开。普通筛选控件不强行增加同类拼接结构。
 
 分段控件以 `--color-fill1-2` 为整体浅底，当前项为白色中性表面、轻边界和局部弱阴影，其他项仅呈次级文字。选中项圆角使用 `--corner-2`，不使用深色或明亮强调实底填满。该形式仅用于同一数据或视图的互斥切换。
 
 ### 表格、活动记录与小型状态
+
+原生数据管理操作区使用 8px 内距、`--corner-4` 外角和 1px 表格边框色，与表格间按卡片间距留白。表格删除单元格及表头伪元素纵线，保留横线；原生卡片用 `--pod-card-border` 弱细框。详情外衬为固定冷灰 Shell，内容保持白面。
 
 表格正文使用 `--pod-table-cell-color`，通过 `var(--pod-card-bg-color)` 跟随内容面板。表头同样保持白面，文字用 `--color-text1-10`；默认只有横向分隔线，没有斑马纹、竖向网格或高饱和表头。表格所在面板的标题与工具区在上方，表头与正文沿一致列轴对齐。
 
@@ -288,11 +304,11 @@ tokens:
 | Error / warning / success / info | 沿用平台既有语义色，配文字和必要图标；输入结构保持稳定，不用数据序列色冒充状态                                                         |
 | Loading / empty                  | 骨架采用 `--color-fill1-3`；空态以简短说明和已有可用操作呈现，不以假数值或装饰图表填充                                                 |
 
-开关开启可使用主色或其可读的派生档，关闭用中性轨道；轨道用 `--corner-semicircle`，滑块保持圆形。状态变化以约 120–180ms 的颜色与透明度过渡为主（推断），不默认弹跳或持续动画。输入错误、键盘焦点、禁用和加载等未展示状态为按本主题推导的实现规则。
+开关开启可使用主色或其可读的派生档，关闭用中性轨道；轨道沿用 `--corner-semicircle` 的控件端角，滑块用 `--corner-circle` 保持圆形。状态变化以约 120–180ms 的颜色与透明度过渡为主（推断），不默认弹跳或持续动画。输入错误、键盘焦点、禁用和加载等未展示状态为按本主题推导的实现规则。
 
 ### 表单组件与版式结构
 
-原生表单与详情通过 appearance.native-form明确接入本主题：输入基础面使用 --color-fill1-1，边界使用 --color-line1-2，控件和只读数据框使用 --corner-2；焦点使用品牌交互角色。表单主面延续页面画布，操作底栏使用卡片表面与 --corner-5，详情保持正文前景与控件密度，不额外添加默认胶囊底栏或数据框阴影。项目有其他材质与状态需求时，在同一份 design.md 中调整对应 Token。
+原生表单与详情通过 appearance.native-form 接入主题：编辑字段消费 `--input-bg-color`，当前为透明底；只读框消费 `--pod-field-preview-bg-color`，当前为固定冷灰，两者不混用。透明输入承接容器背景，边界用 `--color-line1-2`，控件与只读框用 `--corner-2`，焦点沿用品牌交互角色。表单主面延续白色页面，标签到字段间距消费 `--form-top-label-margin-b`。底栏沿用卡片表面和既定圆角，详情保持正文前景和控件密度，不额外增加默认胶囊底栏或数据框阴影。
 
 表单使用与自定义页面相同的应用全局样式，字体、色彩、表面、边界、圆角、密度和状态延续本主题。表单支持在顶部、左侧、主体、右侧和字段之间组合 Tab/切换、按钮组/操作入口、图片/图形、状态区、标题与 `Divider`、`ColumnContainer`、辅助内容和业务字段。各组件承担导航、操作、视觉焦点、反馈、层级、节奏、装饰或采集作用。普通业务分组和章节分隔使用 `Divider`，横向字段组合使用 `ColumnContainer`。每张表单在项目 `design.md` 写清组件位置与作用、列比例、标签位置、字段与章节间距、底栏、详情延续和窄屏重排。
 
@@ -344,9 +360,9 @@ tokens:
 
 YAML 是变量值的唯一事实源，正文负责消费关系；已由变量承接的数值只在 YAML 维护。局部未变量化的线宽、阴影、纹理和动效参数已就近标明为推断。字体与间距保持固定基线，不按截图倍率放大。
 
-全局变量用于原生与自定义页面，本模板的扩展包含同源强调、焦点表面、数据色和数值排版；扩展的是使用角色，不是主题色来源。按两个分组递归读取以 `--` 开头的标量叶子，不把分组名称拼入变量名；平台基础与项目扩展均在主题中声明，可无环引用，并按实际设计补充变量。输入使用品牌微染填充，卡片与 pop-up 保持独立的白色表面引用。
+全局变量用于原生与自定义页面，本模板的扩展包含同源强调、焦点表面、数据色和数值排版；扩展的是使用角色，不是主题色来源。按两个分组递归读取以 `--` 开头的标量叶子，不把分组名称拼入变量名；平台基础与项目扩展均在主题中声明，可无环引用，并按实际设计补充变量。编辑输入使用透明底，承接所在容器，只读字段与 Shell 使用固定冷灰；卡片与 pop-up 保留各自表面角色。
 
-导航具有独立状态职责，并通过已有主色引用跟随项目换色；原生导航使用六项开放颜色，自绘导航才应用菜单圆角和局部阴影。平台已有组件优先保留真实交互能力，在允许的样式接口内实现主题。未提供具体名称的平台状态变量只按语义对接，不虚构接口。
+导航具有独立状态职责，并通过已有主色引用跟随项目换色；原生导航同样应用第二部分的圆角、边框与局部阴影，自绘导航复用同一角色。平台已有组件优先保留真实交互能力，在允许的样式接口内实现主题。未提供具体名称的平台状态变量只按语义对接，不虚构接口。
 
 需求决定页面、功能和数据，平台约束决定可用能力，主题规定视觉表达。配方不能覆盖自然内容增长、数据方向与比较口径；没有对应内容可以完全不采用配方。
 
@@ -354,13 +370,15 @@ YAML 是变量值的唯一事实源，正文负责消费关系；已由变量承
 
 - 色彩来源：{{COLOR_SOURCE}}。
 - `{{PRIMARY_COLOR}}` 是唯一主色入口。用户已指定时直接采用；未指定时，由项目流程中的 AI 依据品牌信息与页面需求推导一次，并记录在色彩来源中。模板不回填固定深青，也不把截图中的翠绿、蓝灰作为其他主色。参考图提供视觉关系，不覆盖项目已确定的主色。
-- 品牌七档保留悬停、平台预留浅色、派生浅色、派生深色、主色、按下和禁用语义。深横幅、明亮操作、图标、带色中性灰与图表色均沿同一主色生成；语义变量可以多个，色相来源只有一个。
-- 派生只把主色或其上游派生值与黑、白、无彩灰混合。具体种子、基底、比例以 YAML 为准；不得加入第二个固定彩色基底，或为恢复截图颜色另选新主色。标准黑白、无彩灰及平台错误、警告、成功、信息状态不属于新增主题色。
+- 品牌七档保留悬停、平台预留浅色、派生浅色、派生深色、主色、按下和禁用语义。深横幅、明亮操作、图标、带色中性灰与图表色均沿同一主色生成；品牌强调由同一主色生成；Shell 与只读底的固定冷灰是独立材质，不扩展为第二组品牌强调。
+- 派生只把主色或其上游派生值与黑、白、无彩灰混合。具体种子、基底、比例以 YAML 为准；不得加入第二个固定彩色基底，或为恢复截图颜色另选新主色。标准黑白、无彩灰、固定冷灰框架与只读底及平台状态不属于新增品牌强调色。
 - sRGB 逐通道计算：`round(A通道 × A占比 + B通道 × B占比)`，通道范围 0–255，占比之和为 100%，输出六位十六进制；不采用线性光转换。先解析唯一主色，再按依赖顺序计算全局派生、页面派生及其交互状态。
 - 深色横幅、明亮操作及其文字沿用设计稿确定的配对；按 YAML 的固定比例从主色派生，保留原有明暗层次。白色叠加纹理继续按 alpha 与深底合成。
 - 导航悬停和选中文字使用各自的专用变量，按本模板 navTheme 配成一组；需要品牌强调时引用 `var(--color-brand1-6)`。
 - 主、次数据序列分别直接从主色计算深浅档，不引用动作的 hover、pressed 或 disabled 色。同一主色重算时，两条数据色与操作强调一起重算；序列仍保持独立图例与数据语义。近似色难以区分时用标注、描边或纹理补充，不能擅自引入新主题色。
 - 实例化时替换占位符、计算生成标记，并按消费者需要解析引用。对比度与系列辨识度在实际页面中核对；模板中的不同角色不能被理解为可分别挑选多个品牌色。
+
+主题交接时分别核对 YAML Token 与 CSS 选择器规则。Token 生成不能代替侧栏背景、搜索位置、顶部容器和原生表格的局部实现；重新生成可能重写导航形状块，维护工具全量构建也可能覆盖手写规则。当前配对 CSS 的这些覆盖需保留并核对，文档同步不代表生成和页面验收已完成。
 
 ### 项目页面设计
 
@@ -377,6 +395,8 @@ YAML 是变量值的唯一事实源，正文负责消费关系；已由变量承
 {{PAGE_APPLICATIONS}}
 
 ### 页面设计验收
+
+导航 placeholder 与图标借用禁用灰值，需核对实际辨识；正常搜索内容和正文说明不能表达为禁用。
 
 以下用于后续实际页面验收，尚未渲染时保持未勾选。
 

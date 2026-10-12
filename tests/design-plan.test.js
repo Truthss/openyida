@@ -559,7 +559,7 @@ describe('design-plan materialize', () => {
 
   test('rejects a selected theme path that does not match the theme index', () => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
-    plan.visualStyle.forUser.selectedTheme.templatePath = 'templates/design-themes/dark-inset-hairline/design.md';
+    plan.visualStyle.forUser.selectedTheme.templatePath = 'templates/design-themes/dark-rail-signal-panels/design.md';
 
     expect(() => renderDesign(plan)).toThrow(/themeId 与 templatePath/);
   });
@@ -633,7 +633,7 @@ describe('design-plan materialize', () => {
 
   test.each([
     ['soft-outline-rhythm', 'light', 'dark'],
-    ['dark-inset-hairline', 'dark', 'light'],
+    ['dark-rail-signal-panels', 'dark', 'light'],
   ])('generated %s navigation derives its %s palette from the theme', (themeId, tone, staleTone) => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
     plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}/design.md` };
@@ -893,7 +893,7 @@ describe('design-plan materialize', () => {
 
   test.each([
     ['soft-inset-surfaces', 'light', 'dark'],
-    ['dark-inset-hairline', 'dark', 'light'],
+    ['dark-rail-signal-panels', 'dark', 'light'],
   ])('selected %s theme derives %s navigation and shares its palette across platform modes', (themeId, tone, staleTone) => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
     plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}/design.md` };
@@ -934,12 +934,12 @@ describe('design-plan materialize', () => {
   test('dark theme surfaces remain dark without an additional color mode', () => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
     delete plan.visualStyle.forUser.themeProfile;
-    plan.visualStyle.forUser.selectedTheme = { themeId: 'dark-inset-hairline', templatePath: 'templates/design-themes/dark-inset-hairline/design.md' };
+    plan.visualStyle.forUser.selectedTheme = { themeId: 'dark-rail-signal-panels', templatePath: 'templates/design-themes/dark-rail-signal-panels/design.md' };
     plan.execution = { ...plan.execution, appConfig: { navigationType: 'custom' } };
     const { readDesignTokens } = require('../lib/app/theme-from-design');
     const tokens = readDesignTokens(renderDesign(plan));
-    expect(tokens['--pod-page-bg-color']).toBe('#000000');
-    expect(tokens['--pod-card-bg-color']).toBe('#0E0E0E');
+    expect(tokens['--pod-page-bg-color']).toBe('#0A0A0A');
+    expect(tokens['--pod-card-bg-color']).toBe('#161616');
     expect(tokens['--color-white']).toBe('var(--pod-card-bg-color)');
   });
 
@@ -956,7 +956,7 @@ describe('design-plan materialize', () => {
       'design-themes',
       'index.json'
     ), 'utf8'));
-    expect(themeIndex.themes.filter(theme => !theme.collection)).toHaveLength(14);
+    expect(themeIndex.themes.filter(theme => !theme.collection)).toHaveLength(13);
     expect(themeIndex.themes.some(theme => theme.themeId.startsWith('app-'))).toBe(false);
 
     for (const theme of themeIndex.themes.filter(item => item.mode !== 'creative')) {
@@ -1048,7 +1048,7 @@ describe('design-plan materialize', () => {
 
   test.each([
     ['soft-inset-surfaces', 'dark', 'light'],
-    ['dark-inset-hairline', 'light', 'dark'],
+    ['dark-rail-signal-panels', 'light', 'dark'],
   ])('%s ignores stale %s input and keeps its derived %s navigation palette', (themeId, staleTone, tone) => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
     plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}/design.md` };
@@ -1064,7 +1064,7 @@ describe('design-plan materialize', () => {
     expect(tokens['--pod-nav-item-text-selected-color']).toBe(sourceTokens['--pod-nav-item-text-selected-color']);
     expect(tokens['--pod-nav-menu-bg-hover-color']).not.toBe(tokens['--pod-shell-theme-bg-color']);
     expect(tokens['--pod-nav-menu-bg-selected-color']).not.toBe(tokens['--pod-nav-menu-bg-hover-color']);
-    expect(tokens['--pod-page-bg-color']).toBe(themeId === 'soft-inset-surfaces' ? '#FAFAFA' : '#000000');
+    expect(tokens['--pod-page-bg-color']).toBe(themeId === 'soft-inset-surfaces' ? '#FAFAFA' : '#0A0A0A');
     plan.visualStyle.tokens = { '--pod-nav-item-text-color': '#ABCDEF' };
     expect(readDesignTokens(renderDesign(plan))['--pod-nav-item-text-color']).toBe('#ABCDEF');
   });

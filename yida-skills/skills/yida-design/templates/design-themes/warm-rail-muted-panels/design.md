@@ -60,7 +60,7 @@ tokens:
       "--color-brand1-6": "{{PRIMARY_COLOR}}" # 唯一品牌种子；由项目输入与 {{COLOR_SOURCE}} 确定，不设固定兜底色
       "--color-brand1-9": "<生成实际色值：--color-brand1-6 76% + #000000 24%，sRGB 逐通道混合>" # 品牌交互按下
       "--color-brand1-10": "<生成实际色值：--color-brand1-6 26% + #FFFFFF 74%，sRGB 逐通道混合>" # 品牌交互禁用
-      "--color-line1-1": "<生成实际色值：--color-brand1-6 3% + #EFEFEF 97%，sRGB 逐通道混合>" # theme-gray；主题色微染弱边界
+      "--color-line1-1": "<生成实际色值：--color-brand1-6 3% + #E8E8E8 97%，sRGB 逐通道混合>" # theme-gray；主题色微染弱边界
       "--color-line1-2": "<生成实际色值：--color-brand1-6 4% + #E3E3E3 96%，sRGB 逐通道混合>" # theme-gray；主题色微染控件边界
       "--color-fill1-1": "<生成实际色值：--color-brand1-6 1% + #FCFCFC 99%，sRGB 逐通道混合>" # theme-gray；输入默认表面、中性悬停角色，比 fill1-2 更浅的品牌微染填充
       "--color-fill1-2": "<生成实际色值：--color-brand1-6 2% + #F7F7F7 98%，sRGB 逐通道混合>" # theme-gray；中性按下与选中的主题微染填充
@@ -154,6 +154,8 @@ tokens:
 ## 2. 页面视觉系统
 
 ### 2.1 表面、区块与层次
+
+弱分隔线 `--color-line1-1` 与填充色使用不同的灰阶基底，避免更换主色后因混色取整而与背景重合；常规边框继续使用较强的 `--color-line1-2`，维持两档边界层次。
 
 层次优先来自背景微差、边界与留白。局部阴影只提供轻微分离感，不让页面变成一组高悬卡片。以下线宽、阴影和图形局部尺寸属于实施推断，不把图片导出尺寸当作 CSS 尺寸。
 

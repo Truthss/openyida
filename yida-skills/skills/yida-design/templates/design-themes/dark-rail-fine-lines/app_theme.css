@@ -38,6 +38,7 @@
 .pod-premium.nav-theme-gray,
 :root {
   /* 品牌色与跨端桥接 */
+  /* brand */
   --color-brand1-1: <生成实际色值：--color-brand1-6 88% + #FFFFFF 12%，sRGB 逐通道混合>;
   --color-brand1-2: <生成实际色值：--color-brand1-6 12% + #FFFFFF 88%，sRGB 逐通道混合>;
   --color-brand1-3: <生成实际色值：--color-brand1-6 4% + #FFFFFF 96%，sRGB 逐通道混合>;
@@ -49,11 +50,12 @@
   --color-brand-2: var(--color-brand1-1);
   --color-brand-3: var(--color-brand1-6);
   --color-brand-4: var(--color-brand1-9);
+  --color-group: var(--color-brand1-6), var(--color-brand1-1), var(--color-brand1-5), var(--color-brand1-2), var(--color-brand1-9), var(--color-brand1-3);
 
   /* 边界、填充与文字颜色 */
   --color-line1-1: #EBEBEB;
   --color-line1-2: #E3E3E3;
-  --color-fill1-1: #FCFCFC;
+  --color-fill1-1: #F5F5F5;
   --color-fill1-2: #FAFAFA;
   --color-fill1-3: #F5F5F5;
   --color-fill1-5: #FFFFFF;
@@ -61,7 +63,7 @@
   --color-fill1-10: #262626;
   --color-text1-5: #FFFFFF;
   --color-text1-4: #1B1B1B;
-  --color-text1-10: #737373;
+  --color-text1-10: #707070;
   --color-text1-3: #666666;
   --color-text1-2: #B8B8B8;
   --color-text1-1: #DEDEDE;
@@ -125,13 +127,13 @@
   --pod-shell-bg-color-white: var(--pod-shell-theme-bg-color);
   --pod-shell-bg-color-gray: var(--pod-shell-theme-bg-color);
   --pod-shell-bg-color-dark: var(--pod-shell-theme-bg-color);
-  --pod-shell-padding: 4px;
+  --pod-shell-padding: 0px;
   --pod-shell-lshape-border-radius: 16px;
   --pod-shell-content-container-padding: 0px;
   --pod-shell-content-container-margin: 0px;
   --pod-shell-content-container-border: none;
   --pod-shell-content-container-bg-color: transparent;
-  --pod-shell-theme-bg-color: #1B1B1B;
+  --pod-shell-theme-bg-color: #FFFFFF;
 
   /* 页面容器 */
   --pod-page-surface-padding: 0px;
@@ -167,8 +169,7 @@
   --pod-nav-l-header-padding: 8px 16px;
   --pod-nav-l-aside-padding: 8px;
   --pod-nav-slide-aside-gap: 12px;
-  --pod-nav-slide-aside-padding: 8px 8px 8px
-    calc(8px - var(--pod-shell-padding, 4px));
+  --pod-nav-slide-aside-padding: 12px 12px 12px 12px;
   --pod-nav-slide-aside-collapsed-padding: 8px 12px 8px
     calc(12px - var(--pod-shell-padding, 4px));
   --pod-nav-slide-collapsed-menu-gap: 4px;
@@ -285,7 +286,7 @@
   --form-element-medium-corner: var(--corner-2);
   --form-element-medium-height: var(--s-8);
   --form-element-medium-font-size: var(--font-size-body-1);
-  --input-bg-color: var(--color-fill1-1);
+  --input-bg-color: transparent;
   --input-border-width: 1px;
   --input-border-color: var(--color-line1-2);
   --input-hover-border-color: var(--color-brand1-6);
@@ -296,6 +297,7 @@
   --form-top-label-margin-b: var(--s-2);
   --yida-help-tips-color: #878f95;
   --yida-divider-secondary-color: var(--color-brand1-2);
+  --input-hover-bg-color: var(--input-bg-color);
 
   /* 原生表单：详情只读字段 */
   --pod-detail-container-padding: 8px;
@@ -400,7 +402,8 @@
   --pod-mxl-gap-pad-margin: 20px;
   --pod-xxl-gap-pad-margin: 24px;
   --pod-full-raduis: var(--corner-semicircle);
-  --input-hover-bg-color: var(--input-bg-color);
+
+  /* 自定义页面扩展变量 */
   --oyd-page-bg: var(--pod-page-bg-color);
   --oyd-entity-ink: <生成实际色值：--color-brand1-6 26% + #1B1B1B 74%，sRGB 逐通道混合>;
   --oyd-data-series-primary: var(--color-brand1-6);
@@ -413,7 +416,6 @@
   --oyd-font-size-metric: 28px;
   --oyd-font-weight-metric: 500;
   --oyd-font-lineheight-metric: 1.2;
-  --color-group: var(--color-brand1-6), var(--color-brand1-1), var(--color-brand1-5), var(--color-brand1-2), var(--color-brand1-9), var(--color-brand1-3);
 }
 /* openyida-theme-tokens:end */
 
@@ -578,6 +580,14 @@ body.pod-premium .deep-web-full-wrapper .deep-full-content {
   background: var(--color-fill1-1);
 }
 
+/* menu 下拉 */ .next-menu.next-ver {
+  border: 1px solid var(--color-line1-1);
+}
+
+/* 头像内的 menu 下拉 */ .yida-nav-account-menu .base-info-pop-account-menu {
+  border: 1px solid var(--balloon-normal-color-bg);
+}
+
 /* 流程 - 提交弹窗 / 审批进度 */ .flow-steps {
   background: transparent !important;
   padding: 20px 0 10px 0 !important;
@@ -723,7 +733,7 @@ body.pod-premium .flow-steps .next-step-dot
 
 /* 表格视图外层：增加边框和圆角，不裁剪同层分页器。 */
 .pod-premium .new-data-manage #newDataManageTable {
-  border: 1px solid var(--table-border) !important;
+  border: 1px solid var(--color-line1-2) !important;
   border-radius: var(--corner-3) !important;
 }
 
@@ -753,4 +763,5 @@ body.pod-premium .flow-steps .next-step-dot
 .pod-premium .deep-shell-nav-tab-list .next-nav-item.next-selected {
   box-shadow: var(--pod-nav-menu-item-selected-shadow, none);
 }
+
 /* openyida-navigation-shape:end */
