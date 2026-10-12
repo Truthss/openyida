@@ -31,7 +31,8 @@ const MAX_UNPACKED_BYTES = 8000 * 1024;
 // Theme scope, brand-scale and palette validation add three runtime modules;
 // removing the application-styles/navigation-styles catalogs offsets two files.
 // App theme upgrades add two CLI modules and an independent skill with its migration guide.
-const MAX_ENTRY_COUNT = 610;
+// Group creation isolates icon persistence from the near-1000-line navigation module.
+const MAX_ENTRY_COUNT = 611;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [

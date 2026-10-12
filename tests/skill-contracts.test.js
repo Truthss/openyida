@@ -1420,7 +1420,7 @@ describe('OpenYida skill contracts', () => {
       },
     };
 
-    expect(presets).toContain('主题选择先根据行业、品牌、业务情绪和视觉目标做创意判断');
+    expect(presets).toContain('从任务、品牌与视觉证据比较候选并复核第一直觉');
     expect(presets).toContain('不能套用“科技=蓝、宠物=橙、法律=蓝”这类行业刻板配色');
     expect(presets).toContain('本文件是 `yida-design` 确定 OpenYida 应用主题色阶和 token 修改清单时使用的参考');
     expect(presets).toContain('## 色盘参考清单');
@@ -1564,8 +1564,15 @@ describe('OpenYida skill contracts', () => {
     expect(visualEngine).toContain('默认浅色内容画布');
     expect(pageUiux).toContain('工作台、门户、列表、详情、普通看板和数据大屏默认都是浅底 / light 模式');
     expect(pageUiux).toContain('只有用户明确说暗色/深色/夜间/高对比时才用深色沉浸');
-    expect(dashboardTheme).toContain('白底商务风（DEFAULT）');
-    expect(dashboardTheme).toContain('用户只说“做个看板 / 驾驶舱 / 数据大屏”，不说暗色或夜间，默认用 **主题 3（白底商务）**');
+    expect(dashboardTheme).toContain('默认浅色内容画布');
+    expect(dashboardTheme).toContain('../../yida-design/references/theme-selection.md');
+    expect(dashboardTheme).not.toContain('命中即止');
+    expect(dashboardTheme).not.toContain('白底商务风（DEFAULT）');
+    expect(dashboardTheme).not.toMatch(/primary:\s*['"]#/);
+    const selection = readSkill('yida-skills/skills/yida-design/references/theme-selection.md');
+    expect(selection).toContain('## 第一直觉复核');
+    expect(selection).toContain('不能三套都是同一蓝色底稿只换名称');
+    expect(selection).toContain('不强制淘汰首选');
     expect(dashboardTheme).not.toContain('深色紫蓝科技风（DEFAULT）');
     expect(chartSpec).toContain('大屏不等于暗色');
   });
