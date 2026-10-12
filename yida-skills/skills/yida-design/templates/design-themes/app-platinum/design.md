@@ -1,87 +1,88 @@
 ---
+schemaVersion: "1.0"
 name: "{{PROJECT_NAME}}"
-description: "稳定双列与合同摘要侧栏；铂灰细线、低圆角、均衡留白。适合合同、采购与商务审批。"
+description: "珍珠奶油白画布、轻香槟金焦点与暖银细线构成轻盈铂金商务界面；适合金融服务、客户经营、合同与专业审批。"
 themeId: "app-platinum"
 tokens:
   application-global:
     appearance:
       surfaces:
-        "--pod-app-root-bg-color": "#eef0ef"
-        "--pod-app-root-bg-image": "none"
-        "--pod-page-bg-color": "#eef0ef"
-        "--pod-card-bg-color": "#ffffff"
+        "--pod-app-root-bg-color": "#F7F3EC"
+        "--pod-app-root-bg-image": "radial-gradient(circle at 86% 2%, rgba(214, 190, 151, 0.16) 0%, rgba(214, 190, 151, 0) 36%), linear-gradient(135deg, #FFFDFC 0%, #F7F2E9 58%, #F3F4F5 100%)"
+        "--pod-page-bg-color": "#FBFAF7"
+        "--pod-card-bg-color": "#FFFFFF"
         "--pod-table-cell-color": "var(--pod-card-bg-color)"
       navigation:
-        "--pod-nav-sub-divider-color": "#B7C5C0"
-        "--pod-shell-theme-bg-color": "#E6ECEA"
-        "--pod-nav-item-text-color": "#35434B"
-        "--pod-nav-item-text-hover-color": "#24323A"
-        "--pod-nav-item-text-selected-color": "#F5F8F7"
-        "--pod-nav-menu-bg-hover-color": "#D6E0DD"
-        "--pod-nav-menu-bg-selected-color": "#354B51"
+        "--pod-nav-sub-divider-color": "#DDD2C2"
+        "--pod-shell-theme-bg-color": "#F6F1E8"
+        "--pod-nav-item-text-color": "#5A5147"
+        "--pod-nav-item-text-hover-color": "#312D28"
+        "--pod-nav-item-text-selected-color": "#3D3327"
+        "--pod-nav-menu-bg-hover-color": "#EEE3D1"
+        "--pod-nav-menu-bg-selected-color": "#D9C29A"
         "--pod-nav-menu-item-height": "38px"
         "--pod-nav-menu-item-radius": "6px"
         "--pod-nav-menu-item-selected-font-weight": "600"
         "--pod-nav-menu-gap": "6px"
-        "--pod-nav-popup-bg-color": "var(--pod-shell-theme-bg-color)"
+        "--pod-nav-popup-bg-color": "#FCF9F3"
       native-form:
         "--form-element-medium-corner": "6px"
         "--form-element-medium-height": "38px"
         "--form-element-medium-font-size": "14px"
-        "--input-bg-color": "#ffffff"
+        "--input-bg-color": "#FFFFFF"
         "--input-border-width": "1px"
-        "--input-border-color": "#d1d8d7"
-        "--input-hover-border-color": "var(--color-brand1-6)"
-        "--input-focus-border-color": "var(--color-brand1-6)"
+        "--input-border-color": "#DED4C7"
+        "--input-hover-border-color": "#9C835F"
+        "--input-focus-border-color": "#897253"
         "--input-hover-bg-color": "#ffffff"
         "--input-focus-bg-color": "#ffffff"
-        "--pod-form-label-color": "var(--color-text1-4)"
+        "--pod-form-label-color": "#312D28"
         "--form-top-label-margin-b": "8px"
         "--yida-divider-secondary-color": "var(--color-brand1-2)"
-        "--yida-form-content-bgcolor": "#ffffff"
-        "--pod-page-content-max-width": "1000px"
+        "--yida-form-content-bgcolor": "#FFFFFF"
+        "--pod-page-content-max-width": "1120px"
         "--pod-page-border-radius": "6px"
-        "--pod-page-footer-bg-color": "#ffffff"
+        "--pod-page-footer-bg-color": "#FFFFFF"
         "--pod-page-footer-border-radius": "6px"
         "--pod-sticky-footer-box-shadow": "none"
-        "--pod-formView-stickyFooter-bg-color": "#eef0ef"
+        "--pod-formView-stickyFooter-bg-color": "#FBFAF7"
         "--pod-formView-stickyFooter-box-shadow": "none"
         "--pod-formView-stickyFooter-border": "none"
-        "--pod-formView-stickyFooter-border-top": "1px solid #d1d8d7"
+        "--pod-formView-stickyFooter-border-top": "1px solid #EAE2D7"
         "--pod-formView-stickyFooter-height": "56px"
         "--pod-formView-stickyFooter-bottom": "8px"
         "--pod-field-preview-min-height": "32px"
         "--pod-field-preview-padding": "8px 12px"
         "--pod-field-preview-gap": "4px"
-        "--pod-field-preview-bg-color": "#ffffff"
-        "--pod-field-preview-border-radius": "6px"
+        "--pod-field-preview-bg-color": "#FAF7F2"
+        "--pod-field-preview-border-radius": "4px"
         "--pod-field-preview-indicator-color": "var(--color-fill1-3)"
         "--pod-field-preview-shadow": "none"
-        "--pod-field-preview-text-color": "var(--color-text1-4)"
+        "--pod-field-preview-text-color": "#312D28"
         "--pod-field-preview-line-height": "20px"
     colors:
       "--color-white": "var(--pod-card-bg-color)"
-      "--color-brand1-1": "<生成实际色值：--color-brand1-6 88% + #FFFFFF 12%，sRGB 逐通道混合>"
-      "--color-brand1-2": "<生成实际色值：--color-brand1-6 12% + #FFFFFF 88%，sRGB 逐通道混合>"
-      "--color-brand1-3": "<生成实际色值：--color-brand1-6 4% + #FFFFFF 96%，sRGB 逐通道混合>"
-      "--color-brand1-5": "<生成实际色值：--color-brand1-6 38% + #171717 62%，sRGB 逐通道混合>"
-      "--color-brand1-6": "{{PRIMARY_COLOR}}"
-      "--color-brand1-9": "<生成实际色值：--color-brand1-6 76% + #000000 24%，sRGB 逐通道混合>"
-      "--color-brand1-10": "<生成实际色值：--color-brand1-6 26% + #202020 74%，sRGB 逐通道混合>"
-      "--color-line1-1": "<生成实际色值：--color-brand1-6 8% + #D6D6D6 92%，sRGB 逐通道混合>"
-      "--color-line1-2": "<生成实际色值：--color-brand1-6 8% + #D6D6D6 92%，sRGB 逐通道混合>"
-      "--color-fill1-1": "<生成实际色值：--color-brand1-6 4% + #F8F8F8 96%，sRGB 逐通道混合>"
-      "--color-fill1-2": "<生成实际色值：--color-brand1-6 4% + #F0F0F0 96%，sRGB 逐通道混合>"
-      "--color-fill1-3": "<生成实际色值：--color-brand1-6 8% + #D6D6D6 92%，sRGB 逐通道混合>"
-      "--color-fill1-5": "#ffffff"
+      "--color-brand1-1": "#9C835F"
+      "--color-brand1-2": "#F1E8D7"
+      "--color-brand1-3": "#FBF8F1"
+      "--color-brand1-5": "#5F4D38"
+      "--color-brand1-6": "#897253"
+      "--color-brand1-9": "#755E41"
+      "--color-brand1-10": "#C9B99D"
+      "--color-line1-1": "#EAE2D7"
+      "--color-line1-2": "#DED4C7"
+      "--color-fill1-1": "#FAF7F2"
+      "--color-fill1-2": "#F2ECE3"
+      "--color-fill1-3": "#E4DACB"
+      "--color-fill1-5": "#FFFFFF"
       "--color-fill1-6": "var(--color-text1-3)" # 弱图标与辅助操作 glyph 前景色
       "--color-fill1-10": "#262626"
       "--color-text1-5": "#FFFFFF"
-      "--color-text1-4": "<生成实际色值：--color-brand1-6 4% + #383838 96%，sRGB 逐通道混合>"
-      "--color-text1-10": "var(--color-text1-3)"
-      "--color-text1-3": "<生成实际色值：--color-brand1-6 4% + #646464 96%，sRGB 逐通道混合>"
-      "--color-text1-2": "<生成实际色值：--color-brand1-6 4% + #868686 96%，sRGB 逐通道混合>"
-      "--color-text1-1": "<生成实际色值：--color-brand1-6 4% + #D6D6D6 96%，sRGB 逐通道混合>"
+      "--color-text1-4": "#312D28"
+      "--color-text1-10": "#292622"
+      "--color-text1-3": "#6F675E"
+      "--color-text1-2": "#8E857A"
+      "--color-text1-1": "#D8D0C6"
     typography:
       "--font-family-base": "Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
       "--font-size-subhead": "18px"
@@ -112,11 +113,11 @@ tokens:
       "--s-10": "40px"
     rounded:
       "--corner-zero": "0px"
-      "--corner-1": "6px"
-      "--corner-2": "6px"
-      "--corner-3": "6px"
-      "--corner-4": "6px"
-      "--corner-5": "6px"
+      "--corner-1": "4px"
+      "--corner-2": "4px"
+      "--corner-3": "4px"
+      "--corner-4": "4px"
+      "--corner-5": "4px"
       "--corner-circle": "50%"
       "--corner-semicircle": "500px"
     shadow:
@@ -124,28 +125,58 @@ tokens:
       "--shadow-2": "0px 4px 20px -1px rgba(0, 0, 0, 0.16)"
       "--shadow-3": "0px 10px 28px -2px rgba(0, 0, 0, 0.24)"
   custom-page:
-    "--oyd-page-bg": "var(--pod-page-bg-color)"
-    "--oyd-surface": "var(--pod-card-bg-color)"
+    "--oyd-page-bg": "#FBFAF7"
+    "--oyd-surface": "#FFFFFF"
     "--oyd-canvas-image": "var(--pod-app-root-bg-image)"
-    "--oyd-ink": "var(--color-text1-4)"
-    "--oyd-border": "var(--color-line1-2)"
-    "--oyd-accent": "var(--color-brand1-6)"
+    "--oyd-ink": "#312D28"
+    "--oyd-border": "#DED4C7"
+    "--oyd-accent": "#897253"
     "--oyd-radius": "6px"
-    "--oyd-content-width": "1000px"
-    "--oyd-content-padding": "36px"
-    "--oyd-field-gap": "24px"
-    "--oyd-section-gap": "48px"
-    "--oyd-heading-font": "var(--font-family-base)"
-    "--oyd-heading-size": "32px"
+    "--oyd-content-width": "1320px"
+    "--oyd-content-padding": "32px"
+    "--oyd-field-gap": "20px"
+    "--oyd-section-gap": "28px"
+    "--oyd-heading-font": "Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    "--oyd-heading-size": "30px"
     "--oyd-rule-style": "solid"
-    "--oyd-layout-columns": "minmax(0, 6fr) minmax(0, 6fr)"
-    "--oyd-surface-shadow": "none"
+    "--oyd-layout-columns": "minmax(0, 12fr)"
+    "--oyd-surface-shadow": "0 8px 28px rgba(92, 77, 56, 0.05)"
+    project-overrides:
+      "--oyd-platinum": "#C3A56F"
+      "--oyd-gold-deep": "#765F40"
+      "--oyd-gold-soft": "#F1E5CF"
+      "--oyd-gold-wash": "#FBF7EF"
 applicationStyle:
   recipe: "application-style-v1"
   mode: "template"
 themeProfile:
+  name: "雾金珍珠 · 铂金商务"
+  themeColor: "#897253"
+  themeColorSource: "theme-default"
   contentTone: "light"
   navTheme: "light"
+iconSystem:
+  library: "lucide-react"
+  mappings:
+    customer: "UsersRound"
+    organization: "Building2"
+    application: "BriefcaseBusiness"
+    product: "Boxes"
+    riskLevel: "Gauge"
+    compliance: "ShieldCheck"
+    riskException: "ShieldAlert"
+    amount: "CircleDollarSign"
+    analytics: "BarChart3"
+    schedule: "CalendarClock"
+    refresh: "RefreshCw"
+    empty: "Inbox"
+  colorPairs:
+    - name: "default"
+      foreground: "var(--color-text1-3)"
+      background: "var(--color-fill1-1)"
+    - name: "brand"
+      foreground: "var(--oyd-gold-deep)"
+      background: "var(--oyd-gold-soft)"
 ---
 # {{PROJECT_NAME}} design.md
 
@@ -153,9 +184,9 @@ themeProfile:
 
 **铂金商务**
 
-稳定双列与合同摘要侧栏；铂灰细线、低圆角、均衡留白。适合合同、采购与商务审批。
+珍珠奶油白画布、轻香槟金焦点与暖银细线构成轻盈、精致且清晰的商务界面。适合金融服务、客户经营、合同、采购与专业审批。
 
-导航、应用框架、自定义页面、表单、编辑与详情共用这一套视觉语言。业务内容来自 PRD，按实际行业、页面标题和数据设计。色彩来源：{{COLOR_SOURCE}}；主色由 {{PRIMARY_COLOR}} 实例化，品牌悬停色按同源占位说明生成；模板不固定项目品牌色。
+导航、应用框架、自定义页面、表单、编辑与详情共用这一套视觉语言。业务内容来自 PRD，按实际行业、页面标题和数据设计。默认主题色为雾面灰金 `#897253`；需要品牌化时成组调整整套色阶，并重新检查导航、正文、图表与状态语义的对比度。
 
 ## 2. 页面视觉系统
 
@@ -163,11 +194,11 @@ themeProfile:
 
 正文、字段标签和详情值使用内容文字色，说明与占位文字使用辅助文字色；品牌色用于局部操作和数据强调，不把整页文字染成主色。
 
-稳定双列与合同摘要侧栏。铂灰细线、低圆角、均衡留白。画布消费 --oyd-page-bg，内容消费 --oyd-surface，文字消费 --oyd-ink，边界消费 --oyd-border。内容最大宽度 --oyd-content-width，内距 --oyd-content-padding；宽屏不放大成空白 KPI 卡。
+珍珠奶油白画布以极轻的雾金与银白渐变建立空气感，内容面保持纯净珍珠白；暖银细线、6px 容器圆角和克制底影建立层次。画布消费 --oyd-page-bg，内容消费 --oyd-surface，文字消费 --oyd-ink，边界消费 --oyd-border。内容最大宽度 --oyd-content-width，内距 --oyd-content-padding；宽屏不放大成空白 KPI 卡。
 
 ### 2.2 应用导航
 
-铂灰导航配低圆角菜单与均衡行距，青灰细线连接合同工作区，当前入口以深灰底浅字形成稳重焦点。
+雾面香槟侧栏配低圆角菜单与均衡行距，暖银细线连接珍珠白工作区；当前入口使用浅香槟金底与深灰金文字，保持清晰但不过重。
 
 常驻导航优先沿用平台原始样式，通过主题文字、背景与字重区分状态。菜单 border、box-shadow 是可选覆盖，没有明确用途就不声明；不为了统一风格给每项加框或投影。普通入口融入同一侧栏，按连续目录组织；分组靠留白与文字层级，不把导航复制成输入框、独立按钮或卡片堆叠。内容卡片、主按钮和表单可以使用更强的形状与材质，同一主题不意味着所有组件装饰强度相同。业务确有触控或特殊展示需求时，在本 design.md 调整并验收，不在运行时限制项目自定义值。
 
@@ -187,11 +218,11 @@ themeProfile:
 
 ### 2.4 布局和移动端
 
-桌面业务工作区：稳定双列与合同摘要侧栏。短字段建议 6:6，字段间距 24px、章节间距 48px、内容内距 36px；这些是项目起点，必须在每张表单设计中按组件树和字段长度确定。窄屏与半屏抽屉按实际可用宽度重排顶部、左侧、主体、右侧及字段间区域，侧栏组件可移到主体前后或折叠为合适的窄屏结构；长文本、附件和子表通常占整行。不把屏幕断点当 iframe 宽度，不用 fixed 卡片截断自然内容。
+桌面业务工作区使用 12 栏弹性网格；主次区域可按 8:4、7:5 或 6:6 组织，但所有列必须使用 `minmax(0, …)`，卡片与子项设置 `min-width: 0`。内容区小于 960px 时双卡或主辅区域切为单栏；小于 650px 时四项明细重排为两列，关键标签、数值和占比不得隐藏。短字段建议 6:6，字段间距 20px、章节间距 28px、内容内距 32px；长文本、附件和子表整行。不把视口断点误当 iframe 可用宽度，不用 fixed 卡片截断自然内容。
 
 ### 2.5 自定义页面设计
 
-自定义页面以 稳定双列与合同摘要侧栏 组织真实业务内容，以 克制抬头与细线章节 建立标题与首屏焦点，并用 铂灰细线、低圆角、均衡留白 统一页面表面。页面根据 PRD 安排标题与操作区、状态摘要、筛选、主要内容、上下文信息和反馈区；列表、表格、图表、详情抽屉和表单入口只在业务需要时出现。宽度、列数、高度和滚动方式按内容增长确定，移动端按阅读与操作顺序重排。
+自定义页面以行动优先级组织真实业务内容，以克制抬头与细线章节建立标题和首屏焦点，并用珍珠白表面、暖银细线、低圆角与轻雾金焦点统一页面。页面根据 PRD 安排标题与操作区、状态摘要、筛选、主要内容、上下文信息和反馈区；列表、表格、图表、详情抽屉和表单入口只在业务需要时出现。宽度、列数、高度和滚动方式按内容增长确定，移动端按阅读与操作顺序重排。
 
 每个自定义页面逐页写清页面任务、首屏焦点、布局、表面与组件、主操作、状态、响应式和验收。状态覆盖加载、空、错误和无权限反馈及恢复动作；页面使用全局主题 token 落实当前风格，并为键盘焦点、纯图标按钮、非颜色状态表达和 reduced motion 提供可执行规则。
 
@@ -215,6 +246,12 @@ themeProfile:
 
 默认/hover/focus 同时配置边界和表面；键盘焦点保持可见。错误、警告、禁用沿用平台独立语义，不能被通用强调色覆盖；不得以全局 input 或 .next-* 强制改所有控件。应用 CSS 配置表单、编辑和详情的视觉样式。
 
+### 图表与图标
+
+图表按信息关系选择不同表达，不连续堆叠同一种横向进度条。阶段推进优先使用流程轴或阶梯分布，客户层级适合环图或分段构成，风险等级适合从低到高的 100% 光谱带并同步展示等级、数量和占比。图例、标签和数值必须保留，不能只依赖颜色传达信息。
+
+应用内统一使用 Lucide 线性图标，并按 frontmatter 的 `iconSystem.mappings` 复用。风险等级使用 `Gauge`，合规校验使用 `ShieldCheck`，仅真实异常使用 `ShieldAlert`；同一图标不跨越不同业务语义复用。图标前景与底盒分别取色，默认组合使用 `iconSystem.colorPairs`，并检查描边和相邻底色的对比度。
+
 ### 底栏与对齐
 
 普通提交按钮区使用 --pod-page-footer-bg-color 与 --pod-sticky-footer-box-shadow；数据管理、抽屉详情外层使用 --pod-formView-stickyFooter-bg-color 与 --pod-formView-stickyFooter-box-shadow。本风格按钮区跟随内容面，外层跟随画布，不叠加双阴影。底栏与正文共同消费 --pod-page-content-max-width。导航、无导航、管理内嵌、抽屉、移动端分别检查，不能全局覆盖 stickyFooter 的宽度与定位。
@@ -223,7 +260,7 @@ themeProfile:
 
 ### 材质与信息密度
 
-铂灰细线、低圆角、均衡留白。稳定双列与合同摘要侧栏。图表、图片、时间线只为真实内容出现；没有媒体时以排版与章节构图成立，不为“丰富”捏造指标或入口。
+珍珠奶油白、暖银细线、低圆角和轻香槟金焦点共同形成铂金商务质感。图表、图片、时间线只为真实内容出现；风险结构可使用由浅至深的雾金光谱带，阶段与分层使用不同图形语法。没有媒体时以排版与章节构图成立，不为“丰富”捏造指标或入口。
 
 ## 5. 项目应用与调整规则
 
@@ -239,3 +276,5 @@ YAML Token 是唯一数值源。沿用当前主题的构图与材质语言，按
 - [ ] 正文与底栏对齐；四类容器与移动端无横向溢出。
 - [ ] 文字/焦点/禁用/错误在实际背景上可辨，长说明与表格未裁切。
 - [ ] 表单布局与逐页设计一致；组件、字段、主题和响应式规则均已核对。
+- [ ] 双卡区域以实际内容宽度为准在 960px 内切为单栏；四项明细在 650px 内重排为两列，所有网格子项无横向溢出。
+- [ ] 阶段、分层和风险图表使用与信息关系匹配的不同表达；图标映射在导航、卡片、图表标题和状态提示中保持一致。
