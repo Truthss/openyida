@@ -17,8 +17,8 @@ const navigationColorNames = [
 ];
 
 const themeTones = {
-  'soft-inset-surfaces': 'light',
-  'dark-inset-hairline': 'dark',
+  'soft-inset-surfaces': 'dark',
+  'dark-rail-signal-panels': 'dark',
   'dark-rail-fine-lines': 'dark',
 };
 
@@ -59,7 +59,7 @@ test.each(['light', 'dark'])('a single %s navigation override leaves platform bi
   const defaults = cascade(template, tone);
   const active = cascade(css, tone);
   expect(active['--pod-nav-menu-item-radius']).toBe('19px');
-  for (const name of ['--pod-nav-search-text-color', '--pod-nav-search-border-active-color', '--pod-nav-logo-bg', '--pod-page-header-bg-color', ...navigationColorNames]) {
+  for (const name of ['--pod-nav-search-text-color', '--pod-nav-search-border-active-color', '--pod-nav-logo-bg', ...navigationColorNames]) {
     expect(active[name]).toBe(defaults[name]);
   }
   expect(css).not.toContain(': undefined;');
@@ -123,7 +123,7 @@ test('removing borders drops the managed layout overrides and retains project CS
 
 test.each([
   ['soft-inset-surfaces', 'light'],
-  ['dark-inset-hairline', 'dark'],
+  ['dark-rail-signal-panels', 'dark'],
 ])('%s uses its %s design palette in every platform mode', (themeId, tone) => {
   const markdown = design(themeId);
   const tokens = readDesignTokens(markdown);
@@ -143,7 +143,7 @@ test.each([
   expect(applyDesignTokens(css, markdown, markdown)).toBe(css);
 });
 
-test.each(['soft-inset-surfaces', 'dark-inset-hairline'])('%s preserves template navigation and content despite stale caller tone', themeId => {
+test.each(['soft-inset-surfaces', 'dark-rail-signal-panels'])('%s preserves template navigation and content despite stale caller tone', themeId => {
   const lightNavigation = design(themeId, '#6F4E37', 'light');
   const darkNavigation = design(themeId, '#6F4E37', 'dark');
   const lightMetadata = parseDesignDocument(lightNavigation).metadata;
@@ -162,7 +162,7 @@ test.each(['soft-inset-surfaces', 'dark-inset-hairline'])('%s preserves template
 });
 
 test.each(['light', 'dark'])('Fast documents infer %s navigation from their shell without Plan metadata', tone => {
-  const theme = tone === 'dark' ? 'dark-inset-hairline' : 'soft-inset-surfaces';
+  const theme = tone === 'dark' ? 'dark-rail-signal-panels' : 'soft-inset-surfaces';
   const markdown = design(theme).replace(/^themeProfile:.*\n/m, '');
   const css = applyDesignTokens(template, markdown);
   const active = cascade(css, tone);
@@ -172,7 +172,7 @@ test.each(['light', 'dark'])('Fast documents infer %s navigation from their shel
 
 test('changing the design updates every mode and preserves unrelated custom CSS', () => {
   const previous = design('soft-inset-surfaces');
-  const next = design('dark-inset-hairline');
+  const next = design('dark-rail-signal-panels');
   const custom = '\n.local-detail { padding: 7px; }\n';
   const css = applyDesignTokens(applyDesignTokens(template, previous) + custom, next, previous);
   for (const name of navigationColorNames) {
@@ -206,6 +206,9 @@ test('extended navigation tokens share one palette across modes and update incre
   };
   const withTokens = (markdown, values) => {
     const metadata = parseDesignDocument(markdown).metadata;
+    if (values['--pod-page-header-bg-color']) {
+      delete metadata.tokens['application-global'].appearance.surfaces['--pod-page-header-bg-color'];
+    }
     Object.assign(metadata.tokens['application-global'].appearance.navigation, values);
     return `---\n${Object.entries(metadata).map(([key, value]) => `${key}: ${JSON.stringify(value)}`).join('\n')}\n---\n${markdown.split(/\n---\n/).slice(1).join('\n---\n')}`;
   };
@@ -306,7 +309,7 @@ test('project overrides replace case measurements in the navigation prose and ge
 
 
 test('one declaration block covers root, light/dark and legacy shell mode nodes', () => {
-  const css = applyDesignTokens(template, design('dark-inset-hairline'));
+  const css = applyDesignTokens(template, design('dark-rail-signal-panels'));
   const rules = topLevelRules(css).filter(rule => rule.selector.split(',').map(x => x.trim()).includes(':root'));
   expect(rules).toHaveLength(1);
   expect(rules[0].selector.split(',').map(x => x.trim())).toEqual(THEME_SELECTORS);
@@ -314,13 +317,13 @@ test('one declaration block covers root, light/dark and legacy shell mode nodes'
   expect(new Set(names).size).toBe(names.length);
   for (const nav of ['light', 'dark', 'white', 'gray']) {
     for (const tone of ['light', 'dark']) {
-      expect(cascade(css, nav, tone)).toMatchObject(readDesignTokens(design('dark-inset-hairline')));
+      expect(cascade(css, nav, tone)).toMatchObject(readDesignTokens(design('dark-rail-signal-panels')));
     }
   }
 });
 
 test('upgrades legacy mode blocks without a token delta and preserves local and conditional rules', () => {
-  const previous = design('dark-inset-hairline');
+  const previous = design('dark-rail-signal-panels');
   const rootBody = applyDesignTokens(template, previous).match(/^:root\s*\{([\s\S]*?)^\}/m)[1];
   const custom = '\n.project-only { color: #123456; }\n@media (min-width: 900px) { :root { --project-wide: 1; } }';
   const old = `:root {${rootBody}\n}

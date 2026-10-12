@@ -24,6 +24,7 @@ module.exports = {
     repair_page_bindings: 'Ordnen Sie pageApplications in visual.json den customPageDetails in business.json eins zu eins zu, ohne native Formulare. visualMemoryApplications muss ein Array sein; verwenden Sie bei Bedarf []. Behalten Sie den Entwurf, korrigieren Sie die angegebenen Felder und wiederholen Sie den ursprünglichen Befehl. Löschen Sie das Verzeichnis nicht und führen Sie init nicht erneut aus.',
   },
   design_document: {
+    confirmation_snapshot_conflict: 'Confirmation snapshot {0} conflicts with its content address; the file was not overwritten.',
     update_conflict: "{0} ({1}) kann nicht aktualisiert werden: Der Inhalt weicht von der letzten generierten Version ab. Gleichen Sie die lokale Änderung in diesem Abschnitt mit den Plandaten ab und versuchen Sie es erneut. Es wurden keine Dateien gespeichert.",
     theme_css_invalid: 'Das Theme-CSS enthält nahe Zeile {0} eine nicht geschlossene oder falsch gepaarte Klammer, Zeichenfolge oder einen Kommentar. Bitte korrigieren und erneut versuchen.',
     theme_css_unresolved: 'Das Theme-CSS-Token {0} enthält noch einen Platzhalter oder eine Anweisung zur Farberzeugung. Vervollständigen Sie design.md, führen Sie openyida sample yida-design app-theme --design-file <design.md> --output <app-theme.css> aus und laden Sie die erzeugte Datei hoch. Nur PRIMARY_COLOR zu ersetzen reicht nicht aus.',
@@ -793,6 +794,7 @@ module.exports = {
     no_login: '  ❌ Unable to get valid login credentials'
   },
   create_form: {
+    create_readback_mismatch: 'The created form does not contain all requested fields. Recover this existing form ID; do not create another form.',
     divider_type_invalid: 'Nicht unterstützter Trennlinienstil: {0}. Unterstützte Werte: {1}',
     batch_invalid: 'Ungültiger Formularstapel; Fehlerdetails prüfen',
     create_title: '  yida-create-form-page - Yida Form Page Creation Tool',
@@ -948,6 +950,7 @@ module.exports = {
     failed: '  ❌ Erstellung fehlgeschlagen: {0}'
   },
   common: {
+    auth_identity_changed: 'Authentication identity changed during preflight; no write was issued.',
     http_status: '  HTTP status: {0}',
     http_response: '  HTTP response: {0}',
     response_body: '  Response body: {0}',

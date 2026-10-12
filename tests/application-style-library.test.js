@@ -49,9 +49,9 @@ function planFor(themeId) {
   return plan;
 }
 
-test('catalog exposes fourteen presets and creative while eighteen style bundles remain preserved', () => {
+test('catalog exposes thirteen presets and creative while eighteen style bundles remain preserved', () => {
   expect(styles).toHaveLength(18);
-  expect(catalog().themes).toHaveLength(14);
+  expect(catalog().themes).toHaveLength(13);
   expect(catalog().themes.some(theme => theme.themeId.startsWith('app-'))).toBe(false);
   expect(catalog().creativeOption).toMatchObject({ themeId: 'free-creative', mode: 'creative' });
   expect(catalog().themes.some(theme => theme.mode === 'creative')).toBe(false);
@@ -66,7 +66,7 @@ test('theme catalog separates content tone from navigation tone', () => {
   expect(themeIndex.find(theme => theme.themeId === 'dark-rail-fine-lines')).toMatchObject({
     contentTone: 'light', navTheme: 'dark',
   });
-  expect(themeIndex.find(theme => theme.themeId === 'dark-inset-hairline')).toMatchObject({
+  expect(themeIndex.find(theme => theme.themeId === 'dark-rail-signal-panels')).toMatchObject({
     contentTone: 'dark', navTheme: 'dark',
   });
   expect(themeIndex.find(theme => theme.themeId === 'free-creative')).not.toHaveProperty('contentTone');
@@ -92,6 +92,13 @@ test('every named theme has its own complete platform navigation design and read
     const source = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8');
     const navigation = parseDesignDocument(source).metadata.tokens['application-global'].appearance.navigation;
     expect(theme.navigationSummary).toEqual(expect.any(String));
+    if (theme.cssSource === 'authored') {
+      expect(source).toContain('## 2.2 应用导航');
+      const css = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.cssTemplatePath), 'utf8');
+      NAVIGATION_COLOR_TOKENS.forEach(token => expect(css).toContain(`${token}:`));
+      palettes.add(NAVIGATION_COLOR_TOKENS.map(token => navigation[token]).join('|'));
+      return;
+    }
     expect(source).toContain(theme.navigationSummary);
     expect(source).toContain('导航与应用框架、表单、自定义页面和详情页共用设计语言');
     expect(source).not.toContain('原生导航仅配置上述开放颜色');
@@ -119,7 +126,7 @@ test('every named theme has its own complete platform navigation design and read
     // Navigation overlays have their own surface, including dark-nav/light-content themes.
     expect(navigation['--pod-nav-popup-bg-color']).toBe('var(--pod-shell-theme-bg-color)');
   });
-  expect(palettes.size).toBe(14);
+  expect(palettes.size).toBe(13);
 });
 
 test('application preset navigation text is readable in ordinary, hover and selected states', () => {
@@ -218,8 +225,8 @@ test('all nineteen application styles define detail read-only field tokens and g
   });
 });
 
-test('all fourteen shared themes include native form layout and style guidance', () => {
-  expect(sharedThemes).toHaveLength(14);
+test('all thirteen shared themes include native form layout and style guidance', () => {
+  expect(sharedThemes).toHaveLength(13);
   sharedThemes.forEach(theme => {
     const design = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8');
     expect(design).toContain('### 表单组件与版式结构');
@@ -356,7 +363,7 @@ test('historical theme paths resolve to the same design and mismatched paths rem
   expect(renderDesign(plan)).toBe(current);
   const normalized = normalizePlan({ ...plan, schemaVersion: '2.0' });
   expect(normalized.visualStyle.internal.selectedTheme.templatePath).toBe('templates/design-themes/soft-inset-surfaces/design.md');
-  plan.visualStyle.forUser.selectedTheme.templatePath = 'templates/design-themes/dark-inset-hairline.md';
+  plan.visualStyle.forUser.selectedTheme.templatePath = 'templates/design-themes/dark-rail-signal-panels.md';
   expect(() => renderDesign(plan)).toThrow();
 });
 

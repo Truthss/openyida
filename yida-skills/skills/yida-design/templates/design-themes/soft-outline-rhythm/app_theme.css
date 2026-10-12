@@ -84,6 +84,9 @@
   --font-size-caption: 12px;
   --font-weight-caption: 400;
   --font-lineheight-caption: 1.4;
+  --font-size-metric-primary: 24px;
+  --font-weight-metric-primary: 600;
+  --font-lineheight-metric-primary: 1.2;
 
   /* 间距 */
   --s-1: 4px;
@@ -285,7 +288,7 @@
   --form-element-medium-corner: var(--corner-2);
   --form-element-medium-height: var(--s-8);
   --form-element-medium-font-size: var(--font-size-body-1);
-  --input-bg-color: var(--color-fill1-1);
+  --input-bg-color: transparent;
   --input-border-width: 1px;
   --input-border-color: var(--color-line1-2);
   --input-hover-border-color: var(--color-brand1-6);
@@ -296,6 +299,7 @@
   --form-top-label-margin-b: var(--s-2);
   --yida-help-tips-color: #878f95;
   --yida-divider-secondary-color: var(--color-brand1-2);
+  --input-hover-bg-color: var(--input-bg-color);
 
   /* 原生表单：详情只读字段 */
   --pod-detail-container-padding: 8px;
@@ -400,19 +404,19 @@
   --pod-mxl-gap-pad-margin: 20px;
   --pod-xxl-gap-pad-margin: 24px;
   --pod-full-raduis: var(--corner-semicircle);
-  --input-hover-bg-color: var(--input-bg-color);
+
+  /* 自定义页面扩展变量 */
   --oyd-page-bg: var(--pod-page-bg-color);
   --oyd-on-brand-light: #FFFFFF;
-  --chart-series-main: <生成实际色值：--color-brand1-6 72% + #171717 28%，sRGB 逐通道混合>;
+  --chart-series-main: #28603F;
   --chart-series-comparison: #00B8A9;
   --chart-category-accent: #F2A000;
-  --chart-heat-step-1: <生成实际色值：--color-brand1-6 14% + #FFFFFF 86%，sRGB 逐通道混合>;
-  --chart-heat-step-2: <生成实际色值：--color-brand1-6 32% + #FFFFFF 68%，sRGB 逐通道混合>;
-  --chart-heat-step-3: <生成实际色值：--color-brand1-6 58% + #FFFFFF 42%，sRGB 逐通道混合>;
+  --chart-heat-step-1: #E2EDE6;
+  --chart-heat-step-2: #BCD5C7;
+  --chart-heat-step-3: #86B499;
   --font-size-metric-primary: 24px;
   --font-weight-metric-primary: 600;
   --font-lineheight-metric-primary: 1.2;
-  --color-group: var(--color-brand1-6), var(--color-brand1-1), var(--color-brand1-5), var(--color-brand1-2), var(--color-brand1-9), var(--color-brand1-3);
 }
 /* openyida-theme-tokens:end */
 
@@ -427,7 +431,7 @@ body.pod-premium.page-type-submit .vc-shell-without-nav.pod-premium {
 
 /* 原生详情属于内容区，独立页面和抽屉内都沿用内容画布与前景。 */
 body.pod-premium.page-type-detail .vc-shell-without-nav.pod-premium {
-  background-color: var(--pod-page-bg-color, var(--color-white, #fff));
+  background-color: var(--pod-shell-theme-bg-color, var(--color-white, #fff));
   --pod-theme-text-color: var(--color-text1-4, #202020);
 }
 
@@ -575,6 +579,14 @@ body.pod-premium .deep-web-full-wrapper .deep-full-content {
 
 /* 数据管理页-调整视图 */ .new-data-manage .data-manage-operaion .operation-icon-wrap.save-button .operation-action {
   background: var(--color-fill1-1);
+}
+
+/* menu 下拉 */ .next-menu.next-ver {
+  border: 1px solid var(--color-line1-1);
+}
+
+/* 头像内的 menu 下拉 */ .yida-nav-account-menu .base-info-pop-account-menu {
+  border: 1px solid var(--balloon-normal-color-bg);
 }
 
 /* 流程 - 提交弹窗 / 审批进度 */ .flow-steps {
@@ -746,3 +758,102 @@ body.pod-premium .flow-steps .next-step-dot
 .pod-premium .view-detail-footer .next-tabs-bar.detail-segmented-tabs {
   background: var(--color-fill1-1,);
 }
+
+/* openyida-navigation-shape:start */
+/*
+ * Side/L navigation and top tabs share the same theme-defined menu shape.
+ * Border widths stay constant between states; border-box keeps row height stable.
+ */
+.pod-premium .deep-shell-nav-menu-content .next-nav-item,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item {
+  box-sizing: border-box;
+  border-radius: var(--pod-nav-menu-item-radius, 8px);
+  border: var(--pod-nav-menu-item-border, none);
+}
+
+/*
+ * Native inner rows also have a fixed minimum height. Fit them inside the
+ * bordered item instead of letting a thick outline push content below it.
+ */
+.vc-shell.pod-premium
+  .next-nav.next-line.next-ver.deep-shell-nav-menu-content:not(.next-icon-only)
+  .next-nav-item.next-menu-item
+  > .next-menu-item-inner,
+.vc-shell.pod-premium
+  .next-shell-header
+  .next-shell-navigation
+  .next-nav.next-line.next-hoz.deep-shell-nav-tab-list
+  .next-nav-item.next-menu-item
+  > .next-menu-item-inner {
+  box-sizing: border-box;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+.pod-premium .deep-shell-nav-menu-content .next-nav-item:hover,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item:hover {
+  border: var(--pod-nav-menu-item-hover-border, var(--pod-nav-menu-item-border, none));
+}
+
+/*
+ * Platform top tabs use transparent backgrounds and zero margin !important.
+ * Match the header scope so theme surfaces and spacing can reveal their shape.
+ */
+.vc-shell.pod-premium
+  .next-shell-header
+  .next-shell-navigation
+  .next-nav.next-line.next-hoz.deep-shell-nav-tab-list
+  .next-nav-item.next-menu-item {
+  margin-inline: calc(var(--pod-nav-menu-gap, 8px) / 2) !important;
+}
+
+.vc-shell.pod-premium
+  .next-shell-header
+  .next-shell-navigation
+  .next-nav.next-line.next-hoz.deep-shell-nav-tab-list
+  .next-nav-item.next-menu-item:hover {
+  background: var(--pod-nav-menu-bg-hover-color) !important;
+  color: var(--pod-nav-item-text-hover-color) !important;
+}
+
+.vc-shell.pod-premium
+  .next-shell-header
+  .next-shell-navigation
+  .next-nav.next-line.next-hoz.deep-shell-nav-tab-list
+  .next-nav-item.next-menu-item.next-selected {
+  background: var(--pod-nav-menu-bg-selected-color) !important;
+  color: var(--pod-nav-item-text-selected-color) !important;
+}
+
+/* 整体 top-nav：浮岛样式外层 tab 容器，与上方 .next-nav-item 形态规则配套。 */
+.vc-shell.pod-premium.nav-type-hoz
+  .next-shell-header
+  .next-shell-navigation
+  .next-nav.next-line.next-hoz {
+  height: calc(var(--pod-nav-top-tab-container-height) + 0px);
+  padding: var(--pod-nav-top-tab-container-padding);
+  border-radius: var(--pod-nav-menu-item-radius);
+  background: var(--pod-nav-top-tab-container-bg);
+}
+
+/* 顶部 tab 单项常态背景：不覆盖 hover / selected。 */
+.vc-shell.pod-premium.nav-type-hoz
+  .next-shell-header
+  .next-shell-navigation
+  .next-nav.next-line.next-hoz
+  .next-nav-item.next-menu-item {
+  background: var(--pod-nav-menu-bg-color, transparent) !important;
+}
+
+/* Selected state wins over hover, retaining the original inset-shadow marker. */
+.pod-premium .deep-shell-nav-menu-content .next-nav-item.next-selected,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item.next-selected {
+  border: var(--pod-nav-menu-item-selected-border, var(--pod-nav-menu-item-border, none));
+  box-shadow: var(--pod-nav-menu-item-selected-shadow, none);
+}
+
+/* 导航搜索下边距 */
+.pod-premium .vc-shell.nav-type-slide .deep-shell-ver-nav-search-wrap {
+  margin-bottom: 8px;
+}
+/* openyida-navigation-shape:end */

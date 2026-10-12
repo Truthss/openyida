@@ -52,7 +52,7 @@
 
   /* 边界、填充与文字颜色 */
   --color-line1-1: #202020;
-  --color-line1-2: #303030;
+  --color-line1-2: #555555;
   --color-fill1-1: #111111;
   --color-fill1-2: #242424;
   --color-fill1-3: #333333;
@@ -285,7 +285,7 @@
   --form-element-medium-corner: var(--corner-2);
   --form-element-medium-height: var(--s-9);
   --form-element-medium-font-size: var(--font-size-body-1);
-  --input-bg-color: var(--color-fill1-1);
+  --input-bg-color: transparent;
   --input-border-width: 1px;
   --input-border-color: var(--color-line1-2);
   --input-hover-border-color: var(--color-brand1-6);
@@ -407,12 +407,15 @@
   --oyd-bright-action-bg: #E6E6E6;
   --oyd-on-bright-color: #111111;
   --oyd-chart-series-1: #9278D0;
-  --oyd-chart-series-2: <生成实际色值：--color-brand1-6 70% + #A0A0A0 30%，sRGB 逐通道混合>;
+  --oyd-chart-series-2: #7092E3;
   --oyd-chart-series-3: #8A8A8A;
+  --oyd-risk-color: #FF6B6B;
+  --oyd-warning-color: #E8B04A;
+  --oyd-success-color: #59C78B;
   --oyd-font-size-metric: 28px;
   --oyd-font-weight-metric: 500;
   --oyd-font-lineheight-metric: 1.2;
-  --color-group: var(--color-brand1-6), var(--color-brand1-1), var(--color-brand1-5), var(--color-brand1-2), var(--color-brand1-9), var(--color-brand1-3);
+  --color-group: #5B8CFF, #6F9AFF, #31436F, #0B111F, #456AC2, #F8FAFF;
 }
 /* openyida-theme-tokens:end */
 
@@ -575,6 +578,14 @@ body.pod-premium .deep-web-full-wrapper .deep-full-content {
 
 /* 数据管理页-调整视图 */ .new-data-manage .data-manage-operaion .operation-icon-wrap.save-button .operation-action {
   background: var(--color-fill1-1);
+}
+
+/* menu 下拉 */ .next-menu.next-ver {
+  border: 1px solid var(--color-line1-1);
+}
+
+/* 头像内的 menu 下拉 */ .yida-nav-account-menu .base-info-pop-account-menu {
+  border: 1px solid var(--balloon-normal-color-bg);
 }
 
 /* 流程 - 提交弹窗 / 审批进度 */ .flow-steps {

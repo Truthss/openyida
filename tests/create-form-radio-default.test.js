@@ -1,9 +1,9 @@
 'use strict';
 const { _private: { buildFormSchema } } = require('../lib/app/create-form');
 function findRadio(value) {
-  if (!value || typeof value !== 'object') return null;
-  if (value.componentName === 'RadioField' && value.props) return value;
-  for (const child of Object.values(value)) { const found = findRadio(child); if (found) return found; }
+  if (!value || typeof value !== 'object') {return null;}
+  if (value.componentName === 'RadioField' && value.props) {return value;}
+  for (const child of Object.values(value)) { const found = findRadio(child); if (found) {return found;} }
   return null;
 }
 function build(dataSource) {

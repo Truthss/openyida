@@ -559,7 +559,7 @@ describe('design-plan materialize', () => {
 
   test('rejects a selected theme path that does not match the theme index', () => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
-    plan.visualStyle.forUser.selectedTheme.templatePath = 'templates/design-themes/dark-inset-hairline/design.md';
+    plan.visualStyle.forUser.selectedTheme.templatePath = 'templates/design-themes/dark-rail-signal-panels/design.md';
 
     expect(() => renderDesign(plan)).toThrow(/themeId 与 templatePath/);
   });
@@ -633,7 +633,7 @@ describe('design-plan materialize', () => {
 
   test.each([
     ['soft-outline-rhythm', 'light', 'dark'],
-    ['dark-inset-hairline', 'dark', 'light'],
+    ['dark-rail-signal-panels', 'dark', 'light'],
   ])('generated %s navigation derives its %s palette from the theme', (themeId, tone, staleTone) => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
     plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}/design.md` };
@@ -659,19 +659,19 @@ describe('design-plan materialize', () => {
       selectionReason: '高频流程处理需要稳定入口，深色导航加强模块边界。',
     };
     plan.visualStyle.tokens = {
-      '--pod-shell-theme-bg-color': '#EDF4FF', '--pod-nav-item-text-color': '#183A6B',
-      '--pod-nav-menu-bg-selected-color': '#BAD7FF',
+      '--pod-shell-theme-bg-color': '#183A6B', '--pod-nav-item-text-color': '#FFFFFF',
+      '--pod-nav-item-text-selected-color': '#183A6B', '--pod-nav-menu-bg-selected-color': '#BAD7FF',
     };
     const design = renderDesign(plan);
     const section = design.split('### 2.2 应用导航')[1].split('### 2.3 ')[0];
     expect(section).toContain('布局依据：高频流程处理需要稳定入口');
-    expect(section).toContain('明暗依据：沿用已选应用风格的导航明暗，当前为浅色');
-    expect(section).toContain('| 导航背景 | --pod-shell-theme-bg-color | #EDF4FF |');
+    expect(section).toContain('明暗依据：沿用已选应用风格的导航明暗，当前为深色');
+    expect(section).toContain('| 导航背景 | --pod-shell-theme-bg-color | #183A6B |');
     expect(section).not.toContain(theme.navigationSummary);
     expect(section).not.toContain('深色导航');
     expect(section).not.toContain('当前模板使用');
-    expect(section).toContain('图标跟随对应文字状态');
-    expect(section).toContain('键盘焦点可见');
+    expect(section).toContain('文字、placeholder 与图标各有独立角色');
+    expect(section).toContain('保留入口名称、当前项和键盘焦点');
     expect(readDesignTokens(design)).toMatchObject(plan.visualStyle.tokens);
     expect(validateDesignDocument(design).success).toBe(true);
   });
@@ -719,7 +719,7 @@ describe('design-plan materialize', () => {
       expect(pageBody).toContain(`- ${label}：`);
     }
     const projectChapter = body.slice(body.indexOf('## 5. 项目应用与调整规则'));
-    expect(projectChapter).toContain('独立金色／粉色分类和平台状态色保留各自用途');
+    expect(projectChapter).toContain('绿／金／粉分类、阶段色和图标底盒保持固定');
     expect(projectChapter).toContain('### 主题表达验收');
     expect(projectChapter).not.toMatch(/sRGB|round\(|themeId|生成标记|### 项目页面设计|每页包含以下结果/);
     expect(validateDesignDocument(markdown, { prdMarkdown: fs.readFileSync(result.outputs.prd, 'utf8') }).success).toBe(true);
@@ -808,12 +808,12 @@ describe('design-plan materialize', () => {
     expect(prd).not.toContain('主题模板：');
     expect(compactDesign).toContain('- 视觉方向：稳重流程型');
     expect(compactDesign).toContain('- 导航类型：平台侧边导航');
-    expect(compactDesign).toContain('- 导航明暗：浅色');
+    expect(compactDesign).toContain('- 导航明暗：深色');
     expect(compactDesign).toContain('- 导航背景：`--pod-shell-theme-bg-color`');
     expect(compactDesign).not.toMatch(/^themeId:/m);
     expect(compactDesign).not.toContain('soft-inset-surfaces');
     expect(html).toContain('<strong>导航结构：</strong>平台侧边导航');
-    expect(html).toContain('<strong>导航明暗：</strong>浅色');
+    expect(html).toContain('<strong>导航明暗：</strong>深色');
     expect(html).toContain('高频流程处理需要稳定入口，深色导航加强模块边界。');
   });
 
@@ -844,7 +844,7 @@ describe('design-plan materialize', () => {
     const template = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-design/references/theme/app-custom-theme-template.css'), 'utf8');
     const design = renderDesign(plan);
     const green = readDesignTokens(design);
-    expect(green['--pod-shell-theme-bg-color']).toBe('#F7F7F7');
+    expect(green['--pod-shell-theme-bg-color']).toBe('#181c1f');
     expect(green['--pod-page-bg-color']).toBe('#FAFAFA');
     expect(green['--pod-card-bg-color']).toBe('#FFFFFF');
     expect(green['--pod-card-border']).toBeUndefined();
@@ -852,7 +852,7 @@ describe('design-plan materialize', () => {
     expect(green['--color-text1-4']).toBe('#303030');
     expect(green['--color-text1-10']).toBe('#606060');
     expect(green['--color-text1-3']).toBe('#666666');
-    expect(applyDesignTokens(template, design)).toContain('--pod-shell-theme-bg-color: #F7F7F7;');
+    expect(applyDesignTokens(template, design)).toContain('--pod-shell-theme-bg-color: #181c1f;');
     expect(applyDesignTokens(template, design)).toContain('--pod-page-bg-color: #FAFAFA;');
     plan.visualStyle.forUser.colorStrategy.primaryColor = '#6F4E37';
     const brown = readDesignTokens(renderDesign(plan));
@@ -877,7 +877,7 @@ describe('design-plan materialize', () => {
       const template = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-design/references/theme/app-custom-theme-template.css'), 'utf8');
       const design = renderDesign(plan);
       const tokens = readDesignTokens(design);
-      expect(tokens['--pod-shell-theme-bg-color']).toBe('#F7F7F7');
+      expect(tokens['--pod-shell-theme-bg-color']).toBe('#181c1f');
       expect(tokens['--pod-page-bg-color']).toBe('#FAFAFA');
       expect(applyDesignTokens(template, design)).toContain('--pod-page-bg-color: #FAFAFA;');
       plan.visualStyle.tokens = {
@@ -892,8 +892,8 @@ describe('design-plan materialize', () => {
   );
 
   test.each([
-    ['soft-inset-surfaces', 'light', 'dark'],
-    ['dark-inset-hairline', 'dark', 'light'],
+    ['soft-inset-surfaces', 'dark', 'light'],
+    ['dark-rail-signal-panels', 'dark', 'light'],
   ])('selected %s theme derives %s navigation and shares its palette across platform modes', (themeId, tone, staleTone) => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
     plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}/design.md` };
@@ -934,12 +934,12 @@ describe('design-plan materialize', () => {
   test('dark theme surfaces remain dark without an additional color mode', () => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
     delete plan.visualStyle.forUser.themeProfile;
-    plan.visualStyle.forUser.selectedTheme = { themeId: 'dark-inset-hairline', templatePath: 'templates/design-themes/dark-inset-hairline/design.md' };
+    plan.visualStyle.forUser.selectedTheme = { themeId: 'dark-rail-signal-panels', templatePath: 'templates/design-themes/dark-rail-signal-panels/design.md' };
     plan.execution = { ...plan.execution, appConfig: { navigationType: 'custom' } };
     const { readDesignTokens } = require('../lib/app/theme-from-design');
     const tokens = readDesignTokens(renderDesign(plan));
-    expect(tokens['--pod-page-bg-color']).toBe('#000000');
-    expect(tokens['--pod-card-bg-color']).toBe('#0E0E0E');
+    expect(tokens['--pod-page-bg-color']).toBe('#0A0A0A');
+    expect(tokens['--pod-card-bg-color']).toBe('#161616');
     expect(tokens['--color-white']).toBe('var(--pod-card-bg-color)');
   });
 
@@ -956,7 +956,7 @@ describe('design-plan materialize', () => {
       'design-themes',
       'index.json'
     ), 'utf8'));
-    expect(themeIndex.themes.filter(theme => !theme.collection)).toHaveLength(14);
+    expect(themeIndex.themes.filter(theme => !theme.collection)).toHaveLength(13);
     expect(themeIndex.themes.some(theme => theme.themeId.startsWith('app-'))).toBe(false);
 
     for (const theme of themeIndex.themes.filter(item => item.mode !== 'creative')) {
@@ -1046,8 +1046,8 @@ describe('design-plan materialize', () => {
   });
 
   test.each([
-    ['soft-inset-surfaces', 'dark', 'light'],
-    ['dark-inset-hairline', 'light', 'dark'],
+    ['soft-inset-surfaces', 'light', 'dark'],
+    ['dark-rail-signal-panels', 'light', 'dark'],
   ])('%s ignores stale %s input and keeps its derived %s navigation palette', (themeId, staleTone, tone) => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
     plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}/design.md` };
@@ -1063,9 +1063,26 @@ describe('design-plan materialize', () => {
     expect(tokens['--pod-nav-item-text-selected-color']).toBe(sourceTokens['--pod-nav-item-text-selected-color']);
     expect(tokens['--pod-nav-menu-bg-hover-color']).not.toBe(tokens['--pod-shell-theme-bg-color']);
     expect(tokens['--pod-nav-menu-bg-selected-color']).not.toBe(tokens['--pod-nav-menu-bg-hover-color']);
-    expect(tokens['--pod-page-bg-color']).toBe(themeId === 'soft-inset-surfaces' ? '#FAFAFA' : '#000000');
+    expect(tokens['--pod-page-bg-color']).toBe(themeId === 'soft-inset-surfaces' ? '#FAFAFA' : '#0A0A0A');
     plan.visualStyle.tokens = { '--pod-nav-item-text-color': '#ABCDEF' };
     expect(readDesignTokens(renderDesign(plan))['--pod-nav-item-text-color']).toBe('#ABCDEF');
+  });
+
+  test('confirmation attachments retain exact HTML after patches and local edits', () => {
+    const input = path.join(tempDir, 'build-plan.json');
+    fs.copyFileSync(FIXTURE, input);
+    const first = materialize(input);
+    const oldPath = first.confirmation.attachments[0].path;
+    const original = fs.readFileSync(oldPath, 'utf8');
+    const second = patchPlan(input, ['visualStyle.forUser.colorStrategy.primaryColor=#8B5E3C'], { materialize: true });
+    expect(second.confirmation.attachments[0].path).not.toBe(oldPath);
+    expect(fs.readFileSync(oldPath, 'utf8')).toBe(original);
+    const canonical = path.join(tempDir, 'build-plan.html');
+    fs.appendFileSync(canonical, '\n<!-- local note -->');
+    const third = materialize(input);
+    expect(fs.readFileSync(third.confirmation.attachments[0].path, 'utf8')).toContain('<!-- local note -->');
+    expect(third.confirmation.attachments[0].path).not.toBe(second.confirmation.attachments[0].path);
+    expect(fs.readFileSync(oldPath, 'utf8')).toBe(original);
   });
 
   test('semantic patch increments revision, invalidates confirmation, and rematerializes a color adjustment', () => {
@@ -1096,7 +1113,7 @@ describe('design-plan materialize', () => {
     expect(html).toContain('#8B5E3C');
   });
 
-  test('internal patches keep the current draft revision; only editing the presented version advances it', () => {
+  test('draft edits preserve revision; ready plans advance even without CLI presentation registration', () => {
     const input = path.join(tempDir, 'build-plan.json');
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
     plan.meta.revision = '1';
@@ -1104,18 +1121,18 @@ describe('design-plan materialize', () => {
     fs.writeFileSync(input, JSON.stringify(plan));
     const patch = color => patchPlan(input, [`visualStyle.forUser.colorStrategy.primaryColor=${color}`]);
     expect(patch('#123456').revision).toBe('1');
-    // Awaiting confirmation alone does not prove a successful user presentation.
+    // Native ask_human may already display this version outside the CLI.
     const ready = JSON.parse(fs.readFileSync(input));
     ready.meta.status = 'awaiting_confirmation';
     fs.writeFileSync(input, JSON.stringify(ready));
-    expect(patch('#234567').revision).toBe('1');
+    expect(patch('#234567').revision).toBe('2');
     const presented = JSON.parse(fs.readFileSync(input));
-    presented.meta.planState.presentedRevision = '1';
+    presented.meta.planState.presentedRevision = '2';
     fs.writeFileSync(input, JSON.stringify(presented));
-    expect(patch('#345678').revision).toBe('2');
+    expect(patch('#345678').revision).toBe('3');
     expect(JSON.parse(fs.readFileSync(input)).meta.planState.presentedRevision).toBeNull();
-    expect(patch('#456789').revision).toBe('2');
-    expect(patch('#456789')).toMatchObject({ changed: false, revision: '2' });
+    expect(patch('#456789').revision).toBe('3');
+    expect(patch('#456789')).toMatchObject({ changed: false, revision: '3' });
     const beforeFailure = fs.readFileSync(input, 'utf8');
     expect(() => patch('not-a-color')).toThrow();
     expect(fs.readFileSync(input, 'utf8')).toBe(beforeFailure);
@@ -1281,7 +1298,7 @@ describe('design-plan materialize', () => {
 
   test('business navigation cannot silently override visual choices', () => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
-    plan.execution = { appConfig: { navTheme: 'dark' } };
+    plan.execution = { appConfig: { navTheme: 'light' } };
     expect(() => renderPrd(plan)).toThrow(/视觉事实冲突/);
   });
 
@@ -1426,7 +1443,7 @@ describe('Plan contract and file consistency', () => {
 
     for (const content of [interactionContract, workflow]) {
       expect(content).toContain('attachments');
-      expect(content).toContain('prd/<项目名>/build-plan.html');
+      expect(content).toContain('prd/<项目名>/build-plan-<content-sha256>.html');
       expect(content).toContain('revision');
     }
     expect(interactionContract).toContain('同一次 `ask_human`');
@@ -1473,7 +1490,7 @@ describe('Plan contract and file consistency', () => {
     expect(payload.attachments).toEqual([
       {
         name: 'build-plan.html',
-        path: 'prd/<项目名>/build-plan.html',
+        path: 'prd/<项目名>/build-plan-<content-sha256>.html',
       },
     ]);
     expect(payload.revision).toBe('{revision}');

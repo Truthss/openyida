@@ -186,7 +186,9 @@ test('finalization promotes the accumulated facts and invalidates confirmation o
   const result = materialize(input, { fromPreview: true });
   expect(result.merged).toBe(true);
   expect(result.revision).toBe('2026-08-31-02');
-  expect(Object.keys(result.outputs)).toEqual(['prd', 'design', 'html', 'theme']);
+  expect(Object.keys(result.outputs)).toEqual(['prd', 'design', 'html', 'theme', 'confirmationHtml']);
+  expect(result.confirmation.attachments[0].path).toBe(result.outputs.confirmationHtml);
+  expect(fs.readFileSync(result.outputs.confirmationHtml, 'utf8')).toBe(fs.readFileSync(result.outputs.html, 'utf8'));
   expect(JSON.parse(fs.readFileSync(input)).meta.planState.planConfirmed).toBe(false);
   expect(fs.readFileSync(result.outputs.prd, 'utf8')).toContain('更新后的客户管理目标');
   expect(fs.readFileSync(result.outputs.html, 'utf8')).toContain('更新后的客户管理目标');

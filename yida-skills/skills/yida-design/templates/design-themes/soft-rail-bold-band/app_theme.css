@@ -49,6 +49,7 @@
   --color-brand-2: var(--color-brand1-1);
   --color-brand-3: var(--color-brand1-6);
   --color-brand-4: var(--color-brand1-9);
+  --color-group: var(--color-brand1-6), var(--color-brand1-1), var(--color-brand1-5), var(--color-brand1-2), var(--color-brand1-9), var(--color-brand1-3);
 
   /* 边界、填充与文字颜色 */
   --color-line1-1: <生成实际色值：--color-brand1-6 3% + #EBEBEB 97%，sRGB 逐通道混合>;
@@ -104,8 +105,8 @@
   --corner-3: 10px;
   --corner-4: 12px;
   --corner-5: 16px;
-  --corner-circle: var(--corner-2);
-  --corner-semicircle: 500px;
+  --corner-circle: 500px;
+  --corner-semicircle: var(--corner-3);
 
   /* 阴影 */
   --shadow-1: 0px 2px 4px 0px rgba(0, 0, 0, 0.12);
@@ -131,7 +132,7 @@
   --pod-shell-content-container-margin: 0px;
   --pod-shell-content-container-border: none;
   --pod-shell-content-container-bg-color: transparent;
-  --pod-shell-theme-bg-color: #F5F5F5;
+  --pod-shell-theme-bg-color: #F4F6F8;
 
   /* 页面容器 */
   --pod-page-surface-padding: 0px;
@@ -156,7 +157,7 @@
   /* 卡片 */
   --pod-card-padding: 20px;
   --pod-card-border-radius: var(--pod-xl-border-radius, 20px);
-  --pod-card-border: none;
+  --pod-card-border:  0.5px solid var(--color-line1-1, #efefef);
   --pod-card-spacing: var(--pod-md-gap-pad-margin);
 
   /* 导航：顶导与侧导布局 */
@@ -167,8 +168,7 @@
   --pod-nav-l-header-padding: 8px 16px;
   --pod-nav-l-aside-padding: 8px;
   --pod-nav-slide-aside-gap: 12px;
-  --pod-nav-slide-aside-padding: 8px 8px 8px
-    calc(8px - var(--pod-shell-padding, 4px));
+  --pod-nav-slide-aside-padding: 8px 8px 8px 8px;
   --pod-nav-slide-aside-collapsed-padding: 8px 12px 8px
     calc(12px - var(--pod-shell-padding, 4px));
   --pod-nav-slide-collapsed-menu-gap: 4px;
@@ -215,8 +215,8 @@
   --pod-nav-logo-icon: var(--color-text1-5, #fff);
   --pod-nav-logo-border-radius: 6px;
   --pod-nav-logo-size: 32px;
-  --pod-nav-logo-img-size: calc(var(--pod-nav-logo-size, 32px) - 6px);
-  --pod-nav-logo-text: var(--pod-nav-item-text-color, var(--color-text1-4, #202020));
+  --pod-nav-logo-img-size: 32px;
+  --pod-nav-logo-text: var(--color-brand1-6);
   --pod-nav-action-border-color: rgba(24, 28, 31, 0.12);
   --pod-nav-action-bg-hover-color: rgba(83, 88, 97, 0.16);
   --pod-nav-action-bg-active-color: rgba(83, 88, 97, 0.24);
@@ -227,24 +227,24 @@
   /* 导航：菜单、搜索与浮层 */
   --pod-nav-search-height: var(--pod-nav-platform-row-height, 32px);
   --pod-nav-search-border-color: transparent;
-  --pod-nav-search-menu-gap: 8px;
+  --pod-nav-search-menu-gap: 12px;
   --pod-nav-menu-panel-search-padding-top: 8px;
   --pod-nav-menu-panel-top: 12px;
   --pod-nav-menu-panel-after-collapse-top: 40px;
-  --pod-nav-menu-item-height: 40px;
+  --pod-nav-menu-item-height: 36px;
   --pod-nav-menu-item-padding: 8px;
-  --pod-nav-menu-item-radius: 4px;
+  --pod-nav-menu-item-radius: var(--corner-3);
   --pod-nav-menu-item-border: none;
   --pod-nav-menu-item-hover-border: var(--pod-nav-menu-item-border);
   --pod-nav-menu-item-selected-border: var(--pod-nav-menu-item-border);
   --pod-nav-menu-font-size: 14px;
   --pod-nav-menu-item-selected-font-weight: 500;
-  --pod-nav-menu-item-selected-shadow: none;
+  --pod-nav-menu-item-selected-shadow: var(--shadow-1);
   --pod-nav-menu-line-height: 20px;
   --pod-nav-menu-icon-size: 16px;
   --pod-nav-menu-arrow-icon-size: 12px;
   --pod-nav-menu-gap: 8px;
-  --pod-nav-menu-item-gap: 4px;
+  --pod-nav-menu-item-gap: 8px;
   --pod-nav-popup-width: 220px;
   --pod-nav-popup-max-height: 400px;
   --pod-nav-popup-padding: 8px;
@@ -257,12 +257,12 @@
   --pod-nav-menu-bg-hover-color: #EFEFEF;
   --pod-nav-tab-line-hover-color: var(--color-brand1-6, rgba(155, 136, 121, 1));
   --pod-nav-tab-line-selected-color: var(--color-brand1-6, rgba(155, 136, 121, 1));
-  --pod-nav-search-bg-color: var(--pod-nav-menu-bg-hover-color, rgba(24, 28, 31, 0.06));
-  --pod-nav-search-bg-hover-color: var(--pod-nav-menu-bg-hover-color, rgba(24, 28, 31, 0.06));
-  --pod-nav-search-bg-active-color: var(--pod-nav-menu-bg-hover-color, rgba(24, 28, 31, 0.06));
-  --pod-nav-search-placeholder-color: var(--pod-nav-item-text-hover-color, var(--color-text1-4, #202020));
+  --pod-nav-search-bg-color: #FFFFFF;
+  --pod-nav-search-bg-hover-color: #FFFFFF;
+  --pod-nav-search-bg-active-color: #FFFFFF;
+  --pod-nav-search-placeholder-color: var(--color-text1-10);
   --pod-nav-search-text-color: var(--pod-nav-item-text-hover-color, var(--color-text1-4, #202020));
-  --pod-nav-search-icon-color: var(--pod-nav-item-text-color, var(--color-text1-4, #202020));
+  --pod-nav-search-icon-color:  var(--color-text1-2);
   --pod-nav-search-border-hover-color: var(--color-brand1-6, rgba(155, 136, 121, 1));
   --pod-nav-search-border-active-color: var(--color-brand1-6, rgba(155, 136, 121, 1));
   --pod-nav-menu-bg-selected-color: #FFFFFF;
@@ -273,19 +273,20 @@
   --pod-nav-page-white-bg-color: rgba(246, 247, 247, 1);
   --pod-nav-page-padding: var(--pod-lg-gap-pad-margin, 16px);
   --pod-nav-avater-border-radius: 6px;
-  --pod-nav-item-text-color: #181818;
+  --pod-nav-item-text-color: var(--color-text1-3);
   --pod-nav-item-text-hover-color: var(--color-text1-4);
   --pod-nav-item-text-disabled-color: rgba(24, 28, 31, 0.24);
+  --pod-nav-item-text-selected-color: var(--color-brand1-5);
   --pod-page-header-bg-color: var(--pod-shell-theme-bg-color, var(--color-white, #fff));
   --pod-theme-text-color: var(--pod-nav-item-text-color, var(--color-text1-4, #202020));
   --pod-page-header-text-color: var(--pod-theme-text-color, var(--color-text1-4, #202020));
-  --pod-nav-item-text-selected-color: var(--color-text1-4);
+
 
   /* 原生表单：编辑态字段 */
   --form-element-medium-corner: var(--corner-2);
   --form-element-medium-height: var(--s-8);
   --form-element-medium-font-size: var(--font-size-body-1);
-  --input-bg-color: var(--color-fill1-1);
+  --input-bg-color: transparent;
   --input-border-width: 1px;
   --input-border-color: var(--color-line1-2);
   --input-hover-border-color: var(--color-brand1-6);
@@ -293,9 +294,10 @@
   --input-focus-bg-color: var(--input-bg-color);
   --yida-form-content-bgcolor: var(--pod-page-bg-color);
   --pod-form-label-color: var(--color-text1-4);
-  --form-top-label-margin-b: var(--s-2);
+  --form-top-label-margin-b: 4px;
   --yida-help-tips-color: #878f95;
   --yida-divider-secondary-color: var(--color-brand1-2);
+  --input-hover-bg-color: var(--input-bg-color);
 
   /* 原生表单：详情只读字段 */
   --pod-detail-container-padding: 8px;
@@ -304,7 +306,7 @@
   --pod-field-preview-min-height: var(--form-element-medium-height);
   --pod-field-preview-padding: 0 8px;
   --pod-field-preview-gap: var(--s-1);
-  --pod-field-preview-bg-color: var(--color-fill1-1);
+  --pod-field-preview-bg-color: #F4F6F8;
   --pod-field-preview-border-radius: var(--corner-2);
   --pod-field-preview-indicator-color: var(--color-fill1-3);
   --pod-field-preview-shadow: none;
@@ -400,7 +402,8 @@
   --pod-mxl-gap-pad-margin: 20px;
   --pod-xxl-gap-pad-margin: 24px;
   --pod-full-raduis: var(--corner-semicircle);
-  --input-hover-bg-color: var(--input-bg-color);
+
+  /* 自定义页面扩展变量 */
   --oyd-page-bg: var(--pod-page-bg-color);
   --oyd-accent-color: <生成实际色值：--color-brand1-6 50% + #FFFFFF 50%，sRGB 逐通道混合>;
   --oyd-accent-foreground: #111111;
@@ -420,7 +423,6 @@
   --oyd-font-size-hero-value: 32px;
   --oyd-font-weight-hero-value: 400;
   --oyd-font-lineheight-hero-value: 1.2;
-  --color-group: var(--color-brand1-6), var(--color-brand1-1), var(--color-brand1-5), var(--color-brand1-2), var(--color-brand1-9), var(--color-brand1-3);
 }
 /* openyida-theme-tokens:end */
 
@@ -435,7 +437,7 @@ body.pod-premium.page-type-submit .vc-shell-without-nav.pod-premium {
 
 /* 原生详情属于内容区，独立页面和抽屉内都沿用内容画布与前景。 */
 body.pod-premium.page-type-detail .vc-shell-without-nav.pod-premium {
-  background-color: var(--pod-page-bg-color, var(--color-white, #fff));
+  background-color: var(--pod-shell-theme-bg-color, var(--color-white, #fff));
   --pod-theme-text-color: var(--color-text1-4, #202020);
 }
 
@@ -502,6 +504,13 @@ body.pod-premium.page-type-submit
 .pod-premium .next-overlay-inner.sort-panel,
 .pod-premium .yu-filter-manage--popup > .yida-yu-filter-manage {
   border-radius: var(--corner-5);
+}
+/* 数据管理页：操作区 */
+.pod-premium .data-manage-operaion {
+    margin-bottom: var(--pod-card-spacing, 12px);
+    padding: 8px;
+    border: 1px solid var(--table-border);
+    border-radius: var(--corner-4);
 }
 
 /* 流程详情：补齐只读字段值容器样式 */
@@ -583,6 +592,14 @@ body.pod-premium .deep-web-full-wrapper .deep-full-content {
 
 /* 数据管理页-调整视图 */ .new-data-manage .data-manage-operaion .operation-icon-wrap.save-button .operation-action {
   background: var(--color-fill1-1);
+}
+
+/* menu 下拉 */ .next-menu.next-ver {
+  border: 1px solid var(--color-line1-1);
+}
+
+/* 头像内的 menu 下拉 */ .yida-nav-account-menu .base-info-pop-account-menu {
+  border: 1px solid var(--balloon-normal-color-bg);
 }
 
 /* 流程 - 提交弹窗 / 审批进度 */ .flow-steps {
@@ -730,7 +747,7 @@ body.pod-premium .flow-steps .next-step-dot
 
 /* 表格视图外层：增加边框和圆角，不裁剪同层分页器。 */
 .pod-premium .new-data-manage #newDataManageTable {
-  border: 1px solid var(--table-border) !important;
+  border:  1px solid var(--table-border) !important;
   border-radius: var(--corner-3) !important;
 }
 
@@ -746,6 +763,25 @@ body.pod-premium .flow-steps .next-step-dot
   overflow: hidden !important;
 }
 
+/* 数据管理页：只隐藏所有竖线，不影响横线 */
+.pod-premium .new-data-manage #newDataManageTable div,
+.pod-premium .new-data-manage #newDataManageTable th,
+.pod-premium .new-data-manage #newDataManageTable td {
+ border-left: none !important;
+ border-right: none !important;
+ border-inline-start: none !important;
+ border-inline-end: none !important;
+}
+/* 同时处理可能通过伪元素绘制的表头竖线 */
+.pod-premium .new-data-manage #newDataManageTable div::before,
+.pod-premium .new-data-manage #newDataManageTable div::after {
+ border-left: none !important;
+ border-right: none !important;
+ border-inline-start: none !important;
+ border-inline-end: none !important;
+}
+
+
 /* 未选中的复选框背景透明 */ .pod-premium .new-data-manage input[type="checkbox"]:not(:checked) + span {
   background: transparent !important;
   background-color: transparent !important;
@@ -754,3 +790,106 @@ body.pod-premium .flow-steps .next-step-dot
 .pod-premium .view-detail-footer .next-tabs-bar.detail-segmented-tabs {
   background: var(--color-fill1-1,);
 }
+
+/* openyida-navigation-shape:start */
+/*
+ * Side/L navigation and top tabs share the same theme-defined menu shape.
+ * Border widths stay constant between states; border-box keeps row height stable.
+ */
+.pod-premium .deep-shell-nav-menu-content .next-nav-item,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item {
+  box-sizing: border-box;
+  border-radius: var(--pod-nav-menu-item-radius, 8px);
+  border: var(--pod-nav-menu-item-border, none);
+}
+
+/*
+ * Native inner rows also have a fixed minimum height. Fit them inside the
+ * bordered item instead of letting a thick outline push content below it.
+ */
+.vc-shell.pod-premium
+  .next-nav.next-line.next-ver.deep-shell-nav-menu-content:not(.next-icon-only)
+  .next-nav-item.next-menu-item
+  > .next-menu-item-inner,
+.vc-shell.pod-premium
+  .next-shell-header
+  .next-shell-navigation
+  .next-nav.next-line.next-hoz.deep-shell-nav-tab-list
+  .next-nav-item.next-menu-item
+  > .next-menu-item-inner {
+  box-sizing: border-box;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+.pod-premium .deep-shell-nav-menu-content .next-nav-item:hover,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item:hover {
+  border: var(--pod-nav-menu-item-hover-border, var(--pod-nav-menu-item-border, none));
+}
+
+/*
+ * Platform top tabs use transparent backgrounds and zero margin !important.
+ * Match the header scope so theme surfaces and spacing can reveal their shape.
+ */
+.vc-shell.pod-premium
+  .next-shell-header
+  .next-shell-navigation
+  .next-nav.next-line.next-hoz.deep-shell-nav-tab-list
+  .next-nav-item.next-menu-item {
+  margin-inline: calc(var(--pod-nav-menu-gap, 8px) / 2) !important;
+}
+
+.vc-shell.pod-premium
+  .next-shell-header
+  .next-shell-navigation
+  .next-nav.next-line.next-hoz.deep-shell-nav-tab-list
+  .next-nav-item.next-menu-item:hover {
+  background: var(--pod-nav-menu-bg-hover-color) !important;
+  color: var(--pod-nav-item-text-hover-color) !important;
+}
+
+.vc-shell.pod-premium
+  .next-shell-header
+  .next-shell-navigation
+  .next-nav.next-line.next-hoz.deep-shell-nav-tab-list
+  .next-nav-item.next-menu-item.next-selected {
+  background: var(--pod-nav-menu-bg-selected-color) !important;
+  color: var(--pod-nav-item-text-selected-color) !important;
+}
+
+/* 整体 top-nav：浮岛样式外层 tab 容器，与上方 .next-nav-item 形态规则配套。 */
+.vc-shell.pod-premium.nav-type-hoz
+  .next-shell-header
+  .next-shell-navigation
+  .next-nav.next-line.next-hoz {
+  height: calc(var(--pod-nav-top-tab-container-height) + 0px);
+  padding: var(--pod-nav-top-tab-container-padding);
+  border-radius: var(--pod-nav-menu-item-radius);
+  background: var(--pod-nav-top-tab-container-bg);
+}
+
+/* 顶部 tab 单项常态背景：不覆盖 hover / selected。 */
+.vc-shell.pod-premium.nav-type-hoz
+  .next-shell-header
+  .next-shell-navigation
+  .next-nav.next-line.next-hoz
+  .next-nav-item.next-menu-item {
+  background: var(--pod-nav-menu-bg-color, transparent) !important;
+}
+
+/* Selected state wins over hover, retaining the original inset-shadow marker. */
+.pod-premium .deep-shell-nav-menu-content .next-nav-item.next-selected,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item.next-selected {
+  border: var(--pod-nav-menu-item-selected-border, var(--pod-nav-menu-item-border, none));
+  box-shadow: var(--pod-nav-menu-item-selected-shadow, none);
+}
+
+/* 导航搜索下边距 */
+.pod-premium .vc-shell.nav-type-slide .deep-shell-ver-nav-search-wrap {
+  margin-bottom: 12px!important;
+}
+.vc-shell.pod-premium .deep-shell-ver-nav-search-wrap .deep-shell-ver-nav-search-input .next-select-inner{
+  border-radius: var(--pod-nav-menu-item-radius);
+}
+
+/* openyida-navigation-shape:end */

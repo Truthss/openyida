@@ -48,6 +48,7 @@ async function requestNonIdempotentOnce(requestFn, preflightFn, authRef) {
 function createSuccessfulFormHttpMocks(formUuid, options = {}) {
   let created = false;
   let navigationIcon = '';
+  let savedSchema = null;
   const navigationNode = function () {
     return {
       id: 101,
@@ -84,17 +85,25 @@ function createSuccessfulFormHttpMocks(formUuid, options = {}) {
       if (requestPath.includes('getFormNavigationListByOrder')) {
         return Promise.resolve({ success: true, content: created ? [navigationNode()] : [] });
       }
-      return Promise.resolve({ success: true, content: { gmtModified: 100 } });
+      return Promise.resolve({ success: true, content: savedSchema || { gmtModified: 100 } });
     }),
     httpPost: jest.fn((baseUrl, requestPath, postData) => {
       if (requestPath.includes('saveFormSchemaInfo')) {
         created = true;
         return Promise.resolve({ success: true, content: { formUuid } });
       }
+      if (requestPath.includes('/saveFormSchema.json')) {
+        const schema = JSON.parse(querystring.parse(postData).content);
+        savedSchema = options.dropSavedFields
+          ? { ...schema, pages: [{ componentsTree: [{ componentName: 'Page', children: [] }] }] }
+          : schema;
+        savedSchema.gmtModified = 101;
+      }
       if (requestPath.includes('updateFormNavigation')) {
         if (!options.ignoreNavigationUpdate) {
           navigationIcon = querystring.parse(postData).icon;
         }
+        if (options.dropFieldsOnNavigation) { savedSchema.pages[0].componentsTree = []; }
         return Promise.resolve({ success: true });
       }
       if (requestPath.includes('updateFormConfig') && options.updateFormConfigResponse) {
@@ -129,6 +138,32 @@ describe('create-form.js imports', () => {
     expect(postBody).not.toContain('authRef && authRef.cookies');
     expect(postBody).not.toContain('Cookie:');
     expect(sourceCode).not.toContain('updateFormConfig');
+  });
+});
+
+describe('create exact remote schema verification', () => {
+  test.each(['dropSavedFields', 'dropFieldsOnNavigation'])('rejects successful ACK with missing fields: %s', async fault => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-create-readback-'));
+    const fieldsPath = path.join(tmpDir, 'fields.json');
+    fs.writeFileSync(fieldsPath, JSON.stringify({ fields: [{ type: 'TextField', label: '申请人' }] }));
+    jest.resetModules();
+    const mocks = createSuccessfulFormHttpMocks('FORM_READBACK', { [fault]: true });
+    jest.doMock('../lib/core/utils', () => ({
+      httpGet: mocks.httpGet, httpPost: mocks.httpPost,
+      requestWithAutoLogin: (fn, auth) => fn(auth),
+      requestNonIdempotentWithAuthPreflight: requestNonIdempotentOnce,
+    }));
+    try {
+      await expect(require('../lib/app/create-form').createFormForLegacyProcess({
+        baseUrl: 'https://example.test', authData: { corp_id: 'corp' },
+      }, { appType: 'APP_TEST', formTitle: '核验表单', fieldsJsonFile: fieldsPath }))
+        .rejects.toMatchObject({ code: 'CREATE_FORM_CREATE_READBACK_MISMATCH', details: { formUuid: 'FORM_READBACK', missingFieldCount: 1 } });
+      expect(mocks.httpPost.mock.calls.filter(call => call[1].includes('saveFormSchemaInfo'))).toHaveLength(1);
+      expect(mocks.httpPost.mock.calls.filter(call => call[1].includes('/saveFormSchema.json'))).toHaveLength(1);
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+      jest.dontMock('../lib/core/utils'); jest.resetModules();
+    }
   });
 });
 
@@ -2176,7 +2211,8 @@ describe('create-form create recovery guardrails', () => {
     consoleSpy.mockRestore();
   });
 
-  test('create-form resume accepts a server-side save failure when exact readback proves the write was applied', async () => {
+  test.each([{ success: false, errorMsg: 'HTTP 500', __httpStatus: 500 },
+    { success: false, errorMsg: 'business 500', __httpStatus: 200, errorCode: 500 }])('resume verifies an applied write after server failure %j', async failure => {
     let currentSchema = formCompiler.compileFormDefinition({
       formTitle: '半成功表单',
       fields: [{ key: 'name', type: 'TextField', label: '姓名' }],
@@ -2194,7 +2230,7 @@ describe('create-form create recovery guardrails', () => {
     const mockHttpPost = jest.fn((baseUrl, requestPath, postData) => {
       if (requestPath.includes('/saveFormSchema.json')) {
         currentSchema = JSON.parse(querystring.parse(postData).content);
-        return Promise.resolve({ success: false, errorMsg: 'HTTP 500', __httpStatus: 500 });
+        return Promise.resolve(failure);
       }
       return Promise.resolve({ success: true });
     });
@@ -3815,7 +3851,7 @@ describe('legacy create-form compatibility', () => {
     expect(JSON.stringify(fillingRules)).not.toContain('@label:');
   });
 
-  test('create mode reads only the shell revision and does not discover semantic keys', async () => {
+  test('create mode verifies saved and final schemas without discovering semantic keys', async () => {
     jest.resetModules();
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     const formHttpMocks = createSuccessfulFormHttpMocks('FORM_TEST', { formTitle: '访客登记' });
@@ -3859,13 +3895,15 @@ describe('legacy create-form compatibility', () => {
       JSON.stringify([{ key: 'visitorName', type: 'TextField', label: '访客姓名' }]),
     ]);
 
-    expect(mockUtils.httpGet).toHaveBeenCalledTimes(4);
+    expect(mockUtils.httpGet).toHaveBeenCalledTimes(6);
     expect(mockUtils.httpGet.mock.calls[0][1]).toContain(
       'getFormNavigationListByOrder.json'
     );
     expect(mockUtils.httpGet.mock.calls[1][1]).toContain('getFormSchema.json');
-    expect(mockUtils.httpGet.mock.calls[2][1]).toContain('getFormNavigationListByOrder.json');
+    expect(mockUtils.httpGet.mock.calls[2][1]).toContain('getFormSchema.json');
     expect(mockUtils.httpGet.mock.calls[3][1]).toContain('getFormNavigationListByOrder.json');
+    expect(mockUtils.httpGet.mock.calls[4][1]).toContain('getFormNavigationListByOrder.json');
+    expect(mockUtils.httpGet.mock.calls[5][1]).toContain('getFormSchema.json');
     expect(
       mockUtils.httpPost.mock.calls.filter((call) =>
         call[1].includes('saveFormSchemaInfo.json')
@@ -3890,4 +3928,46 @@ describe('legacy create-form compatibility', () => {
     jest.dontMock('../lib/core/chalk');
     jest.resetModules();
   });
+});
+
+describe('option defaults survive schema construction', () => {
+  test.each([
+    [{ options: [{ value: 'low' }, { value: 'mid', defaultChecked: true }] }, 'mid'],
+    [{ options: ['low', 'mid'], defaultValue: 'mid' }, 'mid'],
+    [{ options: ['low', 'mid'], value: 'mid' }, 'mid'],
+    [{ options: ['low', 'mid'], props: { value: 'mid' } }, 'mid'],
+    [{ options: [{ value: 0, defaultChecked: true }] }, 0],
+    [{ options: ['mid'], value: '' }, ''],
+  ])('SelectField persists the effective default %j', (definition, expected) => {
+    const component = createForm._private.buildFormNodeComponent({ type: 'SelectField', label: 'priority', ...definition });
+    expect(component.props.value).toEqual(expected);
+    expect(component.props.complexValue.value).toEqual(expected);
+  });
+  test('MultiSelect defaults preserve all selected values', () => {
+    const component = createForm._private.buildFormNodeComponent({ type: 'MultiSelectField', label: 'tags', options: [
+      { value: 'a', defaultChecked: true }, { value: 'b' }, { value: 'c', defaultChecked: true },
+    ] });
+    expect(component.props.value).toEqual(['a', 'c']);
+    expect(component.props.complexValue.value).toEqual(['a', 'c']);
+  });
+});
+
+
+test.each(['missing', 'unavailable'])('business 500 uses readback without retrying writes: %s', async readbackState => {
+  const schema = formCompiler.compileFormDefinition({ formTitle: 'existing', fields: [{ key: 'name', type: 'TextField', label: 'name' }] }, { appType: 'APP_TEST', formUuid: 'FORM_BUSINESS_500' }).schema;
+  let reads = 0;
+  const httpGet = jest.fn(async () => {
+    reads++;
+    if (reads > 1 && readbackState === 'unavailable') { throw new Error('read unavailable'); }
+    return { success: true, appType: 'APP_TEST', formUuid: 'FORM_BUSINESS_500', gmtModified: 100, content: JSON.parse(JSON.stringify(schema)) };
+  });
+  const httpPost = jest.fn(async () => ({ success: false, errorCode: 500, __httpStatus: 200, errorMsg: 'save rejected' }));
+  const { isolatedCreateForm, consoleSpy } = loadIsolatedCreateFormCommand({ httpGet, httpPost });
+  try {
+    await expect(isolatedCreateForm.run(['resume', 'APP_TEST', 'FORM_BUSINESS_500', JSON.stringify([
+      { key: 'name', type: 'TextField', label: 'name' }, { key: 'phone', type: 'TextField', label: 'phone' },
+    ]), '--json'])).rejects.toMatchObject({ code: 'CREATE_FORM_SAVE_SCHEMA_FAILED', details: { remoteSaveState: readbackState === 'missing' ? 'not_saved' : 'unknown' } });
+    expect(httpGet).toHaveBeenCalledTimes(2);
+    expect(httpPost).toHaveBeenCalledTimes(1);
+  } finally { consoleSpy.mockRestore(); }
 });

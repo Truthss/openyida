@@ -49,9 +49,10 @@
   --color-brand-2: var(--color-brand1-1);
   --color-brand-3: var(--color-brand1-6);
   --color-brand-4: var(--color-brand1-9);
+  --color-group: var(--color-brand1-6), var(--color-brand1-1), var(--color-brand1-5), var(--color-brand1-2), var(--color-brand1-9), var(--color-brand1-3);
 
   /* 边界、填充与文字颜色 */
-  --color-line1-1: <生成实际色值：--color-brand1-6 3% + #EEEEEE 97%，sRGB 逐通道混合>;
+  --color-line1-1: <生成实际色值：--color-brand1-6 3% + #E6E6E6 97%，sRGB 逐通道混合>;
   --color-line1-2: <生成实际色值：--color-brand1-6 4% + #DEDEDE 96%，sRGB 逐通道混合>;
   --color-fill1-1: <生成实际色值：--color-brand1-6 1% + #FCFCFC 99%，sRGB 逐通道混合>;
   --color-fill1-2: <生成实际色值：--color-brand1-6 2% + #F7F7F7 98%，sRGB 逐通道混合>;
@@ -125,7 +126,7 @@
   --pod-shell-bg-color-white: var(--pod-shell-theme-bg-color);
   --pod-shell-bg-color-gray: var(--pod-shell-theme-bg-color);
   --pod-shell-bg-color-dark: var(--pod-shell-theme-bg-color);
-  --pod-shell-padding: 4px;
+  --pod-shell-padding: 0px;
   --pod-shell-lshape-border-radius: 16px;
   --pod-shell-content-container-padding: 0px;
   --pod-shell-content-container-margin: 0px;
@@ -167,8 +168,7 @@
   --pod-nav-l-header-padding: 8px 16px;
   --pod-nav-l-aside-padding: 8px;
   --pod-nav-slide-aside-gap: 12px;
-  --pod-nav-slide-aside-padding: 8px 8px 8px
-    calc(8px - var(--pod-shell-padding, 4px));
+  --pod-nav-slide-aside-padding: 12px 12px 12px 12px;
   --pod-nav-slide-aside-collapsed-padding: 8px 12px 8px
     calc(12px - var(--pod-shell-padding, 4px));
   --pod-nav-slide-collapsed-menu-gap: 4px;
@@ -179,7 +179,7 @@
   --pod-nav-top-header-padding: 2px 16px;
   --pod-nav-top-header-gap: 40px;
   --pod-nav-top-navigation-padding: 0 12px;
-  --pod-nav-top-tab-height: 44px;
+  --pod-nav-top-tab-height: 40px;
   --pod-nav-top-tab-item-max-width: 120px;
   --pod-nav-top-tab-item-padding: 0 12px;
   --pod-nav-top-tab-item-inner-padding: 12px 0;
@@ -225,13 +225,13 @@
   --pod-nav-action-icon-color: var(--pod-nav-item-text-color, var(--color-text1-4, #202020));
 
   /* 导航：菜单、搜索与浮层 */
-  --pod-nav-search-height: var(--pod-nav-platform-row-height, 32px);
+  --pod-nav-search-height: 36px;
   --pod-nav-search-border-color: transparent;
   --pod-nav-search-menu-gap: 8px;
   --pod-nav-menu-panel-search-padding-top: 8px;
   --pod-nav-menu-panel-top: 12px;
   --pod-nav-menu-panel-after-collapse-top: 40px;
-  --pod-nav-menu-item-height: 40px;
+  --pod-nav-menu-item-height: 36px;
   --pod-nav-menu-item-padding: 8px;
   --pod-nav-menu-item-radius: 8px;
   --pod-nav-menu-item-border: none;
@@ -239,7 +239,7 @@
   --pod-nav-menu-item-selected-border: var(--pod-nav-menu-item-border);
   --pod-nav-menu-font-size: 14px;
   --pod-nav-menu-item-selected-font-weight: 500;
-  --pod-nav-menu-item-selected-shadow: none;
+  --pod-nav-menu-item-selected-shadow: inset 3px 0 0 0 var(--color-brand1-6);
   --pod-nav-menu-line-height: 20px;
   --pod-nav-menu-icon-size: 16px;
   --pod-nav-menu-arrow-icon-size: 12px;
@@ -254,18 +254,18 @@
   --pod-nav-sub-divider-left: 16px;
   --pod-nav-sub-indent: 24px;
   --pod-nav-sub-divider-color: #DEDEDE;
-  --pod-nav-menu-bg-hover-color: var(--color-brand1-2);
+  --pod-nav-menu-bg-hover-color: #ffffff;
+  --pod-nav-menu-bg-selected-color: #ffffff;
   --pod-nav-tab-line-hover-color: var(--color-brand1-6, rgba(155, 136, 121, 1));
   --pod-nav-tab-line-selected-color: var(--color-brand1-6, rgba(155, 136, 121, 1));
   --pod-nav-search-bg-color: var(--pod-nav-menu-bg-hover-color, rgba(24, 28, 31, 0.06));
   --pod-nav-search-bg-hover-color: var(--pod-nav-menu-bg-hover-color, rgba(24, 28, 31, 0.06));
   --pod-nav-search-bg-active-color: var(--pod-nav-menu-bg-hover-color, rgba(24, 28, 31, 0.06));
   --pod-nav-search-placeholder-color: var(--pod-nav-item-text-hover-color, var(--color-text1-4, #202020));
-  --pod-nav-search-text-color: var(--pod-nav-item-text-hover-color, var(--color-text1-4, #202020));
+  --pod-nav-search-text-color: var(--color-text1-10);
   --pod-nav-search-icon-color: var(--pod-nav-item-text-color, var(--color-text1-4, #202020));
   --pod-nav-search-border-hover-color: var(--color-brand1-6, rgba(155, 136, 121, 1));
   --pod-nav-search-border-active-color: var(--color-brand1-6, rgba(155, 136, 121, 1));
-  --pod-nav-menu-bg-selected-color: var(--color-brand1-3);
   --pod-nav-popup-bg-color: var(--pod-shell-theme-bg-color);
 
   /* 导航：主题表面、文字与状态 */
@@ -285,17 +285,18 @@
   --form-element-medium-corner: var(--corner-2);
   --form-element-medium-height: var(--s-8);
   --form-element-medium-font-size: var(--font-size-body-1);
-  --input-bg-color: var(--color-fill1-1);
+  --input-bg-color: transparent;
   --input-border-width: 1px;
   --input-border-color: var(--color-line1-2);
   --input-hover-border-color: var(--color-brand1-6);
   --input-focus-border-color: var(--color-brand1-6);
   --input-focus-bg-color: var(--input-bg-color);
-  --yida-form-content-bgcolor: var(--pod-page-bg-color);
+  --yida-form-content-bgcolor: #ffffff ;
   --pod-form-label-color: var(--color-text1-4);
   --form-top-label-margin-b: var(--s-2);
   --yida-help-tips-color: #878f95;
   --yida-divider-secondary-color: var(--color-brand1-2);
+  --input-hover-bg-color: var(--input-bg-color);
 
   /* 原生表单：详情只读字段 */
   --pod-detail-container-padding: 8px;
@@ -400,7 +401,8 @@
   --pod-mxl-gap-pad-margin: 20px;
   --pod-xxl-gap-pad-margin: 24px;
   --pod-full-raduis: var(--corner-semicircle);
-  --input-hover-bg-color: var(--input-bg-color);
+
+  /* 自定义页面扩展变量 */
   --oyd-page-bg: var(--pod-page-bg-color);
   --oyd-on-action-color: #FFFFFF;
   --oyd-presentation-bg: <生成实际色值：--color-brand1-6 35% + #FFFFFF 65%，sRGB 逐通道混合>;
@@ -433,7 +435,6 @@
   --oyd-font-size-hero-value: 48px;
   --oyd-font-weight-hero-value: 600;
   --oyd-font-lineheight-hero-value: 1.1;
-  --color-group: var(--color-brand1-6), var(--color-brand1-1), var(--color-brand1-5), var(--color-brand1-2), var(--color-brand1-9), var(--color-brand1-3);
 }
 /* openyida-theme-tokens:end */
 
@@ -596,6 +597,14 @@ body.pod-premium .deep-web-full-wrapper .deep-full-content {
 
 /* 数据管理页-调整视图 */ .new-data-manage .data-manage-operaion .operation-icon-wrap.save-button .operation-action {
   background: var(--color-fill1-1);
+}
+
+/* menu 下拉 */ .next-menu.next-ver {
+  border: 1px solid var(--color-line1-1);
+}
+
+/* 头像内的 menu 下拉 */ .yida-nav-account-menu .base-info-pop-account-menu {
+  border: 1px solid var(--balloon-normal-color-bg);
 }
 
 /* 流程 - 提交弹窗 / 审批进度 */ .flow-steps {
@@ -767,3 +776,131 @@ body.pod-premium .flow-steps .next-step-dot
 .pod-premium .view-detail-footer .next-tabs-bar.detail-segmented-tabs {
   background: var(--color-fill1-1,);
 }
+
+/* openyida-navigation-shape:start */
+/*
+ * Side/L navigation and top tabs share the same theme-defined menu shape.
+ * Border widths stay constant between states; border-box keeps row height stable.
+ */
+.pod-premium .deep-shell-nav-menu-content .next-nav-item,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item {
+  box-sizing: border-box;
+  border-radius: var(--pod-nav-menu-item-radius, 8px);
+  border: var(--pod-nav-menu-item-border, none);
+}
+
+/*
+ * Native inner rows also have a fixed minimum height. Fit them inside the
+ * bordered item instead of letting a thick outline push content below it.
+ */
+.vc-shell.pod-premium
+  .next-nav.next-line.next-ver.deep-shell-nav-menu-content:not(.next-icon-only)
+  .next-nav-item.next-menu-item
+  > .next-menu-item-inner,
+.vc-shell.pod-premium
+  .next-shell-header
+  .next-shell-navigation
+  .next-nav.next-line.next-hoz.deep-shell-nav-tab-list
+  .next-nav-item.next-menu-item
+  > .next-menu-item-inner {
+  box-sizing: border-box;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+.pod-premium .deep-shell-nav-menu-content .next-nav-item:hover,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item:hover {
+  border: var(--pod-nav-menu-item-hover-border, var(--pod-nav-menu-item-border, none));
+}
+
+/*
+ * Platform top tabs use transparent backgrounds and zero margin !important.
+ * Match the header scope so theme surfaces and spacing can reveal their shape.
+ */
+.vc-shell.pod-premium
+  .next-shell-header
+  .next-shell-navigation
+  .next-nav.next-line.next-hoz.deep-shell-nav-tab-list
+  .next-nav-item.next-menu-item {
+  margin-inline: calc(var(--pod-nav-menu-gap, 8px) / 2) !important;
+}
+
+.vc-shell.pod-premium
+  .next-shell-header
+  .next-shell-navigation
+  .next-nav.next-line.next-hoz.deep-shell-nav-tab-list
+  .next-nav-item.next-menu-item:hover {
+  background: var(--pod-nav-menu-bg-hover-color) !important;
+  color: var(--pod-nav-item-text-hover-color) !important;
+}
+
+.vc-shell.pod-premium
+  .next-shell-header
+  .next-shell-navigation
+  .next-nav.next-line.next-hoz.deep-shell-nav-tab-list
+  .next-nav-item.next-menu-item.next-selected {
+  background: var(--pod-nav-menu-bg-selected-color) !important;
+  color: var(--pod-nav-item-text-selected-color) !important;
+}
+
+/* 整体 top-nav：浮岛样式外层 tab 容器，与上方 .next-nav-item 形态规则配套。 */
+.vc-shell.pod-premium.nav-type-hoz
+  .next-shell-header
+  .next-shell-navigation
+  .next-nav.next-line.next-hoz {
+  height: calc(var(--pod-nav-top-tab-container-height) + 0px);
+  padding: var(--pod-nav-top-tab-container-padding);
+  border-radius: var(--pod-nav-menu-item-radius);
+  background: var(--pod-nav-top-tab-container-bg);
+}
+
+/* 顶部 tab 单项常态背景：不覆盖 hover / selected。 */
+.vc-shell.pod-premium.nav-type-hoz
+  .next-shell-header
+  .next-shell-navigation
+  .next-nav.next-line.next-hoz
+  .next-nav-item.next-menu-item {
+  background: var(--pod-nav-menu-bg-color, transparent) !important;
+}
+
+/* Selected state wins over hover, retaining the original inset-shadow marker. */
+.pod-premium .deep-shell-nav-menu-content .next-nav-item.next-selected,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item.next-selected {
+  border: var(--pod-nav-menu-item-selected-border, var(--pod-nav-menu-item-border, none));
+  box-shadow: var(--pod-nav-menu-item-selected-shadow, none);
+}
+
+
+/* 数据管理页：只隐藏所有竖线，不影响横线 */
+.pod-premium .new-data-manage #newDataManageTable div,
+.pod-premium .new-data-manage #newDataManageTable th,
+.pod-premium .new-data-manage #newDataManageTable td {
+  border-left: none !important;
+  border-right: none !important;
+  border-inline-start: none !important;
+  border-inline-end: none !important;
+}
+/* 同时处理可能通过伪元素绘制的表头竖线 */
+.pod-premium .new-data-manage #newDataManageTable div::before,
+.pod-premium .new-data-manage #newDataManageTable div::after {
+  border-left: none !important;
+  border-right: none !important;
+  border-inline-start: none !important;
+  border-inline-end: none !important;
+}
+.new-data-manage .data-manage-content, .new-data-manage--fixed .data-manage-content{
+  padding: var(--s-5);
+  background: var(--pod-card-bg-color);
+  border-radius: var(--corner-5);
+}
+
+/* 导航搜索下边距 */
+.pod-premium .vc-shell.nav-type-slide .deep-shell-ver-nav-search-wrap {
+  margin-bottom: 8px;
+}
+
+.deep-shell.pod-premium .deep-shell .next-shell-branding, .deep-shell.pod-premium .deep-shell.next-shell-brand .next-shell-header .next-shell-branding, .deep-shell.pod-premium .next-shell-branding, .pod-premium .deep-shell .next-shell-branding, .pod-premium .deep-shell.next-shell-brand .next-shell-header .next-shell-branding, .pod-premium .next-shell-branding, .vc-shell.deep-shell.pod-premium .deep-shell .next-shell-branding, .vc-shell.deep-shell.pod-premium .deep-shell.next-shell-brand .next-shell-header .next-shell-branding, .vc-shell.deep-shell.pod-premium .next-shell-branding, .vc-shell.pod-premium .deep-shell .next-shell-branding, .vc-shell.pod-premium .deep-shell.next-shell-brand .next-shell-header .next-shell-branding, .vc-shell.pod-premium .next-shell-branding {
+  display: flex;
+  justify-content: space-between;
+}
+/* openyida-navigation-shape:end */

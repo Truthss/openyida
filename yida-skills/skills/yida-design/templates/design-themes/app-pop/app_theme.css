@@ -51,8 +51,8 @@
   --color-brand-4: var(--color-brand1-9);
 
   /* 边界、填充与文字颜色 */
-  --color-line1-1: <生成实际色值：--color-brand1-6 8% + #1D1D1D 92%，sRGB 逐通道混合>;
-  --color-line1-2: <生成实际色值：--color-brand1-6 8% + #1D1D1D 92%，sRGB 逐通道混合>;
+  --color-line1-1: <生成实际色值：--color-brand1-6 8% + #777777 92%，sRGB 逐通道混合>;
+  --color-line1-2: <生成实际色值：--color-brand1-6 8% + #555555 92%，sRGB 逐通道混合>;
   --color-fill1-1: <生成实际色值：--color-brand1-6 4% + #F1F1F1 96%，sRGB 逐通道混合>;
   --color-fill1-2: <生成实际色值：--color-brand1-6 4% + #E3E3E3 96%，sRGB 逐通道混合>;
   --color-fill1-3: <生成实际色值：--color-brand1-6 8% + #1D1D1D 92%，sRGB 逐通道混合>;
