@@ -57,7 +57,6 @@ CodeCanvas 对话框通过 [CanvasDialog 模板](../../../yida-canvas-custom-pag
 | `blue` | 基础蓝 | 按需 |
 | `green` | 基础绿 | 按需 |
 | `orange` | 基础橙 | 按需 |
-| `podBule` | 平台蓝色 | 按需 |
 | `podBlue` | 平台蓝 | 按需 |
 | `teal` | 青色 | 按需 |
 | `podGreen` | 平台绿 | 按需 |
@@ -145,24 +144,6 @@ CodeCanvas 对话框通过 [CanvasDialog 模板](../../../yida-canvas-custom-pag
   "--color-brand-2": "rgb(255, 125, 26)",
   "--color-brand-3": "rgb(255, 111, 0)",
   "--color-brand-4": "rgb(242, 105, 0)"
-}
-```
-
-## podBule
-
-```json
-{
-  "--color-brand1-1": "rgba(73, 164, 255, 1)",
-  "--color-brand1-2": "rgba(224, 240, 255, 1)",
-  "--color-brand1-3": "rgba(0, 127, 255, 0.2)",
-  "--color-brand1-6": "rgba(0, 102, 255, 1)",
-  "--color-brand1-9": "rgba(0, 82, 204, 1)",
-  "--color-brand1-10": "rgba(0, 127, 255, 0.3)",
-  "--color-brand-1": "rgba(0, 127, 255, 0.3)",
-  "--color-brand-2": "rgba(73, 164, 255, 1)",
-  "--color-brand-3": "rgba(0, 102, 255, 1)",
-  "--color-brand-4": "rgba(0, 82, 204, 1)",
-  "--color-group": "rgba(131, 137, 143, 0.16),rgba(0, 200, 255, 1),rgba(122, 95, 255, 1),rgba(0, 61, 153, 1),rgba(255, 107, 53, 1),rgba(102, 204, 102, 1)"
 }
 ```
 

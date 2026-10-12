@@ -1498,7 +1498,8 @@ describe('OpenYida skill contracts', () => {
     expect(presets).toContain('`--color-brand-*` 是移动端和部分原生表单/壳层消费的品牌色阶');
     expect(presets).toContain('## blue');
     expect(presets).toContain('## podBlue');
-    expect(presets).toContain('| `podBule` | 平台蓝色 | 按需 |');
+    expect(presets).toContain('| `podBlue` | 平台蓝 | 按需 |');
+    expect(presets).not.toContain('podBule');
     expect(presets).toContain('| `teal` | 青色 | 按需 |');
     expect(presets).toContain('| `black` | 黑色 | 按需 |');
     expect(presets).toContain('## teal');
