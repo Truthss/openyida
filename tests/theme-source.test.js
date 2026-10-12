@@ -1,0 +1,142 @@
+'use strict';
+
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+const { run } = require('../lib/core/sample');
+const { renderDesign, prepareArtifacts, materialize } = require('../lib/design-plan/materialize');
+const { generateThemeCss } = require('../lib/app/theme-source');
+const { build } = require('../scripts/build-application-styles');
+const { DESIGN_SKILL_ROOT, loadThemeIndex } = require('../lib/design-plan/themes');
+const { parseDesignDocument, serializeDesignDocument } = require('../lib/design/document');
+const fixture = require('./fixtures/design-plan.json');
+const rules = '\n.template-floating-rail { border-radius: 16px; box-shadow: 0 2px 8px #0003; }\n.template-divider::before { display: none; }\n';
+const projectRule = '\n.project-help { padding: 17px; }\n';
+let directory;
+
+function planFor(themeId = 'soft-inset-surfaces') {
+  const plan = JSON.parse(JSON.stringify(fixture));
+  plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}/design.md` };
+  return plan;
+}
+
+beforeEach(() => {
+  directory = fs.mkdtempSync(path.join(os.tmpdir(), 'oyd-theme-source-'));
+  jest.spyOn(console, 'log').mockImplementation(() => {});
+  jest.spyOn(console, 'error').mockImplementation(() => {});
+});
+afterEach(() => { jest.restoreAllMocks(); fs.rmSync(directory, { recursive: true, force: true }); });
+
+// Inject a template-only rule through the actual paired file read, without editing
+// repository templates. Token-only generation would lose both selectors.
+function withPairedRules() {
+  const read = fs.readFileSync;
+  const paired = path.join(DESIGN_SKILL_ROOT, 'templates/design-themes/soft-inset-surfaces/app_theme.css');
+  jest.spyOn(fs, 'readFileSync').mockImplementation((file, ...args) => {
+    const content = read(file, ...args);
+    return String(file) === paired ? content + rules : content;
+  });
+}
+
+test('Fast and Plan retain paired rules regardless of output filename, then preserve incremental edits', async () => {
+  withPairedRules();
+  const plan = planFor();
+  const design = path.join(directory, 'design.md');
+  const cssFile = path.join(directory, 'renamed.css');
+  fs.writeFileSync(design, renderDesign(plan));
+  const apply = () => run(['yida-design', 'app-theme', '--design-file', design, '--output', cssFile]);
+  await apply();
+  const first = fs.readFileSync(cssFile, 'utf8');
+  expect(first).toContain(rules.trim());
+  expect(first).not.toMatch(/\{\{|<生成实际色值：/);
+  const artifacts = prepareArtifacts(plan, directory, undefined, { renderHtml: false });
+  expect(artifacts.files.find(([file]) => file === artifacts.outputs.theme)[1]).toBe(first);
+  fs.appendFileSync(cssFile, projectRule);
+  plan.visualStyle.forUser.colorStrategy.primaryColor = '#245B57';
+  fs.writeFileSync(design, renderDesign(plan));
+  await apply();
+  const updated = fs.readFileSync(cssFile, 'utf8');
+  expect(updated).toContain('--color-brand1-6: #245B57;');
+  expect(updated).toContain(rules.trim());
+  expect(updated).toContain(projectRule.trim());
+  await apply();
+  expect(fs.readFileSync(cssFile, 'utf8')).toBe(updated);
+});
+
+test('Plan rematerialization retains template rules and local additions', () => {
+  withPairedRules();
+  const plan = planFor();
+  const input = path.join(directory, 'build-plan.json');
+  fs.writeFileSync(input, JSON.stringify(plan));
+  const result = materialize(input);
+  fs.appendFileSync(result.outputs.theme, projectRule);
+  plan.visualStyle.forUser.colorStrategy.primaryColor = '#245B57';
+  fs.writeFileSync(input, JSON.stringify(plan));
+  materialize(input);
+  const css = fs.readFileSync(result.outputs.theme, 'utf8');
+  expect(css).toContain(rules.trim());
+  expect(css).toContain(projectRule.trim());
+  expect(css).toContain('--color-brand1-6: #245B57;');
+  const previous = fs.readFileSync(input, 'utf8');
+  fs.writeFileSync(input, JSON.stringify(planFor('hairline-soft-blocks')));
+  expect(() => materialize(input)).toThrow(expect.objectContaining({ code: 'THEME_SOURCE_CONFLICT' }));
+  expect(fs.readFileSync(result.outputs.theme, 'utf8')).toBe(css);
+  fs.writeFileSync(input, previous);
+});
+
+test('theme switches fail without modifying CSS or snapshots, including after file rename', async () => {
+  withPairedRules();
+  const designFile = path.join(directory, 'design.md');
+  const cssFile = path.join(directory, 'theme.css');
+  fs.writeFileSync(designFile, renderDesign(planFor()));
+  const apply = output => run(['yida-design', 'app-theme', '--design-file', designFile, '--output', output]);
+  await apply(cssFile);
+  const before = [cssFile, `${cssFile}.tokens.md`].map(file => fs.readFileSync(file, 'utf8'));
+  fs.writeFileSync(designFile, renderDesign(planFor('hairline-soft-blocks')));
+  await expect(apply(cssFile)).rejects.toMatchObject({ code: 'THEME_SOURCE_CONFLICT' });
+  expect([cssFile, `${cssFile}.tokens.md`].map(file => fs.readFileSync(file, 'utf8'))).toEqual(before);
+  const moved = path.join(directory, 'moved.css');
+  fs.renameSync(cssFile, moved);
+  await expect(apply(moved)).rejects.toMatchObject({ code: 'THEME_SOURCE_CONFLICT' });
+  await apply(cssFile);
+  expect(fs.readFileSync(cssFile, 'utf8')).not.toContain('.template-floating-rail');
+});
+
+test('unknown sources fail closed; historical files remain compatible without claiming template provenance', () => {
+  const document = parseDesignDocument(renderDesign(planFor()));
+  document.metadata.themeProfile.sourceThemeId = 'not-a-theme';
+  expect(() => generateThemeCss(serializeDesignDocument(document))).toThrow(expect.objectContaining({ code: 'APPLICATION_STYLE_UNKNOWN' }));
+  delete document.metadata.themeProfile.sourceThemeId;
+  const legacy = serializeDesignDocument(document);
+  const css = generateThemeCss(legacy) + projectRule;
+  expect(generateThemeCss(legacy, css, legacy)).toContain(projectRule.trim());
+  expect(() => generateThemeCss(renderDesign(planFor()), css, legacy)).toThrow(expect.objectContaining({ code: 'THEME_SOURCE_CONFLICT' }));
+});
+
+test('creative starts from the shared skeleton even if its paired file has extra rules', () => {
+  const document = parseDesignDocument(renderDesign(planFor()));
+  document.metadata.themeProfile.sourceThemeId = 'free-creative';
+  const read = fs.readFileSync;
+  const spy = jest.spyOn(fs, 'readFileSync').mockImplementation((file, ...args) => {
+    if (String(file).endsWith('/free-creative/app_theme.css')) {throw new Error('Must use shared skeleton');}
+    return read(file, ...args);
+  });
+  expect(generateThemeCss(serializeDesignDocument(document))).toContain('openyida-theme-source: free-creative');
+  spy.mockRestore();
+});
+
+test('template-specific source rules survive rebuild and are exported in paired CSS', () => {
+  const theme = loadThemeIndex().themes.find(item => item.themeId === 'soft-inset-surfaces');
+  const designFile = path.join(directory, theme.templatePath);
+  const cssFile = path.join(directory, theme.cssTemplatePath);
+  fs.mkdirSync(path.dirname(designFile), { recursive: true });
+  fs.copyFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), designFile);
+  fs.writeFileSync(path.join(path.dirname(designFile), 'theme-rules.css'), rules);
+  build({ root: directory, themes: [theme] });
+  expect(fs.readFileSync(cssFile, 'utf8')).toContain(rules.trim());
+  expect(build({ root: directory, themes: [theme], check: true })).toEqual([]);
+  fs.writeFileSync(designFile, fs.readFileSync(designFile, 'utf8').replace('"40px"', '"36px"'));
+  build({ root: directory, themes: [theme] });
+  expect(fs.readFileSync(cssFile, 'utf8')).toContain(rules.trim());
+  expect(fs.readFileSync(cssFile, 'utf8')).toContain('--pod-nav-menu-item-height: 36px;');
+});

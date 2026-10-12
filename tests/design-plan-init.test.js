@@ -484,6 +484,13 @@ test('catalog is read-only and its theme IDs initialize through the public CLI w
   const patterns = require('../yida-skills/skills/yida-design/sub_skill/yida-design-plan/templates/page-patterns/index.json');
   expect(result.themes.map(theme => theme.themeId)).toEqual(themeIndex.themes.filter(theme => theme.mode !== 'creative').map(theme => theme.themeId));
   expect(result.creativeOption).toMatchObject({ themeId: 'free-creative', mode: 'creative' });
+  const restricted = {
+    'soft-inset-surfaces': ['side'], 'hairline-soft-blocks': ['side'],
+    'dark-rail-fine-lines': ['side'], 'ink-glow-soft-panels': ['top'],
+  };
+  for (const [themeId, layouts] of Object.entries(restricted)) {
+    expect(result.themes.find(theme => theme.themeId === themeId).supportedNavigationLayouts).toEqual(layouts);
+  }
   for (const theme of result.themes) {
     expect(theme.styleSummary).toMatch(/(?:深色|浅色)导航/);
     expect(theme.styleSummary).toMatch(/(?:深色|浅色)内容界面/);

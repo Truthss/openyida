@@ -43,6 +43,7 @@
 | 字段 | 规则 |
 | --- | --- |
 | `name` | 项目自己的视觉方向名称，不写主题模板名称 |
+| `sourceThemeId` | 新项目保留目录中的主题 ID，独立设计为 `free-creative`；用于定位配对 CSS，历史无来源文件继续兼容 |
 | `themeColor` | 当前主色，使用 6 位 HEX，与 `--color-brand1-6` 的最终值一致 |
 | `themeColorSource` | 实际来源，如 `user-specified`、`application-theme` 或 `business-inferred`；不伪造模板默认品牌色 |
 | `contentTone` | `light` 或 `dark` |
@@ -79,7 +80,7 @@
 | 表面与组件 | 各区块如何消费共享表面、边界、字体和组件规则；明确局部差异与特色配方位置 |
 | 主操作 | 主次动作的位置、入口与反馈，保留表单、详情及现有业务功能契约 |
 | 状态 | 当前页加载、空、错、无权限等实际反馈与恢复动作；公共状态用 anchor 引用，业务文案就近补充 |
-| 响应式 | 窄屏的排列顺序、折叠、工具栏换行、表格滚动和触控方式 |
+| 响应式 | 按 [共享布局规则](../references/responsive-layout.md) 写清实际容器的重排条件与顺序、筛选换行、面板等高解除、表格局部滚动和触控方式 |
 | 验收 | 焦点、内容、布局、主题、交互、素材与状态的可检查结果 |
 
 页面外壳、焦点、主要内容、动作区、上下文与反馈这些设计含义都要覆盖；不要求创建同名 JSON/YAML 字段。尺寸和间距优先引用已定义 token，只有项目确实需要的数值差异才另外写明。不能仅写“按主题执行”，也不能把公共组件全文复制到每一页。
@@ -175,7 +176,7 @@ Fast 与 Plan 按同一规则记录背景，先确定作用范围：
 
 `tokens` 的格式与变量契约见 [frontmatter 规范](#frontmatter-规范)。需要改变平台表现的圆角、字体、间距等必须落实为 CSS token，不能只写正文。
 
-Fast 或单独更新主题时，执行 `openyida sample yida-design app-theme --output .cache/openyida/<项目名>/app-theme.css --design-file prd/<项目名>/design.md`。首次从公共模板生成；已有 CSS 只更新设计中变化的 token，保留其他 token 和自定义样式。CLI 自动保存更新记录，内容相同时跳过写入，写入失败回滚。省略 `--design-file` 会用公共模板重置目标 CSS。
+Fast 或单独更新主题时，执行 `openyida sample yida-design app-theme --output .cache/openyida/<项目名>/app-theme.css --design-file prd/<项目名>/design.md`。首次按 `themeProfile.sourceThemeId` 读取命名主题配对 CSS，自由创意使用公共骨架；同主题已有 CSS 只更新变化的 token，保留其他 token 和自定义样式。换主题或来源不明时使用新输出路径，按[模板来源约束](../references/application-style-library.md#模板来源与重复生成)迁移定制。CLI 自动保存更新记录，内容相同时跳过写入，写入失败回滚。省略 `--design-file` 会用公共模板重置目标 CSS。
 
 主题生成前校验输入 CSS 的括号、字符串和注释闭合，生成后与上传前复用同一检查；纯模板导出也须通过。出现 `THEME_CSS_STRUCTURE_INVALID` 时按错误行修复源模板或已有 CSS，再重试；生成失败保留原 CSS 和 token 更新记录，不能靠重置模板覆盖已有定制。新增全局及页面语义 token 写入包含顶层 `:root` 的统一声明块；light、dark、white、gray 选择器消费同一套项目颜色。
 

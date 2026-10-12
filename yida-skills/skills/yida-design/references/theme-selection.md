@@ -35,9 +35,11 @@ Fast、Plan 和单页设计共用 [主题索引](../templates/design-themes/inde
 4. 选定后通过该索引记录的 `templatePath`，相对 `yida-design/` 读取一份完整主题。沿用已确认选择，不再重新推荐；用户要求比较时，按所在流程完成选择后再读全文。
 5. 项目要求与主题核心特征冲突时，可以选择自由创意，也可重新匹配摘要中的其他主题；品牌色等允许的项目输入不构成更换主题的理由。用户明确的导航明暗与候选主题 `navTheme` 冲突时，改选符合要求的主题，不覆盖模板的导航明暗。
 
-主题 ID、模板路径和候选比较保留在内部实施记录；Plan 写 `visualStyle.internal.selectedTheme`，Fast 沿用 brief 的视觉选择。最终文档正文和用户可见方案只写当前项目的视觉效果、配色和使用理由，不展示模板路径或内部选择过程；design.md frontmatter 只保留 applicationStyle 配方版本与模式，不携带模板身份。
+主题 ID、模板路径和候选比较保留在内部实施记录；Plan 写 `visualStyle.internal.selectedTheme`，Fast 沿用 brief 的视觉选择。最终文档正文和用户可见方案只写当前项目的视觉效果、配色和使用理由，不展示模板路径或内部选择过程；design.md frontmatter 的 `themeProfile.sourceThemeId` 保留所选主题 ID，供 CLI 定位同目录配对 CSS；不把该内部字段展示为用户方案内容。实例化与验收按[模板来源约束](application-style-library.md#模板来源与重复生成)执行。
 
 ## 设计方向比较
+
+比较前先按 [主题与导航兼容规则](navigation-decision.md#主题与导航兼容规则) 读取目录的 `supportedNavigationLayouts`，排除与已确定布局不兼容的命名主题。用户只指定主题时按其允许布局规划；主题与明确布局冲突时先解决冲突，再进入候选比较。Fast、Plan、单页和美化共用该规则。
 
 比较过程只使用索引摘要，遵守上述完整模板读取边界。
 

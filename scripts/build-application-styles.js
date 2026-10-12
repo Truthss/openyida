@@ -21,7 +21,7 @@ function yaml(value, depth = 0) {
 }
 
 /** Compile the complete authored theme into scoped CSS, retaining brand placeholders. */
-function cssTemplate(markdown) {
+function cssTemplate(markdown, rules = '') {
   // Resolve only to reuse the platform's scope/recipe writer, then restore every
   // project-dependent value. The temporary seed never becomes a template default.
   const metadata = parseDesignDocument(markdown).metadata;
@@ -42,7 +42,7 @@ function cssTemplate(markdown) {
     '--color-brand-3': 'var(--color-brand1-6)', '--color-brand-4': 'var(--color-brand1-9)',
     '--color-group': [6, 1, 5, 2, 9, 3].map(slot => `var(--color-brand1-${slot})`).join(', '),
   };
-  const compiled = applyDesignTokens(platformCss, resolved);
+  const compiled = applyDesignTokens(rules.trim() ? `${platformCss.trimEnd()}\n\n${rules.trim()}\n` : platformCss, resolved);
   const audit = validatePalette(rootDeclarations(compiled.replace(/\/\*[\s\S]*?\*\//g, '')));
   if (audit.unresolved.length) {throw new Error(`Unresolved template palette: ${audit.unresolved.map(pair => pair.role).join(', ')}`);}
   return compiled
@@ -63,7 +63,9 @@ function build({ root = DESIGN_SKILL_ROOT, themes = loadThemeIndex().themes, che
     if (source !== path.join(directory, 'design.md') || output !== path.join(directory, 'app_theme.css')) {
       throw new Error(`Invalid theme paths: ${theme.themeId}`);
     }
-    return [output, cssTemplate(fs.readFileSync(source, 'utf8'))];
+    const rulesFile = path.join(directory, 'theme-rules.css');
+    const rules = fs.existsSync(rulesFile) ? fs.readFileSync(rulesFile, 'utf8') : '';
+    return [output, cssTemplate(fs.readFileSync(source, 'utf8'), rules)];
   });
   const changed = outputs.filter(([file, css]) => !fs.existsSync(file) || fs.readFileSync(file, 'utf8') !== css);
   if (check && changed.length) {throw new Error(`Theme CSS out of date: ${changed.map(([file]) => path.relative(root, file)).join(', ')}`);}

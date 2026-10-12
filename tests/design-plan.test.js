@@ -811,7 +811,7 @@ describe('design-plan materialize', () => {
     expect(compactDesign).toContain('- 导航明暗：浅色');
     expect(compactDesign).toContain('- 导航背景：`--pod-shell-theme-bg-color`');
     expect(compactDesign).not.toMatch(/^themeId:/m);
-    expect(compactDesign).not.toContain('soft-inset-surfaces');
+    expect(parseDesignDocument(compactDesign).metadata.themeProfile.sourceThemeId).toBe('soft-inset-surfaces');
     expect(html).toContain('<strong>导航结构：</strong>平台侧边导航');
     expect(html).toContain('<strong>导航明暗：</strong>浅色');
     expect(html).toContain('高频流程处理需要稳定入口，深色导航加强模块边界。');
@@ -971,7 +971,8 @@ describe('design-plan materialize', () => {
         ...plan.pages.customPageDetails[0].pageSpecHandoff, designRefs,
       };
       const design = renderDesign(plan);
-      expect(design).not.toContain(theme.themeId);
+      expect(parseDesignDocument(design).metadata.themeProfile.sourceThemeId).toBe(theme.themeId);
+      expect(parseDesignDocument(design).body).not.toContain(theme.themeId);
       expect(design).not.toContain(theme.label);
       expect(design).toContain('### 项目视觉选择与事实');
       expect(design).toContain(plan.visualStyle.constraints.accessibility);

@@ -16,13 +16,15 @@ description: >
 
 所有页面按[任务驱动的视觉设计](references/task-driven-visual-design.md)从主要任务和信息关系推导表达、构图与视觉重点，主动判断图片的识别、解释和氛围价值，再确定密度与降级。
 
+自定义页面按 [响应式布局](references/responsive-layout.md) 明确容器宽度变化后的换行、堆叠、控件对齐和局部滚动；等高只用于宽屏下需要成组展示的面板，窄屏恢复自然高度。
+
 固定主题只写一套 token。CLI 让全局与平台 light、dark、white、gray 选择器共用同一个声明块，不为 is-light/is-dark 另配颜色。`navTheme` 按设计保存为应用配置，不能按主题名称猜测。
 
 配色要按“文字＋所在背景”成对设计。正文、说明、表单标签、详情和搜索必须清楚；禁用色不能用于正常提示，品牌色不能直接当通用文字色。大面积画布和导航控制亮度、饱和度，强色留给局部重点。`check-design` 和带设计文件的主题生成会拦截已知低于 4.5:1 的文字组合，返回具体角色和 token；修复设计源后再生成，不自动改色。JSON 中 `paletteContrast.unresolved` 非空表示尚未确认，复杂颜色、图片与渐变仍需浏览器检查。
 
 **品牌变量必须完整，导航装饰可以省略。** `design.md` 提供 PC 品牌色阶 `--color-brand1-1/2/3/5/6/9/10`，CLI 同时生成移动端 `--color-brand-1`、`--color-brand-2`、`--color-brand-3`、`--color-brand-4`。最终 CSS 必须在全局 `:root` 中提供这 11 个可用颜色；移动端映射不必在 design.md 重复填写。生成和上传都会检查缺失、无效颜色及循环引用。报错时修复设计后重新生成，不能只替换主色后上传模板。
 
-需要选择风格时，读取 [共享主题选择规则](references/theme-selection.md)；选型方法和适用条件只在该文件维护。
+需要选择风格时，读取 [共享主题选择规则](references/theme-selection.md)，按 [模板来源约束](references/application-style-library.md#模板来源与重复生成) 保留配对 CSS 与所选视觉特征；先按 [主题与导航兼容规则](references/navigation-decision.md#主题与导航兼容规则) 筛选候选；已确定的导航结构不能被不兼容主题覆盖。
 
 向用户说明设计时，写风格和适用场景：“设计主题风格为轻盈媒体栅格，适合产品展示型品牌官网。”风格名称与场景按当前项目填写；建议阶段使用“建议采用……风格”。
 
@@ -112,6 +114,6 @@ Fast、Plan 和单页设计使用相同的 UI 设计规则、主题变量和质�
 | [基础变量契约](templates/design-themes/basic-tokens.json) | 全局基础变量与固定值 | 主题项目化和 token 校验 |
 | [应用结构参考](../yida-prd/references/app/blueprint.md) | 应用角色、导航、页面清单、页面/表单/流程资源蓝图 | 完整应用或主页面 |
 | [应用主题与 token 参考](references/theme/theme-token-presets.md) | 平台主题 key、候选主题、token profile | 需要主题 key 或 token |
-| [应用主题 CSS 模板](references/theme/app-custom-theme-template.css) | AI 可复制修改的品牌、Shell、页面、表格和导航 token | 生成自定义应用主题文件时必读 |
+| [应用主题 CSS 模板](references/theme/app-custom-theme-template.css) | 自由创意与历史无来源设计的公共骨架 | 命名主题使用对应目录的配对 CSS |
 | [yida-canvas-custom-page 样式实现指南](../yida-canvas-custom-page/references/canvas-style-implementation-guide.md) | 将 `design.md` 的 token、背景、圆角、密度和组件规则落到页面源码、antd、CSS、图表和控件状态 | 实现阶段 |
 | [字段与 URL 参考](../../references/field-and-url-reference.md) | `isRenderNav=false`、页面 URL、跨页跳转 | 拼接页面/表单 URL |
