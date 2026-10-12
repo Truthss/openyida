@@ -32,8 +32,8 @@ TOKEN_WILDCARD = re.compile(r"--[a-z0-9-]*\*")
 def parse_scalar(raw: str) -> str | dict:
     """Read the template's YAML mapping subset without a PyYAML dependency.
 
-    Quoted strings, plain CSS scalars and empty maps are supported; sequences,
-    aliases, tags and block strings are rejected instead of silently ignored.
+    Quoted strings, plain CSS scalars and empty maps are supported;
+    inline sequences, aliases, tags and block strings are rejected instead of silently ignored.
     """
     if raw.startswith('"'):
         value, end = json.JSONDecoder().raw_decode(raw)
@@ -57,28 +57,48 @@ def parse_frontmatter(text: str) -> dict:
     match = re.match(r"\A---\n([\s\S]*?)\n---(?:\n|$)", text)
     if not match:
         raise ValueError("缺少合法 YAML frontmatter")
-    root: dict = {}
-    stack = [(-2, root)]
-    for number, line in enumerate(match.group(1).splitlines(), start=2):
-        if not line.strip() or line.lstrip().startswith("#"):
-            continue
-        item = re.fullmatch(r'([ ]*)("[^"\n]+"|\'[^\'\n]+\'|[a-zA-Z_][\w-]*):(?:\s+(.*))?', line)
-        if not item:
-            raise ValueError(f"第 {number} 行不是受支持的 YAML 映射")
-        indent = len(item.group(1))
-        key = item.group(2).strip('"\'')
-        raw = (item.group(3) or "").strip()
-        while stack[-1][0] >= indent:
-            stack.pop()
-        parent_indent, parent = stack[-1]
-        if indent != parent_indent + 2:
-            raise ValueError(f"第 {number} 行缩进应逐级增加两个空格")
-        if key in parent:
-            raise ValueError(f"第 {number} 行重复定义 {key}")
-        value = {} if not raw or raw.startswith("#") else parse_scalar(raw)
-        parent[key] = value
-        if isinstance(value, dict):
-            stack.append((indent, value))
+    lines = [(number, line) for number, line in enumerate(match.group(1).splitlines(), start=2)
+             if line.strip() and not line.lstrip().startswith("#")]
+
+    def read_block(offset: int, indent: int) -> tuple[object, int]:
+        sequence = lines[offset][1].lstrip().startswith("- ")
+        result = [] if sequence else {}
+        while offset < len(lines):
+            number, line = lines[offset]
+            actual = len(line) - len(line.lstrip(" "))
+            if actual < indent:
+                break
+            if actual != indent:
+                raise ValueError(f"第 {number} 行缩进应逐级增加两个空格")
+            content = line[indent:]
+            if sequence:
+                if not content.startswith("- "):
+                    raise ValueError(f"第 {number} 行不是受支持的 YAML 序列")
+                # Sequence items are mappings, as used by icon color pairs.
+                lines[offset] = (number, " " * (indent + 2) + content[2:])
+                value, offset = read_block(offset, indent + 2)
+                result.append(value)
+                continue
+            item = re.fullmatch(r"(\"[^\"\n]+\"|'[^'\n]+'|[a-zA-Z_][\w-]*):(?:\s+(.*))?", content)
+            if not item:
+                raise ValueError(f"第 {number} 行不是受支持的 YAML 映射")
+            key = item.group(1).strip("\"'")
+            raw = (item.group(2) or "").strip()
+            if key in result:
+                raise ValueError(f"第 {number} 行重复定义 {key}")
+            offset += 1
+            if not raw or raw.startswith("#"):
+                value = {}
+                if offset < len(lines) and len(lines[offset][1]) - len(lines[offset][1].lstrip(" ")) > indent:
+                    value, offset = read_block(offset, indent + 2)
+            else:
+                value = parse_scalar(raw)
+            result[key] = value
+        return result, offset
+
+    root, _ = read_block(0, 0) if lines else ({}, 0)
+    if not isinstance(root, dict):
+        raise ValueError("frontmatter 必须是映射")
     return root
 
 
@@ -107,7 +127,7 @@ def collect_tokens(node: object, label: str, errors: list[str]) -> dict[str, str
 
 def validate_tokens(frontmatter: dict, text: str, label: str, contract: dict, errors: list[str]) -> None:
     groups = contract["groups"]
-    basic_tokens = {name for names in groups.values() for name in names}
+    basic_tokens = {name for names in groups.values() for name in names if not name.startswith("--color-brand1-")}
     tokens = frontmatter.get("tokens")
     if not isinstance(tokens, dict) or set(tokens) != {"application-global", "custom-page"}:
         errors.append(f"{label} tokens 必须包含 application-global 和 custom-page 两层")
@@ -123,10 +143,8 @@ def validate_tokens(frontmatter: dict, text: str, label: str, contract: dict, er
     for name, value in contract["fixedValues"].items():
         if name in global_tokens and global_tokens[name] != str(value):
             errors.append(f"{label} {name} 应使用固定值 {value}")
-    if global_tokens.get("--color-brand1-6") != "{{PRIMARY_COLOR}}":
-        errors.append(f"{label} --color-brand1-6 必须使用项目主色占位符")
-    if "--oyd-page-bg" in custom_tokens and custom_tokens["--oyd-page-bg"] != "var(--pod-page-bg-color)":
-        errors.append(f"{label} --oyd-page-bg 必须单向继承 --pod-page-bg-color")
+    if "--oyd-page-bg" in custom_tokens and custom_tokens["--oyd-page-bg"] not in {"var(--pod-page-bg-color)", "transparent", "rgba(255, 255, 255, 0)", global_tokens.get("--pod-page-bg-color")}:
+        errors.append(f"{label} --oyd-page-bg 必须继承或等于 --pod-page-bg-color，或使用透明底")
 
     declared = {**global_tokens, **custom_tokens}
     unsupported = set(declared) & {"--color-brand1-4", "--color-brand1-7", "--color-brand1-8"}
@@ -153,9 +171,6 @@ def validate_tokens(frontmatter: dict, text: str, label: str, contract: dict, er
 
     for name in declared:
         visit(name)
-    for name in global_tokens:
-        if name.startswith("--color-brand1-") and name != "--color-brand1-6" and "--color-brand1-6" not in dependencies[name]:
-            errors.append(f"{label} {name} 必须与 --color-brand1-6 同源")
 
 
 def validate(skill_root: Path) -> list[str]:
@@ -226,14 +241,12 @@ def validate(skill_root: Path) -> list[str]:
             errors.append(f"{label} 主题目录必须只包含 design.md、app_theme.css、form-layout.json 三个文件")
         try:
             css = (full_path.parent / "app_theme.css").read_text(encoding="utf-8")
-            for name, pattern in (("--color-brand1-6", r"\{\{PRIMARY_COLOR\}\}"), ("--color-brand1-1", r"<生成实际色值：--color-brand1-6 [^;\n]+>")):
-                if not re.search(r"^\s*" + re.escape(name) + r":\s*" + pattern + r";", css, re.M):
-                    errors.append(f"{label} app_theme.css {name} 必须保留项目颜色占位")
             layout = json.loads((full_path.parent / "form-layout.json").read_text(encoding="utf-8"))
             if not isinstance(layout, list) or not layout:
                 errors.append(f"{label} form-layout.json 必须是非空组件数组")
         except (OSError, ValueError) as exc:
             errors.append(f"{label} 主题配对资产不可读：{exc}")
+            continue
         try:
             text = full_path.read_text(encoding="utf-8")
             frontmatter = parse_frontmatter(text)
@@ -255,13 +268,21 @@ def validate(skill_root: Path) -> list[str]:
                 errors.append(f"{label} styleSummary 的导航明暗与主题模板 navTheme 不一致")
             if theme.get("navTheme") != nav_theme:
                 errors.append(f"{label} navTheme 与主题模板不一致")
+        # Validate authored pairs, not a universal palette shape or color formula.
+        colors = collect_tokens(frontmatter.get("tokens", {}).get("application-global", {}), template_path, errors)
+        css_names = set(re.findall(r"^\s*(--[\w-]+)\s*:", css, re.M))
+        for name, value in colors.items():
+            if name.startswith("--color-brand1-") and name in css_names:
+                if not re.search(r"^\s*" + re.escape(name) + r":\s*" + re.escape(value) + r";", css, re.M):
+                    errors.append(f"{label} app_theme.css {name} 与 design.md 的声明不一致")
         validate_tokens(frontmatter, text, template_path, contract, errors)
         headings = re.findall(r"^## (.+)$", text, re.M)
         if headings != list(REQUIRED_HEADINGS):
             errors.append(f"{template_path} 必须依次包含 V2 五个章节")
         placeholders = set(re.findall(r"\{\{([A-Z0-9_]+)\}\}", text))
-        if placeholders != REQUIRED_PLACEHOLDERS:
-            errors.append(f"{template_path} 项目占位符不符合 V2 契约：缺少 {sorted(REQUIRED_PLACEHOLDERS - placeholders)}，未知 {sorted(placeholders - REQUIRED_PLACEHOLDERS)}")
+        required = REQUIRED_PLACEHOLDERS - {"PRIMARY_COLOR", "COLOR_SOURCE"}
+        if not required <= placeholders or placeholders - REQUIRED_PLACEHOLDERS:
+            errors.append(f"{template_path} 项目占位符不符合 V2 契约：缺少 {sorted(required - placeholders)}，未知 {sorted(placeholders - REQUIRED_PLACEHOLDERS)}")
         if TOKEN_SUFFIX_SHORTHAND.search(text) or TOKEN_WILDCARD.search(text):
             errors.append(f"{template_path} 含未展开的 Token 后缀缩写或通配写法")
 

@@ -240,7 +240,7 @@ test.each([
     v.metadata.tokens['application-global'].appearance.surfaces['--pod-page-bg-color'] = 'var(--project-paper)';
     v.metadata.tokens['custom-page']['--project-paper'] = 'var(--pod-page-bg-color)';
   }, 'TOKEN_REFERENCE_CYCLE'],
-  ['fixed bridge', v => { v.metadata.tokens['application-global'].colors['--color-white'] = '#FFFFFF'; }, 'FIXED_PLATFORM_VALUE'],
+  ['fixed tooltip', v => { v.metadata.tokens['application-global'].colors['--color-text1-5'] = '#000000'; }, 'FIXED_PLATFORM_VALUE'],
   ['primary mismatch', v => { v.metadata.themeProfile.themeColor = '#FF0000'; }, 'PRIMARY_COLOR_MISMATCH'],
   ['missing content tone', v => { delete v.metadata.themeProfile.contentTone; }, 'LIGHT_OR_DARK_REQUIRED'],
   ['invalid content tone', v => { v.metadata.themeProfile.contentTone = 'auto'; }, 'LIGHT_OR_DARK_REQUIRED'],

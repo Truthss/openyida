@@ -2,9 +2,9 @@
 
 本文件是 `yida-design` 确定 OpenYida 应用主题色阶和 token 修改清单时使用的参考。
 
-主题选择先根据行业、品牌、业务情绪和视觉目标做创意判断，不能固定回到 `podBlue` 或 #1677ff，也不能套用“科技=蓝、宠物=橙、法律=蓝”这类行业刻板配色。`podBlue`、`podGreen`、`podOrange` 是常用浅底候选，不是默认答案；`blue`、`green`、`orange` 也是应用主题 token profile，保留原名，不自动改写成其他主题名。
+主题选择按 [共享规则](../theme-selection.md) 执行，不能固定回到 `podBlue` 或 #1677ff，也不能套用“科技=蓝、宠物=橙、法律=蓝”这类行业刻板配色。平台预置色盘是实现选项，不是默认推荐顺序；`blue`、`green`、`orange` 也是应用主题 token profile，保留原名，不自动改写成其他主题名。
 
-`deepBlue`、`deepPurple`、`purple`、`yellow`、`magenta`、`red`、`greyBlue`、`coffee`、`black` 等色盘仅在用户明确指定、品牌匹配或业务确实需要时使用。普通业务页默认使用浅底主题，`black` 不作为默认主题。
+所有色盘按同一标准判断：用户要求、品牌依据与候选比较结果；不将其他色相设为次选或要求额外授权。普通业务页默认使用浅底主题，`black` 不作为默认主题。
 
 下方预置用于确定主题色阶。主题文件的生成与更新统一按 [CLI token 契约](../../workflow/output-design.md#cli-token-契约fast--plan-共用) 执行，品牌变量含义见下方“平台 token 语义”。
 
@@ -57,14 +57,13 @@ CodeCanvas 对话框通过 [CanvasDialog 模板](../../../yida-canvas-custom-pag
 | `blue` | 基础蓝 | 按需 |
 | `green` | 基础绿 | 按需 |
 | `orange` | 基础橙 | 按需 |
-| `podBule` | 平台蓝色 | 按需 |
-| `podBlue` | 平台蓝 | 常用候选，不默认 |
+| `podBlue` | 平台蓝 | 按需 |
 | `teal` | 青色 | 按需 |
-| `podGreen` | 平台绿 | 常用候选，不默认 |
+| `podGreen` | 平台绿 | 按需 |
 | `deepBlue` | 深蓝 | 按需 |
 | `deepPurple` | 深紫 | 按需 |
 | `purple` | 紫色 | 按需 |
-| `podOrange` | 平台橙 | 常用候选，不默认 |
+| `podOrange` | 平台橙 | 按需 |
 | `yellow` | 黄色 | 按需 |
 | `magenta` | 玫红 | 按需 |
 | `red` | 红色 | 按需 |
@@ -145,24 +144,6 @@ CodeCanvas 对话框通过 [CanvasDialog 模板](../../../yida-canvas-custom-pag
   "--color-brand-2": "rgb(255, 125, 26)",
   "--color-brand-3": "rgb(255, 111, 0)",
   "--color-brand-4": "rgb(242, 105, 0)"
-}
-```
-
-## podBule
-
-```json
-{
-  "--color-brand1-1": "rgba(73, 164, 255, 1)",
-  "--color-brand1-2": "rgba(224, 240, 255, 1)",
-  "--color-brand1-3": "rgba(0, 127, 255, 0.2)",
-  "--color-brand1-6": "rgba(0, 102, 255, 1)",
-  "--color-brand1-9": "rgba(0, 82, 204, 1)",
-  "--color-brand1-10": "rgba(0, 127, 255, 0.3)",
-  "--color-brand-1": "rgba(0, 127, 255, 0.3)",
-  "--color-brand-2": "rgba(73, 164, 255, 1)",
-  "--color-brand-3": "rgba(0, 102, 255, 1)",
-  "--color-brand-4": "rgba(0, 82, 204, 1)",
-  "--color-group": "rgba(131, 137, 143, 0.16),rgba(0, 200, 255, 1),rgba(122, 95, 255, 1),rgba(0, 61, 153, 1),rgba(255, 107, 53, 1),rgba(102, 204, 102, 1)"
 }
 ```
 

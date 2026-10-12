@@ -38,7 +38,7 @@ metadata:
 
 1. 单屏控制塔结构，见 `references/structure-and-layout.md`。
 2. 真实数据绑定：聚合指标走报表/聚合结果，明细走分页查询；禁止前端拉全量后聚合。
-3. 视觉主题和信息层级，见 `references/theme-presets.md`。默认从 `podBlue`、`podGreen`、`podOrange` 等应用主题中选择；平台预置主题使用应用 `--theme`，自定义色盘使用应用级主题 CSS 文件，页面只消费运行时变量。
+3. 视觉主题和信息层级，见 `references/theme-presets.md`。按共享主题选择规则先拒绝第一直觉，再比较新候选；平台预置主题使用应用 `--theme`，自定义色盘使用应用级主题 CSS 文件，页面只消费运行时变量。
 4. 筛选与图表联动；控件必须受控并真实改变下方数据。
 5. 每元素可派单：`saveFormData → 集成自动化 → 待办2.0 ConnectorCall`。
 6. 卡片截图分享：真实可点击，截图时排除截图按钮本身。
@@ -82,7 +82,7 @@ metadata:
 自定义页面入口：
 
 - `prd.md` 决定页面目标、指标、区块和交互，`design.md` 决定主题、布局和视觉状态；`page-spec.json` 只作为生成器需要时的派生输入。
-- 默认主题从 `podBlue`、`podGreen`、`podOrange` 等应用主题中选择；用户明确要求应用主题风格/应用主题色时，才使用 `yida-app-theme`。
+- 主题与配色统一由 `yida-design` 确定，沿用已确认的项目设计；不得按业务关键词套固定看板色盘。
 - 用户强调“大屏 / 指挥舱 / 实时监控”时使用 `screen` 场景；普通经营看板使用 `dashboard` 场景。
 - `.canvas.jsx` 编译与发布细节以 `yida-canvas-custom-page` 为准；不要把 `openyida check-page`、`.oyd.jsx` 或 `renderJsx` 写成默认步骤。
 

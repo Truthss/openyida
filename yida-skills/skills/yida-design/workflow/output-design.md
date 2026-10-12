@@ -34,7 +34,7 @@
 | `iconSystem` | 必填，`{library: "lucide-react", mappings: {}}`；library 仅为 `lucide-react` 或 `@ant-design/icons`，mappings 将实际业务语义映射到具体图标组件，无图标时为空对象 |
 | `buildPlanRevision` | 仅 Plan 可选，用于与当前计划版本对应；Fast 不补造计划版本 |
 
-`tokens` 中每个 `--token` 只占一行具体 CSS 值，可以带行尾注释。数值、颜色、变量引用均须能解析为有效单行值；不得遗留占位符、推导指令、同名冲突值或多行标量。字体与间距使用主题默认值，明确项目定制可以写入合法覆盖；`--color-white`、`--pod-table-cell-color` 的桥接关系及 Tooltip 固定值仍按公共契约保持。应用全局的七个品牌色阶为 1/2/3/5/6/9/10，不补造 4/7/8。分组只用于组织，CSS 变量使用叶子的完整原名；可引用同份主题中声明的项目变量，不能依赖只在页面选择器内定义的值。移动端品牌桥接由公共 CSS 模板保留，不能删改其变量名。
+`tokens` 中每个 `--token` 只占一行具体 CSS 值，可以带行尾注释。数值、颜色、变量引用均须能解析为有效单行值；不得遗留占位符、推导指令、同名冲突值或多行标量。字体与间距使用主题默认值，明确项目定制可以写入合法覆盖；`--color-white`、`--pod-table-cell-color` 沿用配对主题的表面取值，不强制改成卡片别名；Tooltip 固定值仍按公共契约保持。应用全局的七个品牌色阶为 1/2/3/5/6/9/10，不补造 4/7/8。分组只用于组织，CSS 变量使用叶子的完整原名；可引用同份主题中声明的项目变量，不能依赖只在页面选择器内定义的值。移动端品牌桥接由公共 CSS 模板保留，不能删改其变量名。
 
 ### themeProfile
 
@@ -43,6 +43,7 @@
 | 字段 | 规则 |
 | --- | --- |
 | `name` | 项目自己的视觉方向名称，不写主题模板名称 |
+| `sourceThemeId` | 新项目保留目录中的主题 ID，独立设计为 `free-creative`；用于定位配对 CSS，历史无来源文件继续兼容 |
 | `themeColor` | 当前主色，使用 6 位 HEX，与 `--color-brand1-6` 的最终值一致 |
 | `themeColorSource` | 实际来源，如 `user-specified`、`application-theme` 或 `business-inferred`；不伪造模板默认品牌色 |
 | `contentTone` | `light` 或 `dark` |
@@ -79,10 +80,12 @@
 | 表面与组件 | 各区块如何消费共享表面、边界、字体和组件规则；明确局部差异与特色配方位置 |
 | 主操作 | 主次动作的位置、入口与反馈，保留表单、详情及现有业务功能契约 |
 | 状态 | 当前页加载、空、错、无权限等实际反馈与恢复动作；公共状态用 anchor 引用，业务文案就近补充 |
-| 响应式 | 窄屏的排列顺序、折叠、工具栏换行、表格滚动和触控方式 |
+| 响应式 | 按 [共享布局规则](../references/responsive-layout.md) 写清实际容器的重排条件与顺序、筛选换行、面板等高解除、表格局部滚动和触控方式 |
 | 验收 | 焦点、内容、布局、主题、交互、素材与状态的可检查结果 |
 
 页面外壳、焦点、主要内容、动作区、上下文与反馈这些设计含义都要覆盖；不要求创建同名 JSON/YAML 字段。尺寸和间距优先引用已定义 token，只有项目确实需要的数值差异才另外写明。不能仅写“按主题执行”，也不能把公共组件全文复制到每一页。
+
+按 [阅读无障碍门禁](../references/page-quality-gates.md#阅读无障碍门禁) 将排版与可访问名称写入共享组件规则，将放大重排、完整信息获取和阅读顺序写入逐页响应式与验收项。使用已有正文与 Plan 字段，不新增一份无障碍配置；验收标准与已执行结果分开，设计阶段不得写成已通过实际页面验证。
 
 Fast 在 design.md 逐页写清背景范围、导航首屏/滚动态、对齐宽度、实际滚动容器、入口行为、返回状态及未保存策略；Plan 写入已有 pageApplications 的 visualApplication、surface、states 后物化，不另问实现字段。
 
@@ -138,7 +141,7 @@ Fast 写入 `design.md`；Plan 写入 `visualStyle.forUser.iconSystem.colorPairs
 
 用户确认的整体氛围高于模板默认灰阶。根据品牌和已确认方向协调页面、卡片、导航、填充、边界和交互，同时保留文字可读性和独立状态语义；不能只改按钮，也不能统一抹掉主题原有层次与材质。
 
-Fast 与 Plan 使用同一主题的颜色推导、组件规则和页面设计标准。主色按主题公式推导，其余变量沿用主题；项目差异直接写入 token。Plan 输入使用 `visualStyle.tokens`，Fast 写入 `design.md.tokens`，最终设计相同。导航差异 token（未声明项沿用平台绑定） 沿用主题模板，并合入明确的项目差异；`navigationStyle.tone` 表示导航明暗，具体外观由这组 token 表达。导航明暗与内容画布分别设计。用户明确保留中性参考或只改强调色时尊重该范围。`--pod-nav-menu-item-selected-shadow` 作为方向无关的基础外观 Token 独立透传，`none` 表示关闭；CLI 不根据导航明暗生成替代配色。
+Fast 与 Plan 使用同一主题的颜色推导、组件规则和页面设计标准。只计算模板中已有的主色公式，固定值与变量引用按原设计保留；项目差异直接写入 token，不强制其他色阶跟随主色。Plan 输入使用 `visualStyle.tokens`，Fast 写入 `design.md.tokens`，最终设计相同。导航差异 token（未声明项沿用平台绑定） 沿用主题模板，并合入明确的项目差异；`navigationStyle.tone` 表示导航明暗，具体外观由这组 token 表达。导航明暗与内容画布分别设计。用户明确保留中性参考或只改强调色时尊重该范围。`--pod-nav-menu-item-selected-shadow` 作为方向无关的基础外观 Token 独立透传，`none` 表示关闭；CLI 不根据导航明暗生成替代配色。
 
 圆角、padding、gap、密度、背景与卡片关系按选中主题和真实任务执行，通用参考值仅补未定义项。同色画布与面板可通过边界、共容器和留白建立层次；渐变、玻璃、阴影、纹理不互相强制绑定。需要动效时提供 reduced motion 降级，装饰不覆盖内容与操作。
 
@@ -175,7 +178,7 @@ Fast 与 Plan 按同一规则记录背景，先确定作用范围：
 
 `tokens` 的格式与变量契约见 [frontmatter 规范](#frontmatter-规范)。需要改变平台表现的圆角、字体、间距等必须落实为 CSS token，不能只写正文。
 
-Fast 或单独更新主题时，执行 `openyida sample yida-design app-theme --output .cache/openyida/<项目名>/app-theme.css --design-file prd/<项目名>/design.md`。首次从公共模板生成；已有 CSS 只更新设计中变化的 token，保留其他 token 和自定义样式。CLI 自动保存更新记录，内容相同时跳过写入，写入失败回滚。省略 `--design-file` 会用公共模板重置目标 CSS。
+Fast 或单独更新主题时，执行 `openyida sample yida-design app-theme --output .cache/openyida/<项目名>/app-theme.css --design-file prd/<项目名>/design.md`。首次按 `themeProfile.sourceThemeId` 读取命名主题配对 CSS，保留其原有声明与规则，只实例化品牌及相对原模板的项目覆盖，不按设计默认值覆盖模板 CSS 的差异；自由创意使用公共骨架；同主题已有 CSS 只更新变化的 token，保留其他 token 和自定义样式。换主题或来源不明时使用新输出路径，按[模板来源约束](../references/application-style-library.md#模板来源与重复生成)迁移定制。CLI 自动保存更新记录，内容相同时跳过写入，写入失败回滚。省略 `--design-file` 会用公共模板重置目标 CSS。
 
 主题生成前校验输入 CSS 的括号、字符串和注释闭合，生成后与上传前复用同一检查；纯模板导出也须通过。出现 `THEME_CSS_STRUCTURE_INVALID` 时按错误行修复源模板或已有 CSS，再重试；生成失败保留原 CSS 和 token 更新记录，不能靠重置模板覆盖已有定制。新增全局及页面语义 token 写入包含顶层 `:root` 的统一声明块；light、dark、white、gray 选择器消费同一套项目颜色。
 

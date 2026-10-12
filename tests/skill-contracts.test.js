@@ -1420,7 +1420,7 @@ describe('OpenYida skill contracts', () => {
       },
     };
 
-    expect(presets).toContain('主题选择先根据行业、品牌、业务情绪和视觉目标做创意判断');
+    expect(presets).toContain('../theme-selection.md');
     expect(presets).toContain('不能套用“科技=蓝、宠物=橙、法律=蓝”这类行业刻板配色');
     expect(presets).toContain('本文件是 `yida-design` 确定 OpenYida 应用主题色阶和 token 修改清单时使用的参考');
     expect(presets).toContain('## 色盘参考清单');
@@ -1498,7 +1498,8 @@ describe('OpenYida skill contracts', () => {
     expect(presets).toContain('`--color-brand-*` 是移动端和部分原生表单/壳层消费的品牌色阶');
     expect(presets).toContain('## blue');
     expect(presets).toContain('## podBlue');
-    expect(presets).toContain('| `podBule` | 平台蓝色 | 按需 |');
+    expect(presets).toContain('| `podBlue` | 平台蓝 | 按需 |');
+    expect(presets).not.toContain('podBule');
     expect(presets).toContain('| `teal` | 青色 | 按需 |');
     expect(presets).toContain('| `black` | 黑色 | 按需 |');
     expect(presets).toContain('## teal');
@@ -1564,8 +1565,20 @@ describe('OpenYida skill contracts', () => {
     expect(visualEngine).toContain('默认浅色内容画布');
     expect(pageUiux).toContain('工作台、门户、列表、详情、普通看板和数据大屏默认都是浅底 / light 模式');
     expect(pageUiux).toContain('只有用户明确说暗色/深色/夜间/高对比时才用深色沉浸');
-    expect(dashboardTheme).toContain('白底商务风（DEFAULT）');
-    expect(dashboardTheme).toContain('用户只说“做个看板 / 驾驶舱 / 数据大屏”，不说暗色或夜间，默认用 **主题 3（白底商务）**');
+    expect(dashboardTheme).toContain('默认浅色内容画布');
+    expect(dashboardTheme).toContain('../../yida-design/references/theme-selection.md');
+    expect(dashboardTheme).not.toContain('命中即止');
+    expect(dashboardTheme).not.toContain('白底商务风（DEFAULT）');
+    expect(dashboardTheme).not.toMatch(/primary:\s*['"]#/);
+    const selection = readSkill('yida-skills/skills/yida-design/references/theme-selection.md');
+    expect(selection).toContain('## 拒绝第一直觉');
+    expect(selection).toContain('被排除方案不计入三套候选');
+    expect(selection).toContain('不得仅改名称、微调色值或调换候选顺序后重新引入原方案');
+    expect(selection).toContain('用户明确指定的完整风格、品牌约束、参考材料或已有满意主题优先保留');
+    expect(visualThemeSelection).toContain('../../../references/theme-selection.md');
+    expect(selection).toContain('不能三套都是同一蓝色底稿只换名称');
+    expect(selection).not.toContain('不强制淘汰首选');
+    expect(selection).not.toContain('第一直觉有依据可以胜出');
     expect(dashboardTheme).not.toContain('深色紫蓝科技风（DEFAULT）');
     expect(chartSpec).toContain('大屏不等于暗色');
   });

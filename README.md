@@ -404,6 +404,8 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 | `openyida design-plan materialize <build-plan.json> [--from-preview \| --business-file <json> --visual-file <json>] [--output-dir <dir>] [--rebase-parts] [--check] [--json]` | Generate or update plan documents and theme with consistency checks |
 | `openyida design-plan patch <build-plan.json> --set <path=value> [--set <path=value> ...] [--materialize] [--output-dir <dir>] [--json]` | Patch plan fields and optionally sync documents and theme |
 | `openyida update-app <appType> [--name "..."] [--desc "..."] [--icon <name>] [--icon-color <color>] [--colour <key>] [--theme-color <color>] [--theme-file <css>] [--confirm-legacy-app-style] [--disable-custom-theme] [--nav-theme light\|dark\|white\|gray] [--logo-source appIcon\|customImage] [--layout side\|top\|l_shape] [--hide-app-nav\|--show-app-nav]` | Update app info |
+| `openyida app-theme snapshot <appType> --output-dir <new-dir> [--json]` | Archive application theme settings and CSS (read-only) |
+| `openyida app-theme restore <appType> --snapshot <before.json> --expected-current <after.json> [--check \| --confirm --output-dir <new-dir>] [--json]` | Check or restore an application theme snapshot (supported exact values only) |
 | `openyida upgrade-app-theme <appType> --explicit-request [--confirm \| --prepare --output-dir <dir>] [--json]` | Upgrade an AI-built legacy app theme (explicit request and ask_human confirmation required) |
 | `openyida app-online <appType> [--to-ding-app-center] [--show-app-center]` | Enable a Yida app |
 | `openyida app-offline <appType> [--to-ding-app-center] [--show-app-center]` | Disable a Yida app |

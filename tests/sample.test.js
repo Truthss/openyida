@@ -693,6 +693,7 @@ describe('application theme from design.md', () => {
 
   test.each(themeIndex.themes.filter(theme => theme.mode !== 'creative').map(theme => [theme.id || theme.themeId]))('Plan theme %s uses the public CSS pipeline', themeId => {
     const plan = JSON.parse(JSON.stringify(fixture));
+    plan.visualStyle.forUser.colorStrategy.primaryColor = themeId === 'app-platinum' ? '#897253' : '#6F4E37';
     delete plan.visualStyle.forUser.themeProfile;
     plan.visualStyle.forUser.selectedTheme = themeIndex.themes.find(theme => theme.themeId === themeId);
     plan.visualStyle.tokens = { '--pod-card-border-radius': '16px' };
@@ -706,7 +707,7 @@ describe('application theme from design.md', () => {
     }
     expect(readDesignTokens(design)['--pod-card-border-radius']).toBe('16px');
     expect(css).toContain('--pod-card-border-radius: 16px;');
-    expect(css).toContain('--color-brand1-6: #6F4E37;');
+    expect(css).toContain(`--color-brand1-6: ${plan.visualStyle.forUser.colorStrategy.primaryColor};`);
     // Ignore new theme declarations while preserving all existing selectors and scope.
     const rootPattern = /^:root\s*\{([\s\S]*?)^\}/m;
     const originalRoot = template.match(rootPattern)[1];

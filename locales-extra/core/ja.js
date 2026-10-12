@@ -5,6 +5,7 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
     desc_get: 'Read frontend and management runtime entries',
     desc_set: 'Register application entries with partial update and readback',
@@ -617,7 +618,7 @@ module.exports = {
     waiting_login: '  ログイン完了を待機中（最大 10 分）...',
     login_timeout: '  ⏰ ログインがタイムアウトしました（10 分）。再試行してください。',
     login_success: '  ✅ ログインに成功しました！',
-    no_csrf_in_cookie: '  ❌ ログインは成功しましたが Cookie に tianshu_csrf_token がありません。再試行してください。',
+    no_csrf_in_cookie: '  ❌ トークンによるログインで有効なユーザー情報を取得できませんでした。再試行してください。',
     no_cookie_cache: '  ❌ 有効なローカル token がありません。再ログインが必要です。',
     no_csrf_in_cache: '  ❌ 有効なローカル token がありません。再ログインが必要です。',
     csrf_extracted: '  ✅ csrf_token を取得しました: {0}...',
@@ -2063,3 +2064,7 @@ module.exports.sample_options = {
 
 module.exports.upgrade_app_theme = require('../../lib/core/locales/en').upgrade_app_theme;
 module.exports.help.cmd_upgrade_app_theme = require('../../lib/core/locales/en').help.cmd_upgrade_app_theme;
+
+module.exports.app_theme = require('../../lib/core/locales/en').app_theme;
+module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en').help.cmd_app_theme_snapshot;
+module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
