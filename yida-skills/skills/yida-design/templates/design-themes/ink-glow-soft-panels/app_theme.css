@@ -116,7 +116,7 @@
   /* 应用基础表面 */
   --pod-app-root-bg-color: var(--color-brand1-3);
   --pod-app-root-bg-image: none;
-  --pod-page-bg-color: rgba(0, 0, 0, 0);
+  --pod-page-bg-color: #ffffff;
   --pod-card-bg-color: #ffffff;
   --pod-table-cell-color: #ffffff;
   --color-white: var(--pod-card-bg-color);
@@ -431,7 +431,7 @@
 
 /* 独立提交页（含抽屉 iframe）使用应用外衬；平台默认壳层取导航背景且不消费背景图。 */
 body.pod-premium.page-type-submit .vc-shell-without-nav.pod-premium {
-  background-color: var(--pod-app-root-bg-color, var(--pod-page-bg-color, #fff));
+  background-color: var(--pod-page-bg-color);
   background-image: var(--pod-app-root-bg-image, none);
   background-position: center top;
   background-repeat: no-repeat;

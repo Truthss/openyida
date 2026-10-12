@@ -257,9 +257,9 @@
   --pod-nav-tab-line-selected-color: var(--color-brand1-6, rgba(155, 136, 121, 1));
   --pod-nav-search-height: var(--pod-nav-platform-row-height, 32px);
   --pod-nav-search-menu-gap: 8px;
-  --pod-nav-search-bg-color: var(--pod-nav-menu-bg-hover-color, rgba(24, 28, 31, 0.06));
-  --pod-nav-search-bg-hover-color: var(--pod-nav-menu-bg-hover-color, rgba(24, 28, 31, 0.06));
-  --pod-nav-search-bg-active-color: var(--pod-nav-menu-bg-hover-color, rgba(24, 28, 31, 0.06));
+  --pod-nav-search-bg-color: #222222;
+  --pod-nav-search-bg-hover-color: #292929;
+  --pod-nav-search-bg-active-color: #303030;
   --pod-nav-search-placeholder-color: var(--pod-nav-item-text-hover-color, var(--color-text1-4, #202020));
   --pod-nav-search-text-color: var(--pod-nav-item-text-hover-color, var(--color-text1-4, #202020));
   --pod-nav-search-icon-color: var(--pod-nav-item-text-color, var(--color-text1-4, #202020));
@@ -753,18 +753,18 @@ body.pod-premium .flow-steps .next-step-dot
 /* 表格视图外层：增加边框和圆角，不裁剪同层分页器。 */
 .pod-premium .new-data-manage #newDataManageTable {
   border: var(--table-border) !important;
-  border-radius: var(--corner-3) !important;
+  border-radius: 0px !important;
 }
 
 /* 表格内层圆角 */
 .pod-premium .new-data-manage #newDataManageTable > div > div {
-  border-radius: var(--corner-3) !important;
+  border-radius: 0px !important;
 }
 
 /* 仅裁剪表格网格内容，避免内容溢出圆角且不影响分页器。 */
 .pod-premium .new-data-manage #newDataManageTable > div > div > div > div:has([role="grid"]) {
   border: none !important;
-  border-radius: var(--corner-3) !important;
+  border-radius: 0px !important;
   overflow: hidden !important;
 }
 

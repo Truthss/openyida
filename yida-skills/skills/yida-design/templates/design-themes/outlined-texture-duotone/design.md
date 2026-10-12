@@ -35,6 +35,9 @@ tokens:
         "--pod-nav-menu-item-gap": "4px"
         "--pod-nav-menu-gap": "8px"
         "--pod-nav-search-menu-gap": "8px"
+        "--pod-nav-search-bg-color": "#222222"
+        "--pod-nav-search-bg-hover-color": "#292929"
+        "--pod-nav-search-bg-active-color": "#303030"
       native-form:
         "--form-element-medium-corner": "var(--corner-2)"
         "--form-element-medium-height": "var(--s-8)"
@@ -202,7 +205,7 @@ YAML 的 `--color-white` 保留平台基础表面绑定；配对 CSS 直接使�
 
 Shell 外留白归零，侧栏内距和品牌图尺寸消费各自 Token。侧栏外壳同样使用暗边与 2px 内亮沿，外壳与菜单分属两个作用范围，不在字段和嵌套内容上重复描边。搜索边框角色只表达颜色，宽度与线型由对应属性设置。
 
-侧栏搜索下方保留 8px 局部间距，搜索圆角与菜单圆角配套；顶部容器若采用独立形状，必须补齐其高度、内距与底面的实际绑定，未声明变量不能视为已生效。
+侧栏搜索使用独立深灰控件表面，默认、悬停和聚焦依次消费 `--pod-nav-search-bg-color`、`--pod-nav-search-bg-hover-color`、`--pod-nav-search-bg-active-color`，与侧栏底面保持明暗层次。搜索下方保留 8px 局部间距，搜索圆角与菜单圆角配套；顶部容器若采用独立形状，必须补齐其高度、内距与底面的实际绑定，未声明变量不能视为已生效。
 
 平台导航使用真实页面菜单，业务决定分组与入口，主题定义文字、底面、形状与状态。普通、hover 与 selected 的前景和背景按 navigation Token 成组消费；顶部与侧栏切换保持尺寸稳定，选中优先于 hover。已有品牌区、搜索和折叠操作保留真实能力，不为造型增加无功能入口。
 

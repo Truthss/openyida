@@ -49,9 +49,9 @@ function planFor(themeId) {
   return plan;
 }
 
-test('catalog exposes fourteen presets and creative while eighteen style bundles remain preserved', () => {
+test('catalog exposes thirteen presets and creative while eighteen style bundles remain preserved', () => {
   expect(styles).toHaveLength(18);
-  expect(catalog().themes).toHaveLength(14);
+  expect(catalog().themes).toHaveLength(13);
   expect(catalog().themes.some(theme => theme.themeId.startsWith('app-'))).toBe(false);
   expect(catalog().creativeOption).toMatchObject({ themeId: 'free-creative', mode: 'creative' });
   expect(catalog().themes.some(theme => theme.mode === 'creative')).toBe(false);
@@ -66,7 +66,7 @@ test('theme catalog separates content tone from navigation tone', () => {
   expect(themeIndex.find(theme => theme.themeId === 'dark-rail-fine-lines')).toMatchObject({
     contentTone: 'light', navTheme: 'dark',
   });
-  expect(themeIndex.find(theme => theme.themeId === 'dark-inset-hairline')).toMatchObject({
+  expect(themeIndex.find(theme => theme.themeId === 'dark-rail-signal-panels')).toMatchObject({
     contentTone: 'dark', navTheme: 'dark',
   });
   expect(themeIndex.find(theme => theme.themeId === 'free-creative')).not.toHaveProperty('contentTone');
@@ -218,8 +218,8 @@ test('all nineteen application styles define detail read-only field tokens and g
   });
 });
 
-test('all fourteen shared themes include native form layout and style guidance', () => {
-  expect(sharedThemes).toHaveLength(14);
+test('all thirteen shared themes include native form layout and style guidance', () => {
+  expect(sharedThemes).toHaveLength(13);
   sharedThemes.forEach(theme => {
     const design = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8');
     expect(design).toContain('### 表单组件与版式结构');
@@ -356,7 +356,7 @@ test('historical theme paths resolve to the same design and mismatched paths rem
   expect(renderDesign(plan)).toBe(current);
   const normalized = normalizePlan({ ...plan, schemaVersion: '2.0' });
   expect(normalized.visualStyle.internal.selectedTheme.templatePath).toBe('templates/design-themes/soft-inset-surfaces/design.md');
-  plan.visualStyle.forUser.selectedTheme.templatePath = 'templates/design-themes/dark-inset-hairline.md';
+  plan.visualStyle.forUser.selectedTheme.templatePath = 'templates/design-themes/dark-rail-signal-panels.md';
   expect(() => renderDesign(plan)).toThrow();
 });
 
