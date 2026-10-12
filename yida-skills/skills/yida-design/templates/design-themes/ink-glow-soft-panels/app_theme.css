@@ -116,9 +116,9 @@
   /* 应用基础表面 */
   --pod-app-root-bg-color: var(--color-brand1-3);
   --pod-app-root-bg-image: none;
-  --pod-page-bg-color: #ffffff;
-  --pod-card-bg-color: #ffffff;
-  --pod-table-cell-color: #ffffff;
+  --pod-page-bg-color: #FFFFFF;
+  --pod-card-bg-color: #FFFFFF;
+  --pod-table-cell-color: #FFFFFF;
   --color-white: var(--pod-card-bg-color);
 
   /* 应用 Shell */
@@ -791,7 +791,7 @@ body.pod-premium .flow-steps .next-step-dot
   background: var(--color-fill1-1,);
 }
 
-/* openyida-navigation-shape:start */
+/* openyida-template-navigation:start */
 /*
  * Side/L navigation and top tabs share the same theme-defined menu shape.
  * Border widths stay constant between states; border-box keeps row height stable.
@@ -889,5 +889,32 @@ body.pod-premium .flow-steps .next-step-dot
 /* 导航搜索下边距 */
 .pod-premium .vc-shell.nav-type-slide .deep-shell-ver-nav-search-wrap {
   margin-bottom: 8px;
+}
+/* openyida-template-navigation:end */
+
+/* openyida-paired-css */
+
+/* openyida-navigation-shape:start */
+.pod-premium .deep-shell-nav-menu-content .next-nav-item,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item {
+  box-sizing: border-box;
+  border: var(--pod-nav-menu-item-border, none);
+}
+.pod-premium .deep-shell-nav-menu-content .next-nav-item:hover,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item:hover {
+  box-sizing: border-box;
+  border: var(--pod-nav-menu-item-hover-border, var(--pod-nav-menu-item-border, none));
+}
+.pod-premium .deep-shell-nav-menu-content .next-nav-item.next-selected,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item.next-selected {
+  box-sizing: border-box;
+  border: var(--pod-nav-menu-item-selected-border, var(--pod-nav-menu-item-border, none));
+}
+/* Fit native inner rows only when the project opts into borders. */
+.vc-shell.pod-premium .next-nav.next-line.next-ver.deep-shell-nav-menu-content:not(.next-icon-only) .next-nav-item.next-menu-item > .next-menu-item-inner,
+.vc-shell.pod-premium .next-shell-header .next-shell-navigation .next-nav.next-line.next-hoz.deep-shell-nav-tab-list .next-nav-item.next-menu-item > .next-menu-item-inner {
+  box-sizing: border-box;
+  height: 100% !important;
+  min-height: 0 !important;
 }
 /* openyida-navigation-shape:end */

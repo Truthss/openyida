@@ -758,10 +758,19 @@ body.pod-premium .flow-steps .next-step-dot
   background: var(--color-fill1-1,);
 }
 
-/* openyida-navigation-shape:start */
+/* openyida-template-navigation:start */
 .pod-premium .deep-shell-nav-menu-content .next-nav-item.next-selected,
 .pod-premium .deep-shell-nav-tab-list .next-nav-item.next-selected {
   box-shadow: var(--pod-nav-menu-item-selected-shadow, none);
 }
 
+/* openyida-template-navigation:end */
+
+/* openyida-paired-css */
+
+/* openyida-navigation-shape:start */
+.pod-premium .deep-shell-nav-menu-content .next-nav-item.next-selected,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item.next-selected {
+  box-shadow: var(--pod-nav-menu-item-selected-shadow, none);
+}
 /* openyida-navigation-shape:end */

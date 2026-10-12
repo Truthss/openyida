@@ -116,7 +116,8 @@
   /* 应用基础表面 */
   --pod-app-root-bg-color: var(--color-brand1-3);
   --pod-app-root-bg-image: none;
-  --pod-page-bg-color: radial-gradient(circle at 12% 0%, var(--oy-brand-soft), transparent 26%), var(--pod-page-bg-color);
+  --pod-page-bg-color: #FFFFFF;
+  --oyd-page-bg-image: radial-gradient(circle at 12% 0%, var(--color-brand1-3), transparent 26%);
   --pod-card-bg-color: #FFFFFF;
   --pod-table-cell-color: var(--pod-card-bg-color);
   --color-white: var(--pod-card-bg-color);
@@ -239,7 +240,7 @@
   --pod-nav-menu-item-selected-border: 1px solid var(--oy-line);
   --pod-nav-menu-font-size: 14px;
   --pod-nav-menu-item-selected-font-weight: 600;
-  --pod-nav-menu-item-selected-shadow: var(shadow-1);
+  --pod-nav-menu-item-selected-shadow: var(--shadow-1);
   --pod-nav-menu-line-height: 20px;
   --pod-nav-menu-icon-size: 16px;
   --pod-nav-menu-arrow-icon-size: 12px;
@@ -562,7 +563,7 @@ body.pod-premium.page-type-submit
 body.pod-premium .deep-pc-full-wrapper .deep-full-content,
 body.pod-premium .deep-scale-wrapper,
 body.pod-premium .deep-web-full-wrapper .deep-full-content {
-  background: var(--pod-page-bg-color) !important;
+  background: var(--oyd-page-bg-image), var(--pod-page-bg-color) !important;
 }
 
 /* 数据管理页：排序项 */
@@ -792,7 +793,7 @@ padding: 2px;
   background: var(--color-fill1-1,);
 }
 
-/* openyida-navigation-shape:start */
+/* openyida-template-navigation:start */
 /*
  * Side/L navigation and top tabs share the same theme-defined menu shape.
  * Border widths stay constant between states; border-box keeps row height stable.
@@ -888,5 +889,36 @@ padding: 2px;
 /* 导航搜索下边距 */
 .pod-premium .vc-shell.nav-type-slide .deep-shell-ver-nav-search-wrap {
   margin-bottom: 12px;
+}
+/* openyida-template-navigation:end */
+
+/* openyida-paired-css */
+
+/* openyida-navigation-shape:start */
+.pod-premium .deep-shell-nav-menu-content .next-nav-item,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item {
+  box-sizing: border-box;
+  border: var(--pod-nav-menu-item-border, none);
+}
+.pod-premium .deep-shell-nav-menu-content .next-nav-item:hover,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item:hover {
+  box-sizing: border-box;
+  border: var(--pod-nav-menu-item-hover-border, var(--pod-nav-menu-item-border, none));
+}
+.pod-premium .deep-shell-nav-menu-content .next-nav-item.next-selected,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item.next-selected {
+  box-sizing: border-box;
+  border: var(--pod-nav-menu-item-selected-border, var(--pod-nav-menu-item-border, none));
+}
+/* Fit native inner rows only when the project opts into borders. */
+.vc-shell.pod-premium .next-nav.next-line.next-ver.deep-shell-nav-menu-content:not(.next-icon-only) .next-nav-item.next-menu-item > .next-menu-item-inner,
+.vc-shell.pod-premium .next-shell-header .next-shell-navigation .next-nav.next-line.next-hoz.deep-shell-nav-tab-list .next-nav-item.next-menu-item > .next-menu-item-inner {
+  box-sizing: border-box;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+.pod-premium .deep-shell-nav-menu-content .next-nav-item.next-selected,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item.next-selected {
+  box-shadow: var(--pod-nav-menu-item-selected-shadow, none);
 }
 /* openyida-navigation-shape:end */

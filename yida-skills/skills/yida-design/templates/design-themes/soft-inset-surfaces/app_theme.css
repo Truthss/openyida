@@ -167,9 +167,8 @@
   --pod-nav-l-header-padding: 8px 16px;
   --pod-nav-l-aside-padding: 8px;
   --pod-nav-slide-aside-gap: 12px;
-  --pod-nav-slide-aside-padding: 12px 12px 12px
-    calc(22px - var(--pod-shell-padding, 4px));
-  --pod-nav-slide-aside-collapsed-padding: 12px 12px 12px 12px     ;
+  --pod-nav-slide-aside-padding: 12px 12px 12px calc(22px - var(--pod-shell-padding, 4px));
+  --pod-nav-slide-aside-collapsed-padding: 12px 12px 12px 12px;
   --pod-nav-slide-collapsed-menu-gap: 4px;
   --pod-nav-slide-branding-height: 40px;
   --pod-nav-side-collapsed-width: 56px;
@@ -346,8 +345,8 @@
   --popup-bg: var(--color-fill1-5, #fff);
 
   /* 浮层、弹窗与抽屉 */
-  --pod-overlay-color: rgba(255, 255, 255, 0.12) ;
-  --pod-overlay-color-hover: rgba(255, 255, 255, 0.12) ;
+  --pod-overlay-color: rgba(255, 255, 255, 0.12);
+  --pod-overlay-color-hover: rgba(255, 255, 255, 0.12);
   --pod-overlay-color-active: var(--color-fill1-3, #eaeaea);
   --pod-background-mask-light-gradient: linear-gradient(
     142deg,
@@ -423,6 +422,7 @@
   --oyd-font-weight-metric: 500;
   --oyd-font-lineheight-metric: 1.3;
   --oyd-shadow-resting: 0px 1px 2px 0px rgba(0, 0, 0, 0.03);
+  --color-group: var(--color-brand1-6), var(--color-brand1-1), var(--color-brand1-5), var(--color-brand1-2), var(--color-brand1-9), var(--color-brand1-3);
 }
 /* openyida-theme-tokens:end */
 
@@ -765,7 +765,7 @@ body.pod-premium .flow-steps .next-step-dot
   background: var(--color-fill1-1,);
 }
 
-/* openyida-navigation-shape:start */
+/* openyida-template-navigation:start */
 /*
  * Side/L navigation and top tabs share the same theme-defined menu shape.
  * Border widths stay constant between states; border-box keeps row height stable.
@@ -877,5 +877,32 @@ body.pod-premium .flow-steps .next-step-dot
 /* 导航搜索下边距 */
 .pod-premium .vc-shell.nav-type-slide .deep-shell-ver-nav-search-wrap {
   margin-bottom: 8px;
+}
+/* openyida-template-navigation:end */
+
+/* openyida-paired-css */
+
+/* openyida-navigation-shape:start */
+.pod-premium .deep-shell-nav-menu-content .next-nav-item,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item {
+  box-sizing: border-box;
+  border: var(--pod-nav-menu-item-border, none);
+}
+.pod-premium .deep-shell-nav-menu-content .next-nav-item:hover,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item:hover {
+  box-sizing: border-box;
+  border: var(--pod-nav-menu-item-hover-border, var(--pod-nav-menu-item-border, none));
+}
+.pod-premium .deep-shell-nav-menu-content .next-nav-item.next-selected,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item.next-selected {
+  box-sizing: border-box;
+  border: var(--pod-nav-menu-item-selected-border, var(--pod-nav-menu-item-border, none));
+}
+/* Fit native inner rows only when the project opts into borders. */
+.vc-shell.pod-premium .next-nav.next-line.next-ver.deep-shell-nav-menu-content:not(.next-icon-only) .next-nav-item.next-menu-item > .next-menu-item-inner,
+.vc-shell.pod-premium .next-shell-header .next-shell-navigation .next-nav.next-line.next-hoz.deep-shell-nav-tab-list .next-nav-item.next-menu-item > .next-menu-item-inner {
+  box-sizing: border-box;
+  height: 100% !important;
+  min-height: 0 !important;
 }
 /* openyida-navigation-shape:end */

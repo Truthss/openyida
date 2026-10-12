@@ -49,6 +49,7 @@ function cascade(css, navigation, tone = navigation) {
 function navigationOverrides(overrides, tone = 'light') {
   const metadata = parseDesignDocument(design('soft-inset-surfaces')).metadata;
   metadata.themeProfile.navTheme = tone;
+  delete metadata.tokens['application-global'].appearance.surfaces['--pod-page-header-bg-color'];
   metadata.tokens['application-global'].appearance.navigation = overrides;
   return `---\n${JSON.stringify(metadata)}\n---\n`;
 }
@@ -206,6 +207,8 @@ test('extended navigation tokens share one palette across modes and update incre
   };
   const withTokens = (markdown, values) => {
     const metadata = parseDesignDocument(markdown).metadata;
+    const visit = node => { for (const [key, value] of Object.entries(node)) { if (key in values) {delete node[key];} else if (value && typeof value === 'object') {visit(value);} } };
+    visit(metadata.tokens);
     Object.assign(metadata.tokens['application-global'].appearance.navigation, values);
     return `---\n${Object.entries(metadata).map(([key, value]) => `${key}: ${JSON.stringify(value)}`).join('\n')}\n---\n${markdown.split(/\n---\n/).slice(1).join('\n---\n')}`;
   };

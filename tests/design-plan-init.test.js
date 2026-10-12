@@ -12,7 +12,7 @@ let dir;
 let briefPath;
 let brief;
 const save = () => fs.writeFileSync(briefPath, JSON.stringify(brief));
-const init = () => initialize(briefPath, { themeId: 'soft-inset-surfaces', outputDir: path.join(dir, 'prd') });
+const init = () => initialize(briefPath, { themeId: 'soft-outline-rhythm', outputDir: path.join(dir, 'prd') });
 const colorExample = result => JSON.parse(fs.readFileSync(result.context, 'utf8')
   .split('## 输入格式示例')[1].match(/```json\n([\s\S]*?)\n```/)[1]).colorStrategy;
 
@@ -522,7 +522,7 @@ test('collects interaction state format errors alongside other missing facts', (
 
 test('returned materialize command handles spaces, quotes and shell expressions in paths', () => {
   const { spawnSync } = require('child_process');
-  const result = initialize(briefPath, { themeId: 'soft-inset-surfaces', outputDir: path.join(dir, "plan ' $(touch unwanted)") });
+  const result = initialize(briefPath, { themeId: 'soft-outline-rhythm', outputDir: path.join(dir, "plan ' $(touch unwanted)") });
   const source = fixture();
   source.pages.customPageDetails[0].pageId = 'dashboard';
   source.pages.customPageDetails[0].sceneKey = 'dashboard';
@@ -582,6 +582,12 @@ test.each(require('../yida-skills/skills/yida-design/templates/design-themes/ind
     business.ready = true;
     business.facts = { overview: source.overview, dataModels: source.dataModels, businessFlows: source.businessFlows, pages: source.pages };
     fs.writeFileSync(businessFile, JSON.stringify(business));
+    if (['dark-rail-fine-lines', 'outlined-texture-duotone', 'soft-inset-surfaces', 'soft-rail-bold-band', 'warm-canvas-contrast-panels'].includes(theme.themeId)) {
+      expect(() => materialize(result.output, { businessFile, visualFile: result.preparedInputs.visual }))
+        .toThrow(expect.objectContaining({ code: 'DESIGN_THEME_CONTRAST_LOW' }));
+      expect(fs.existsSync(path.join(path.dirname(result.output), 'app-theme.css'))).toBe(false);
+      return;
+    }
     const output = materialize(result.output, { businessFile, visualFile: result.preparedInputs.visual });
     expect(output.success).toBe(true);
     expect(output).toMatchObject({ previousRevision: '1', revision: '1' });
@@ -689,7 +695,7 @@ test('CLI init is permitted locally, documents every argument and runs through t
   expect(command.notes.join(' ')).toContain('toneSource=theme_derived');
   const { execFileSync } = require('child_process');
   const result = JSON.parse(execFileSync(process.execPath, [path.join(__dirname, '../bin/yida.js'), 'design-plan', 'init', briefPath,
-    '--theme-id', 'soft-inset-surfaces', '--output-dir', path.join(dir, 'cli-prd'), '--json'], {
+    '--theme-id', 'soft-outline-rhythm', '--output-dir', path.join(dir, 'cli-prd'), '--json'], {
     cwd: dir, encoding: 'utf8', env: { ...process.env, OPENYIDA_SKIP_UPDATE_CHECK: '1' },
   }));
   expect(result.success).toBe(true);
@@ -698,7 +704,7 @@ test('CLI init is permitted locally, documents every argument and runs through t
 
 test('CLI init rejects undeclared navigation tone overrides', async () => {
   const { run } = require('../lib/design-plan/design-plan');
-  await expect(run(['init', briefPath, '--theme-id', 'soft-inset-surfaces', '--nav-theme', 'dark', '--json']))
+  await expect(run(['init', briefPath, '--theme-id', 'soft-outline-rhythm', '--nav-theme', 'dark', '--json']))
     .rejects.toMatchObject({ code: 'DESIGN_PLAN_INVALID_ARGUMENT' });
 });
 

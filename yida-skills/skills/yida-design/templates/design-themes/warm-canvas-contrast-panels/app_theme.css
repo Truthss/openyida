@@ -291,7 +291,7 @@
   --input-hover-border-color: var(--color-brand1-6);
   --input-focus-border-color: var(--color-brand1-6);
   --input-focus-bg-color: var(--input-bg-color);
-  --yida-form-content-bgcolor: #ffffff ;
+  --yida-form-content-bgcolor: #ffffff;
   --pod-form-label-color: var(--color-text1-4);
   --form-top-label-margin-b: var(--s-2);
   --yida-help-tips-color: #878f95;
@@ -777,7 +777,7 @@ body.pod-premium .flow-steps .next-step-dot
   background: var(--color-fill1-1,);
 }
 
-/* openyida-navigation-shape:start */
+/* openyida-template-navigation:start */
 /*
  * Side/L navigation and top tabs share the same theme-defined menu shape.
  * Border widths stay constant between states; border-box keeps row height stable.
@@ -902,5 +902,36 @@ body.pod-premium .flow-steps .next-step-dot
 .deep-shell.pod-premium .deep-shell .next-shell-branding, .deep-shell.pod-premium .deep-shell.next-shell-brand .next-shell-header .next-shell-branding, .deep-shell.pod-premium .next-shell-branding, .pod-premium .deep-shell .next-shell-branding, .pod-premium .deep-shell.next-shell-brand .next-shell-header .next-shell-branding, .pod-premium .next-shell-branding, .vc-shell.deep-shell.pod-premium .deep-shell .next-shell-branding, .vc-shell.deep-shell.pod-premium .deep-shell.next-shell-brand .next-shell-header .next-shell-branding, .vc-shell.deep-shell.pod-premium .next-shell-branding, .vc-shell.pod-premium .deep-shell .next-shell-branding, .vc-shell.pod-premium .deep-shell.next-shell-brand .next-shell-header .next-shell-branding, .vc-shell.pod-premium .next-shell-branding {
   display: flex;
   justify-content: space-between;
+}
+/* openyida-template-navigation:end */
+
+/* openyida-paired-css */
+
+/* openyida-navigation-shape:start */
+.pod-premium .deep-shell-nav-menu-content .next-nav-item,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item {
+  box-sizing: border-box;
+  border: var(--pod-nav-menu-item-border, none);
+}
+.pod-premium .deep-shell-nav-menu-content .next-nav-item:hover,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item:hover {
+  box-sizing: border-box;
+  border: var(--pod-nav-menu-item-hover-border, var(--pod-nav-menu-item-border, none));
+}
+.pod-premium .deep-shell-nav-menu-content .next-nav-item.next-selected,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item.next-selected {
+  box-sizing: border-box;
+  border: var(--pod-nav-menu-item-selected-border, var(--pod-nav-menu-item-border, none));
+}
+/* Fit native inner rows only when the project opts into borders. */
+.vc-shell.pod-premium .next-nav.next-line.next-ver.deep-shell-nav-menu-content:not(.next-icon-only) .next-nav-item.next-menu-item > .next-menu-item-inner,
+.vc-shell.pod-premium .next-shell-header .next-shell-navigation .next-nav.next-line.next-hoz.deep-shell-nav-tab-list .next-nav-item.next-menu-item > .next-menu-item-inner {
+  box-sizing: border-box;
+  height: 100% !important;
+  min-height: 0 !important;
+}
+.pod-premium .deep-shell-nav-menu-content .next-nav-item.next-selected,
+.pod-premium .deep-shell-nav-tab-list .next-nav-item.next-selected {
+  box-shadow: var(--pod-nav-menu-item-selected-shadow, none);
 }
 /* openyida-navigation-shape:end */

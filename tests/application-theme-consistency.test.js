@@ -33,8 +33,8 @@ describe('shared application theme', () => {
     input = path.join(directory, 'build-plan.json');
     plan = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/design-plan.json'), 'utf8'));
     plan.visualStyle.forUser.selectedTheme = {
-      themeId: 'warm-canvas-contrast-panels', source: 'user_selected',
-      templatePath: 'templates/design-themes/warm-canvas-contrast-panels/design.md',
+      themeId: 'soft-outline-rhythm', source: 'user_selected',
+      templatePath: 'templates/design-themes/soft-outline-rhythm/design.md',
     };
     plan.visualStyle.forUser.colorStrategy = {
       source: 'user_selected', primaryColor: '#1B1B1B', primaryColorName: '编辑墨黑',

@@ -1,7 +1,7 @@
 'use strict';
 
-// Each theme's design.md owns its complete visual system. This maintainer tool
-// compiles paired CSS only; it never rewrites design prose, tokens or form layouts.
+// The authored paired CSS owns template selectors; design.md owns token changes.
+// Never rebuild an existing template from the shared skeleton.
 const fs = require('fs');
 const path = require('path');
 const { parseDesignDocument } = require('../lib/design/document');
@@ -9,7 +9,8 @@ const { resolveThemeColors, loadThemeIndex, DESIGN_SKILL_ROOT } = require('../li
 const { applyDesignTokens, readDesignTokens } = require('../lib/app/theme-from-design');
 const { writeFiles } = require('../lib/design-plan/files');
 const { rootDeclarations } = require('../lib/core/theme-brand-scale');
-const { validatePalette } = require('../lib/design/palette-contrast');
+const { auditPalette } = require('../lib/design/palette-contrast');
+const { preservePairedRules } = require('../lib/app/paired-theme-css');
 const platformCss = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, 'references/theme/app-custom-theme-template.css'), 'utf8');
 
 /** Serialize template metadata without inserting user text into token expressions. */
@@ -21,7 +22,7 @@ function yaml(value, depth = 0) {
 }
 
 /** Compile the complete authored theme into scoped CSS, retaining brand placeholders. */
-function cssTemplate(markdown, rules = '') {
+function cssTemplate(markdown, rules = '', pairedCss) {
   // Resolve only to reuse the platform's scope/recipe writer, then restore every
   // project-dependent value. The temporary seed never becomes a template default.
   const metadata = parseDesignDocument(markdown).metadata;
@@ -42,9 +43,11 @@ function cssTemplate(markdown, rules = '') {
     '--color-brand-3': 'var(--color-brand1-6)', '--color-brand-4': 'var(--color-brand1-9)',
     '--color-group': [6, 1, 5, 2, 9, 3].map(slot => `var(--color-brand1-${slot})`).join(', '),
   };
-  const compiled = applyDesignTokens(rules.trim() ? `${platformCss.trimEnd()}\n\n${rules.trim()}\n` : platformCss, resolved);
-  const audit = validatePalette(rootDeclarations(compiled.replace(/\/\*[\s\S]*?\*\//g, '')));
-  if (audit.unresolved.length) {throw new Error(`Unresolved template palette: ${audit.unresolved.map(pair => pair.role).join(', ')}`);}
+  let base = preservePairedRules(pairedCss === undefined ? platformCss : pairedCss);
+  const managed = /\/\* openyida-extra-rules:start \*\/[\s\S]*?\/\* openyida-extra-rules:end \*\//;
+  const block = rules.trim() ? `/* openyida-extra-rules:start */\n${rules.trim()}\n/* openyida-extra-rules:end */` : '';
+  base = managed.test(base) ? base.replace(managed, () => block) : block ? `${base.trimEnd()}\n\n${block}\n` : base;
+  const compiled = applyDesignTokens(base, resolved);
   return compiled
     .replace(/^(\s*(--[\w-]+)\s*:\s*)([^;\n]+);/gm, (_, prefix, name, value) =>
       `${prefix}${value.trim() === after[name] && /\{\{|<生成实际色值：/.test(before[name] || '')
@@ -56,6 +59,7 @@ function cssTemplate(markdown, rules = '') {
 
 /** Compile every template first so an invalid design cannot cause partial writes. */
 function build({ root = DESIGN_SKILL_ROOT, themes = loadThemeIndex().themes, check = false } = {}) {
+  const paletteIssues = [];
   const outputs = themes.map(theme => {
     const directory = path.resolve(root, 'templates/design-themes', theme.themeId);
     const source = path.resolve(root, theme.templatePath);
@@ -65,8 +69,22 @@ function build({ root = DESIGN_SKILL_ROOT, themes = loadThemeIndex().themes, che
     }
     const rulesFile = path.join(directory, 'theme-rules.css');
     const rules = fs.existsSync(rulesFile) ? fs.readFileSync(rulesFile, 'utf8') : '';
-    return [output, cssTemplate(fs.readFileSync(source, 'utf8'), rules)];
+    const markdown = fs.readFileSync(source, 'utf8');
+    const css = cssTemplate(markdown, rules, fs.existsSync(output) ? fs.readFileSync(output, 'utf8') : undefined);
+    const metadata = parseDesignDocument(markdown).metadata;
+    if (metadata.applicationStyle?.mode === 'creative') {delete metadata.applicationStyle;}
+    const design = resolveThemeColors(`---\n${yaml(metadata)}\n---\n`.replace(/\{\{PRIMARY_COLOR\}\}/g, '#2C73A9'));
+    const resolved = applyDesignTokens(css, design);
+    const audit = auditPalette(rootDeclarations(resolved.replace(/\/\*[\s\S]*?\*\//g, '')), { css: resolved });
+    if (audit.issues.length || audit.unresolved.length) {paletteIssues.push({ themeId: theme.themeId, ...audit });}
+    return [output, css];
   });
+  if (paletteIssues.length) {
+    const error = new Error(`Template palette review required: ${paletteIssues.map(item => item.themeId).join(', ')}`);
+    error.code = 'THEME_PALETTE_REVIEW_REQUIRED';
+    error.details = paletteIssues;
+    throw error;
+  }
   const changed = outputs.filter(([file, css]) => !fs.existsSync(file) || fs.readFileSync(file, 'utf8') !== css);
   if (check && changed.length) {throw new Error(`Theme CSS out of date: ${changed.map(([file]) => path.relative(root, file)).join(', ')}`);}
   if (!check && changed.length) {writeFiles(changed);}
@@ -75,6 +93,11 @@ function build({ root = DESIGN_SKILL_ROOT, themes = loadThemeIndex().themes, che
 
 if (require.main === module) {
   if (process.argv.slice(2).some(arg => arg !== '--check')) {throw new Error('Usage: node scripts/build-application-styles.js [--check]');}
-  build({ check: process.argv.includes('--check') });
+  try {build({ check: process.argv.includes('--check') });}
+  catch (error) {
+    if (!error.details) {throw error;}
+    console.error(JSON.stringify({ code: error.code, templates: error.details }, null, 2));
+    process.exitCode = 1;
+  }
 }
 module.exports = { build, cssTemplate };

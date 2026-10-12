@@ -6,15 +6,17 @@ const path = require('path');
 const { run } = require('../lib/core/sample');
 const { renderDesign, prepareArtifacts, materialize } = require('../lib/design-plan/materialize');
 const { generateThemeCss } = require('../lib/app/theme-source');
-const { build } = require('../scripts/build-application-styles');
+const { build, cssTemplate } = require('../scripts/build-application-styles');
 const { DESIGN_SKILL_ROOT, loadThemeIndex } = require('../lib/design-plan/themes');
 const { parseDesignDocument, serializeDesignDocument } = require('../lib/design/document');
 const fixture = require('./fixtures/design-plan.json');
+const { resolveThemeColors } = require('../lib/design-plan/themes');
+const { topLevelRules } = require('../lib/app/theme-scope');
 const rules = '\n.template-floating-rail { border-radius: 16px; box-shadow: 0 2px 8px #0003; }\n.template-divider::before { display: none; }\n';
 const projectRule = '\n.project-help { padding: 17px; }\n';
 let directory;
 
-function planFor(themeId = 'soft-inset-surfaces') {
+function planFor(themeId = 'soft-outline-rhythm') {
   const plan = JSON.parse(JSON.stringify(fixture));
   plan.visualStyle.forUser.selectedTheme = { themeId, templatePath: `templates/design-themes/${themeId}/design.md` };
   return plan;
@@ -31,7 +33,7 @@ afterEach(() => { jest.restoreAllMocks(); fs.rmSync(directory, { recursive: true
 // repository templates. Token-only generation would lose both selectors.
 function withPairedRules() {
   const read = fs.readFileSync;
-  const paired = path.join(DESIGN_SKILL_ROOT, 'templates/design-themes/soft-inset-surfaces/app_theme.css');
+  const paired = path.join(DESIGN_SKILL_ROOT, 'templates/design-themes/soft-outline-rhythm/app_theme.css');
   jest.spyOn(fs, 'readFileSync').mockImplementation((file, ...args) => {
     const content = read(file, ...args);
     return String(file) === paired ? content + rules : content;
@@ -126,7 +128,7 @@ test('creative starts from the shared skeleton even if its paired file has extra
 });
 
 test('template-specific source rules survive rebuild and are exported in paired CSS', () => {
-  const theme = loadThemeIndex().themes.find(item => item.themeId === 'soft-inset-surfaces');
+  const theme = loadThemeIndex().themes.find(item => item.themeId === 'soft-outline-rhythm');
   const designFile = path.join(directory, theme.templatePath);
   const cssFile = path.join(directory, theme.cssTemplatePath);
   fs.mkdirSync(path.dirname(designFile), { recursive: true });
@@ -135,8 +137,44 @@ test('template-specific source rules survive rebuild and are exported in paired 
   build({ root: directory, themes: [theme] });
   expect(fs.readFileSync(cssFile, 'utf8')).toContain(rules.trim());
   expect(build({ root: directory, themes: [theme], check: true })).toEqual([]);
-  fs.writeFileSync(designFile, fs.readFileSync(designFile, 'utf8').replace('"40px"', '"36px"'));
+  fs.writeFileSync(designFile, fs.readFileSync(designFile, 'utf8').replace(/("--pod-nav-menu-item-height": )"[^"]+"/, '$1"36px"'));
   build({ root: directory, themes: [theme] });
   expect(fs.readFileSync(cssFile, 'utf8')).toContain(rules.trim());
   expect(fs.readFileSync(cssFile, 'utf8')).toContain('--pod-nav-menu-item-height: 36px;');
+});
+
+test.each(loadThemeIndex().themes.filter(theme => theme.mode === 'template'))('$themeId preserves every authored selector on first and repeated generation', theme => {
+  const source = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8');
+  const design = resolveThemeColors(source.replaceAll('{{PRIMARY_COLOR}}', '#245B57'));
+  const paired = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.cssTemplatePath), 'utf8');
+  const css = generateThemeCss(design);
+  const compiled = cssTemplate(source, '', paired);
+  expect(cssTemplate(source, '', compiled)).toBe(compiled);
+  const rules = topLevelRules(css);
+  const compiledRules = topLevelRules(compiled);
+  const canonical = value => value.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').trim();
+  for (const rule of topLevelRules(paired).filter(rule => !rule.selector.split(',').map(x => x.trim()).includes(':root'))) {
+    for (const output of [rules, compiledRules]) {
+      expect(output.some(actual => canonical(actual.selector) === canonical(rule.selector) && canonical(actual.body) === canonical(rule.body))).toBe(true);
+    }
+  }
+  expect(generateThemeCss(design, css + projectRule, design)).toContain(projectRule.trim());
+  expect(generateThemeCss(design, css, design)).toBe(css);
+});
+
+test('the main picture rail survives legacy navigation markers and repeated compilation', () => {
+  const theme = loadThemeIndex().themes.find(item => item.themeId === 'soft-inset-surfaces');
+  const markdown = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8');
+  const paired = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.cssTemplatePath), 'utf8');
+  const { preservePairedRules } = require('../lib/app/paired-theme-css');
+  const historical = paired.replace('/* openyida-paired-css */', '')
+    .replaceAll('openyida-template-navigation:', 'openyida-navigation-shape:');
+  const protectedCss = preservePairedRules(historical);
+  expect(preservePairedRules(protectedCss)).toBe(protectedCss);
+  const design = resolveThemeColors(markdown.replaceAll('{{PRIMARY_COLOR}}', '#245B57'));
+  const css = require('../lib/app/theme-from-design').applyDesignTokens(protectedCss, design);
+  expect(css).toContain('O1CN01YOwO9y84p7E1IZQm_');
+  expect(css).toContain('border-radius: 16px;');
+  expect(css).toContain('box-shadow: var(--shadow-3);');
+  expect(css).toContain('background-color: #181c1f;');
 });

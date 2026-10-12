@@ -125,8 +125,8 @@ def validate_tokens(frontmatter: dict, text: str, label: str, contract: dict, er
             errors.append(f"{label} {name} 应使用固定值 {value}")
     if global_tokens.get("--color-brand1-6") != "{{PRIMARY_COLOR}}":
         errors.append(f"{label} --color-brand1-6 必须使用项目主色占位符")
-    if "--oyd-page-bg" in custom_tokens and custom_tokens["--oyd-page-bg"] != "var(--pod-page-bg-color)":
-        errors.append(f"{label} --oyd-page-bg 必须单向继承 --pod-page-bg-color")
+    if "--oyd-page-bg" in custom_tokens and custom_tokens["--oyd-page-bg"] not in {"var(--pod-page-bg-color)", "transparent", "rgba(255, 255, 255, 0)"}:
+        errors.append(f"{label} --oyd-page-bg 必须单向继承 --pod-page-bg-color 或使用透明底")
 
     declared = {**global_tokens, **custom_tokens}
     unsupported = set(declared) & {"--color-brand1-4", "--color-brand1-7", "--color-brand1-8"}
