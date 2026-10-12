@@ -1,6 +1,6 @@
 ---
 name: "{{PROJECT_NAME}}"
-description: "独立导航与白色画布相邻，以浅灰平面块、细描边白色面板和开放表格区分内容；无衬线大数字保持中等字重，主题色集中于小型标记、细折线及等距刻度，主题派生分类色、独立类别色与状态色按角色使用。"
+description: "灰色圆角侧栏与白色框架、画布相邻，以浅灰平面块、细描边白色面板和开放表格区分内容；无衬线大数字保持中等字重，主题色集中于小型标记、细折线及等距刻度，主题派生分类色、独立类别色与状态色按角色使用。"
 themeId: hairline-soft-blocks
 navTheme: light
 tokens:
@@ -11,24 +11,35 @@ tokens:
         "--pod-app-root-bg-image": "none" # 无全局背景图或纹理
         "--pod-page-bg-color": "#FFFFFF" # neutral-gray；内容画布
         "--pod-card-bg-color": "#FFFFFF" # neutral-gray；一级卡片、表单和详情面板
-        "--pod-table-cell-color": "var(--pod-card-bg-color)"
+        "--pod-table-cell-color": "var(--pod-card-bg-color)" # 保留平台基础契约；配对 CSS 的固定白面覆盖见原生表格规则
+        "--pod-shell-padding": "8px"
+        "--pod-card-border": "1px solid var(--color-line1-1)"
+        "--table-cell-bg": "#FFFFFF"
       navigation:
-        "--pod-nav-sub-divider-color": "#DEDEDE"
+        "--pod-nav-sub-divider-color": "var(--color-line1-2)"
         "--pod-shell-theme-bg-color": "#FFFFFF"
         "--pod-nav-item-text-color": "#484848"
         "--pod-nav-item-text-hover-color": "#262626"
         "--pod-nav-item-text-selected-color": "#171717"
         "--pod-nav-menu-bg-hover-color": "#FAFAFA"
-        "--pod-nav-menu-bg-selected-color": "#F6F6F6"
-        "--pod-nav-menu-item-height": "40px"
+        "--pod-nav-menu-bg-selected-color": "#ffffff"
+        "--pod-nav-menu-item-height": "36px"
         "--pod-nav-menu-item-radius": "8px"
         "--pod-nav-menu-item-selected-font-weight": "500"
         "--pod-nav-popup-bg-color": "var(--pod-shell-theme-bg-color)"
+        "--pod-nav-slide-aside-padding": "12px 12px 12px 12px"
+        "--pod-nav-slide-aside-collapsed-padding": "12px 12px 12px 12px"
+        "--pod-nav-menu-item-hover-border": "1px solid var(--color-line1-2)"
+        "--pod-nav-menu-item-selected-border": "1px solid var(--color-line1-2)"
+        "--pod-nav-menu-item-border": "none"
+        "--pod-nav-menu-item-gap": "4px"
+        "--pod-nav-menu-gap": "8px"
+        "--pod-nav-search-menu-gap": "8px"
       native-form:
         "--form-element-medium-corner": "var(--corner-2)"
         "--form-element-medium-height": "var(--s-8)"
         "--form-element-medium-font-size": "var(--font-size-body-1)"
-        "--input-bg-color": "var(--color-fill1-1)"
+        "--input-bg-color": "transparent"
         "--input-border-width": "1px"
         "--input-border-color": "var(--color-line1-2)"
         "--input-hover-border-color": "var(--color-brand1-6)"
@@ -62,7 +73,7 @@ tokens:
       "--color-brand1-10": "<生成实际色值：--color-brand1-6 26% + #FFFFFF 74%，sRGB 逐通道混合>" # 主题色交互禁用
       "--color-line1-1": "#EFEFEF" # neutral-gray；行分隔、轻网格及弱面板边界
       "--color-line1-2": "#E5E5E5" # neutral-gray；控件和面板细描边
-      "--color-fill1-1": "#FAFAFA" # neutral-gray；输入基础表面，中性悬停使用比 fill1-2 更浅的近白灰
+      "--color-fill1-1": "#F8F8F8" # neutral-gray；只读数据框与中性悬停，编辑输入另用透明底
       "--color-fill1-2": "#F2F2F2" # neutral-gray；中性按下与选中填充
       "--color-fill1-3": "#EAEAEA" # neutral-gray；较重填充和进度轨道
       "--color-fill1-5": "#FFFFFF" # neutral-gray；独立 pop-up 表面
@@ -110,7 +121,7 @@ tokens:
       "--corner-4": 14px # 浅灰摘要组外轮廓
       "--corner-5": 18px # 大面板、卡片、抽屉外露边角
       "--corner-circle": 50% # 圆头像、图例点、圆形图标底盒
-      "--corner-semicircle": 500px # 紧凑变化标签等少量胶囊
+      "--corner-semicircle": "var(--corner-2)" # 紧凑标签和工具按钮沿用小圆角；不再默认胶囊
     shadow:
       "--shadow-1": "0px 2px 4px 0px rgba(0, 0, 0, 0.12)"
       "--shadow-2": "0px 4px 20px -1px rgba(0, 0, 0, 0.16)"
@@ -139,7 +150,7 @@ tokens:
 
 **细线白面 · 浅灰拼块（hairline-soft-blocks）**
 
-导航与白色内容区以一条轻分界线建立区域关系，导航明暗采用本模板 navTheme。内容由浅灰平面摘要块、细描边白色面板和直接展开在画布上的表格组成；不同内容采用不同边界强度。无衬线字体贯穿页面，核心数字通过字号与留白突出，字重保持克制。主题色只占少量面积，主要落在图标标记、细折线和刻度条上。
+灰色侧栏与白色 Shell、正文相邻，以圆角外框、轻分界和留白建立区域关系，导航明暗采用本模板 navTheme。内容由浅灰平面摘要块、细描边白色面板和直接展开在画布上的表格组成；不同内容采用不同边界强度。无衬线字体贯穿页面，核心数字通过字号与留白突出，字重保持克制。主题色只占少量面积，主要落在图标标记、细折线和刻度条上。
 
 | 核心特征 | 可见表现 | 主要偏离风险 |
 | --- | --- | --- |
@@ -161,10 +172,10 @@ tokens:
 | --- | --- | --- | --- |
 | 应用根背景 | `--pod-app-root-bg-color`、`--pod-app-root-bg-image` | 无背景图、噪点或渐变 | 仅作用于根节点，提供白色兜底 |
 | 页面画布 | `--pod-page-bg-color`；自定义页使用 `--oyd-page-bg` | 默认无外框和投影 | 正文使用 `--color-text1-4` |
-| 一级卡片、表单与详情面板 | `--pod-card-bg-color` | `--color-line1-2` 细框、`--corner-5`；默认无阴影，可用局部微阴影 | 标题和主要值使用 `--color-text1-4`，说明用 `--color-text1-3` |
+| 一级卡片、表单与详情面板 | `--pod-card-bg-color` | 原生卡片用 `--pod-card-border` 弱细框；自定义轮廓面板可用 `--color-line1-2`、`--corner-5`；默认无阴影，可用局部微阴影 | 标题和主要值使用 `--color-text1-4`，说明用 `--color-text1-3` |
 | 摘要块、表头带和静态分组面 | `--oyd-subtle-block-bg` | 不叠加描边和阴影；摘要组外角用 `--corner-4`，表头外端用 `--corner-2` | 内容前景仍按正文和说明角色，不整体降透明度 |
 | 表格正文 | `--pod-table-cell-color` | 单元格 `--corner-zero`；横向分隔用 `--color-line1-1` | 外部可直接展开，不额外借面板底色制造套框 |
-| 输入控件 | `--color-fill1-1` | `--color-line1-2`、`--corner-2` | 值为一级前景，placeholder 使用 `--color-text1-10` |
+| 编辑输入控件 | `--input-bg-color` 透明底 | `--color-line1-2`、`--corner-2` | 值为一级前景，placeholder 使用 `--color-text1-10` |
 | 中性按下、选中 | `--color-fill1-2` | 保留原组件轮廓 | 不承担数据类别或序列语义 |
 | 较重填充、进度轨道 | `--color-fill1-3` | 以平面填充为主 | 仅表达底轨和较重中性结构 |
 | 下拉、气泡、弹出日历、弹窗、导航弹出层 | `--color-fill1-5` | `--color-line1-2`、`--corner-3`；小浮层用 `--shadow-1`，弹窗可用 `--shadow-2` | 使用白色覆盖层自己的主次前景；内部菜单仍用 `--corner-2` |
@@ -176,21 +187,19 @@ tokens:
 
 `--color-white` 是全应用基础表面，当前随白色内容主面，不能当作固定白字；内容明暗切换时随主面同步。应用根背景图只作用于根节点，输入与卡片不继承其材质。浅灰分组面有自己的独立角色；不能因为当前颜色相近，就让它和 hover、disabled 或进度底轨共用语义。
 
+菜单下拉以弱分隔色绘制 1px 外框；账户菜单边框沿用气泡表面角色，保持低对比轮廓。这是原生菜单的局部规则，不要求所有内容容器使用同样的边框。
+
 ### 2.2 应用导航
 
-白色导航接续白色正文，浅灰菜单底和轻量层次保持轻盈，搜索与菜单弹层沿用同一白面。
+白色 Shell 与正文相邻，侧栏及侧边工具区采用 `--color-fill1-2` 灰面、16px 外圆角和 `--color-line1-2` 细边，容器裁剪溢出且无图片、无阴影。普通菜单融入灰面，hover 为近白面，当前项为固定白面与细描边；品牌区的标识与已有操作分置两端。
 
-常驻导航优先沿用平台原始样式，通过主题文字、背景与字重区分状态。菜单 border、box-shadow 是可选覆盖，没有明确用途就不声明；不为了统一风格给每项加框或投影。普通入口融入同一侧栏，按连续目录组织；分组靠留白与文字层级，不把导航复制成输入框、独立按钮或卡片堆叠。内容卡片、主按钮和表单可以使用更强的形状与材质，同一主题不意味着所有组件装饰强度相同。业务确有触控或特殊展示需求时，在本 design.md 调整并验收，不在运行时限制项目自定义值。
+菜单高度、圆角分别消费 `--pod-nav-menu-item-height` 与 `--pod-nav-menu-item-radius`；展开及折叠侧栏均保留四边内距。普通项不描边，hover 与 selected 消费各自边框 Token，切换不改变文字基线与行高。
 
-菜单圆角可通过 --pod-nav-menu-item-radius 与内容层级配套。只有明确需要自定义边界时才声明 --pod-nav-menu-item-border、--pod-nav-menu-item-hover-border、--pod-nav-menu-item-selected-border，并检查状态切换不引起文字跳动；省略时保留平台原始表现。
+侧栏搜索下方保留 8px 局部间距，搜索圆角与菜单圆角配套；顶部容器若采用独立形状，必须补齐其高度、内距与底面的实际绑定，未声明变量不能视为已生效。
 
-导航与应用框架、表单、自定义页面和详情页共用设计语言。先按业务入口安排菜单、分组、搜索、品牌区与常用操作，再一起确定导航与正文的明暗、表面、字体、边界、圆角和密度。平台导航使用真实页面菜单；自绘导航按同一套导航 Token 实现。导航外观属于这份完整应用主题，颜色、三态边框、圆角、阴影与表单、详情和自定义页面一起设计。业务决定入口组织、操作频率与交互需求；主题决定这些需求的视觉表达。主色只是颜色角色之一，辅助色和材质色可以独立存在；仅显式 var 引用建立联动，不按主色批量染色。项目更换配色时，回到同一份 design.md 成组调整实际受影响的 Token，并核对五类界面的整体搭配。
+平台导航使用真实页面菜单，业务决定分组与入口，主题定义文字、底面、形状与状态。普通、hover 与 selected 的前景和背景按 navigation Token 成组消费；顶部与侧栏切换保持尺寸稳定，选中优先于 hover。已有品牌区、搜索和折叠操作保留真实能力，不为造型增加无功能入口。
 
-导航底色使用 --pod-shell-theme-bg-color；普通、悬停和选中文字分别使用 --pod-nav-item-text-color、--pod-nav-item-text-hover-color、--pod-nav-item-text-selected-color；悬停和选中背景使用 --pod-nav-menu-bg-hover-color、--pod-nav-menu-bg-selected-color。图标跟随对应文字状态，当前入口同时用背景或字重表达。
-
-菜单高度、圆角与间距使用 --pod-nav-menu-item-height、--pod-nav-menu-item-radius、--pod-nav-menu-gap；搜索、品牌区、分组和操作优先沿用平台已有的变量绑定，navigation 分组只声明本主题需要覆盖的差异。弹出菜单的底色、文字与搜索状态成组配套，导航与内容可以分别选择明暗。选中项通常沿用平台样式；仅需额外位置标记时才声明 --pod-nav-menu-item-selected-shadow，显式 none 用于有意关闭阴影。省略时不生成额外 box-shadow 规则；该 Token 独立于导航明暗。菜单高度、文字行高、内距和框架留白一起调整，给外阴影、长标题与键盘焦点留出空间。
-
-桌面检查菜单、搜索、选中态与表单的协调；折叠后保留可识别图标和入口名称；窄屏保持菜单可展开、当前页面可定位、键盘焦点可见。提交、编辑、详情与自定义页都沿用这一导航设计。
+菜单边框、圆角与选中阴影属于原生导航的主题覆盖，自绘导航也沿用同一角色。折叠及窄屏保留入口名称、当前项和键盘焦点，长标题不能被固定高度裁掉。弹出菜单需按自己的背景核对文字，不直接复制侧栏前景。
 
 ### 2.3 页面标题与操作
 
@@ -219,7 +228,7 @@ tokens:
 
 页面边距一般使用 `--s-8`，空间紧凑时使用 `--s-6`；邻接独立区块间使用 `--s-5` 或 `--s-6`，面板内使用 `--s-5`。标签至值采用 `--s-2`，图文之间采用 `--s-2` 或 `--s-3`。开放集合与上方内容用 `--s-6` 至 `--s-8` 留白分隔，表格内部通过自然行高维持从容节奏。
 
-主要白色面板用 `--corner-5`，浅灰摘要组用 `--corner-4`，浮层用 `--corner-3`，按钮和输入用 `--corner-2`，小复选框和键帽用 `--corner-1`。圆形头像和对象图标盒用 `--corner-circle`；`--corner-semicircle` 只用于少量变化标签，不把所有按钮和面板胶囊化。拼接内边与细刻度使用 `--corner-zero`。
+主要白色面板用 `--corner-5`，浅灰摘要组用 `--corner-4`，浮层用 `--corner-3`，按钮和输入用 `--corner-2`，小复选框和键帽用 `--corner-1`。圆形头像和对象图标盒用 `--corner-circle`；`--corner-semicircle` 跟随控件小圆角，标签与工具按钮不再默认胶囊；圆形标识仍用 `--corner-circle`。拼接内边与细刻度使用 `--corner-zero`。
 
 页面列数、主辅比例、固定高度、等高范围与窄屏顺序均由实际内容决定，不把某一张看板的两列或四指标结构固化为主题规则。
 
@@ -257,7 +266,7 @@ tokens:
 
 ### 3.3 输入、搜索与筛选
 
-输入使用 `--color-fill1-1`、`--color-line1-2` 和 `--corner-2`，保留比 `--color-fill1-2` 更浅的近白灰内面。前置图标与 placeholder 使用说明或表头前景，值使用一级前景。高度仅用 `--s-8` 至 `--s-10` 三档，不按大幅导出图片增加规格。
+编辑输入使用 `--input-bg-color` 透明底、`--color-line1-2` 和 `--corner-2`；只读框使用 `--pod-field-preview-bg-color` 近白灰面。前置图标与 placeholder 使用说明或表头前景，值使用一级前景。高度仅用 `--s-8` 至 `--s-10` 三档，不按大幅导出图片增加规格。
 
 搜索中的快捷键键帽只在存在真实快捷键时呈现，使用小圆角、细框与弱文字。选择器的展开箭头靠近当前值，保持紧凑；日历与选项菜单打开后使用独立白色 pop-up。
 
@@ -265,9 +274,11 @@ tokens:
 
 ### 3.4 表格与独立记录列表
 
+原生数据管理表格正文和别名保持固定白面，移除单元格及表头伪元素纵线，保留横线与原生外框。自定义页仍可采用开放表格，不因原生外框统一增加包裹卡片。
+
 表格直接展开在白色画布或必要的内容面内，默认不加外包卡框。标题、说明和已有搜索操作在表格外形成一条开放工具行。表头使用 `--oyd-subtle-block-bg`，外侧端角 `--corner-2`，内部单元格连续；表头文字用 `--color-text1-10`，排序箭头保持次要。
 
-正文单元格背景使用 `--pod-table-cell-color`，通过 `var(--pod-card-bg-color)` 跟随卡片背景。仅用 `--color-line1-1` 横线分隔，避免粗竖线、密集网格、每行单独圆角以及强烈斑马纹。推断行内垂直留白优先 `--s-4`，水平留白用 `--s-3` 或 `--s-4`；多行内容自然扩展，不用固定行高截掉信息。
+表格正文消费 `--pod-table-cell-color`，YAML 保留基础卡片桥接；配对 CSS 的原生表格直接使用白面。仅用 `--color-line1-1` 横线分隔，避免粗竖线、密集网格、每行单独圆角以及强烈斑马纹。推断行内垂直留白优先 `--s-4`，水平留白用 `--s-3` 或 `--s-4`；多行内容自然扩展，不用固定行高截掉信息。
 
 第一列若表示对象，可组合小圆形线性图标或真实头像与对象名称。类型图标、头像和文字之间采用 `--s-3`，只给具备识别价值的对象加图标。日期、账户等普通字段维持纯文字。金额保留符号并启用等宽数字，同列对齐一致；需要连续金额比较时优先右对齐，其余文本列左对齐。
 
@@ -302,7 +313,7 @@ tokens:
 
 ### 表单组件与版式结构
 
-原生表单与详情通过 appearance.native-form明确接入本主题：输入基础面使用 --color-fill1-1，边界使用 --color-line1-2，控件和只读数据框使用 --corner-2；焦点使用品牌交互角色。表单主面延续页面画布，操作底栏使用卡片表面与 --corner-5，详情保持正文前景与控件密度，不额外添加默认胶囊底栏或数据框阴影。项目有其他材质与状态需求时，在同一份 design.md 中调整对应 Token。
+原生表单与详情通过 appearance.native-form 接入主题：编辑字段消费 `--input-bg-color`，当前为透明底；只读框消费 `--pod-field-preview-bg-color`，当前为 `--color-fill1-1` 近白灰，两者不混用。透明输入承接容器背景，边界用 `--color-line1-2`，控件与只读框用 `--corner-2`，焦点沿用品牌交互角色。表单主体延续白色页面。底栏沿用卡片表面和既定圆角，详情保持正文前景和控件密度，不额外增加默认胶囊底栏或数据框阴影。
 
 表单使用与自定义页面相同的应用全局样式，字体、色彩、表面、边界、圆角、密度和状态延续本主题。表单支持在顶部、左侧、主体、右侧和字段之间组合 Tab/切换、按钮组/操作入口、图片/图形、状态区、标题与 `Divider`、`ColumnContainer`、辅助内容和业务字段。各组件承担导航、操作、视觉焦点、反馈、层级、节奏、装饰或采集作用。普通业务分组和章节分隔使用 `Divider`，横向字段组合使用 `ColumnContainer`。每张表单在项目 `design.md` 写清组件位置与作用、列比例、标签位置、字段与章节间距、底栏、详情延续和窄屏重排。
 
@@ -358,11 +369,11 @@ tokens:
 
 ### 变量、平台与优先级
 
-YAML 是变量值的唯一事实源，正文说明角色及消费关系。平台基础与项目扩展按职责组织，递归读取以双连字符开头的标量叶子，分组名不拼进变量名；平台基础与项目扩展均在主题中声明，可无环引用，并按实际设计补充变量。`--oyd-page-bg` 单向桥接 `--pod-page-bg-color`，`--pod-table-cell-color` 单向引用 `--pod-card-bg-color`。
+YAML 是平台 Token 契约的事实源，原生局部覆盖另按本章明确规则实现，正文说明角色及消费关系。平台基础与项目扩展按职责组织，递归读取以双连字符开头的标量叶子，分组名不拼进变量名；平台基础与项目扩展均在主题中声明，可无环引用，并按实际设计补充变量。`--oyd-page-bg` 单向桥接 `--pod-page-bg-color`，`--pod-table-cell-color` 保留平台要求的卡片桥接；配对 CSS 直接覆盖为白面，`--table-cell-bg` 也为固定白面。当前卡片与覆盖值同为白色，后续换内容面时需单独核对表格，不把这项覆盖理解为自动联动。
 
 `--oyd-subtle-block-bg` 表示静态结构面，与输入基础面、中性选择、进度轨道分别维护；相同或相近颜色不代表可互换的职责。本模板扩展了图形、分组面、独立导航点缀和数值展示语义，项目可按实际需求继续补充。
 
-需求决定页面与内容，平台限制实际接口，主题决定视觉语言。原生导航仅采用六项开放配色；主题强调色图标和边缘标记是自绘导航的条件补充。内容区换色与导航换色独立处理，不以主题色派生色代替框架背景。无明确变量名的状态色沿用平台语义，不杜撰接口。
+需求决定页面与内容，平台限制实际接口，主题决定视觉语言。原生导航按第二部分采用开放配色与形状覆盖；额外标记按实际布局启用。内容区换色与导航换色独立处理，不以主题色派生色代替框架背景。无明确变量名的状态色沿用平台语义，不杜撰接口。
 
 固定的字体 16 项与间距 10 项保持不变。局部线宽、图形密度、缝隙和未展示的交互状态属于推断，可在页面实现时调整；调整仍应保留白面、浅灰平面块、细轮廓与克制强调。实际内容增长优先于等高卡片、固定图表比例或装饰性布局。
 
@@ -376,6 +387,8 @@ YAML 是变量值的唯一事实源，正文说明角色及消费关系。平台
 - 自绘导航强调直接引用 `--color-brand1-6`，主题色变化时随引用更新，菜单的深色文字和浅色底面配对保持不变。六项导航中性配色保留自身角色；若项目为其中任何项启用主题强调，引用对应 Brand Token，不填入旧主题色值或内容 Text／Fill。
 - 类别一与二保留独立分类编码；类别三与四由品牌种子混合无色相白得到不同明度，换种子时同步重算，不能冻结旧结果。所有类别色不能借作状态语义或文字可读性兜底；项目明确映射，保留图例、条带和明细的既定表达，不因替换主色增加纹理或调整明暗。
 - 沿用设计稿的深字浅底及各状态配对，换主色只更新关联的图标、标记与图形色，不自动挑选黑白前景或改变灰阶、边界和强调形式。状态反馈继续使用平台语义，分类与业务状态分开解释。
+
+主题交接时分别核对 YAML Token 与 CSS 选择器规则。Token 生成不能代替侧栏背景、搜索位置、顶部容器和原生表格的局部实现；重新生成可能重写导航形状块，维护工具全量构建也可能覆盖手写规则。当前配对 CSS 的这些覆盖需保留并核对，文档同步不代表生成和页面验收已完成。
 
 ### 项目页面设计
 
