@@ -25,9 +25,9 @@ const path = require('path');
 // Retain modest growth headroom and round budgets to 16 KiB boundaries.
 const MAX_TARBALL_BYTES = 2144 * 1024;
 // UI improvement/restore adds eight net runtime and guidance files.
-// Reading accessibility and theme-preview guidance bring the dry-run to ~8070 KiB;
-// retain 16 KiB rounding without increasing tarball or per-file limits.
-const MAX_UNPACKED_BYTES = 8080 * 1024;
+// Restored Pop/Platinum templates and catalog validation bring the dry-run to ~8082 KiB;
+// allow 8 KiB rounding without increasing tarball, entry-count or per-file limits.
+const MAX_UNPACKED_BYTES = 8088 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.

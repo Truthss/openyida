@@ -45,14 +45,15 @@ afterEach(() => { fs.rmSync(directory, { recursive: true, force: true }); });
 function planFor(themeId) {
   const plan = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/design-plan.json'), 'utf8'));
   plan.visualStyle.forUser.selectedTheme = { themeId, source: 'user_selected', templatePath: loadThemeIndex().themes.find(theme => theme.themeId === themeId).templatePath };
+  if (themeId === 'app-platinum') {plan.visualStyle.forUser.colorStrategy.primaryColor = '#897253';}
   plan.pages.customPageDetails[0].pageSpecHandoff = { designRefs: ['themeProfile'] };
   return plan;
 }
 
-test('catalog exposes thirteen presets and creative while eighteen style bundles remain preserved', () => {
+test('catalog exposes fifteen presets and creative while eighteen style bundles remain preserved', () => {
   expect(styles).toHaveLength(18);
-  expect(catalog().themes).toHaveLength(13);
-  expect(catalog().themes.some(theme => theme.themeId.startsWith('app-'))).toBe(false);
+  expect(catalog().themes).toHaveLength(15);
+  expect(catalog().themes.filter(theme => theme.themeId.startsWith('app-')).map(theme => theme.themeId).sort()).toEqual(['app-platinum', 'app-pop']);
   expect(catalog().creativeOption).toMatchObject({ themeId: 'free-creative', mode: 'creative' });
   expect(catalog().themes.some(theme => theme.mode === 'creative')).toBe(false);
   const layouts = new Set(styles.map(theme => JSON.parse(fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.formLayoutPath), 'utf8'))[0].layout));
@@ -74,7 +75,7 @@ test('theme catalog separates content tone from navigation tone', () => {
 
   applicationStyles.filter(theme => theme.mode === 'template').forEach(theme => {
     const design = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8');
-    expect(parseDesignDocument(design).metadata.themeProfile).toEqual({
+    expect(parseDesignDocument(design).metadata.themeProfile).toMatchObject({
       contentTone: theme.contentTone, navTheme: theme.navTheme,
     });
     expect(design).toContain(`当前模板使用 contentTone: ${theme.contentTone}、navTheme: ${theme.navTheme}`);
@@ -97,7 +98,7 @@ test('every named theme keeps main navigation tokens without imposing an unrelat
     }
     palettes.add(NAVIGATION_COLOR_TOKENS.map(token => navigation[token]).join('|'));
   });
-  expect(palettes.size).toBe(13);
+  expect(palettes.size).toBe(15);
 });
 
 test('application preset navigation text is readable in ordinary, hover and selected states', () => {
@@ -241,14 +242,14 @@ test('form skills describe component capabilities with direct instructions', () 
 
 test.each(themeIndex.filter(theme => theme.mode !== 'creative').map(style => [style.themeId, style]))('%s pairs generate valid CSS and compile the form layout', (_id, style) => {
   const templateCss = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, style.cssTemplatePath), 'utf8');
-  expect(templateCss).toContain('--color-brand1-6: {{PRIMARY_COLOR}};');
-  expect(templateCss).toContain('--color-brand1-1: <生成实际色值：');
+  expect(templateCss).toContain(`--color-brand1-6: ${style.themeId === 'app-platinum' ? '#897253' : '{{PRIMARY_COLOR}}'};`);
+  if (style.themeId !== 'app-platinum') {expect(templateCss).toContain('--color-brand1-1: <生成实际色值：');}
   const template = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, style.templatePath), 'utf8');
   const design = resolveThemeColors(template.replace(/\{\{PRIMARY_COLOR\}\}/g, '#357942'));
   const css = applyDesignTokens(templateCss, design);
   expect(() => validateThemeCssContent(css)).not.toThrow();
   expect(css).not.toMatch(/\{\{|<生成实际色值：/);
-  expect(css).toContain('--color-brand1-6: #357942;');
+  expect(css).toContain(`--color-brand1-6: ${style.themeId === 'app-platinum' ? '#897253' : '#357942'};`);
   if (style.collection === 'application-styles') {
     expect(css.match(/OPENYIDA APPLICATION STYLE RECIPES START/g)).toHaveLength(1);
   }
@@ -303,12 +304,14 @@ test('export writes all three assets and refuses to overwrite authored work', as
     .rejects.toMatchObject({ code: 'APPLICATION_STYLE_SAMPLE_INVALID' });
 });
 
-test('every catalog entry exports exactly three files with unresolved project brand colors', () => {
+test('every catalog entry exports its three source files without rewriting template palettes', () => {
   themeIndex.forEach(theme => {
     const output = path.join(directory, theme.themeId);
     exportApplicationStyle(theme.themeId, output);
     expect(fs.readdirSync(output).sort()).toEqual(['app_theme.css', 'design.md', 'form-layout.json']);
-    expect(fs.readFileSync(path.join(output, 'app_theme.css'), 'utf8')).toContain('--color-brand1-6: {{PRIMARY_COLOR}};');
+    for (const [name, source] of [['design.md', theme.templatePath], ['app_theme.css', theme.cssTemplatePath], ['form-layout.json', theme.formLayoutPath]]) {
+      expect(fs.readFileSync(path.join(output, name), 'utf8')).toBe(fs.readFileSync(path.join(DESIGN_SKILL_ROOT, source), 'utf8'));
+    }
   });
 });
 

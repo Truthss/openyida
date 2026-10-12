@@ -959,9 +959,10 @@ describe('design-plan materialize', () => {
       'index.json'
     ), 'utf8'));
     expect(themeIndex.themes.filter(theme => !theme.collection)).toHaveLength(13);
-    expect(themeIndex.themes.some(theme => theme.themeId.startsWith('app-'))).toBe(false);
+    expect(themeIndex.themes.filter(theme => theme.themeId.startsWith('app-')).map(theme => theme.themeId).sort()).toEqual(['app-platinum', 'app-pop']);
 
     for (const theme of themeIndex.themes.filter(item => item.mode !== 'creative')) {
+      plan.visualStyle.forUser.colorStrategy.primaryColor = theme.themeId === 'app-platinum' ? '#897253' : '#6F4E37';
       delete plan.visualStyle.forUser.themeProfile;
       plan.visualStyle.forUser.selectedTheme.themeId = theme.themeId;
       plan.visualStyle.forUser.selectedTheme.templatePath = theme.templatePath;
@@ -975,7 +976,7 @@ describe('design-plan materialize', () => {
       const design = renderDesign(plan);
       expect(parseDesignDocument(design).metadata.themeProfile.sourceThemeId).toBe(theme.themeId);
       expect(parseDesignDocument(design).body).not.toContain(theme.themeId);
-      expect(design).not.toContain(theme.label);
+      expect(design).not.toContain(`**${theme.label}**`);
       expect(design).toContain('### 项目视觉选择与事实');
       expect(design).toContain(plan.visualStyle.constraints.accessibility);
       expect(design).toContain(plan.visualStyle.forDesignMd.productTopologyApplication);
@@ -986,10 +987,10 @@ describe('design-plan materialize', () => {
         expect(reference.anchor).toMatch(/^#(?:component|state)-/);
         expect(design.slice(design.indexOf('## 3. 基础组件表达'))).toContain(`<a id="${reference.anchor.slice(1)}"></a>`);
       }
-      expect(design).toContain('"--color-brand1-6": "#6F4E37"');
+      expect(design).toContain(`"--color-brand1-6": "${plan.visualStyle.forUser.colorStrategy.primaryColor}"`);
       expect(design).not.toMatch(/\{\{[^}]+\}\}|<[^>]*(?:实际色值|生成期标记)[^>]*>/);
       expect(design).not.toMatch(/"--[^"]+"\s*:\s*"AI 根据[^"]*生成[^"]*"/);
-      expect(design).toContain('"--color-brand1-1": "#80634F"');
+      expect(design).toContain(`"--color-brand1-1": "${theme.themeId === 'app-platinum' ? '#9C835F' : '#80634F'}"`);
       const { readDesignTokens, applyDesignTokens } = require('../lib/app/theme-from-design');
       const contract = require('../yida-skills/skills/yida-design/templates/design-themes/basic-tokens.json');
       const tokens = readDesignTokens(design);

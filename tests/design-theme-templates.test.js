@@ -15,12 +15,16 @@ const PYTHON = [['python3', []], ['python', []], ['py', ['-3']]].find(([command,
   return !result.error && result.status === 0 && match && Number(match[1]) === 3 && Number(match[2]) >= 9;
 });
 
-test('shipped themes inherit project color and declare the selected-item shadow contract', () => {
+test('shipped themes retain a project color placeholder or a concrete default palette and declare selected-item shadows', () => {
   const index = JSON.parse(fs.readFileSync(path.join(THEMES, 'index.json'), 'utf8'));
   for (const theme of index.themes) {
     const source = fs.readFileSync(path.join(SKILL, theme.templatePath), 'utf8');
     expect(source).not.toMatch(/(?:无品牌色|没有品牌色)[^。\n]*(?:默认[^。\n]*(?:蓝色|冷色|纯黑)|(?:蓝色|冷色|纯黑)[^。\n]*默认)/);
-    expect(source).toContain('{{PRIMARY_COLOR}}');
+    if (theme.themeId === 'app-platinum') {
+      expect(source).toContain('"--color-brand1-6": "#897253"');
+    } else {
+      expect(source).toContain('{{PRIMARY_COLOR}}');
+    }
     const shadow = /"--pod-nav-menu-item-selected-shadow":\s*"([^"]+)"/.exec(source);
     const css = fs.readFileSync(path.join(SKILL, theme.cssTemplatePath), 'utf8');
     expect(css).toContain(`--pod-nav-menu-item-selected-shadow: ${shadow ? shadow[1] : 'none'};`);
@@ -74,14 +78,14 @@ with patch.object(Path, 'relative_to', lambda self, *args, **kwargs: PureWindows
   });
 }
 
-function withFixture(run) {
+function withFixture(run, themeId) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-theme-contract-'));
   try {
     const skill = path.join(dir, 'yida-design');
     const themes = path.join(skill, 'templates/design-themes');
     fs.mkdirSync(themes, { recursive: true });
     const index = JSON.parse(fs.readFileSync(path.join(THEMES, 'index.json'), 'utf8'));
-    index.themes = index.themes.slice(0, 1);
+    index.themes = themeId ? index.themes.filter(theme => theme.themeId === themeId) : index.themes.slice(0, 1);
     fs.copyFileSync(path.join(THEMES, 'basic-tokens.json'), path.join(themes, 'basic-tokens.json'));
     fs.mkdirSync(path.join(skill, 'references/theme'), { recursive: true });
     fs.copyFileSync(path.join(SKILL, 'references/theme/app-custom-theme-template.css'), path.join(skill, 'references/theme/app-custom-theme-template.css'));
@@ -132,7 +136,7 @@ test.each([
   ['token reference cycle', source => source.replace(/("--color-line1-1": )"[^"\n]+"/, '$1"var(--color-line1-2)"').replace(/("--color-line1-2": )"[^"\n]+"/, '$1"var(--color-line1-1)"'), '变量循环引用'],
   ['primary seed', source => source.replace('"--color-brand1-6": "{{PRIMARY_COLOR}}"', '"--color-brand1-6": "#123456"'), '必须使用项目主色占位符'],
   ['brand derivative', source => source.replace(/("--color-brand1-1": )"[^"]+"/, '$1"#123456"'), '必须与 --color-brand1-6 同源'],
-  ['page bridge', source => source.replace('"--oyd-page-bg": "var(--pod-page-bg-color)"', '"--oyd-page-bg": "#000000"'), '必须单向继承'],
+  ['page bridge', source => source.replace('"--oyd-page-bg": "var(--pod-page-bg-color)"', '"--oyd-page-bg": "#000000"'), '必须继承或等于'],
   ['missing section', source => source.replace('## 4. 特色表达配方', '## 4. 其他'), 'V2 五个章节'],
   ['unknown placeholder', source => source + '\n{{UNKNOWN_VALUE}}\n', '未知'],
   ['missing placeholder', source => source.replace('{{PAGE_APPLICATIONS}}', ''), '缺少'],
@@ -207,7 +211,7 @@ test.each(['--color-brand1-1', '--color-brand1-6'])('validator rejects a fixed C
     const cssFile = path.join(path.dirname(template), 'app_theme.css');
     const css = fs.readFileSync(cssFile, 'utf8').replace(new RegExp(`(${name}: )[^;]+;`), '$1#123456;');
     fs.writeFileSync(cssFile, css);
-    expect(validate(skill).stdout).toContain(`${name} 必须保留项目颜色占位`);
+    expect(validate(skill).stdout).toContain(`${name} 必须保留设计中的品牌配色或项目颜色占位`);
   });
 });
 
@@ -247,4 +251,25 @@ test('check:skills rejects a missing public CSS root closure', () => {
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
+});
+
+
+test.each([
+  ['default color mismatch', source => source.replace('themeColor: "#897253"', 'themeColor: "#123456"'), '默认主色与 themeProfile.themeColor 不一致'],
+  ['incomplete default palette', source => source.replace('"--color-brand1-9": "#755E41"', '"--color-brand1-9": "invalid"'), '默认品牌色阶必须包含完整 HEX 色值'],
+  ['duplicate sequence property', source => source.replace('- name: "default"', '- name: "default"\n      name: "duplicate"'), '重复定义 name'],
+])('default palette validation rejects %s', (_name, change, expected) => {
+  withFixture(({ skill, template, original }) => {
+    fs.writeFileSync(template, change(original));
+    expect(validate(skill).stdout).toContain(expected);
+    expect(validate(skill).status).toBe(1);
+  }, 'app-platinum');
+});
+
+test('default palette CSS must remain paired with the design palette', () => {
+  withFixture(({ skill, template }) => {
+    const file = path.join(path.dirname(template), 'app_theme.css');
+    fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace('--color-brand1-6: #897253;', '--color-brand1-6: #123456;'));
+    expect(validate(skill).stdout).toContain('--color-brand1-6 必须保留设计中的品牌配色或项目颜色占位');
+  }, 'app-platinum');
 });

@@ -6,21 +6,13 @@ const fs = require('fs');
 const path = require('path');
 const { createHash } = require('crypto');
 const { reviewPalette } = require('./theme-palette-baseline');
-const { parseDesignDocument } = require('../lib/design/document');
+const { parseDesignDocument, serializeDesignDocument } = require('../lib/design/document');
 const { resolveThemeColors, loadThemeIndex, DESIGN_SKILL_ROOT } = require('../lib/design-plan/themes');
 const { applyDesignTokens, readDesignTokens } = require('../lib/app/theme-from-design');
 const { writeFiles } = require('../lib/design-plan/files');
 const { rootDeclarations } = require('../lib/core/theme-brand-scale');
 const { auditPalette } = require('../lib/design/palette-contrast');
 const platformCss = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, 'references/theme/app-custom-theme-template.css'), 'utf8');
-
-/** Serialize template metadata without inserting user text into token expressions. */
-function yaml(value, depth = 0) {
-  return Object.entries(value).map(([key, item]) => {
-    const prefix = `${'  '.repeat(depth)}${key.startsWith('--') ? JSON.stringify(key) : key}:`;
-    return item && typeof item === 'object' ? `${prefix}\n${yaml(item, depth + 1)}` : `${prefix} ${JSON.stringify(String(item))}`;
-  }).join('\n');
-}
 
 /** Compile the complete authored theme into scoped CSS, retaining brand placeholders. */
 function cssTemplate(markdown, rules = '', pairedCss) {
@@ -36,7 +28,7 @@ function cssTemplate(markdown, rules = '', pairedCss) {
   // project-dependent value. The temporary seed never becomes a template default.
   const metadata = parseDesignDocument(markdown).metadata;
   if (metadata.applicationStyle?.mode === 'creative') {delete metadata.applicationStyle;}
-  const source = `---\n${yaml(metadata)}\n---\n`;
+  const source = serializeDesignDocument(metadata, '');
   const resolved = resolveThemeColors(source.replace(/\{\{PRIMARY_COLOR\}\}/g, '#2C73A9'));
   const before = {};
   const collect = node => Object.entries(node).forEach(([key, value]) => {
@@ -82,7 +74,7 @@ function build({ root = DESIGN_SKILL_ROOT, themes = loadThemeIndex().themes, che
     const css = cssTemplate(markdown, rules, fs.existsSync(output) ? fs.readFileSync(output, 'utf8') : undefined);
     const metadata = parseDesignDocument(markdown).metadata;
     if (metadata.applicationStyle?.mode === 'creative') {delete metadata.applicationStyle;}
-    const design = resolveThemeColors(`---\n${yaml(metadata)}\n---\n`.replace(/\{\{PRIMARY_COLOR\}\}/g, '#2C73A9'));
+    const design = resolveThemeColors(serializeDesignDocument(metadata, '').replace(/\{\{PRIMARY_COLOR\}\}/g, '#2C73A9'));
     const resolved = applyDesignTokens(css, design, markdown, { paired: true });
     const audit = auditPalette(rootDeclarations(resolved.replace(/\/\*[\s\S]*?\*\//g, '')), { css: resolved });
     if (audit.issues.length || audit.unresolved.length) {

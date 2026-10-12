@@ -19,10 +19,14 @@ test('strict audit reports and blocks main palette findings without recoloring',
   expect(() => build({ check: true })).toThrow(expect.objectContaining({ code: 'THEME_PALETTE_REVIEW_REQUIRED' }));
 });
 
-test.each(loadThemeIndex().themes)('$themeId rejects primary-only replacement and generates all usable color slots', theme => {
+test.each(loadThemeIndex().themes)('$themeId resolves placeholders or preserves its complete default palette', theme => {
   const css = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.cssTemplatePath), 'utf8');
-  expect(() => validateThemeCssContent(css.replaceAll('{{PRIMARY_COLOR}}', '#345B49')))
-    .toThrow(expect.objectContaining({ code: 'THEME_CSS_UNRESOLVED_TOKEN' }));
+  if (theme.themeId === 'app-platinum') {
+    expect(() => validateThemeCssContent(css)).not.toThrow();
+  } else {
+    expect(() => validateThemeCssContent(css.replaceAll('{{PRIMARY_COLOR}}', '#345B49')))
+      .toThrow(expect.objectContaining({ code: 'THEME_CSS_UNRESOLVED_TOKEN' }));
+  }
   const source = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8');
   const creative = theme.mode === 'creative' ? '\ncreativeDirection:\n  businessRationale: Daily operations\n  composition: Single workspace\n  typography: Clear labels\n  material: Flat surfaces\n  formLayout: Single column\n' : '';
   const design = resolveThemeColors(source.replaceAll('{{PRIMARY_COLOR}}', '#345B49').replace(/\n---\n/, creative + '\n---\n'));
@@ -155,4 +159,25 @@ test('changing the primary updates explicit references but preserves independent
   expect(light).toContain('--pod-nav-menu-bg-selected-color: #C2410C;');
   expect(css).toContain('--color-brand1-6: #245B57;');
   expect(applyDesignTokens(css, after, after)).toBe(css);
+});
+
+
+test('restored templates pass strict palette checks without rewriting their authored files', () => {
+  const themes = loadThemeIndex().themes.filter(theme => ['app-pop', 'app-platinum'].includes(theme.themeId));
+  const files = themes.flatMap(theme => [theme.templatePath, theme.cssTemplatePath, theme.formLayoutPath]);
+  const before = files.map(file => fs.readFileSync(path.join(DESIGN_SKILL_ROOT, file), 'utf8'));
+  expect(build({ check: true, themes })).toEqual([]);
+  expect(files.map(file => fs.readFileSync(path.join(DESIGN_SKILL_ROOT, file), 'utf8'))).toEqual(before);
+});
+
+test('Plan inherits the selected template icon rules unless the project supplies its own', () => {
+  const plan = JSON.parse(JSON.stringify(fixture));
+  const theme = loadThemeIndex().themes.find(item => item.themeId === 'app-platinum');
+  plan.visualStyle.forUser.selectedTheme = { themeId: theme.themeId, source: 'user_selected', templatePath: theme.templatePath };
+  plan.visualStyle.forUser.colorStrategy.primaryColor = '#897253';
+  delete plan.visualStyle.forUser.iconSystem;
+  const template = parseDesignDocument(fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8'));
+  expect(parseDesignDocument(renderDesign(plan, { draft: true })).metadata.iconSystem).toEqual(template.metadata.iconSystem);
+  plan.visualStyle.forUser.iconSystem = { library: 'lucide-react', mappings: { orders: 'Package' } };
+  expect(parseDesignDocument(renderDesign(plan, { draft: true })).metadata.iconSystem).toEqual(plan.visualStyle.forUser.iconSystem);
 });

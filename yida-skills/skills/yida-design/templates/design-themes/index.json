@@ -172,6 +172,34 @@
       "mode": "template"
     },
     {
+      "themeId": "app-pop",
+      "label": "波普印刷",
+      "mode": "template",
+      "collection": "application-styles",
+      "contentTone": "light",
+      "navTheme": "light",
+      "navigationSummary": "暖白画布与淡纸色导航承托墨色文字，选中项使用柔和黄纸底。明黄、粉色与硬边图形只用于局部内容焦点，不铺满导航和业务画布。",
+      "templatePath": "templates/design-themes/app-pop/design.md",
+      "cssTemplatePath": "templates/design-themes/app-pop/app_theme.css",
+      "formLayoutPath": "templates/design-themes/app-pop/form-layout.json",
+      "previewPrimaryColor": "#211c21",
+      "styleSummary": "浅色导航，浅色内容界面。不对称二比一工作区与粗线信息带，暖白画布搭配近方角、粗墨线和硬偏移阴影。适合活动执行、创意制作与品牌运营。"
+    },
+    {
+      "themeId": "app-platinum",
+      "label": "铂金商务",
+      "mode": "template",
+      "collection": "application-styles",
+      "contentTone": "light",
+      "navTheme": "light",
+      "navigationSummary": "雾面香槟侧栏配低圆角菜单与均衡行距，暖银细线连接珍珠白工作区；当前入口使用浅香槟金底与深灰金文字，保持清晰但不过重。",
+      "templatePath": "templates/design-themes/app-platinum/design.md",
+      "cssTemplatePath": "templates/design-themes/app-platinum/app_theme.css",
+      "formLayoutPath": "templates/design-themes/app-platinum/form-layout.json",
+      "previewPrimaryColor": "#897253",
+      "styleSummary": "浅色导航，浅色内容界面。珍珠奶油白画布、轻香槟金焦点与暖银细线，搭配低圆角和克制底影。弹性网格按业务组织主次区域，适合金融服务、客户经营、合同与专业审批。"
+    },
+    {
       "themeId": "free-creative",
       "label": "自由创意",
       "mode": "creative",

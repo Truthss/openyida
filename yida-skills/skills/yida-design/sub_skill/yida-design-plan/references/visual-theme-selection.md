@@ -22,7 +22,7 @@
 
 应用编排先根据业务需求确定导航结构。视觉设计按 [主题与导航兼容规则](../../../references/navigation-decision.md#主题与导航兼容规则) 筛选支持该结构的主题，再设计各页面共用的配色、背景、圆角和组件样式；命名模板的导航明暗采用模板 `navTheme`；自由创意由项目设计明确填写。页面内容、布局和操作顺序按业务规划执行。
 
-主色按所选主题的公式推导，其他颜色沿用主题。已选方向承诺的画布、卡片、填充、字体或辅助色与模板不同时，将具体差异写入 `visualStyle.tokens`，不等待用户逐个指定色值。`description` 和 `colorStrategy.usage` 只说明用途，不会被编译成配色。按 [共用主题规则](../../../references/application-theme-consistency.md) 完成变量后再交接页面；渐变和图片按公共输出契约处理。Fast 与 Plan 使用相同规则。
+含主色占位的模板按所选主题的公式推导，其他颜色沿用主题。模板声明 `themeProfile.themeColorSource: theme-default` 时，按其默认整套配色展示与选择，并将 `themeProfile.themeColor` 写入 `colorStrategy.primaryColor`；不能只填另一主色却保留旧色阶。已选方向承诺的画布、卡片、填充、字体或辅助色与模板不同时，将具体差异写入 `visualStyle.tokens`，不等待用户逐个指定色值。`description` 和 `colorStrategy.usage` 只说明用途，不会被编译成配色。按 [共用主题规则](../../../references/application-theme-consistency.md) 完成变量后再交接页面；渐变和图片按公共输出契约处理。Fast 与 Plan 使用相同规则。
 
 ## 公共选型规则
 
