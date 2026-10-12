@@ -12,7 +12,7 @@ let dir;
 let briefPath;
 let brief;
 const save = () => fs.writeFileSync(briefPath, JSON.stringify(brief));
-const init = () => initialize(briefPath, { themeId: 'soft-inset-surfaces', outputDir: path.join(dir, 'prd') });
+const init = () => initialize(briefPath, { themeId: 'soft-outline-rhythm', outputDir: path.join(dir, 'prd') });
 const colorExample = result => JSON.parse(fs.readFileSync(result.context, 'utf8')
   .split('## 输入格式示例')[1].match(/```json\n([\s\S]*?)\n```/)[1]).colorStrategy;
 
@@ -40,7 +40,7 @@ beforeEach(() => {
 afterEach(() => fs.rmSync(dir, { recursive: true, force: true }));
 
 test.each(fs.readdirSync(path.join(__dirname, '../yida-skills/skills/yida-design/templates/design-themes'))
-  .filter(id => id.startsWith('app-')))('unlisted %s cannot initialize or export even though its files remain', themeId => {
+  .filter(id => id.startsWith('app-') && !['app-pop', 'app-platinum'].includes(id)))('unlisted %s cannot initialize or export even though its files remain', themeId => {
   const { exportApplicationStyle } = require('../lib/app/application-style');
   const before = fs.readdirSync(dir);
   brief.visualSelection.themeId = themeId;
@@ -158,10 +158,10 @@ test('initialization derives navigation tone from the selected theme and replace
   const plan = JSON.parse(fs.readFileSync(result.output, 'utf8'));
   expect(plan.visualStyle.forUser.navigationStyle).toMatchObject({
     structure: 'top',
-    tone: 'dark',
+    tone: 'light',
     toneSource: 'theme_derived',
   });
-  expect(fs.readFileSync(result.context, 'utf8')).toContain('tone=dark 由已选主题模板派生，不要修改');
+  expect(fs.readFileSync(result.context, 'utf8')).toContain('tone=light 由已选主题模板派生，不要修改');
 });
 
 test.each([undefined, 'ai_default', 'user_selected'])('visual selection preserves its actual source: %s', source => {
@@ -484,11 +484,32 @@ test('catalog is read-only and its theme IDs initialize through the public CLI w
   const patterns = require('../yida-skills/skills/yida-design/sub_skill/yida-design-plan/templates/page-patterns/index.json');
   expect(result.themes.map(theme => theme.themeId)).toEqual(themeIndex.themes.filter(theme => theme.mode !== 'creative').map(theme => theme.themeId));
   expect(result.creativeOption).toMatchObject({ themeId: 'free-creative', mode: 'creative' });
+  const restricted = {
+    'soft-inset-surfaces': ['side'], 'hairline-soft-blocks': ['side'],
+    'dark-rail-fine-lines': ['side'], 'ink-glow-soft-panels': ['top'],
+  };
+  for (const [themeId, layouts] of Object.entries(restricted)) {
+    expect(result.themes.find(theme => theme.themeId === themeId).supportedNavigationLayouts).toEqual(layouts);
+  }
   for (const theme of result.themes) {
     expect(theme.styleSummary).toMatch(/(?:深色|浅色)导航/);
     expect(theme.styleSummary).toMatch(/(?:深色|浅色)内容界面/);
     expect(theme.styleSummary).not.toMatch(/navTheme\s*=|contentTheme\s*=/);
   }
+  const previews = require('../yida-skills/skills/yida-design/references/theme-preview-images.json');
+  expect(Object.keys(previews)).toHaveLength(17);
+  expect(result.themes.filter(theme => theme.previewImage)).toHaveLength(13);
+  for (const theme of result.themes) {
+    if (previews[theme.themeId]) {
+      expect(theme.previewImage).toEqual({ url: previews[theme.themeId], alt: `${theme.label} · 效果参考图` });
+    } else {
+      expect(theme).not.toHaveProperty('previewImage');
+    }
+  }
+  expect(result.themes.find(theme => theme.themeId === 'soft-inset-surfaces').previewImage.url)
+    .toBe('https://img.alicdn.com/imgextra/i3/O1CN01UEEmuLlMF3I5pHky_!!6000000006290-2-tps-2870-1798.png');
+  expect(result.creativeOption).not.toHaveProperty('previewImage');
+  expect(result.themes.filter(theme => theme.themeId.startsWith('app-')).map(theme => theme.themeId).sort()).toEqual(['app-platinum', 'app-pop']);
   expect(result.pagePatterns).toEqual(patterns.patterns.map(({ id, label, mustKeep }) => ({ id, label, mustKeep })));
   const initialized = JSON.parse(execFileSync(process.execPath, [bin, 'design-plan', 'init', briefPath,
     '--theme-id', result.themes[0].themeId, '--output-dir', path.join(dir, 'catalog-plan'), '--json'], options));
@@ -515,7 +536,7 @@ test('collects interaction state format errors alongside other missing facts', (
 
 test('returned materialize command handles spaces, quotes and shell expressions in paths', () => {
   const { spawnSync } = require('child_process');
-  const result = initialize(briefPath, { themeId: 'soft-inset-surfaces', outputDir: path.join(dir, "plan ' $(touch unwanted)") });
+  const result = initialize(briefPath, { themeId: 'soft-outline-rhythm', outputDir: path.join(dir, "plan ' $(touch unwanted)") });
   const source = fixture();
   source.pages.customPageDetails[0].pageId = 'dashboard';
   source.pages.customPageDetails[0].sceneKey = 'dashboard';
@@ -546,6 +567,7 @@ test('returned materialize command handles spaces, quotes and shell expressions 
 test.each(require('../yida-skills/skills/yida-design/templates/design-themes/index.json').themes)(
   'initializes and materializes shared theme $themeId with its current summary and token contract', theme => {
     delete brief.visualSelection.visualDirection;
+    if (theme.themeId === 'app-platinum') {brief.visualSelection.colorStrategy.primaryColor = '#897253';}
     if (theme.mode === 'creative') {
       const { CREATIVE_TOKENS } = require('../lib/app/application-style');
       const { resolveThemeColors, themeTemplatePath } = require('../lib/design-plan/themes');
@@ -575,14 +597,20 @@ test.each(require('../yida-skills/skills/yida-design/templates/design-themes/ind
     business.ready = true;
     business.facts = { overview: source.overview, dataModels: source.dataModels, businessFlows: source.businessFlows, pages: source.pages };
     fs.writeFileSync(businessFile, JSON.stringify(business));
+    if (['dark-rail-fine-lines', 'outlined-texture-duotone', 'soft-inset-surfaces', 'soft-rail-bold-band', 'warm-canvas-contrast-panels'].includes(theme.themeId)) {
+      expect(() => materialize(result.output, { businessFile, visualFile: result.preparedInputs.visual }))
+        .toThrow(expect.objectContaining({ code: 'DESIGN_THEME_CONTRAST_LOW' }));
+      expect(fs.existsSync(path.join(path.dirname(result.output), 'app-theme.css'))).toBe(false);
+      return;
+    }
     const output = materialize(result.output, { businessFile, visualFile: result.preparedInputs.visual });
     expect(output.success).toBe(true);
     expect(output).toMatchObject({ previousRevision: '1', revision: '1' });
     const design = fs.readFileSync(output.outputs.design, 'utf8');
     expect(design).toContain('dashboard');
-    expect(design).toContain('#6F4E37');
+    expect(design).toContain(brief.visualSelection.colorStrategy.primaryColor);
     expect(design).not.toMatch(/<生成实际色值|\{\{[A-Z_]+\}\}/);
-    expect(require('../lib/app/theme-from-design').readDesignTokens(design)['--color-brand1-6']).toBe('#6F4E37');
+    expect(require('../lib/app/theme-from-design').readDesignTokens(design)['--color-brand1-6']).toBe(brief.visualSelection.colorStrategy.primaryColor);
     expect(fs.readFileSync(output.outputs.prd, 'utf8')).toContain('采购');
   });
 
@@ -682,7 +710,7 @@ test('CLI init is permitted locally, documents every argument and runs through t
   expect(command.notes.join(' ')).toContain('toneSource=theme_derived');
   const { execFileSync } = require('child_process');
   const result = JSON.parse(execFileSync(process.execPath, [path.join(__dirname, '../bin/yida.js'), 'design-plan', 'init', briefPath,
-    '--theme-id', 'soft-inset-surfaces', '--output-dir', path.join(dir, 'cli-prd'), '--json'], {
+    '--theme-id', 'soft-outline-rhythm', '--output-dir', path.join(dir, 'cli-prd'), '--json'], {
     cwd: dir, encoding: 'utf8', env: { ...process.env, OPENYIDA_SKIP_UPDATE_CHECK: '1' },
   }));
   expect(result.success).toBe(true);
@@ -691,7 +719,7 @@ test('CLI init is permitted locally, documents every argument and runs through t
 
 test('CLI init rejects undeclared navigation tone overrides', async () => {
   const { run } = require('../lib/design-plan/design-plan');
-  await expect(run(['init', briefPath, '--theme-id', 'soft-inset-surfaces', '--nav-theme', 'dark', '--json']))
+  await expect(run(['init', briefPath, '--theme-id', 'soft-outline-rhythm', '--nav-theme', 'dark', '--json']))
     .rejects.toMatchObject({ code: 'DESIGN_PLAN_INVALID_ARGUMENT' });
 });
 

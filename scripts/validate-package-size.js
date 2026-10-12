@@ -23,20 +23,29 @@ const path = require('path');
 // app-entry/fix-theme commands and WAF-safe authoring guidance push the gzipped tarball
 // past the previous 2128 KiB ratchet (CI Node 20 gzip runs ~2 KiB heavier than newer Node).
 // Retain modest growth headroom and round budgets to 16 KiB boundaries.
-const MAX_TARBALL_BYTES = 2144 * 1024;
-// Latest merged runtime/skills plus managed-command declarations total about 8094 KiB.
-const MAX_UNPACKED_BYTES = 8128 * 1024;
+// Merging UI improvement/restore with Local Agent adds runtime modules and skills.
+// Measured combined package: ~2172 KiB compressed, ~8278 KiB unpacked, 642 files.
+const MAX_TARBALL_BYTES = 2192 * 1024;
+// Round the combined content to a 16 KiB boundary with modest cross-Node headroom.
+const MAX_UNPACKED_BYTES = 8304 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
 // Theme scope, brand-scale and palette validation add three runtime modules;
 // removing the application-styles/navigation-styles catalogs offsets two files.
 // App theme upgrades add two CLI modules and an independent skill with its migration guide.
-// Latest merged main ships 630 files; provider discovery and managed policy add two.
-const MAX_ENTRY_COUNT = 634;
+// Retain two entries of headroom; per-file limits remain unchanged.
+const MAX_ENTRY_COUNT = 644;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
+  'lib/app/app-theme.js',
+  'lib/app/theme-source.js',
+  'lib/app/nav-group-create.js',
+  'yida-skills/skills/yida-design/references/responsive-layout.md',
+  'yida-skills/skills/yida-design/sub_skill/ui-improve/SKILL.md',
+  ...['application-coverage', 'backup-and-restore', 'component-replacement', 'confirmation']
+    .map(name => `yida-skills/skills/yida-design/sub_skill/ui-improve/references/${name}.md`),
   'lib/app/upgrade-app-theme.js',
   'lib/app/prepare-app-theme-upgrade.js',
   'yida-skills/skills/yida-upgrade-app-theme/SKILL.md',
@@ -81,6 +90,7 @@ const REQUIRED_PACKAGE_FILES = [
   'yida-skills/skills/yida-requirement-analysis/references/experience-groups.md',
   'yida-skills/skills/yida-requirement-analysis/references/handoff.md',
   'yida-skills/skills/yida-design/references/navigation-decision.md',
+  'yida-skills/skills/yida-design/references/theme-preview-images.json',
   'yida-skills/skills/yida-design/templates/design-themes/index.json',
   'yida-skills/skills/yida-design/templates/design-themes/basic-tokens.json',
   'lib/app/application-style.js',

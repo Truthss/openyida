@@ -942,6 +942,11 @@ async function main() {
       break;
     }
 
+    case 'app-theme': {
+      await require('../lib/app/app-theme').run(args);
+      break;
+    }
+
     case 'upgrade-app-theme': {
       await require('../lib/app/upgrade-app-theme').run(args);
       break;

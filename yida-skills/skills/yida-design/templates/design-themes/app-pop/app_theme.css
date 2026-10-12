@@ -51,20 +51,20 @@
   --color-brand-4: var(--color-brand1-9);
 
   /* 边界、填充与文字颜色 */
-  --color-line1-1: <生成实际色值：--color-brand1-6 8% + #777777 92%，sRGB 逐通道混合>;
-  --color-line1-2: <生成实际色值：--color-brand1-6 8% + #555555 92%，sRGB 逐通道混合>;
-  --color-fill1-1: <生成实际色值：--color-brand1-6 4% + #F1F1F1 96%，sRGB 逐通道混合>;
-  --color-fill1-2: <生成实际色值：--color-brand1-6 4% + #E3E3E3 96%，sRGB 逐通道混合>;
-  --color-fill1-3: <生成实际色值：--color-brand1-6 8% + #1D1D1D 92%，sRGB 逐通道混合>;
-  --color-fill1-5: <生成实际色值：--color-brand1-6 2% + #FDFDFD 98%，sRGB 逐通道混合>;
+  --color-line1-1: #CCCCCC;
+  --color-line1-2: #211C21;
+  --color-fill1-1: #F6F6F6;
+  --color-fill1-2: #F6F6F6;
+  --color-fill1-3: #CCCCCC;
+  --color-fill1-5: #FFFFFF;
   --color-fill1-6: var(--color-text1-3);
   --color-fill1-10: #262626;
   --color-text1-5: #FFFFFF;
-  --color-text1-4: <生成实际色值：--color-brand1-6 4% + #242424 96%，sRGB 逐通道混合>;
-  --color-text1-10: var(--color-text1-3);
-  --color-text1-3: <生成实际色值：--color-brand1-6 4% + #5E5E5E 96%，sRGB 逐通道混合>;
-  --color-text1-2: <生成实际色值：--color-brand1-6 4% + #868686 96%，sRGB 逐通道混合>;
-  --color-text1-1: <生成实际色值：--color-brand1-6 4% + #1D1D1D 96%，sRGB 逐通道混合>;
+  --color-text1-4: #211C21;
+  --color-text1-10: #242424;
+  --color-text1-3: #242424;
+  --color-text1-2: #8A8A83;
+  --color-text1-1: #CCCCCC;
 
   /* 字体 */
   --font-family-base:
@@ -99,11 +99,11 @@
 
   /* 圆角 */
   --corner-zero: 0px;
-  --corner-1: 0px;
-  --corner-2: 0px;
-  --corner-3: 0px;
-  --corner-4: 0px;
-  --corner-5: 0px;
+  --corner-1: 4px;
+  --corner-2: 4px;
+  --corner-3: 4px;
+  --corner-4: 4px;
+  --corner-5: 4px;
   --corner-circle: 50%;
   --corner-semicircle: 500px;
 
@@ -116,7 +116,7 @@
   --pod-app-root-bg-color: #F6F1E3;
   --pod-app-root-bg-image: none;
   --pod-page-bg-color: #F6F1E3;
-  --pod-card-bg-color: #fffdf6;
+  --pod-card-bg-color: #FFFDF6;
   --pod-table-cell-color: var(--pod-card-bg-color);
   --color-white: var(--pod-card-bg-color);
 
@@ -141,7 +141,7 @@
   --pod-page-surface-border-radius: 12px;
   --pod-page-surface-shadow: none;
   --pod-page-border: 1px solid var(--color-line1-1, #efefef);
-  --pod-page-border-radius: 0px;
+  --pod-page-border-radius: 4px;
   --pod-page-padding: 20px;
   --pod-page-mobile-margin: 12px;
   --pod-page-mobile-padding: 12px;
@@ -238,7 +238,7 @@
   --pod-nav-menu-item-hover-border: var(--pod-nav-menu-item-border);
   --pod-nav-menu-item-selected-border: var(--pod-nav-menu-item-border);
   --pod-nav-menu-font-size: 14px;
-  --pod-nav-menu-item-selected-font-weight: 700;
+  --pod-nav-menu-item-selected-font-weight: 500;
   --pod-nav-menu-item-selected-shadow: none;
   --pod-nav-menu-line-height: 20px;
   --pod-nav-menu-icon-size: 16px;
@@ -253,7 +253,7 @@
   --pod-nav-menu-fade-height: 32px;
   --pod-nav-sub-divider-left: 16px;
   --pod-nav-sub-indent: 24px;
-  --pod-nav-sub-divider-color: #211C21;
+  --pod-nav-sub-divider-color: #CCCCCC;
   --pod-nav-menu-bg-hover-color: #ECE3C4;
   --pod-nav-tab-line-hover-color: var(--color-brand1-6, rgba(155, 136, 121, 1));
   --pod-nav-tab-line-selected-color: var(--color-brand1-6, rgba(155, 136, 121, 1));
@@ -274,25 +274,25 @@
   --pod-nav-page-padding: var(--pod-lg-gap-pad-margin, 16px);
   --pod-nav-avater-border-radius: 6px;
   --pod-nav-item-text-color: #211C21;
-  --pod-nav-item-text-hover-color: #211C21;
+  --pod-nav-item-text-hover-color: #171717;
   --pod-nav-item-text-disabled-color: rgba(24, 28, 31, 0.24);
   --pod-page-header-bg-color: var(--pod-shell-theme-bg-color, var(--color-white, #fff));
   --pod-theme-text-color: var(--pod-nav-item-text-color, var(--color-text1-4, #202020));
   --pod-page-header-text-color: var(--pod-theme-text-color, var(--color-text1-4, #202020));
-  --pod-nav-item-text-selected-color: #282329;
+  --pod-nav-item-text-selected-color: #211C21;
 
   /* 原生表单：编辑态字段 */
   --form-element-medium-corner: 0px;
   --form-element-medium-height: 46px;
   --form-element-medium-font-size: 14px;
-  --input-bg-color: #fffdf6;
+  --input-bg-color: #FFFFFF;
   --input-border-width: 3px;
-  --input-border-color: #211c21;
+  --input-border-color: #211C21;
   --input-hover-border-color: var(--color-brand1-6);
   --input-focus-border-color: var(--color-brand1-6);
-  --input-focus-bg-color: #fffdf6;
-  --yida-form-content-bgcolor: #fffdf6;
-  --pod-form-label-color: var(--color-text1-4);
+  --input-focus-bg-color: #FFFFFF;
+  --yida-form-content-bgcolor: #FFFFFF;
+  --pod-form-label-color: #242424;
   --form-top-label-margin-b: 8px;
   --yida-help-tips-color: #878f95;
   --yida-divider-secondary-color: var(--color-brand1-2);
@@ -304,29 +304,29 @@
   --pod-field-preview-min-height: 32px;
   --pod-field-preview-padding: 8px 12px;
   --pod-field-preview-gap: 4px;
-  --pod-field-preview-bg-color: #fffdf6;
-  --pod-field-preview-border-radius: 0px;
+  --pod-field-preview-bg-color: #FFFFFF;
+  --pod-field-preview-border-radius: 4px;
   --pod-field-preview-indicator-color: var(--color-fill1-3);
   --pod-field-preview-shadow: none;
-  --pod-field-preview-text-color: var(--color-text1-4);
+  --pod-field-preview-text-color: #242424;
   --pod-field-preview-line-height: 20px;
 
   /* 原生表单与详情：底部操作区 */
   --pod-sticky-footer-box-shadow:
-    4px 4px 0 #211c21;
+    4px 4px 0 #211C21;
   --pod-formView-stickyFooter: 0 0 var(--pod-page-border-radius, 20px)
     var(--pod-page-border-radius, 20px);
   --pod-formView-stickyFooter-border: none;
-  --pod-formView-stickyFooter-border-top: 1px solid #211c21;
+  --pod-formView-stickyFooter-border-top: 1px solid #CCCCCC;
   --pod-inDrawer-stickyFooter-border: none;
   --pod-inDrawer-stickyFooter-border-top: 0.5px solid
     var(--color-line1-1, #efefef);
-  --pod-formView-stickyFooter-bg-color: #F6F1E3;
+  --pod-formView-stickyFooter-bg-color: #F6F6F6;
   --pod-formView-stickyFooter-box-shadow: none;
   --pod-formView-stickyFooter-height: 56px;
   --pod-formView-stickyFooter-bottom: 8px;
-  --pod-page-footer-bg-color: #fffdf6;
-  --pod-page-footer-border-radius: 0px;
+  --pod-page-footer-bg-color: #FFFDF6;
+  --pod-page-footer-border-radius: 4px;
 
   /* 数据管理与表格 */
   --yida-data-manage-s-font-size: 13px;
@@ -397,23 +397,26 @@
   --pod-mxl-gap-pad-margin: 20px;
   --pod-xxl-gap-pad-margin: 24px;
   --pod-full-raduis: var(--corner-semicircle);
-  --input-hover-bg-color: #fffdf6;
+  --input-hover-bg-color: #FFFFFF;
   --oyd-page-bg: var(--pod-page-bg-color);
   --oyd-surface: var(--pod-card-bg-color);
   --oyd-canvas-image: var(--pod-app-root-bg-image);
   --oyd-ink: var(--color-text1-4);
   --oyd-border: var(--color-line1-2);
   --oyd-accent: var(--color-brand1-6);
-  --oyd-radius: 0px;
-  --oyd-content-width: 1000px;
+  --oyd-radius: 4px;
+  --oyd-content-width: 1180px;
   --oyd-content-padding: 32px;
   --oyd-field-gap: 26px;
-  --oyd-section-gap: 52px;
+  --oyd-section-gap: 40px;
   --oyd-heading-font: var(--font-family-base);
   --oyd-heading-size: 44px;
   --oyd-rule-style: solid;
   --oyd-layout-columns: minmax(0, 8fr) minmax(0, 4fr);
-  --oyd-surface-shadow: 4px 4px 0 #211c21;
+  --oyd-surface-shadow: 4px 4px 0 #211C21;
+  --oyd-accent-pink: #F04B8A;
+  --oyd-accent-cyan: #25B7D3;
+  --oyd-accent-yellow: var(--color-brand1-6);
   --color-group: var(--color-brand1-6), var(--color-brand1-1), var(--color-brand1-5), var(--color-brand1-2), var(--color-brand1-9), var(--color-brand1-3);
 }
 /* openyida-theme-tokens:end */
@@ -807,3 +810,189 @@ body.pod-premium .flow-steps .next-step-dot
   .pod-premium .oyd-style-intro h1 { font-size: min(32px, var(--oyd-heading-size)); }
 }
 /* OPENYIDA APPLICATION STYLE RECIPES END */
+
+/* POP 印刷按钮系统：实体主操作与表单次操作使用粗墨线和硬偏移阴影；
+ * 图标按钮、分页和表格文字操作保持轻量，兼顾高频扫描。 */
+.pod-premium .next-btn.next-btn-primary:not(.next-btn-text):not(.next-btn-simple),
+.pod-premium .next-btn.deep-form-stage,
+.pod-premium .next-dialog-footer .next-btn.next-btn-normal:not(.next-btn-text),
+.pod-premium .deep-balloon-buttons .next-btn.next-btn-normal:not(.next-btn-text) {
+  border: 3px solid #211C21 !important;
+  border-radius: 0 !important;
+  box-shadow: 6px 6px 0 #211C21 !important;
+  box-sizing: border-box;
+  color: #211C21 !important;
+  font-weight: 800 !important;
+  transform: translate(0, 0);
+  transition: box-shadow 120ms ease, transform 120ms ease, background-color 120ms ease;
+}
+
+.pod-premium .next-btn.next-btn-primary:not(.next-btn-text):not(.next-btn-simple) {
+  background: var(--color-brand1-6) !important;
+}
+
+.pod-premium .next-btn.deep-form-stage,
+.pod-premium .next-dialog-footer .next-btn.next-btn-normal:not(.next-btn-text),
+.pod-premium .deep-balloon-buttons .next-btn.next-btn-normal:not(.next-btn-text) {
+  background: var(--pod-card-bg-color, #FFFDF6) !important;
+}
+
+.pod-premium .next-btn.deep-form-submit,
+.pod-premium .next-btn.deep-form-stage {
+  min-height: 48px !important;
+  min-width: 112px !important;
+  padding-inline: 28px !important;
+}
+
+/* 表单底部操作区只统一按钮几何、间距与交互，不改变勾选项和响应式布局。 */
+.pod-premium .deep-form-sticky-footer-buttons-wrapper .next-btn:not(.next-btn-text):not(.next-btn-simple) {
+  min-height: 48px !important;
+  min-width: 112px !important;
+  margin-inline-end: 16px !important;
+  padding-inline: 28px !important;
+  border: 3px solid #211C21 !important;
+  border-radius: 0 !important;
+  box-shadow: 6px 6px 0 #211C21 !important;
+  box-sizing: border-box;
+  color: #211C21 !important;
+  font-weight: 800 !important;
+  transform: translate(0, 0);
+  transition: box-shadow 120ms ease, transform 120ms ease, background-color 120ms ease;
+}
+
+.pod-premium .deep-form-sticky-footer-buttons-wrapper .next-btn.next-btn-primary:not(.next-btn-text):not(.next-btn-simple) {
+  background: var(--color-brand1-6) !important;
+}
+
+.pod-premium .deep-form-sticky-footer-buttons-wrapper .next-btn.next-btn-normal:not(.next-btn-text):not(.next-btn-simple) {
+  background: var(--pod-card-bg-color, #FFFDF6) !important;
+}
+
+.pod-premium .deep-form-sticky-footer-buttons-wrapper .next-btn:not(.next-btn-text):not(.next-btn-simple):hover {
+  box-shadow: 4px 4px 0 #211C21 !important;
+  transform: translate(2px, 2px);
+}
+
+.pod-premium .deep-form-sticky-footer-buttons-wrapper .next-btn:not(.next-btn-text):not(.next-btn-simple):active {
+  box-shadow: 1px 1px 0 #211C21 !important;
+  transform: translate(5px, 5px);
+}
+
+.pod-premium .deep-form-sticky-footer-buttons-wrapper .next-btn:not(.next-btn-text):not(.next-btn-simple):focus-visible {
+  outline: 3px solid var(--oyd-accent-cyan, #25B7D3) !important;
+  outline-offset: 3px;
+}
+
+.pod-premium .new-data-manage .next-btn.add-button.next-btn-primary:not(.next-btn-text) {
+  min-height: 40px !important;
+  padding-inline: 18px !important;
+}
+
+.pod-premium .next-btn.next-btn-primary:not(.next-btn-text):not(.next-btn-simple):hover,
+.pod-premium .next-btn.deep-form-stage:hover,
+.pod-premium .next-dialog-footer .next-btn.next-btn-normal:not(.next-btn-text):hover,
+.pod-premium .deep-balloon-buttons .next-btn.next-btn-normal:not(.next-btn-text):hover {
+  box-shadow: 4px 4px 0 #211C21 !important;
+  transform: translate(2px, 2px);
+}
+
+.pod-premium .next-btn.next-btn-primary:not(.next-btn-text):not(.next-btn-simple):active,
+.pod-premium .next-btn.deep-form-stage:active,
+.pod-premium .next-dialog-footer .next-btn.next-btn-normal:not(.next-btn-text):active,
+.pod-premium .deep-balloon-buttons .next-btn.next-btn-normal:not(.next-btn-text):active {
+  box-shadow: 1px 1px 0 #211C21 !important;
+  transform: translate(5px, 5px);
+}
+
+.pod-premium .next-btn.next-btn-primary:not(.next-btn-text):not(.next-btn-simple):focus-visible,
+.pod-premium .next-btn.deep-form-stage:focus-visible,
+.pod-premium .next-dialog-footer .next-btn.next-btn-normal:not(.next-btn-text):focus-visible,
+.pod-premium .deep-balloon-buttons .next-btn.next-btn-normal:not(.next-btn-text):focus-visible {
+  outline: 3px solid var(--oyd-accent-cyan, #25B7D3) !important;
+  outline-offset: 3px;
+}
+
+.pod-premium .next-btn[disabled],
+.pod-premium .next-btn.disabled {
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* 数据管理与详情页操作带：左侧次操作、右侧筛选工具和详情操作使用轻量 POP 方角系统。 */
+.pod-premium .new-data-manage .next-btn.next-btn-simple.add-button:not(.next-yida-button-iconOnly),
+.pod-premium .new-data-manage .operation-action,
+body.pod-premium.page-type-detail .next-btn.actionUpDownBtn,
+body.pod-premium.page-type-detail .form-button-group .next-btn.next-btn-normal {
+  background: var(--pod-card-bg-color, #FFFDF6) !important;
+  border: 2px solid #211C21 !important;
+  border-radius: 0 !important;
+  box-shadow: 3px 3px 0 #211C21 !important;
+  box-sizing: border-box;
+  color: #211C21 !important;
+  font-weight: 700 !important;
+  transform: translate(0, 0);
+  transition: box-shadow 120ms ease, transform 120ms ease, background-color 120ms ease;
+}
+
+.pod-premium .new-data-manage .next-btn.next-btn-simple.add-button:not(.next-yida-button-iconOnly) {
+  min-height: 36px !important;
+  min-width: 68px !important;
+  padding-inline: 12px !important;
+}
+
+.pod-premium .new-data-manage .operation-action {
+  min-height: 34px !important;
+  padding-inline: 10px !important;
+}
+
+.pod-premium .new-data-manage .next-btn.next-yida-button-iconOnly,
+body.pod-premium.page-type-detail .next-btn.next-yida-button-iconOnly {
+  width: 32px !important;
+  min-width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  background: var(--pod-card-bg-color, #FFFDF6) !important;
+  border: 2px solid #211C21 !important;
+  border-radius: 0 !important;
+  box-shadow: 2px 2px 0 #211C21 !important;
+  box-sizing: border-box;
+  color: #211C21 !important;
+}
+
+body.pod-premium.page-type-detail .next-btn.actionUpDownBtn {
+  min-height: 32px !important;
+  padding-inline: 10px !important;
+}
+
+body.pod-premium.page-type-detail .form-button-group .next-btn.deep-button-group-item {
+  min-height: 40px !important;
+  min-width: 72px !important;
+  padding-inline: 18px !important;
+}
+
+body.pod-premium.page-type-detail .form-button-group .next-btn.next-btn-normal {
+  border-width: 3px !important;
+  box-shadow: 6px 6px 0 #211C21 !important;
+  font-weight: 800 !important;
+}
+
+.pod-premium .new-data-manage .next-btn.next-btn-simple.add-button:not(.next-yida-button-iconOnly):hover,
+.pod-premium .new-data-manage .operation-action:hover,
+body.pod-premium.page-type-detail .next-btn.actionUpDownBtn:hover,
+body.pod-premium.page-type-detail .form-button-group .next-btn.next-btn-normal:hover {
+  box-shadow: 1px 1px 0 #211C21 !important;
+  transform: translate(2px, 2px);
+}
+
+.pod-premium .new-data-manage .next-btn.next-yida-button-iconOnly:hover,
+body.pod-premium.page-type-detail .next-btn.next-yida-button-iconOnly:hover {
+  background: var(--color-brand1-2) !important;
+  box-shadow: 1px 1px 0 #211C21 !important;
+  transform: translate(1px, 1px);
+}
+
+body.pod-premium.page-type-detail .next-btn.actionBtnDisabled {
+  box-shadow: none !important;
+  opacity: .45;
+  transform: none !important;
+}

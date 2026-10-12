@@ -17,7 +17,7 @@ const navigationColorNames = [
 ];
 
 const themeTones = {
-  'soft-inset-surfaces': 'dark',
+  'soft-inset-surfaces': 'light',
   'dark-rail-signal-panels': 'dark',
   'dark-rail-fine-lines': 'dark',
 };
@@ -49,6 +49,7 @@ function cascade(css, navigation, tone = navigation) {
 function navigationOverrides(overrides, tone = 'light') {
   const metadata = parseDesignDocument(design('soft-inset-surfaces')).metadata;
   metadata.themeProfile.navTheme = tone;
+  delete metadata.tokens['application-global'].appearance.surfaces['--pod-page-header-bg-color'];
   metadata.tokens['application-global'].appearance.navigation = overrides;
   return `---\n${JSON.stringify(metadata)}\n---\n`;
 }
@@ -59,7 +60,7 @@ test.each(['light', 'dark'])('a single %s navigation override leaves platform bi
   const defaults = cascade(template, tone);
   const active = cascade(css, tone);
   expect(active['--pod-nav-menu-item-radius']).toBe('19px');
-  for (const name of ['--pod-nav-search-text-color', '--pod-nav-search-border-active-color', '--pod-nav-logo-bg', ...navigationColorNames]) {
+  for (const name of ['--pod-nav-search-text-color', '--pod-nav-search-border-active-color', '--pod-nav-logo-bg', '--pod-page-header-bg-color', ...navigationColorNames]) {
     expect(active[name]).toBe(defaults[name]);
   }
   expect(css).not.toContain(': undefined;');
@@ -206,9 +207,8 @@ test('extended navigation tokens share one palette across modes and update incre
   };
   const withTokens = (markdown, values) => {
     const metadata = parseDesignDocument(markdown).metadata;
-    if (values['--pod-page-header-bg-color']) {
-      delete metadata.tokens['application-global'].appearance.surfaces['--pod-page-header-bg-color'];
-    }
+    const visit = node => { for (const [key, value] of Object.entries(node)) { if (key in values) {delete node[key];} else if (value && typeof value === 'object') {visit(value);} } };
+    visit(metadata.tokens);
     Object.assign(metadata.tokens['application-global'].appearance.navigation, values);
     return `---\n${Object.entries(metadata).map(([key, value]) => `${key}: ${JSON.stringify(value)}`).join('\n')}\n---\n${markdown.split(/\n---\n/).slice(1).join('\n---\n')}`;
   };

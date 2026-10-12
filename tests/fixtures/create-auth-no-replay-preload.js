@@ -36,6 +36,20 @@ Module._load = function patchedLoad(request, parent, isMain) {
   if (
     parent
     && /[/\\]lib[/\\]core[/\\]utils\.js$/.test(parent.filename || '')
+    && request === '../auth/token-store'
+  ) {
+    return {
+      ...loaded,
+      // Keep the post-preflight readback on the same simulated identity.
+      // Never consume the developer's stored login session in this test.
+      loadTokenSession() {
+        return { access_token: 'x', base_url: 'https://example.invalid', corp_id: 'c' };
+      },
+    };
+  }
+  if (
+    parent
+    && /[/\\]lib[/\\]core[/\\]utils\.js$/.test(parent.filename || '')
     && request === '../auth/token-auth'
   ) {
     return {

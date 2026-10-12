@@ -64,6 +64,8 @@ test.each([
   ['design-plan', ['future-action']], ['auth', ['login']], ['auth', ['status', 'login']],
   ['env', ['switch', 'prod']], ['login', ['--check-only', '--refresh']], ['agent', ['disconnect']],
   ['create-form', ['resume', 'APP_BOUND']], ['nav-group', ['unknown', 'APP_BOUND']],
+  ['app-theme', ['snapshot', 'APP_BOUND', '--output-dir', 'backup']],
+  ['app-theme', ['restore', 'APP_BOUND', '--confirm']],
   ['nav-group', ['toString', 'APP_BOUND']], ['auth', ['constructor']],
   ['connector', ['delete', 'any']], ['update', []], ['export', ['APP_BOUND']],
 ])('identity, unaudited actions and unknown arguments remain blocked: %s %j', (command, args) => {

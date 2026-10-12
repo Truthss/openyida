@@ -5,6 +5,8 @@ description: 为应用或独立前台页面编写自己的顶部、侧边等导�
 
 # yida-nav-shell
 
+导航形态必须与所选主题兼容：按 [主题与导航兼容规则](../yida-design/references/navigation-decision.md#主题与导航兼容规则) 核对`openyida design-plan catalog --json` 返回的 `supportedNavigationLayouts`。自绘菜单也按实际 `variant` 检查；只支持侧边的主题不能改成顶部或 mixed，不能通过隐藏平台导航绕过限制。
+
 ## 先判断
 
 先看需求和方案：只有需要编写自己的导航菜单时才使用本技能。调整已有导航的颜色、圆角、边框或阴影用 `yida-design`；整理菜单分组和顺序用 `yida-nav-group`。同一个应用可以让前台使用自己的菜单、管理端继续使用宜搭菜单。用户已有明确要求时直接沿用；尚未确定时按 [导航决策](../yida-design/references/navigation-decision.md) 选择。

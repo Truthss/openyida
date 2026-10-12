@@ -36,11 +36,15 @@ openyida nav-group list <appType> --flat
 ### 创建分组
 
 ```bash
-openyida nav-group create <appType> "分组名"
+openyida nav-group create <appType> "分组名" [--icon auto|<iconName>]
 openyida nav-group create <appType> "子分组名" --parent <groupNavUuid>
 ```
 
-分组只能创建在根目录或一级分组下。
+分组只能创建在根目录或一级分组下。默认根据分组标题选择业务图标，复用页面/表单导航的图标库和语义匹配，例如客户、财务、项目、看板分组分别匹配对应业务图标；不要为所有分组统一指定文件夹，也不为追求差异随机换图标。同一语义允许复用同一图标。
+
+通常省略 `--icon` 或传 `auto`；明确需要某个图标时可传合法的平台图标名。平台导航图标与页面内容的 Lucide/Ant Design 组件是两套协议，不能传组件名、emoji 或应用图标的 `xian-*%%color`。
+
+创建后 CLI 唯一定位本次新增节点，保留导航节点字段更新图标，并回读验证；结果中的 `group.icon`、`iconSource`、`readbackVerified` 用于核对。若返回 `NAV_GROUP_CREATE_INCOMPLETE`，先执行 `nextStep` 查询，不重试 create；分组可能已创建，仅图标尚未完成。更新 OpenYida 不会自动修改已有分组，重命名保留原图标。
 
 ### 重命名分组
 

@@ -291,13 +291,15 @@ openyida copy
 
 应用主题只在应用级统一配置。严禁页面代码向原生表单、详情页、父页面或平台容器写入主题样式；\`YidaCodeCanvas\` 页面只在 \`YidaComp\` 内消费现有主题 token。字段结构统一交给 \`yida-create-form-page\`。
 
+已有页面或应用美化先加载 \`yida-design\` 的 \`sub_skill/ui-improve/SKILL.md\`：展示视觉方案，通过 ask_human 确认并备份后才修改 UI；允许替换展示组件，业务逻辑保持原样，不满意时恢复。具体规则只在该子流程维护。
+
 完整应用页面源码默认不得使用 \`this.dataSourceMap.*\`，除非本轮已经明确创建并绑定设计器数据源；默认使用入口型页面或 \`this.utils.yida.*\` 查询已创建表单。
 
 最终结果先输出 2-3 句业务交付总结，再给一个主入口链接：新增/修改/发布单个页面时主入口是当前页面 URL；明确仅前台时只交付已验证的前台页面；其余完整应用、表单、流程、权限、主题、导航或批量资源场景主入口是应用首页 \`{base_url}/{appType}/workbench\`。示例：“已完成订单、商品和客户等核心表单，并发布首页、订单管理和库存看板入口。当前应用已支持订单录入、库存预警、销售统计和表单详情查看，示例记录与轻量导航排序也已就绪。主入口：{base_url}/{appType}/workbench”。不要使用表格、资源 ID 清单或长列表；不要把 \`g.alicdn.com\` 静态资源、CDN 构建产物、locale JSON、\`/admin\` 管理页或中间文件 URL 当成最终结果。
 
 完整应用创建/解析多个表单后，页面阶段需要字段映射时，对每个目标表单默认只执行一次 \`openyida get-schema <appType> <formUuid> --field-map-json\`，读取完整 JSON 并写入/复用 \`.cache/<项目名>-schema.json\`；不要用 \`head\` / \`tail\` / \`grep\` 截断 schema stdout 后重复拉取。
 
-使用 \`YidaCodeCanvas\` 组件实现的自定义页面统一直接写最终 \`.canvas.jsx\`：先读 PRD 的页面场景、业务区块、数据来源和主操作，再读 design.md 的主题、布局、材质、组件和状态规则，然后用 \`compileCanvasLocal\` 快检或 \`openyida publish\` 的编译阶段验证发布。\`openyida check-page\` / \`openyida compile\` 只用于历史平台 JSX 组件页面维护。
+使用 \`YidaCodeCanvas\` 组件实现的自定义页面按对应技能编写 \`.canvas.jsx\`，先执行 \`openyida compile <源文件> --json\`，再通过 \`openyida publish\` 发布和读回。\`openyida check-page\` 只用于历史平台 JSX 组件页面维护；美化任务先满足 ui-improve 的确认、备份和业务保留条件。
 
 完整应用先由 \`yida-requirement-analysis\` 整理用户需求，再同时执行两个技能：\`yida-prd\` 写 \`prd/<项目名>/prd.md\`，负责业务目标、数据结构、页面与功能、资源顺序、导航顺序和验收标准；\`yida-design\` 写 \`prd/<项目名>/design.md\`，负责主题色、themeProfile、tokens、视觉系统、组件和状态规则。\`yida-app\` 必须等待两份文件完成并通过一致性校验后才能创建业务资源。页面实现先读 PRD 的页面场景、页面区块、数据来源、主操作和表单入口，再读 design.md 的主题、布局、材质、组件和状态规则，然后交给 \`yida-canvas-custom-page\` 落地。只有已识别为历史平台 JSX 组件页面维护时，才由 \`yida-custom-page\` 自身闭环处理。
 

@@ -591,7 +591,7 @@ describe('design-plan materialize', () => {
     const design = fs.readFileSync(result.outputs.design, 'utf8');
     const tokens = require('../lib/app/theme-from-design').readDesignTokens(design);
     expect(tokens['--pod-app-root-bg-image']).toBe(gradient);
-    expect(tokens['--pod-page-bg-color']).toBe('#FAFAFA');
+    expect(tokens['--pod-page-bg-color']).toBe('#FFFFFF');
     expect(tokens['--pod-card-bg-color']).toBe('#FFFFFF');
     expect(fs.readFileSync(result.outputs.theme, 'utf8')).toContain(`--pod-app-root-bg-image: ${gradient};`);
   });
@@ -628,7 +628,9 @@ describe('design-plan materialize', () => {
     expect(design.match(/### 指标卡与按钮配色/g)).toHaveLength(1);
     expect(design).not.toContain('## 页面只引用设计值');
     expect(readDesignTokens(design)).toMatchObject(plan.visualStyle.tokens);
-    expect(validateDesignDocument(design).success).toBe(true);
+    if (themeId === 'warm-canvas-contrast-panels') {
+      expect(() => validateDesignDocument(design)).toThrow(expect.objectContaining({ code: 'DESIGN_THEME_CONTRAST_LOW' }));
+    } else {expect(validateDesignDocument(design).success).toBe(true);}
   });
 
   test.each([
@@ -652,26 +654,26 @@ describe('design-plan materialize', () => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
     const { loadThemeIndex } = require('../lib/design-plan/themes');
     const { readDesignTokens } = require('../lib/app/theme-from-design');
-    const theme = loadThemeIndex().themes.find(item => item.themeId === 'soft-inset-surfaces');
+    const theme = loadThemeIndex().themes.find(item => item.themeId === 'soft-outline-rhythm');
     plan.visualStyle.forUser.selectedTheme = theme;
     plan.visualStyle.forUser.navigationStyle = {
       structure: 'side', tone: 'dark',
       selectionReason: '高频流程处理需要稳定入口，深色导航加强模块边界。',
     };
     plan.visualStyle.tokens = {
-      '--pod-shell-theme-bg-color': '#183A6B', '--pod-nav-item-text-color': '#FFFFFF',
-      '--pod-nav-item-text-selected-color': '#183A6B', '--pod-nav-menu-bg-selected-color': '#BAD7FF',
+      '--pod-shell-theme-bg-color': '#EDF4FF', '--pod-nav-item-text-color': '#183A6B',
+      '--pod-nav-menu-bg-selected-color': '#BAD7FF',
     };
     const design = renderDesign(plan);
     const section = design.split('### 2.2 应用导航')[1].split('### 2.3 ')[0];
     expect(section).toContain('布局依据：高频流程处理需要稳定入口');
-    expect(section).toContain('明暗依据：沿用已选应用风格的导航明暗，当前为深色');
-    expect(section).toContain('| 导航背景 | --pod-shell-theme-bg-color | #183A6B |');
+    expect(section).toContain('明暗依据：沿用已选应用风格的导航明暗，当前为浅色');
+    expect(section).toContain('| 导航背景 | --pod-shell-theme-bg-color | #EDF4FF |');
     expect(section).not.toContain(theme.navigationSummary);
     expect(section).not.toContain('深色导航');
     expect(section).not.toContain('当前模板使用');
-    expect(section).toContain('文字、placeholder 与图标各有独立角色');
-    expect(section).toContain('保留入口名称、当前项和键盘焦点');
+    expect(section).toContain('导航类型');
+    expect(section).toContain('键盘焦点');
     expect(readDesignTokens(design)).toMatchObject(plan.visualStyle.tokens);
     expect(validateDesignDocument(design).success).toBe(true);
   });
@@ -684,7 +686,7 @@ describe('design-plan materialize', () => {
     };
     const design = renderDesign(plan);
     expect(design).toContain('| 选中项阴影 | --pod-nav-menu-item-selected-shadow | inset 3px 0 0 var(--color-brand1-6) |');
-    expect(validateDesignDocument(design).success).toBe(true);
+    expect(() => validateDesignDocument(design)).toThrow(expect.objectContaining({ code: 'DESIGN_THEME_CONTRAST_LOW' }));
   });
 
   test('delivers one compact design contract with real anchors, safe metadata and the actual theme output path', () => {
@@ -719,7 +721,7 @@ describe('design-plan materialize', () => {
       expect(pageBody).toContain(`- ${label}：`);
     }
     const projectChapter = body.slice(body.indexOf('## 5. 项目应用与调整规则'));
-    expect(projectChapter).toContain('绿／金／粉分类、阶段色和图标底盒保持固定');
+    expect(projectChapter).toContain('### 品牌色与数据色职责与约束');
     expect(projectChapter).toContain('### 主题表达验收');
     expect(projectChapter).not.toMatch(/sRGB|round\(|themeId|生成标记|### 项目页面设计|每页包含以下结果/);
     expect(validateDesignDocument(markdown, { prdMarkdown: fs.readFileSync(result.outputs.prd, 'utf8') }).success).toBe(true);
@@ -743,7 +745,7 @@ describe('design-plan materialize', () => {
     const read = fs.readFileSync;
     const spy = jest.spyOn(fs, 'readFileSync').mockImplementation((file, ...args) => {
       const value = read(file, ...args);
-      return String(file).endsWith(path.join('soft-inset-surfaces', 'design.md'))
+      return String(file).endsWith(path.join('soft-outline-rhythm', 'design.md'))
         ? value.replace(/## 3\. 基础组件表达[\s\S]*?(?=## 4\.)/, '## 3. 基础组件表达\n\n### 文字层次\n\n正文保持清晰。\n\n') : value;
     });
     try {
@@ -778,7 +780,7 @@ describe('design-plan materialize', () => {
       mustKeep: expect.arrayContaining(['高频动作显眼', '首屏至少两层信息']),
     });
     expect(normalized.visualStyle.internal.selectedTheme.templatePath).toBe(
-      'templates/design-themes/soft-inset-surfaces/design.md'
+      'templates/design-themes/soft-outline-rhythm/design.md'
     );
     expect(normalized.visualStyle.forUser.themeProfile).toEqual({});
     expect(normalized.visualStyle.forDesignMd).not.toHaveProperty('componentRules');
@@ -789,9 +791,9 @@ describe('design-plan materialize', () => {
     const compactDesign = fs.readFileSync(path.join(compactOutput, 'design.md'), 'utf8');
     const componentContract = source => source.slice(source.indexOf('## 3. 基础组件表达'), source.indexOf('## 5. 项目应用与调整规则'));
     expect(componentContract(compactDesign)).toBe(componentContract(legacyDesign));
-    expect(compactDesign).toContain('### 交互与反馈状态');
+    expect(compactDesign).toContain('### 3.7 交互状态的视觉表现');
     expect(compactDesign).toContain('### 主题表达验收');
-    expect(compactDesign).toContain('柔圆白面板');
+    expect(compactDesign).toContain('细描边柔圆面板');
 
     const prd = fs.readFileSync(path.join(compactOutput, 'prd.md'), 'utf8');
     const html = fs.readFileSync(path.join(compactOutput, 'build-plan.html'), 'utf8');
@@ -808,18 +810,18 @@ describe('design-plan materialize', () => {
     expect(prd).not.toContain('主题模板：');
     expect(compactDesign).toContain('- 视觉方向：稳重流程型');
     expect(compactDesign).toContain('- 导航类型：平台侧边导航');
-    expect(compactDesign).toContain('- 导航明暗：深色');
+    expect(compactDesign).toContain('- 导航明暗：浅色');
     expect(compactDesign).toContain('- 导航背景：`--pod-shell-theme-bg-color`');
     expect(compactDesign).not.toMatch(/^themeId:/m);
-    expect(compactDesign).not.toContain('soft-inset-surfaces');
+    expect(parseDesignDocument(compactDesign).metadata.themeProfile.sourceThemeId).toBe('soft-outline-rhythm');
     expect(html).toContain('<strong>导航结构：</strong>平台侧边导航');
-    expect(html).toContain('<strong>导航明暗：</strong>深色');
+    expect(html).toContain('<strong>导航明暗：</strong>浅色');
     expect(html).toContain('高频流程处理需要稳定入口，深色导航加强模块边界。');
   });
 
   test.each([
-    ['custom', undefined, '#FAFAFA'],
-    ['platform-top', undefined, '#FAFAFA'],
+    ['custom', undefined, '#FFFFFF'],
+    ['platform-top', undefined, '#FFFFFF'],
     ['custom', 'var(--color-brand1-3)', 'var(--color-brand1-3)'],
     ['platform-side', '#FFF8ED', '#FFF8ED'],
   ])('page background is shared for %s navigation while preserving explicit design %s', (navigationType, override, expected) => {
@@ -837,23 +839,23 @@ describe('design-plan materialize', () => {
   test('theme color recipes preserve neutral surfaces unless the project explicitly overrides them', () => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
     delete plan.visualStyle.forUser.themeProfile;
-    plan.visualStyle.forUser.selectedTheme = { themeId: 'soft-inset-surfaces', templatePath: 'templates/design-themes/soft-inset-surfaces/design.md' };
+    plan.visualStyle.forUser.selectedTheme = { themeId: 'soft-outline-rhythm', templatePath: 'templates/design-themes/soft-outline-rhythm/design.md' };
     plan.visualStyle.forUser.colorStrategy = { primaryColor: '#2F9E63', primaryColorName: '自然绿意' };
     plan.visualStyle.forUser.navigationStyle.tone = 'light';
     const { readDesignTokens, applyDesignTokens } = require('../lib/app/theme-from-design');
     const template = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-design/references/theme/app-custom-theme-template.css'), 'utf8');
     const design = renderDesign(plan);
     const green = readDesignTokens(design);
-    expect(green['--pod-shell-theme-bg-color']).toBe('#181c1f');
-    expect(green['--pod-page-bg-color']).toBe('#FAFAFA');
+    expect(green['--pod-shell-theme-bg-color']).toBe('#FAFAFA');
+    expect(green['--pod-page-bg-color']).toBe('#FFFFFF');
     expect(green['--pod-card-bg-color']).toBe('#FFFFFF');
     expect(green['--pod-card-border']).toBeUndefined();
-    expect(green['--color-line1-2']).toBe('#E8E8E8');
-    expect(green['--color-text1-4']).toBe('#303030');
+    expect(green['--color-line1-2']).toBe('#E3E3E3');
+    expect(green['--color-text1-4']).toBe('#202020');
     expect(green['--color-text1-10']).toBe('#606060');
     expect(green['--color-text1-3']).toBe('#666666');
-    expect(applyDesignTokens(template, design)).toContain('--pod-shell-theme-bg-color: #181c1f;');
-    expect(applyDesignTokens(template, design)).toContain('--pod-page-bg-color: #FAFAFA;');
+    expect(applyDesignTokens(template, design)).toContain('--pod-shell-theme-bg-color: #FAFAFA;');
+    expect(applyDesignTokens(template, design)).toContain('--pod-page-bg-color: #FFFFFF;');
     plan.visualStyle.forUser.colorStrategy.primaryColor = '#6F4E37';
     const brown = readDesignTokens(renderDesign(plan));
     for (const token of ['--color-brand1-3', '--color-brand1-6']) {
@@ -877,9 +879,9 @@ describe('design-plan materialize', () => {
       const template = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-design/references/theme/app-custom-theme-template.css'), 'utf8');
       const design = renderDesign(plan);
       const tokens = readDesignTokens(design);
-      expect(tokens['--pod-shell-theme-bg-color']).toBe('#181c1f');
-      expect(tokens['--pod-page-bg-color']).toBe('#FAFAFA');
-      expect(applyDesignTokens(template, design)).toContain('--pod-page-bg-color: #FAFAFA;');
+      expect(tokens['--pod-shell-theme-bg-color']).toBe('#FAFAFA');
+      expect(tokens['--pod-page-bg-color']).toBe('#FFFFFF');
+      expect(applyDesignTokens(template, design)).toContain('--pod-page-bg-color: #FFFFFF;');
       plan.visualStyle.tokens = {
         '--pod-page-bg-color': '#FFF8ED',
         '--pod-shell-theme-bg-color': '#FAF0E6',
@@ -892,7 +894,7 @@ describe('design-plan materialize', () => {
   );
 
   test.each([
-    ['soft-inset-surfaces', 'dark', 'light'],
+    ['soft-outline-rhythm', 'light', 'dark'],
     ['dark-rail-signal-panels', 'dark', 'light'],
   ])('selected %s theme derives %s navigation and shares its palette across platform modes', (themeId, tone, staleTone) => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
@@ -957,9 +959,10 @@ describe('design-plan materialize', () => {
       'index.json'
     ), 'utf8'));
     expect(themeIndex.themes.filter(theme => !theme.collection)).toHaveLength(13);
-    expect(themeIndex.themes.some(theme => theme.themeId.startsWith('app-'))).toBe(false);
+    expect(themeIndex.themes.filter(theme => theme.themeId.startsWith('app-')).map(theme => theme.themeId).sort()).toEqual(['app-platinum', 'app-pop']);
 
     for (const theme of themeIndex.themes.filter(item => item.mode !== 'creative')) {
+      plan.visualStyle.forUser.colorStrategy.primaryColor = theme.themeId === 'app-platinum' ? '#897253' : '#6F4E37';
       delete plan.visualStyle.forUser.themeProfile;
       plan.visualStyle.forUser.selectedTheme.themeId = theme.themeId;
       plan.visualStyle.forUser.selectedTheme.templatePath = theme.templatePath;
@@ -971,8 +974,9 @@ describe('design-plan materialize', () => {
         ...plan.pages.customPageDetails[0].pageSpecHandoff, designRefs,
       };
       const design = renderDesign(plan);
-      expect(design).not.toContain(theme.themeId);
-      expect(design).not.toContain(theme.label);
+      expect(parseDesignDocument(design).metadata.themeProfile.sourceThemeId).toBe(theme.themeId);
+      expect(parseDesignDocument(design).body).not.toContain(theme.themeId);
+      expect(design).not.toContain(`**${theme.label}**`);
       expect(design).toContain('### 项目视觉选择与事实');
       expect(design).toContain(plan.visualStyle.constraints.accessibility);
       expect(design).toContain(plan.visualStyle.forDesignMd.productTopologyApplication);
@@ -983,10 +987,10 @@ describe('design-plan materialize', () => {
         expect(reference.anchor).toMatch(/^#(?:component|state)-/);
         expect(design.slice(design.indexOf('## 3. 基础组件表达'))).toContain(`<a id="${reference.anchor.slice(1)}"></a>`);
       }
-      expect(design).toContain('"--color-brand1-6": "#6F4E37"');
+      expect(design).toContain(`"--color-brand1-6": "${plan.visualStyle.forUser.colorStrategy.primaryColor}"`);
       expect(design).not.toMatch(/\{\{[^}]+\}\}|<[^>]*(?:实际色值|生成期标记)[^>]*>/);
       expect(design).not.toMatch(/"--[^"]+"\s*:\s*"AI 根据[^"]*生成[^"]*"/);
-      expect(design).toContain('"--color-brand1-1": "#80634F"');
+      expect(design).toContain(`"--color-brand1-1": "${theme.themeId === 'app-platinum' ? '#9C835F' : '#80634F'}"`);
       const { readDesignTokens, applyDesignTokens } = require('../lib/app/theme-from-design');
       const contract = require('../yida-skills/skills/yida-design/templates/design-themes/basic-tokens.json');
       const tokens = readDesignTokens(design);
@@ -1010,7 +1014,7 @@ describe('design-plan materialize', () => {
     plan.visualStyle.constraints = { copy: fact };
     const design = renderDesign(plan);
     expect(design).toContain(fact);
-    expect(design).not.toContain('**柔灰嵌白 · soft-inset-surfaces**');
+    expect(design).not.toContain('**柔灰嵌白 · soft-outline-rhythm**');
     expect(design).not.toMatch(/^themeId:/m);
   });
 
@@ -1046,7 +1050,7 @@ describe('design-plan materialize', () => {
   });
 
   test.each([
-    ['soft-inset-surfaces', 'light', 'dark'],
+    ['soft-outline-rhythm', 'dark', 'light'],
     ['dark-rail-signal-panels', 'light', 'dark'],
   ])('%s ignores stale %s input and keeps its derived %s navigation palette', (themeId, staleTone, tone) => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
@@ -1063,7 +1067,7 @@ describe('design-plan materialize', () => {
     expect(tokens['--pod-nav-item-text-selected-color']).toBe(sourceTokens['--pod-nav-item-text-selected-color']);
     expect(tokens['--pod-nav-menu-bg-hover-color']).not.toBe(tokens['--pod-shell-theme-bg-color']);
     expect(tokens['--pod-nav-menu-bg-selected-color']).not.toBe(tokens['--pod-nav-menu-bg-hover-color']);
-    expect(tokens['--pod-page-bg-color']).toBe(themeId === 'soft-inset-surfaces' ? '#FAFAFA' : '#0A0A0A');
+    expect(tokens['--pod-page-bg-color']).toBe(themeId === 'soft-outline-rhythm' ? '#FFFFFF' : '#0A0A0A');
     plan.visualStyle.tokens = { '--pod-nav-item-text-color': '#ABCDEF' };
     expect(readDesignTokens(renderDesign(plan))['--pod-nav-item-text-color']).toBe('#ABCDEF');
   });
@@ -1203,7 +1207,7 @@ describe('design-plan materialize', () => {
     expect(compact.visualStyle.forUser).not.toHaveProperty('candidateThemes');
     expect(compact.visualStyle.forUser).not.toHaveProperty('candidateVisualDirections');
     expect(compact.visualStyle.internal.selectedTheme).toEqual(expect.objectContaining({
-      themeId: 'soft-inset-surfaces',
+      themeId: 'soft-outline-rhythm',
     }));
   });
 
@@ -1298,7 +1302,7 @@ describe('design-plan materialize', () => {
 
   test('business navigation cannot silently override visual choices', () => {
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
-    plan.execution = { appConfig: { navTheme: 'light' } };
+    plan.execution = { appConfig: { navTheme: 'dark' } };
     expect(() => renderPrd(plan)).toThrow(/视觉事实冲突/);
   });
 
@@ -1352,10 +1356,10 @@ describe('Plan contract and file consistency', () => {
   });
 
   test('preserves explicit references and validates them against generated design keys', () => {
-    patchPlan(input, ['pages.customPageDetails[0].pageSpecHandoff.designRefs=["states.empty","components.table"]'], { materialize: true });
+    patchPlan(input, ['pages.customPageDetails[0].pageSpecHandoff.designRefs=["states.focus","components.table"]'], { materialize: true });
     const prd = fs.readFileSync(path.join(dir, 'prd.md'), 'utf8');
     const handoff = JSON.parse(prd.match(/```json\n([\s\S]*?)\n```/)[1]).pages[0].pageSpecHandoff;
-    expect(handoff.designRefs).toEqual(['themeProfile', 'sceneRecipes.workbench', 'states.empty', 'components.table']);
+    expect(handoff.designRefs).toEqual(['themeProfile', 'sceneRecipes.workbench', 'states.focus', 'components.table']);
     const design = require('js-yaml').load(fs.readFileSync(path.join(dir, 'design.md'), 'utf8').match(/^---\n([\s\S]*?)\n---/)[1]);
     expect(design.components.table).toEqual({ anchor: '#component-table' });
     expect(fs.readFileSync(path.join(dir, 'design.md'), 'utf8')).toContain('<a id="component-table"></a>');

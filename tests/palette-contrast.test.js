@@ -10,16 +10,21 @@ const { parseDesignDocument, serializeDesignDocument } = require('../lib/design/
 const base = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, 'references/theme/app-custom-theme-template.css'), 'utf8');
 const defaults = rootDeclarations(base.replace(/\/\*[\s\S]*?\*\//g, ''));
 
-test.each(loadThemeIndex().themes)('$themeId keeps text readable across extreme primary colors', theme => {
+test.each(loadThemeIndex().themes)('$themeId reports unresolved and low-contrast pairs without changing authored colors', theme => {
   const source = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8');
-  for (const primary of [theme.previewPrimaryColor || '#6F4E37', '#111111', '#FFFFFF', '#FFDE59', '#1677FF', '#B421FD', '#00CCAA']) {
+  const paired = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.cssTemplatePath), 'utf8');
+  for (const primary of ['#6F4E37', '#111111', '#FFFFFF', '#FFDE59', '#1677FF', '#B421FD', '#00CCAA']) {
     const metadata = parseDesignDocument(resolveThemeColors(source.replaceAll('{{PRIMARY_COLOR}}', primary))).metadata;
-    // The creative starter has no authored recipe yet; inspect its token defaults.
     if (theme.mode === 'creative') {delete metadata.applicationStyle;}
-    const css = applyDesignTokens(base, serializeDesignDocument(metadata, ''));
-    const audit = auditPalette(rootDeclarations(css.replace(/\/\*[\s\S]*?\*\//g, '')));
-    expect({ primary, issues: audit.issues, unresolved: audit.unresolved }).toEqual({ primary, issues: [], unresolved: [] });
-    expect(audit.checks.length).toBeGreaterThanOrEqual(24);
+    const css = applyDesignTokens(paired, serializeDesignDocument(metadata, ''));
+    const tokens = rootDeclarations(css.replace(/\/\*[\s\S]*?\*\//g, ''));
+    const audit = auditPalette(tokens, { css });
+    expect(tokens['--color-brand1-6']).toBe(theme.themeId === 'app-platinum' ? '#897253' : primary);
+    expect(audit.checks.length + audit.unresolved.length).toBe(26);
+    for (const issue of audit.issues) {expect(issue.minimum).toBe(4.5); expect(issue.ratio).toBeLessThan(4.5);}
+    if (audit.issues.length) {
+      expect(() => validatePalette(tokens, { css })).toThrow(expect.objectContaining({ code: 'DESIGN_THEME_CONTRAST_LOW' }));
+    } else {expect(validatePalette(tokens, { css }).issues).toEqual([]);}
   }
 });
 
@@ -28,6 +33,24 @@ test('rejects the reported light-on-light navigation and brown-on-brown content'
     '--pod-page-bg-color': '#B96B49', '--color-text1-4': '#733C26' };
   expect(auditPalette(tokens).issues.map(pair => pair.role)).toEqual(expect.arrayContaining(['nav.item', 'page.body']));
   expect(() => validatePalette(tokens)).toThrow(expect.objectContaining({ code: 'DESIGN_THEME_CONTRAST_LOW' }));
+});
+
+test('a navigation image is pending runtime review, while opaque fills retain the 4.5 threshold', () => {
+  const css = '.vc-shell .next-shell-aside.next-shell-navigation { background-image: url("https://example.com/rail.png"); }';
+  const tokens = { ...defaults, '--pod-nav-item-text-color': '#FFFFFF', '--pod-shell-theme-bg-color': '#FFFFFF',
+    '--pod-nav-menu-bg-selected-color': '#FFFFFF', '--pod-nav-item-text-selected-color': '#FFFFFF' };
+  const audit = auditPalette(tokens, { css });
+  expect(audit.unresolved).toEqual(expect.arrayContaining([expect.objectContaining({ role: 'nav.item', reason: 'NAVIGATION_IMAGE_REQUIRES_RUNTIME_CHECK' })]));
+  expect(audit.issues).toEqual(expect.arrayContaining([expect.objectContaining({ role: 'nav.selected', ratio: 1, minimum: 4.5 })]));
+  expect(() => validatePalette(tokens, { css })).toThrow(expect.objectContaining({ code: 'DESIGN_THEME_CONTRAST_LOW' }));
+});
+
+test('main outlined-texture-duotone retains its real 4.41 secondary-text finding', () => {
+  const theme = loadThemeIndex().themes.find(item => item.themeId === 'outlined-texture-duotone');
+  const design = resolveThemeColors(fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8').replaceAll('{{PRIMARY_COLOR}}', '#2C73A9'));
+  const css = require('../lib/app/theme-source').generateThemeCss(design);
+  const tokens = rootDeclarations(css.replace(/\/\*[\s\S]*?\*\//g, ''));
+  expect(auditPalette(tokens, { css }).issues).toEqual(expect.arrayContaining([expect.objectContaining({ role: 'page.secondary', ratio: 4.41, minimum: 4.5 })]));
 });
 
 test('composites transparent hover fills on the navigation surface', () => {

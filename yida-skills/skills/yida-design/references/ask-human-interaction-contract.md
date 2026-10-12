@@ -125,11 +125,15 @@ Fast / Plan 是面向用户的模式名称，仅在首轮澄清后的模式路�
 | 搭建方式 | `single_choice` | 按需求详细程度提供 PRD 是/否或 Fast/Plan | brief 的 `intake.designMode` |
 | 核心功能 | `multi_choice` | 功能名称＋一句用途，说明谁做什么；按宿主能力适配 | brief 的 `coreFunctions/businessObjects/userTasks` |
 | 关键用法 | `single_choice` | 能改变范围或入口判断的实际使用方式 | brief 的 `userTasks/entryRecommendation` |
-| 应用设计风格 | `single_choice` | 面向业务的风格选项与自定义偏好 | brief 的 `visualSelection` |
+| 应用设计风格 | `single_choice` | 风格名称＋适用说明，有对应效果图时附图，支持自定义偏好 | brief 的 `visualSelection` |
 | 来源补齐         | `free_text`                                    | 可读正文、链接或附件         | `meta.source`                 |
 | 最新搭建计划确认 | `confirm`                                      | 当前版本、确认生成、继续调整 | `meta.planState`              |
+| 已有资源美化方案确认 | `confirm` | 当前视觉方案、开始美化、继续调整、暂不修改 | ui-improve manifest 的 revision 与确认记录 |
+| 美化效果验收 | `single_choice` | 实际效果、保留或不满意恢复 | ui-improve manifest 的验收与恢复记录 |
 
 逻辑问题按以下信息组织；仅向实际工具传入 schema 支持的字段：
+
+风格选择按 [名称与效果图展示规则](theme-selection.md#选择时展示名称与效果图) 有对应图片时配对展示，无图只展示名称和说明，不加缺图提示。宿主不支持图片选项时，同轮先展示有图候选的图文卡片，再用相同编号及名称提问；图片的展示方式服从实际宿主能力，不改变选项与图片的绑定关系。
 
 - `interactionId`：当前交互唯一标识。
 - `questionType`：交互类型。
@@ -145,6 +149,8 @@ Fast / Plan 是面向用户的模式名称，仅在首轮澄清后的模式路�
 - `revision`：本次问题绑定的事实版本。宿主提交回答时必须原样回传；版本已变化时拒绝旧回答并重新展示最新版本。
 
 附件、问题与 `revision` 是一个原子交互。不得先发普通文本附件、再单独调用 `ask_human`，也不得只在问题文案中写文件路径；否则实时界面和历史回放无法可靠证明用户确认的是哪一版方案。
+
+已有资源美化使用 [ui-improve](../sub_skill/ui-improve/SKILL.md) 的视觉方案和验收流程，不使用下文首次搭建的固定两选项 payload。宿主缺少附件或 revision 能力时，仅按该流程的降级契约在同次问题提供不可变方案链接，并保存真实交互与版本关联；不得伪造附件、回答或版本字段，未取得明确同意不得写入。首次搭建的原子附件契约保持不变。
 
 ## 首次搭建确认
 

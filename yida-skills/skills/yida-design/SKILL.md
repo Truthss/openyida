@@ -1,14 +1,14 @@
 ---
 name: yida-design
 description: >
-  设计应用外观、美化页面、调整主题色，或解决导航与页面风格不一致时使用。
-  读取已有需求和设计，创建或更新 design.md，让导航、应用框架、表单、详情和自定义页面使用同一套主题。
-  调整现有导航的颜色和样式也用本技能；需要自己编写导航菜单时才用 yida-nav-shell。本技能不写 PRD 或页面源码。
+  设计或美化宜搭页面、应用外观和主题。读取整理后的用户需求；已有资源先确认视觉方案、备份，再只改 UI，不满意时恢复。本技能不写 PRD 或页面源码。
 ---
 
 # yida-design
 
 宜搭应用和页面视觉设计技能，输出 `design.md`。后续主题生成和页面开发都按这份设计实现。
+
+已有资源的 UI 调整和美化后恢复，先进入 [ui-improve](sub_skill/ui-improve/SKILL.md)，再按其确认、备份和业务保留约束使用下方设计规则。
 
 先读已有需求、设计和应用主题，确定哪些地方需要调整。优先使用平台已有的主题变量，只在表达不了所需效果时新增变量，并写清哪些组件使用它；见 [主题扩展规则](references/application-theme-consistency.md#平台基础变量是应用主题基础框架)。
 
@@ -16,13 +16,19 @@ description: >
 
 所有页面按[任务驱动的视觉设计](references/task-driven-visual-design.md)从主要任务和信息关系推导表达、构图与视觉重点，主动判断图片的识别、解释和氛围价值，再确定密度与降级。
 
+自定义页面按 [响应式布局](references/responsive-layout.md) 明确容器宽度变化后的换行、堆叠、控件对齐和局部滚动；等高只用于宽屏下需要成组展示的面板，窄屏恢复自然高度。
+
+**阅读无障碍是页面设计的基本要求。** 导航、正文、表单、详情、报表及抽屉等浮层都要让用户看得清、读得懂，放大或使用读屏时仍能获取完整信息。不能为风格、密度或装饰牺牲阅读；按 [阅读无障碍门禁](references/page-quality-gates.md#阅读无障碍门禁) 将具体要求写入页面设计与验收。
+
 固定主题只写一套 token。CLI 让全局与平台 light、dark、white、gray 选择器共用同一个声明块，不为 is-light/is-dark 另配颜色。`navTheme` 按设计保存为应用配置，不能按主题名称猜测。
 
 配色要按“文字＋所在背景”成对设计。正文、说明、表单标签、详情和搜索必须清楚；禁用色不能用于正常提示，品牌色不能直接当通用文字色。大面积画布和导航控制亮度、饱和度，强色留给局部重点。`check-design` 和带设计文件的主题生成会拦截已知低于 4.5:1 的文字组合，返回具体角色和 token；修复设计源后再生成，不自动改色。JSON 中 `paletteContrast.unresolved` 非空表示尚未确认，复杂颜色、图片与渐变仍需浏览器检查。
 
 **品牌变量必须完整，导航装饰可以省略。** `design.md` 提供 PC 品牌色阶 `--color-brand1-1/2/3/5/6/9/10`，CLI 同时生成移动端 `--color-brand-1`、`--color-brand-2`、`--color-brand-3`、`--color-brand-4`。最终 CSS 必须在全局 `:root` 中提供这 11 个可用颜色；移动端映射不必在 design.md 重复填写。生成和上传都会检查缺失、无效颜色及循环引用。报错时修复设计后重新生成，不能只替换主色后上传模板。
 
-确定风格前，按[设计方向比较](references/theme-selection.md#设计方向比较)以第一直觉为参照，发展两个在构图和信息表达上有实质差异的方向，按任务适配性选择，在当前规划轮次内选定。已有明确视觉要求时，在其范围内完善设计。
+需要选择风格时，读取 [共享主题选择规则](references/theme-selection.md)，按 [模板来源约束](references/application-style-library.md#模板来源与重复生成) 保留配对 CSS 与所选视觉特征；先按 [主题与导航兼容规则](references/navigation-decision.md#主题与导航兼容规则) 筛选候选；已确定的导航结构不能被不兼容主题覆盖。
+
+请用户选风格时，按 [名称与效果图展示规则](references/theme-selection.md#选择时展示名称与效果图) 展示风格名称和适用说明，有对应效果图时附图，再用 `ask_human` 收集选择；无图时省略图片，不加占位或缺图提示。
 
 向用户说明设计时，写风格和适用场景：“设计主题风格为轻盈媒体栅格，适合产品展示型品牌官网。”风格名称与场景按当前项目填写；建议阶段使用“建议采用……风格”。
 
@@ -30,7 +36,7 @@ description: >
 
 Fast、Plan 和单页设计使用相同的 UI 设计规则、主题变量和质量检查；流程只在编写方式与确认时机上有区别。共用 [主题索引](templates/design-themes/index.json)，按 [共享主题选择规则](references/theme-selection.md) 先读摘要、选中后读一份完整主题。
 
-完整应用沿用需求分析阶段确认的模式与风格，按 [设计模式路由](references/design-mode.md) 推进。Fast 使用下方视觉流程；Plan 使用 [视觉分支](sub_skill/yida-design-plan/SKILL.md) 维护视觉事实，由 `yida-app` 生成方案并请用户确认；业务规划始终归 `yida-prd`。单页设计和主题调整直接继续。
+完整应用沿用需求分析阶段确认的模式与风格，按 [设计模式路由](references/design-mode.md) 推进。Fast 使用下方视觉流程；Plan 使用 [视觉分支](sub_skill/yida-design-plan/SKILL.md) 维护视觉事实，由 `yida-app` 生成方案并请用户确认；业务规划始终归 `yida-prd`。新页面设计直接继续；已有页面或应用外观调整先进入 ui-improve。
 
 ---
 
@@ -40,6 +46,7 @@ Fast、Plan 和单页设计使用相同的 UI 设计规则、主题变量和质�
 
 | 用户诉求 | 判定为 | 唯一动作 |
 | --- | --- | --- |
+| 已有页面/应用美化、优化 UI、太乱、不好看、局部间距、风格统一、换肤，或美化后不满意/恢复 | 已有资源 UI-only 美化（优先匹配） | 读 [ui-improve](sub_skill/ui-improve/SKILL.md)，先展示并确认方案、备份，再交接实施；不满意则恢复 |
 | 完整应用、多个角色、多页面、导航分组、首页/入口页、官网 + 看板 + 后台 | 完整应用视觉设计 | Fast 执行下方视觉流程；Plan 执行 [视觉分支](sub_skill/yida-design-plan/SKILL.md) |
 | 单个自定义页要求好看、高级、品牌化、去 AI 味、页面太丑、不够惊艳 | 单页设计 | 读 [page-design](sub_skill/page-design/SKILL.md)，确认当前页面和应用主题后输出设计补充 |
 | 应用主题色、品牌色、全局换肤、`--color-brand1-*`、自定义主题 CSS、`themeColor`、`navTheme` | 主题色和 token 设计 | 读 `workflow/step-2-theme-system.md` 和 `workflow/step-6-handoff.md`，输出 themeProfile、应用主题文件和 token 契约 |
@@ -61,7 +68,7 @@ Fast、Plan 和单页设计使用相同的 UI 设计规则、主题变量和质�
 | 2 | [选择主题色和 token](workflow/step-2-theme-system.md) | 确定主色、辅助色、中性色、字体层级、组件基调和宜搭 token 作用域 | `themeProfile` |
 | 3 | [页面结构和交互设计](workflow/step-4-wireframe-interaction.md) | 根据用户需求中的页面场景确定布局骨架、区块、主操作、状态和响应式规则 | 低保真结构 + 交互路径 |
 | 4 | [UI 视觉和状态设计](workflow/step-5-visual-states.md) | 从业务任务、信息拓扑和视觉特征选择设计风格 | `design.md` 内容草稿 |
-| 5 | [写入 design.md](workflow/step-6-handoff.md) | 写入唯一视觉事实源和稳定 `designRefs` | `prd/<项目名>/design.md` |
+| 5 | [写入 design.md](workflow/step-6-handoff.md) | 写入项目视觉契约和稳定 `designRefs` | `prd/<项目名>/design.md` |
 
 完整应用输出一份应用级 `design.md`，包含主题、布局、组件、状态和响应式规则，三种流程共用 [唯一输出契约](workflow/output-design.md)：frontmatter 保存机器数据与 anchor 索引，完整规则只写在五章正文。Fast 手写并执行 `check-design`，Plan 使用紧凑契约由 CLI 生成并执行同一校验。页面实现同时读取业务 PRD 和视觉契约。
 
@@ -69,7 +76,7 @@ Fast、Plan 和单页设计使用相同的 UI 设计规则、主题变量和质�
 
 ## 核心规则
 
-修改已有设计时，只读取并更新相关章节、页面记录和 token。Plan 统一按 [局部调整](../yida-app/workflow/plan/step-4-deliver.md#4-处理调整) 执行；Fast 直接修改当前 `design.md`，再按主题更新命令同步已有 CSS，保留未改的正文和自定义样式。
+修改已有设计时，只读取并更新相关章节、页面记录和 token。首次搭建尚未实施的 Plan 按 [局部调整](../yida-app/workflow/plan/step-4-deliver.md#4-处理调整) 执行；首次搭建 Fast 修改当前 `design.md`。已有资源美化必须先走 ui-improve，在确认和备份后才更新有效设计与 CSS，保留未改的正文和自定义样式。
 
 1. **平台能力优先**：数据录入、提交、编辑、审批、权限、字段校验走宜搭表单/流程；自定义页负责展示数据、呈现分析结果、放置业务入口、打开详情页，并串联表单、流程、报表和导航入口。
 2. **美感提升保持功能契约**：页面美化、视觉升级和页面重构默认只调整颜色、布局、密度、间距、视觉层级、素材和图标表达；现有数据源、字段映射、按钮动作、筛选逻辑、提交 URL、权限和业务状态保持原样。
@@ -77,14 +84,14 @@ Fast、Plan 和单页设计使用相同的 UI 设计规则、主题变量和质�
 4. **同应用页面入口归导航**：同应用页面优先放入平台导航或导航分组；自定义页内容区放当前页动作、原生表单新建/查看、外部链接和跨应用资源。
 5. **表单入口响应式**：新增/提交页 URL 默认使用页面级隐藏导航的 `submission/{formUuid}?isRenderNav=false`；详情页 URL 默认使用 `formDetail/{formUuid}?formInstId={formInstId}&navConfig.layout=1180&isRenderNav=false`，且 `formInstId` 必须来自真实数据记录并优先取 `row.formInstId`；PC 端默认在侧边抽屉中用 iframe 承载宜搭原生表单，抽屉默认半屏 `50vw`，提交页和详情页使用同一宽度规则；移动端整页或新页打开。
 6. **主题文件**：**旧主题注入确认**：应用层 CSS 上传前必须按 [旧主题应用的样式作用域与确认](references/application-style-library.md#旧主题应用的样式作用域与确认) 检查实际主题能力。旧主题或能力未知时默认仅做页面局部样式；只有用户明确确认目标应用的全局注入后才传 `--confirm-legacy-app-style`。用户要求停用应用级 `appCustomTheme` 时使用 `update-app --disable-custom-theme` 并回读核验，不切换主题色。 主题目录统一包含设计、CSS、表单布局三个文件，导出和生成参数见 [命令与参数](references/application-style-library.md#命令与参数)。Plan 使用 CLI 返回的 `outputs.theme`；Fast 和已有主题调整按 [主题文件生成与更新](workflow/output-design.md#cli-token-契约fast--plan-共用) 执行。按 [共用主题规则](references/application-theme-consistency.md) 将已选风格落实为 token，并核对生成的 CSS。修改变量要回到设计源后重新生成、上传；仅 CLI 未覆盖且已核实选择器的样式覆盖可在 CSS 末尾小范围追加，不另写脚本生成或重写主题文件。
-7. **默认主题先做业务判断**：工作台、门户、列表、详情、普通看板和数据大屏默认都是浅底 / light 模式，但主色不固定为 `podBlue` 或 #1677ff；先按主要任务、使用频率和信息密度判断适配性，再结合品牌证据和视觉目标做色彩判断；行业名词不能直接决定配色或材质，主题色可以是任意合法 CSS 颜色。只有用户明确说暗色/深色/夜间/高对比时才用深色沉浸。
+7. **默认主题先做业务判断**：工作台、门户、列表、详情、普通看板和数据大屏默认都是浅底 / light 模式，但主色不固定为 `podBlue` 或 #1677ff；用户委托 AI 选型时，按 [共享主题选择规则](references/theme-selection.md) 执行；先按主要任务、使用频率和信息密度判断适配性，再结合品牌证据和视觉目标做色彩判断；行业名词不能直接决定配色或材质，主题色可以是任意合法 CSS 颜色。只有用户明确说暗色/深色/夜间/高对比时才用深色沉浸。
 8. **页面布局要到可实现粒度**：每个页面至少写清顶部/左侧/主体/右侧/底部区域、核心组件、信息密度、主操作位置、PC/移动端差异和空/载/错态。
 9. **页面丰富度建议**：工作台沿用 PRD 已确定的内容和业务关系。综合工作台参考 8-10 个有独立业务价值的区块，不作为硬门槛；按任务覆盖和信息增量衡量丰富度，不用重复记录、入口或装饰凑数。区块依据信息关系采用不同且合适的表现形式，不要求每块换一种组件。
 10. **工作台禁低密大卡片套路**：工作台 / 业务首页不能用“标题 + 4 个等宽大 KPI 白卡 + 图标快捷卡 + 大空态白卡”撑首屏。按已确定的业务内容和信息关系安排主视图、分析区、操作区及快捷入口，不指定统一列表组合或固定双栏。空态保留该视图所需的上下文与可执行下一步，不铺大块空白卡片。
 11. **按主题保持形状、密度与呼吸感**：`design.md` 正文写清圆角、密度与呼吸节奏的具体消费方式和必要数值，优先采用选中主题的容器/控件形状与内距、组间距、列表行高。通用业务页参考值只补主题未定义项，不能用固定大圆角、padding 或 gap 覆盖主题。呼吸感来自对齐、分组、层级和节奏，不来自超宽空 KPI 框或空白卡。
 12. **背景与内容层次清晰**：正文说明主题如何用色差、细边界、共容器、留白或材质区分内容。同色画布与面板可通过明确边界和分组成立；渐变、玻璃、阴影按主题规则启用，不强制添加。
 13. **模板与自由创意并列**：始终支持[自由创意](references/application-style-library.md)，根据业务独立推演，不要求从模板选择。使用模板时，先按业务任务、信息拓扑选择风格，再按用户确认的色彩氛围协调页面、卡片、导航、填充、边界和交互。布局、圆角与材质可保留，模板固定灰阶和品牌色面积限制不能覆盖用户要求。“自然绿意”等整体风格不能缩减成只有按钮和 logo 变绿；明确只改强调色或忠实中性参考时才保持原画布。文字保留可读的中性层级，状态保留独立语义。
-14. **应用主题统一**：模板或项目 `design.md` 是整套视觉的唯一来源，导航的颜色、border、hover、radius、shadow 与其他界面一起定义；业务决定结构和交互需求，外观由整体主题表达。优先复用平台已有变量绑定，仅声明必要的导航覆盖，不要求完整变量清单或最低数量。不额外选择导航风格包，也不强制所有颜色由主色派生。按 [整体主题规则](references/application-theme-consistency.md#导航与应用框架) 一起设计导航、应用框架、提交/编辑表单、记录详情和自定义页面。`app-theme.css` 保存完整主题变量与消费样式。`YidaCodeCanvas` 页面只在 `YidaComp` 内消费 `--color-brand1-*`、`--color-group` 和 `--pod-*`；严禁页面代码修改或向上层注入主题变量。应用包含表单或详情页时，读取 [表单风格规则](references/native-form-styles.md)，将组件布局和只读详情样式写入 `design.md`；视觉值写入应用主题 CSS，结构写入表单配置。
+14. **应用主题统一**：命名主题以同目录 `design.md`、JSON 和 CSS 为完整基线，保留配对 CSS 的原有声明和规则；项目 `design.md` 记录获批的视觉决定与覆盖，导航的颜色、border、hover、radius、shadow 与其他界面一起定义；业务决定结构和交互需求，外观由整体主题表达。优先复用平台已有变量绑定，仅声明必要的导航覆盖，不要求完整变量清单或最低数量。不额外选择导航风格包，也不强制所有颜色由主色派生。按 [整体主题规则](references/application-theme-consistency.md#导航与应用框架) 一起设计导航、应用框架、提交/编辑表单、记录详情和自定义页面。`app-theme.css` 保存完整主题变量与消费样式。`YidaCodeCanvas` 页面只在 `YidaComp` 内消费 `--color-brand1-*`、`--color-group` 和 `--pod-*`；严禁页面代码修改或向上层注入主题变量。应用包含表单或详情页时，读取 [表单风格规则](references/native-form-styles.md)，将组件布局和只读详情样式写入 `design.md`；视觉值写入应用主题 CSS，结构写入表单配置。
 15. **参考转成可执行选择**：参考 Dribbble / 优秀案例时，落到主色、背景素材、首屏构图、信息密度、动线、区块数量和反默认点。
 16. **页面文案和图标使用专业表达**：渲染文案使用纯文本；图标只使用 `lucide-react` 或 `@ant-design/icons` 的具体组件，默认选择 `lucide-react`，并在 `design.md` 的 `iconSystem` 中写清业务动作、状态、导航和空态到图标组件的映射。emoji 不能改成 CSS 形状、字母占位、Unicode 符号或临时 SVG；如果需要图标，必须映射到上述两类库的具体组件。
 17. **实现交接明确**：设计产物只定义页面结构、视觉系统和验收标准；常规业务图表使用 `yida-rechart`；ECharts 例外只用于用户明确要求复杂 ECharts option 或维护旧图表。
@@ -102,6 +109,7 @@ Fast、Plan 和单页设计使用相同的 UI 设计规则、主题变量和质�
 | [UI 视觉和状态设计](workflow/step-5-visual-states.md) | 设计风格选择、视觉特征、主题换肤、素材图标、空/载/错态、去 AI 味 | 输出前自检 |
 | [写入 design.md](workflow/step-6-handoff.md) | `design.md` 必填内容、稳定引用和完成条件 | 输出前 |
 | [page-design 单页设计](sub_skill/page-design/SKILL.md) | 单页主题证据、页面级设计流程、输出补充字段 | 单个自定义页设计 |
+| [ui-improve 页面与应用美化](sub_skill/ui-improve/SKILL.md) | 视觉方案、ask_human 确认、UI-only 实施、备份和不满意恢复 | 已有资源外观调整优先读取 |
 | [design.md 输出格式](workflow/output-design.md) | `design.md` 字段示例 | Fast 写入前；Plan 定制时按需 |
 | [共享主题选择规则](references/theme-selection.md) | Fast、Plan、单页共用的摘要选型、项目化和读取边界 | 主题选择与生成 |
 | [视觉结构配方库](references/visual-scaffold-recipes.md) | 把真实内容组织为可实现的布局、表面与响应式安排 | UI 视觉设计 |
@@ -110,6 +118,6 @@ Fast、Plan 和单页设计使用相同的 UI 设计规则、主题变量和质�
 | [基础变量契约](templates/design-themes/basic-tokens.json) | 全局基础变量与固定值 | 主题项目化和 token 校验 |
 | [应用结构参考](../yida-prd/references/app/blueprint.md) | 应用角色、导航、页面清单、页面/表单/流程资源蓝图 | 完整应用或主页面 |
 | [应用主题与 token 参考](references/theme/theme-token-presets.md) | 平台主题 key、候选主题、token profile | 需要主题 key 或 token |
-| [应用主题 CSS 模板](references/theme/app-custom-theme-template.css) | AI 可复制修改的品牌、Shell、页面、表格和导航 token | 生成自定义应用主题文件时必读 |
+| [应用主题 CSS 模板](references/theme/app-custom-theme-template.css) | 自由创意与历史无来源设计的公共骨架 | 命名主题使用对应目录的配对 CSS |
 | [yida-canvas-custom-page 样式实现指南](../yida-canvas-custom-page/references/canvas-style-implementation-guide.md) | 将 `design.md` 的 token、背景、圆角、密度和组件规则落到页面源码、antd、CSS、图表和控件状态 | 实现阶段 |
 | [字段与 URL 参考](../../references/field-and-url-reference.md) | `isRenderNav=false`、页面 URL、跨页跳转 | 拼接页面/表单 URL |

@@ -7,6 +7,12 @@ description: 宜搭自定义页面开发规范，使用 `YidaCodeCanvas` 组件�
 
 ## 编码前必读（MUST）
 
+布局实现读取 [共享响应式规则](../yida-design/references/responsive-layout.md)：按实际容器宽度重排筛选栏和主辅面板，统一同组控件尺寸，宽屏按需等高、窄屏自然增长，宽表格局部滚动。断点变化保留原组件状态与业务行为，发布前按该文档验收。
+
+已有页面的美化或 UI 优化，先进入 [ui-improve](../yida-design/sub_skill/ui-improve/SKILL.md)。只有当前视觉方案已通过 `ask_human` 确认且原状态备份可恢复，才修改源码；交接需包含获批 revision、范围、备份和功能契约。本轮仅按视觉差异修改，保留现有业务表达式、事件、数据绑定、URL、状态管理和打开方式，不套用下文的新页面默认规则改变业务。
+
+自定义页 UI 组件和 JSX 展示结构可以更换，不限于 CSS 修改；按 ui-improve 的组件替换边界记录映射并核验。只允许最小展示接口适配，复用原业务函数；不改业务函数体、请求/提交参数、计算、权限或业务状态实现，不因替换组件引入默认筛选、分页变化、重复请求或状态丢失。
+
 先确认导航归属：使用平台导航的管理端自定义页面默认只实现业务内容，同任务可用页内 Tab，跨模块由平台菜单切换。编码前按[管理页面边界](references/navigation-and-entry-guide.md#平台导航下的管理页面)核对，不把后台任务清单或前台菜单复制为第二套导航。
 
 先确定控件与动作的接入方式，再写业务 JSX：使用 antd 时先读取并合并 [标准主题桥](references/canvas-theme-provider.md)，所有 Button、Tabs、Segmented、链接与弹层放在同一主题子树；普通 DOM 控件直接消费应用 CSS 变量。需要跨页按钮或链接时，先按 [入口契约](references/navigation-and-entry-guide.md#先建立动作与目标清单) 提取 `canvas-navigation`，填写真实资源 ID 和目标类型。本页 Tab 用状态或 hash；按钮点击和链接 href 共用同一个 URL 构造函数。缺少目标资源时保留布局并禁用该入口，不猜地址。
