@@ -9,55 +9,55 @@ tokens:
         "--pod-app-root-bg-color": "#F6F1E3"
         "--pod-app-root-bg-image": "none"
         "--pod-page-bg-color": "#F6F1E3"
-        "--pod-card-bg-color": "#fffdf6"
+        "--pod-card-bg-color": "#FFFDF6"
         "--pod-table-cell-color": "var(--pod-card-bg-color)"
       navigation:
-        "--pod-nav-sub-divider-color": "#211C21"
+        "--pod-nav-sub-divider-color": "#CCCCCC"
         "--pod-shell-theme-bg-color": "#F4EEDB"
         "--pod-nav-item-text-color": "#211C21"
-        "--pod-nav-item-text-hover-color": "#211C21"
-        "--pod-nav-item-text-selected-color": "#282329"
+        "--pod-nav-item-text-hover-color": "#171717"
+        "--pod-nav-item-text-selected-color": "#211C21"
         "--pod-nav-menu-bg-hover-color": "#ECE3C4"
         "--pod-nav-menu-bg-selected-color": "#E8DDB5"
         "--pod-nav-menu-item-height": "40px"
         "--pod-nav-menu-item-radius": "0px"
-        "--pod-nav-menu-item-selected-font-weight": "700"
+        "--pod-nav-menu-item-selected-font-weight": "500"
         "--pod-nav-menu-gap": "8px"
         "--pod-nav-popup-bg-color": "var(--pod-shell-theme-bg-color)"
       native-form:
         "--form-element-medium-corner": "0px"
         "--form-element-medium-height": "46px"
         "--form-element-medium-font-size": "14px"
-        "--input-bg-color": "#fffdf6"
+        "--input-bg-color": "#FFFFFF"
         "--input-border-width": "3px"
-        "--input-border-color": "#211c21"
+        "--input-border-color": "#211C21"
         "--input-hover-border-color": "var(--color-brand1-6)"
         "--input-focus-border-color": "var(--color-brand1-6)"
-        "--input-hover-bg-color": "#fffdf6"
-        "--input-focus-bg-color": "#fffdf6"
-        "--pod-form-label-color": "var(--color-text1-4)"
+        "--input-hover-bg-color": "#FFFFFF"
+        "--input-focus-bg-color": "#FFFFFF"
+        "--pod-form-label-color": "#242424"
         "--form-top-label-margin-b": "8px"
         "--yida-divider-secondary-color": "var(--color-brand1-2)"
-        "--yida-form-content-bgcolor": "#fffdf6"
+        "--yida-form-content-bgcolor": "#FFFFFF"
         "--pod-page-content-max-width": "1000px"
-        "--pod-page-border-radius": "0px"
-        "--pod-page-footer-bg-color": "#fffdf6"
-        "--pod-page-footer-border-radius": "0px"
-        "--pod-sticky-footer-box-shadow": "4px 4px 0 #211c21"
-        "--pod-formView-stickyFooter-bg-color": "#F6F1E3"
+        "--pod-page-border-radius": "4px"
+        "--pod-page-footer-bg-color": "#FFFDF6"
+        "--pod-page-footer-border-radius": "4px"
+        "--pod-sticky-footer-box-shadow": "4px 4px 0 #211C21"
+        "--pod-formView-stickyFooter-bg-color": "#F6F6F6"
         "--pod-formView-stickyFooter-box-shadow": "none"
         "--pod-formView-stickyFooter-border": "none"
-        "--pod-formView-stickyFooter-border-top": "1px solid #211c21"
+        "--pod-formView-stickyFooter-border-top": "1px solid #CCCCCC"
         "--pod-formView-stickyFooter-height": "56px"
         "--pod-formView-stickyFooter-bottom": "8px"
         "--pod-field-preview-min-height": "32px"
         "--pod-field-preview-padding": "8px 12px"
         "--pod-field-preview-gap": "4px"
-        "--pod-field-preview-bg-color": "#fffdf6"
-        "--pod-field-preview-border-radius": "0px"
+        "--pod-field-preview-bg-color": "#FFFFFF"
+        "--pod-field-preview-border-radius": "4px"
         "--pod-field-preview-indicator-color": "var(--color-fill1-3)"
         "--pod-field-preview-shadow": "none"
-        "--pod-field-preview-text-color": "var(--color-text1-4)"
+        "--pod-field-preview-text-color": "#242424"
         "--pod-field-preview-line-height": "20px"
     colors:
       "--color-white": "var(--pod-card-bg-color)"
@@ -68,20 +68,20 @@ tokens:
       "--color-brand1-6": "{{PRIMARY_COLOR}}"
       "--color-brand1-9": "<生成实际色值：--color-brand1-6 76% + #000000 24%，sRGB 逐通道混合>"
       "--color-brand1-10": "<生成实际色值：--color-brand1-6 26% + #202020 74%，sRGB 逐通道混合>"
-      "--color-line1-1": "<生成实际色值：--color-brand1-6 8% + #1D1D1D 92%，sRGB 逐通道混合>"
-      "--color-line1-2": "<生成实际色值：--color-brand1-6 8% + #1D1D1D 92%，sRGB 逐通道混合>"
-      "--color-fill1-1": "<生成实际色值：--color-brand1-6 4% + #F1F1F1 96%，sRGB 逐通道混合>"
-      "--color-fill1-2": "<生成实际色值：--color-brand1-6 4% + #E3E3E3 96%，sRGB 逐通道混合>"
-      "--color-fill1-3": "<生成实际色值：--color-brand1-6 8% + #1D1D1D 92%，sRGB 逐通道混合>"
-      "--color-fill1-5": "<生成实际色值：--color-brand1-6 2% + #FDFDFD 98%，sRGB 逐通道混合>"
+      "--color-line1-1": "#CCCCCC"
+      "--color-line1-2": "#211C21"
+      "--color-fill1-1": "#F6F6F6"
+      "--color-fill1-2": "#F6F6F6"
+      "--color-fill1-3": "#CCCCCC"
+      "--color-fill1-5": "#FFFFFF"
       "--color-fill1-6": "var(--color-text1-3)" # 弱图标与辅助操作 glyph 前景色
       "--color-fill1-10": "#262626"
       "--color-text1-5": "#FFFFFF"
-      "--color-text1-4": "<生成实际色值：--color-brand1-6 4% + #242424 96%，sRGB 逐通道混合>"
-      "--color-text1-10": "var(--color-text1-3)"
-      "--color-text1-3": "<生成实际色值：--color-brand1-6 4% + #5E5E5E 96%，sRGB 逐通道混合>"
-      "--color-text1-2": "<生成实际色值：--color-brand1-6 4% + #868686 96%，sRGB 逐通道混合>"
-      "--color-text1-1": "<生成实际色值：--color-brand1-6 4% + #1D1D1D 96%，sRGB 逐通道混合>"
+      "--color-text1-4": "#211C21"
+      "--color-text1-10": "#242424"
+      "--color-text1-3": "#242424"
+      "--color-text1-2": "#8A8A83"
+      "--color-text1-1": "#CCCCCC"
     typography:
       "--font-family-base": "Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
       "--font-size-subhead": "18px"
@@ -112,11 +112,11 @@ tokens:
       "--s-10": "40px"
     rounded:
       "--corner-zero": "0px"
-      "--corner-1": "0px"
-      "--corner-2": "0px"
-      "--corner-3": "0px"
-      "--corner-4": "0px"
-      "--corner-5": "0px"
+      "--corner-1": "4px"
+      "--corner-2": "4px"
+      "--corner-3": "4px"
+      "--corner-4": "4px"
+      "--corner-5": "4px"
       "--corner-circle": "50%"
       "--corner-semicircle": "500px"
     shadow:
@@ -130,16 +130,19 @@ tokens:
     "--oyd-ink": "var(--color-text1-4)"
     "--oyd-border": "var(--color-line1-2)"
     "--oyd-accent": "var(--color-brand1-6)"
-    "--oyd-radius": "0px"
-    "--oyd-content-width": "1000px"
+    "--oyd-radius": "4px"
+    "--oyd-content-width": "1180px"
     "--oyd-content-padding": "32px"
     "--oyd-field-gap": "26px"
-    "--oyd-section-gap": "52px"
+    "--oyd-section-gap": "40px"
     "--oyd-heading-font": "var(--font-family-base)"
     "--oyd-heading-size": "44px"
     "--oyd-rule-style": "solid"
     "--oyd-layout-columns": "minmax(0, 8fr) minmax(0, 4fr)"
-    "--oyd-surface-shadow": "4px 4px 0 #211c21"
+    "--oyd-surface-shadow": "4px 4px 0 #211C21"
+    "--oyd-accent-pink": "#F04B8A"
+    "--oyd-accent-cyan": "#25B7D3"
+    "--oyd-accent-yellow": "var(--color-brand1-6)"
 applicationStyle:
   recipe: "application-style-v1"
   mode: "template"
@@ -163,7 +166,7 @@ themeProfile:
 
 正文、字段标签和详情值使用内容文字色，说明与占位文字使用辅助文字色；品牌色用于局部操作和数据强调，不把整页文字染成主色。
 
-不对称二比一工作区与粗线信息带。方角、粗墨线、硬偏移阴影。画布消费 --oyd-page-bg，内容消费 --oyd-surface，文字消费 --oyd-ink，边界消费 --oyd-border。内容最大宽度 --oyd-content-width，内距 --oyd-content-padding；宽屏不放大成空白 KPI 卡。
+不对称二比一工作区与粗线信息带。近方角、粗墨线、硬偏移阴影。画布消费 --oyd-page-bg，内容消费 --oyd-surface，文字消费 --oyd-ink，边界消费 --oyd-border。内容最大宽度 --oyd-content-width，内距 --oyd-content-padding；宽屏不放大成空白 KPI 卡。
 
 ### 2.2 应用导航
 
@@ -183,7 +186,7 @@ themeProfile:
 
 ### 2.3 页面标题与操作
 
-大字印刷标题与偏置章号。标题字体消费 --oyd-heading-font 与 --oyd-heading-size，辅助说明按正文层级。主操作与当前任务相邻；不堆造虚假标签、指标或章号。
+大字印刷标题与偏置章号。标题字体消费 --oyd-heading-font 与 --oyd-heading-size，辅助说明按正文层级。主操作与当前任务相邻；不堆造虚假标签、指标或章号。页面内容以 1180px 为桌面最大宽度，窄屏保持自然收缩。
 
 ### 2.4 布局和移动端
 
@@ -197,15 +200,21 @@ themeProfile:
 
 ## 3. 基础组件表达
 
+### 按钮与操作区
+
+主操作、表单提交及关键确认按钮使用品牌色实底、3px 墨色边框、近方角和 6px 硬偏移阴影；次操作使用近白实底并保持同一几何。hover 将阴影收至 4px 并位移 2px，active 收至 1px 并位移 5px，focus-visible 使用青蓝色 3px 外描边。禁用态移除阴影和位移，保留平台禁用语义。
+
+数据管理左右操作区、筛选按钮与详情页操作采用 2px 边框和 3px 轻量硬阴影；纯图标按钮固定紧凑尺寸，表格行内文字操作继续保持轻量，不套用实体按钮。原生表单底栏只统一按钮几何、间距和交互，不改勾选项、容器宽度或响应式定位。
+
 ### 自定义页面组件与交互
 
 页面标题、筛选、主操作、状态摘要、列表、表格、图表、详情抽屉和表单入口按真实任务组合。标题与操作保持清楚的主次和对齐；列表、表格与图表使用稳定容器高度或自然增长规则；详情抽屉保留上下文并提供明确返回路径。默认、hover、active、focus、loading、empty、error、disabled 和 selected 状态使用同一套表面、边界、文字与状态语义。
 
-`YidaCodeCanvas` 页面在 `YidaComp` 内消费 --oyd-page-bg、--oyd-surface、--oyd-ink、--oyd-border、--oyd-accent、--oyd-radius、--oyd-content-width、--oyd-content-padding、--oyd-section-gap 和其他已声明 token。页面局部 CSS 只负责当前组件的布局和特色表达；应用全局样式统一作用于应用框架、表单、详情页和自定义页面等。
+`YidaCodeCanvas` 页面在 `YidaComp` 内消费 --oyd-page-bg、--oyd-surface、--oyd-ink、--oyd-border、--oyd-accent、--oyd-accent-pink、--oyd-accent-cyan、--oyd-accent-yellow、--oyd-radius、--oyd-content-width、--oyd-content-padding、--oyd-section-gap 和其他已声明 token。页面局部 CSS 只负责当前组件的布局和特色表达；应用全局样式统一作用于应用框架、表单、详情页和自定义页面等。
 
 ### 表单、表格与记录集合
 
-单行控件 46px、圆角 0px，边框 3px；字段 labelAlign=top（标签在字段上方）。多行文本、附件、日期范围、子表按自身布局。详情页沿用相同章节顺序与表面；只读字段的数据框使用 --pod-field-preview-bg-color、--pod-field-preview-border-radius、--pod-field-preview-shadow、--pod-field-preview-indicator-color、--pod-field-preview-text-color、--form-element-medium-font-size、--pod-field-preview-gap、--pod-field-preview-line-height、--pod-field-preview-min-height 和 --pod-field-preview-padding，延续应用的色彩、形状、字体与密度。表格保持紧凑，按钮、输入、浮层和导航消费同源色彩与形状。
+单行控件 46px、控件本体方角，页面与只读数据框使用 4px 近方角，边框 3px；字段 labelAlign=top（标签在字段上方）。多行文本、附件、日期范围、子表按自身布局。详情页沿用相同章节顺序与表面；只读字段的数据框使用 --pod-field-preview-bg-color、--pod-field-preview-border-radius、--pod-field-preview-shadow、--pod-field-preview-indicator-color、--pod-field-preview-text-color、--form-element-medium-font-size、--pod-field-preview-gap、--pod-field-preview-line-height、--pod-field-preview-min-height 和 --pod-field-preview-padding，延续应用的色彩、形状、字体与密度。表格保持紧凑，按钮、输入、浮层和导航消费同源色彩与形状。
 
 ### 表单组件与版式结构
 
@@ -239,3 +248,4 @@ YAML Token 是唯一数值源。沿用当前主题的构图与材质语言，按
 - [ ] 正文与底栏对齐；四类容器与移动端无横向溢出。
 - [ ] 文字/焦点/禁用/错误在实际背景上可辨，长说明与表格未裁切。
 - [ ] 表单布局与逐页设计一致；组件、字段、主题和响应式规则均已核对。
+- [ ] 提交底栏、数据管理左右操作区、筛选按钮和详情操作已统一为 POP 操作层级，图标与表格文字操作仍保持轻量。
