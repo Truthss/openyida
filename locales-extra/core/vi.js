@@ -1067,6 +1067,10 @@ module.exports = {
   },
   update_app: {
     name_not_persisted: 'Tên ứng dụng đã lưu không khớp với tên yêu cầu. Hãy kiểm tra tên hiện tại trước khi thử lại; không tạo ứng dụng khác.',
+    legacy_style_confirm_required: 'Application CSS is discouraged for legacy or unverified themes. Review CSS scope and ask the human to confirm injection into this exact application (navigation, forms and visit pages may be affected). Only then pass --confirm-legacy-app-style. Otherwise use page-scoped styles.',
+    disable_theme_conflict: '--disable-custom-theme only disables CSS and cannot be combined with other application updates.',
+    custom_theme_config_invalid: 'customThemeStyle is missing, malformed, or lacks a nonempty cssUrl. No disable request was submitted; inspect the latest app configuration.',
+    custom_theme_disabled: 'Custom theme CSS is disabled and resource settings are retained; runtime page verification remains pending.',
     theme_preset_conflict: 'Không thể kết hợp colour có sẵn với CSS hoặc themeColor. Dùng --colour custom hoặc bỏ --colour.',
     custom_theme_color_required: 'colour=custom cần tệp giao diện hoặc themeColor hợp lệ. Dùng --theme-file hoặc --theme-color.',
     theme_not_persisted: 'Không thể xác nhận cài đặt giao diện sau khi lưu. Kiểm tra themeVerification và thử lại bằng update-app <appType> --theme-file <css>; không tạo lại ứng dụng.',

@@ -1021,6 +1021,10 @@ module.exports = {
   },
   update_app: {
     name_not_persisted: '保存されたアプリ名が指定した名前と一致しません。再試行する前に現在の名前を確認してください。別のアプリを作成しないでください。',
+    legacy_style_confirm_required: 'Application CSS is discouraged for legacy or unverified themes. Review CSS scope and ask the human to confirm injection into this exact application (navigation, forms and visit pages may be affected). Only then pass --confirm-legacy-app-style. Otherwise use page-scoped styles.',
+    disable_theme_conflict: '--disable-custom-theme only disables CSS and cannot be combined with other application updates.',
+    custom_theme_config_invalid: 'customThemeStyle is missing, malformed, or lacks a nonempty cssUrl. No disable request was submitted; inspect the latest app configuration.',
+    custom_theme_disabled: 'Custom theme CSS is disabled and resource settings are retained; runtime page verification remains pending.',
     theme_preset_conflict: 'プリセット colour と CSS または themeColor は併用できません。--colour custom を指定するか --colour を省略してください。',
     custom_theme_color_required: 'colour=custom にはテーマファイルまたは有効な themeColor が必要です。--theme-file または --theme-color を指定してください。',
     theme_not_persisted: '保存後のアプリテーマ設定を確認できませんでした。themeVerification を確認し、update-app <appType> --theme-file <css> で再試行してください。アプリを作り直さないでください。',
