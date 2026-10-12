@@ -496,6 +496,20 @@ test('catalog is read-only and its theme IDs initialize through the public CLI w
     expect(theme.styleSummary).toMatch(/(?:深色|浅色)内容界面/);
     expect(theme.styleSummary).not.toMatch(/navTheme\s*=|contentTheme\s*=/);
   }
+  const previews = require('../yida-skills/skills/yida-design/references/theme-preview-images.json');
+  expect(Object.keys(previews)).toHaveLength(17);
+  expect(result.themes.filter(theme => theme.previewImage)).toHaveLength(11);
+  for (const theme of result.themes) {
+    if (previews[theme.themeId]) {
+      expect(theme.previewImage).toEqual({ url: previews[theme.themeId], alt: `${theme.label} · 效果参考图` });
+    } else {
+      expect(theme).not.toHaveProperty('previewImage');
+    }
+  }
+  expect(result.themes.find(theme => theme.themeId === 'soft-inset-surfaces').previewImage.url)
+    .toBe('https://img.alicdn.com/imgextra/i3/O1CN01UEEmuLlMF3I5pHky_!!6000000006290-2-tps-2870-1798.png');
+  expect(result.creativeOption).not.toHaveProperty('previewImage');
+  expect(result.themes.some(theme => theme.themeId.startsWith('app-'))).toBe(false);
   expect(result.pagePatterns).toEqual(patterns.patterns.map(({ id, label, mustKeep }) => ({ id, label, mustKeep })));
   const initialized = JSON.parse(execFileSync(process.execPath, [bin, 'design-plan', 'init', briefPath,
     '--theme-id', result.themes[0].themeId, '--output-dir', path.join(dir, 'catalog-plan'), '--json'], options));

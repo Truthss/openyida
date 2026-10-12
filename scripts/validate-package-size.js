@@ -24,9 +24,10 @@ const path = require('path');
 // past the previous 2128 KiB ratchet (CI Node 20 gzip runs ~2 KiB heavier than newer Node).
 // Retain modest growth headroom and round budgets to 16 KiB boundaries.
 const MAX_TARBALL_BYTES = 2144 * 1024;
-// UI improvement/restore adds eight net runtime and guidance files. Node 20
-// dry-run is ~8054 KiB unpacked; retain 16 KiB rounding, no tarball/cap increase.
-const MAX_UNPACKED_BYTES = 8064 * 1024;
+// UI improvement/restore adds eight net runtime and guidance files.
+// Reading accessibility and theme-preview guidance bring the dry-run to ~8070 KiB;
+// retain 16 KiB rounding without increasing tarball or per-file limits.
+const MAX_UNPACKED_BYTES = 8080 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -34,7 +35,8 @@ const MAX_UNPACKED_BYTES = 8064 * 1024;
 // removing the application-styles/navigation-styles catalogs offsets two files.
 // App theme upgrades add two CLI modules and an independent skill with its migration guide.
 // Group creation isolates icon persistence from the near-1000-line navigation module.
-const MAX_ENTRY_COUNT = 619;
+// Theme selection adds one URL-only preview mapping, without bundling image binaries.
+const MAX_ENTRY_COUNT = 620;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -88,6 +90,7 @@ const REQUIRED_PACKAGE_FILES = [
   'yida-skills/skills/yida-requirement-analysis/references/experience-groups.md',
   'yida-skills/skills/yida-requirement-analysis/references/handoff.md',
   'yida-skills/skills/yida-design/references/navigation-decision.md',
+  'yida-skills/skills/yida-design/references/theme-preview-images.json',
   'yida-skills/skills/yida-design/templates/design-themes/index.json',
   'yida-skills/skills/yida-design/templates/design-themes/basic-tokens.json',
   'lib/app/application-style.js',

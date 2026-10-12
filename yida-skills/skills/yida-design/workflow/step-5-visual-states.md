@@ -33,4 +33,6 @@
 
 按 [页面质量门禁](../references/page-quality-gates.md) 核对业务内容、首屏焦点、主次、密度、主题、状态、素材与响应式。每个 PRD 设计引用均须定位到真实正文，不能以整章复制充当多个组件规则。
 
+逐页落实其中的 [阅读无障碍门禁](../references/page-quality-gates.md#阅读无障碍门禁)，说明文字、放大重排、完整信息获取与辅助阅读的实现要求和验收方式；仅写“清晰易读”不能代替具体设计。
+
 随后进入 [写入与校验](step-6-handoff.md)：Fast 手写后执行公共 check-design；Plan 由 CLI 物化并执行相同校验。

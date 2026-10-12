@@ -25,6 +25,8 @@ description: Plan 模式的视觉设计分支。基于需求选择视觉方向�
 4. 全局和局部 token 遵守 [基础变量契约](../../templates/design-themes/basic-tokens.json)，明确项目差异写 `visualStyle.tokens`，主色写 `forUser.colorStrategy.primaryColor`；沿用主题的字号、间距和组件圆角。
 5. CLI 按 [公共输出契约](../../workflow/output-design.md) 生成 frontmatter、anchor 索引和五章正文，并调用同一 `check-design` 校验。缺少逐页决定时只保留可预览草稿，补齐后再生成最终产物；旧计划同样不得以继承主题套话补过门槛。
 
+逐页按 [阅读无障碍门禁](../../references/page-quality-gates.md#阅读无障碍门禁) 将实际要求写入已有 `layout`、`responsive` 和 `acceptanceChecks`，覆盖文字可读、放大重排及完整信息获取；不新增重复字段，不将 CLI 校验通过视为读屏或真实页面验收通过。
+
 用户选择整体暗色或黑色主题时，按 [暗色主题浮层适配](../../references/theme/theme-token-presets.md#暗色主题浮层适配) 补齐 `visualStyle.tokens`；内容界面明暗与导航明暗分别描述，导航明暗仍由所选主题模板确定。
 
 首版提交前，将基础视觉与 `pageApplications` 一次补齐到已有 `visual.json`。仅超大需求需要中间展示时才按 [按模块更新方案](../../../yida-app/workflow/incremental-preview.md) 提交。主流程负责生成方案、展示和确认，主题 CSS 使用 CLI 返回的 `outputs.theme`。

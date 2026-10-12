@@ -26,11 +26,11 @@
 
 ## 公共选型规则
 
-输入证据优先级、摘要匹配和读取边界统一按 [共享主题选择规则](../../../references/theme-selection.md) 执行。候选使用 [公共主题索引](../../../templates/design-themes/index.json) 或 `openyida design-plan catalog --json` 的 `themes[].styleSummary`；选中后才读取对应的一份完整模板。本文件只规定 Plan 的三套候选、用户可见内容和选择事实写入，不另设评分或主题库。
+输入证据优先级、摘要匹配和读取边界统一按 [共享主题选择规则](../../../references/theme-selection.md) 执行。候选使用 `openyida design-plan catalog --json` 的 `themes[].styleSummary`、`label` 和 `previewImage`；直接读 [公共主题索引](../../../templates/design-themes/index.json) 时按 [名称与效果图展示规则](../../../references/theme-selection.md#选择时展示名称与效果图) 关联已有图片；选中后才读取对应的一份完整模板。本文件只规定 Plan 的三套候选、用户可见内容和选择事实写入，不另设评分或主题库。
 
 ## 候选结构与约束
 
-生成三项选择：两个具体视觉方向，加一项“自由创意：根据业务重新推演”。用户已明确风格时直接沿用，无需重选。具体方向包含。下列尖括号是待填写字段，必须按当前项目替换；示例不提供默认颜色：
+生成三项选择：两个具体视觉方向，加一项“自由创意：根据业务重新推演”。用户已明确风格时直接沿用，无需重选。具体方向包含风格名称和适用说明，有对应效果图时附图。下列尖括号是待填写字段，必须按当前项目替换；示例不提供默认颜色：
 
 ```json
 {
@@ -38,12 +38,16 @@
   "directionLabel": "关系洞察型",
   "description": "以客户上下文和跟进节奏为视觉主线，层级柔和但关键动作清晰。",
   "themeId": "<有效索引记录，仅内部>",
+  "themeLabel": "<catalog 对应主题的 label>",
+  "previewImage": { "url": "<catalog 对应主题的 previewImage.url>", "alt": "<catalog 对应主题的 previewImage.alt>" },
   "primaryColor": "<项目实际主色色值>",
   "primaryColorName": "<项目实际主色名称>",
   "contentTone": "light",
   "recommendationReason": "适合需要持续查看关系历史和推进状态的日常工作。"
 }
 ```
+
+`themeLabel` 与 `previewImage` 是本轮展示元数据，不写入 Plan 的视觉事实；无对应图时直接省略 `previewImage`，不传空值、不显示占位或缺图提示。
 
 规则：
 
@@ -66,10 +70,13 @@
 
 用户只看到：
 
-- `directionLabel`；
+- 对应主题的风格名称 `themeLabel`，可附项目方向 `directionLabel`；
+- 有图时展示与该主题一一对应的效果参考图（含替代文字），无图时省略；
 - `description`；
 - `recommendationReason`；
 - 第一项的“推荐”标记。
+
+展示图片时统一注明“效果参考图，实际内容、布局和品牌色按本次方案调整”。展示方式按 [名称与效果图展示规则](../../../references/theme-selection.md#选择时展示名称与效果图) 适配宿主；下例为有图候选的逻辑结构，无图候选删除 `previewImage`；该字段不能直接传给不支持它的工具。文字选项宿主先展示对应图文卡片，再用相同编号和名称提问。
 
 `themeId`、`templatePath` 和模板匹配结果保存在内部实施记录中。
 
@@ -83,18 +90,20 @@
   "options": [
     {
       "value": "<first.directionId>",
-      "label": "<first.directionLabel>（推荐）",
+      "label": "1 · <first.themeLabel> · <first.directionLabel>（推荐）",
+      "previewImage": { "url": "<first.previewImage.url>", "alt": "<first.previewImage.alt>" },
       "description": "<first.description> <first.recommendationReason>"
     },
     {
       "value": "<second.directionId>",
-      "label": "<second.directionLabel>",
+      "label": "2 · <second.themeLabel> · <second.directionLabel>",
+      "previewImage": { "url": "<second.previewImage.url>", "alt": "<second.previewImage.alt>" },
       "description": "<second.description> <second.recommendationReason>"
     },
     {
       "value": "free-creative",
-      "label": "自由创意",
-      "description": "根据这项业务重新推演构图、材质和表单布局，不从现成模板选取。"
+      "label": "3 · 自由创意",
+      "description": "根据这项业务重新推演构图、材质和表单布局。"
     }
   ],
   "allowCustom": true,
@@ -149,6 +158,6 @@
 ## 运行时读取边界
 
 - Step 2 读取本规则和主题索引中的精简风格摘要，不读取候选模板全文。
-- 候选阶段只提供方向名称、配色与体验说明。
+- 候选阶段展示风格名称、配色与体验说明，有对应效果图时附图；无需读取候选模板全文。
 - 用户选择后保存选中方向、内部主题绑定、导航结构和实现该方向所需的 token 差异；CLI 从模板读取导航明暗。
 - 用户确认主题后，规划时读取 CLI 返回的主题上下文；CLI 仅按已确认的 selectedTheme.themeId 读取选中的完整模板生成文档。
