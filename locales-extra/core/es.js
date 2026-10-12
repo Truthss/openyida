@@ -25,6 +25,7 @@ module.exports = {
     repair_page_bindings: 'Haga corresponder pageApplications de visual.json con customPageDetails de business.json uno a uno, sin formularios nativos. visualMemoryApplications debe ser un arreglo; use [] si no corresponde ninguno. Conserve el borrador, corrija los campos indicados y repita el comando original. No elimine el directorio ni ejecute init de nuevo.',
   },
   design_document: {
+    confirmation_snapshot_conflict: 'Confirmation snapshot {0} conflicts with its content address; the file was not overwritten.',
     update_conflict: "No se puede actualizar {0} ({1}): el contenido entra en conflicto con la última versión generada. Revise esta sección, concilie el cambio local con los datos del plan y vuelva a intentarlo. No se guardó ningún archivo.",
     theme_css_invalid: 'El CSS del tema contiene un delimitador, una cadena o un comentario sin cerrar o mal emparejado cerca de la línea {0}. Corrígelo e inténtalo de nuevo.',
     theme_css_unresolved: 'El token CSS del tema {0} aún contiene un marcador de plantilla o una instrucción para generar colores. Complete design.md, ejecute openyida sample yida-design app-theme --design-file <design.md> --output <app-theme.css> y suba el archivo generado. No basta con reemplazar PRIMARY_COLOR.',
@@ -794,6 +795,7 @@ module.exports = {
     no_login: '  ❌ Unable to get valid login credentials'
   },
   create_form: {
+    create_readback_mismatch: 'The created form does not contain all requested fields. Recover this existing form ID; do not create another form.',
     divider_type_invalid: 'Estilo de separador no compatible: {0}. Valores admitidos: {1}',
     batch_invalid: 'Lote de formularios no válido; revise los detalles',
     create_title: '  yida-create-form-page - Yida Form Page Creation Tool',
@@ -951,6 +953,7 @@ module.exports = {
     failed: '  ❌ Error al crear: {0}'
   },
   common: {
+    auth_identity_changed: 'Authentication identity changed during preflight; no write was issued.',
     http_status: '  HTTP status: {0}',
     http_response: '  HTTP response: {0}',
     response_body: '  Response body: {0}',

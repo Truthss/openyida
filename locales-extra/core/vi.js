@@ -25,6 +25,7 @@ module.exports = {
     repair_page_bindings: 'Sửa pageApplications trong visual.json để khớp từng mục customPageDetails trong business.json, không thêm biểu mẫu gốc. visualMemoryApplications phải là mảng; dùng [] nếu không có mục phù hợp. Giữ bản nháp, sửa các trường được liệt kê rồi chạy lại lệnh ban đầu. Không xóa thư mục hoặc chạy lại init.',
   },
   design_document: {
+    confirmation_snapshot_conflict: 'Confirmation snapshot {0} conflicts with its content address; the file was not overwritten.',
     update_conflict: "Không thể cập nhật {0} ({1}): nội dung hiện tại xung đột với phiên bản được tạo trước đó. Hãy đối chiếu thay đổi cục bộ trong phần này với dữ liệu kế hoạch rồi thử lại. Chưa lưu tệp nào.",
     theme_css_invalid: 'CSS giao diện gần dòng {0} có dấu ngoặc, chuỗi hoặc chú thích chưa đóng hoặc không khớp. Hãy sửa rồi thử lại.',
     theme_css_unresolved: 'Token CSS chủ đề {0} vẫn chứa chỗ giữ chỗ hoặc hướng dẫn tạo màu. Hoàn thiện design.md, chạy openyida sample yida-design app-theme --design-file <design.md> --output <app-theme.css>, rồi tải tệp đã tạo lên. Chỉ thay PRIMARY_COLOR là chưa đủ.',
@@ -794,6 +795,7 @@ module.exports = {
     no_login: '  ❌ Unable to get valid login credentials'
   },
   create_form: {
+    create_readback_mismatch: 'The created form does not contain all requested fields. Recover this existing form ID; do not create another form.',
     divider_type_invalid: 'Kiểu đường phân cách không được hỗ trợ: {0}. Giá trị được hỗ trợ: {1}',
     batch_invalid: 'Lô biểu mẫu không hợp lệ; kiểm tra chi tiết lỗi',
     create_title: '  yida-create-form-page - Yida Form Page Creation Tool',
@@ -949,6 +951,7 @@ module.exports = {
     failed: '  ❌ Tạo thất bại: {0}'
   },
   common: {
+    auth_identity_changed: 'Authentication identity changed during preflight; no write was issued.',
     http_status: '  HTTP status: {0}',
     http_response: '  HTTP response: {0}',
     response_body: '  Response body: {0}',

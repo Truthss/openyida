@@ -25,6 +25,7 @@ module.exports = {
     repair_page_bindings: '按 business.json 的 customPageDetails 逐一修復 visual.json 的 pageApplications；原生表單不加入綁定。每項 visualMemoryApplications 必須為陣列，無適用項用 []。保留現有草稿，修復所列欄位後重試原命令；不要刪除目錄或重新 init。',
   },
   design_document: {
+    confirmation_snapshot_conflict: 'Confirmation snapshot {0} conflicts with its content address; the file was not overwritten.',
     update_conflict: "無法更新 {0}（{1}）：現有內容與上次生成結果衝突。請讀取這部分，將本地修改與計劃來源對齊後重試；本次未儲存任何檔案。",
     theme_css_invalid: '主題 CSS 第 {0} 行附近存在未閉合或不匹配的括號、字串或註解，請修正後重試。',
     theme_css_unresolved: '主題 CSS 的 {0} 仍含模板佔位或色值生成說明。請先完成 design.md，執行 openyida sample yida-design app-theme --design-file <design.md> --output <app-theme.css>，再上傳生成檔案；不能只替換 PRIMARY_COLOR。',
@@ -753,6 +754,7 @@ module.exports = {
     no_login: '  ❌ 无法获取有效登录态'
   },
   create_form: {
+    create_readback_mismatch: 'The created form does not contain all requested fields. Recover this existing form ID; do not create another form.',
     divider_type_invalid: '不支援的分隔線樣式：{0}。可選值：{1}',
     batch_invalid: '表單批量任務設定無效，請檢查錯誤詳情',
     create_title: '  yida-create-form-page - 宜搭表单页面创建工具',
@@ -901,6 +903,7 @@ module.exports = {
     data_check_failed: '  ⚠️  資料量檢查失敗，繼續執行修改'
   },
   common: {
+    auth_identity_changed: 'Authentication identity changed during preflight; no write was issued.',
     http_status: '  HTTP 狀態碼：{0}',
     http_response: '  HTTP 回應：{0}',
     response_body: '  回應內容：{0}',

@@ -186,6 +186,8 @@ openyida create-form create <appType> <formTitle> <fieldsJsonOrFile> [--layout s
 
 完整应用模式下的下一步：
 
+创建成功必须经过保存后及导航更新后的真实 schema 回读核验。若返回 `CREATE_FORM_CREATE_READBACK_MISMATCH` 或读取失败，保留返回的 `formUuid`，按下方半成功恢复流程处理，不能重跑 create 生成第二张表单。
+
 1. 将 `formUuid`、字段摘要和字段 JSON 路径写入 `.cache/<项目名>-schema.json`。
 2. 对需要作为页面列表、看板或详情数据源的核心普通表单，加载 `yida-data-management`。
 3. 用 `openyida get-schema <appType> <formUuid> --field-map-json` 获取真实 `fieldId`，再逐条写入 1-3 条业务化 seed records。

@@ -1071,6 +1071,23 @@ describe('design-plan materialize', () => {
     expect(readDesignTokens(renderDesign(plan))['--pod-nav-item-text-color']).toBe('#ABCDEF');
   });
 
+  test('confirmation attachments retain exact HTML after patches and local edits', () => {
+    const input = path.join(tempDir, 'build-plan.json');
+    fs.copyFileSync(FIXTURE, input);
+    const first = materialize(input);
+    const oldPath = first.confirmation.attachments[0].path;
+    const original = fs.readFileSync(oldPath, 'utf8');
+    const second = patchPlan(input, ['visualStyle.forUser.colorStrategy.primaryColor=#8B5E3C'], { materialize: true });
+    expect(second.confirmation.attachments[0].path).not.toBe(oldPath);
+    expect(fs.readFileSync(oldPath, 'utf8')).toBe(original);
+    const canonical = path.join(tempDir, 'build-plan.html');
+    fs.appendFileSync(canonical, '\n<!-- local note -->');
+    const third = materialize(input);
+    expect(fs.readFileSync(third.confirmation.attachments[0].path, 'utf8')).toContain('<!-- local note -->');
+    expect(third.confirmation.attachments[0].path).not.toBe(second.confirmation.attachments[0].path);
+    expect(fs.readFileSync(oldPath, 'utf8')).toBe(original);
+  });
+
   test('semantic patch increments revision, invalidates confirmation, and rematerializes a color adjustment', () => {
     const input = path.join(tempDir, 'build-plan.json');
     fs.copyFileSync(FIXTURE, input);
@@ -1099,7 +1116,7 @@ describe('design-plan materialize', () => {
     expect(html).toContain('#8B5E3C');
   });
 
-  test('internal patches keep the current draft revision; only editing the presented version advances it', () => {
+  test('draft edits preserve revision; ready plans advance even without CLI presentation registration', () => {
     const input = path.join(tempDir, 'build-plan.json');
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
     plan.meta.revision = '1';
@@ -1107,18 +1124,18 @@ describe('design-plan materialize', () => {
     fs.writeFileSync(input, JSON.stringify(plan));
     const patch = color => patchPlan(input, [`visualStyle.forUser.colorStrategy.primaryColor=${color}`]);
     expect(patch('#123456').revision).toBe('1');
-    // Awaiting confirmation alone does not prove a successful user presentation.
+    // Native ask_human may already display this version outside the CLI.
     const ready = JSON.parse(fs.readFileSync(input));
     ready.meta.status = 'awaiting_confirmation';
     fs.writeFileSync(input, JSON.stringify(ready));
-    expect(patch('#234567').revision).toBe('1');
+    expect(patch('#234567').revision).toBe('2');
     const presented = JSON.parse(fs.readFileSync(input));
-    presented.meta.planState.presentedRevision = '1';
+    presented.meta.planState.presentedRevision = '2';
     fs.writeFileSync(input, JSON.stringify(presented));
-    expect(patch('#345678').revision).toBe('2');
+    expect(patch('#345678').revision).toBe('3');
     expect(JSON.parse(fs.readFileSync(input)).meta.planState.presentedRevision).toBeNull();
-    expect(patch('#456789').revision).toBe('2');
-    expect(patch('#456789')).toMatchObject({ changed: false, revision: '2' });
+    expect(patch('#456789').revision).toBe('3');
+    expect(patch('#456789')).toMatchObject({ changed: false, revision: '3' });
     const beforeFailure = fs.readFileSync(input, 'utf8');
     expect(() => patch('not-a-color')).toThrow();
     expect(fs.readFileSync(input, 'utf8')).toBe(beforeFailure);
@@ -1429,7 +1446,7 @@ describe('Plan contract and file consistency', () => {
 
     for (const content of [interactionContract, workflow]) {
       expect(content).toContain('attachments');
-      expect(content).toContain('prd/<项目名>/build-plan.html');
+      expect(content).toContain('prd/<项目名>/build-plan-<content-sha256>.html');
       expect(content).toContain('revision');
     }
     expect(interactionContract).toContain('同一次 `ask_human`');
@@ -1476,7 +1493,7 @@ describe('Plan contract and file consistency', () => {
     expect(payload.attachments).toEqual([
       {
         name: 'build-plan.html',
-        path: 'prd/<项目名>/build-plan.html',
+        path: 'prd/<项目名>/build-plan-<content-sha256>.html',
       },
     ]);
     expect(payload.revision).toBe('{revision}');

@@ -442,6 +442,30 @@ describe('requestWithAutoLogin', () => {
 });
 
 describe('requestNonIdempotentWithAuthPreflight', () => {
+  test.each([false, true])('bootstrap business origin is synchronized before mutation; identityChanged=%s', async identityChanged => {
+    jest.resetModules();
+    const session = { refresh_token: 'test-refresh', corp_id: 'corp', user_id: 'user', base_url: 'https://seed.test' };
+    jest.doMock('../lib/auth/token-store', () => ({ loadTokenSession: () => session }));
+    const utils = require('../lib/core/utils');
+    const auth = { authMode: 'token', authData: { corp_id: 'corp', user_id: 'user' }, baseUrl: session.base_url }; // Real createAuthRef has no projectRoot.
+    const mutate = jest.fn(ref => Promise.resolve({ success: true, origin: ref.baseUrl }));
+    try {
+      const result = await utils.requestNonIdempotentWithAuthPreflight(mutate, async () => {
+        session.access_token = 'test-access';
+        session.base_url = 'https://business.test';
+        if (identityChanged) { session.corp_id = 'another-corp'; }
+        return { success: true };
+      }, auth);
+      if (identityChanged) {
+        expect(mutate).not.toHaveBeenCalled();
+        expect(result.errorCode).toBe('AUTH_IDENTITY_CHANGED');
+      } else {
+        expect(result).toEqual({ success: true, origin: 'https://business.test' });
+        expect(mutate).toHaveBeenCalledTimes(1);
+      }
+    } finally { jest.dontMock('../lib/auth/token-store'); jest.resetModules(); }
+  });
+
   test('does not replay the mutation when its result has an auth challenge', async () => {
     const utils = require('../lib/core/utils');
     const preflightFn = jest.fn().mockResolvedValue({ success: true, content: [] });

@@ -38,7 +38,7 @@ test('reconciles changed main source with completed part facts without deleting 
   expect([businessFile, visualFile].map(file => fs.readFileSync(file, 'utf8'))).toEqual(parts);
   expect(fs.existsSync(result.outputs.html)).toBe(true);
   expect(result.confirmation.revision).toBe(final.meta.revision);
-  expect(result.confirmation.attachments[0].path).toBe(result.outputs.html);
+  expect(result.confirmation.attachments[0].path).toBe(result.outputs.confirmationHtml);
   expect(result.confirmation.options.map(option => option.value)).toEqual(['confirm_build', 'continue_editing']);
   // Replaying the initial parts over the materialized plan reconciles to the current plan.
   merge({ rebaseParts: true });
@@ -69,7 +69,7 @@ test('patch materialization returns current confirmation on both actual and no-o
   for (let attempt = 0; attempt < 2; attempt++) {
     const result = patchPlan(input, ['overview.summary=本轮调整后的概要'], { materialize: true });
     expect(result.confirmation.revision).toBe(read(input).meta.revision);
-    expect(result.confirmation.attachments[0].path).toBe(result.outputs.html);
+    expect(result.confirmation.attachments[0].path).toBe(result.outputs.confirmationHtml);
     expect(result.changed).toBe(attempt === 0);
   }
 });
@@ -89,7 +89,7 @@ test('CLI accepts rebase-parts and delivers confirmation for the reconciled draf
     expect(read(input).overview.summary).toBe(source.overview.summary);
     expect(read(input).overview.businessGoals).toEqual(business.facts.overview.businessGoals);
     expect(result.confirmation.revision).toBe(read(input).meta.revision);
-    expect(result.confirmation.attachments[0].path).toBe(result.outputs.html);
+    expect(result.confirmation.attachments[0].path).toBe(result.outputs.confirmationHtml);
   } finally {
     log.mockRestore();
   }

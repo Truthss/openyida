@@ -143,7 +143,7 @@ Fast / Plan 是面向用户的模式名称，仅在首轮澄清后的模式路�
 
 需要让用户查看 workspace 产物后再回答时，同一次 `ask_human` 还必须携带：
 
-- `attachments`：待查看文件列表；workspace 文件使用 `{ "name": "搭建方案", "path": "prd/<项目名>/build-plan.html" }`。路径必须位于当前项目工作区，不能传运行时内部路径或外部绝对路径。
+- `attachments`：待查看文件列表；workspace 文件使用 `{ "name": "搭建方案", "path": "prd/<项目名>/build-plan-<content-sha256>.html" }`。路径必须位于当前项目工作区，不能传运行时内部路径或外部绝对路径。
 - `revision`：本次问题绑定的事实版本。宿主提交回答时必须原样回传；版本已变化时拒绝旧回答并重新展示最新版本。
 
 附件、问题与 `revision` 是一个原子交互。不得先发普通文本附件、再单独调用 `ask_human`，也不得只在问题文案中写文件路径；否则实时界面和历史回放无法可靠证明用户确认的是哪一版方案。
@@ -163,11 +163,11 @@ Fast / Plan 是面向用户的模式名称，仅在首轮澄清后的模式路�
 Plan Design 完成当前版本后，按以下顺序与用户交互：
 
 1. 在会话中使用“搭建方案”或“当前方案”，给出 3-7 条业务摘要。用户可见的 PRD / HTML 标题、摘要、附件名称和确认问题都不展示修订序号或原始 `meta.revision`；修订标识仅保留在内部元数据和确认字段中。
-2. 在“最新搭建计划确认”的同一次 `ask_human` 中，通过 `attachments` 展示可打开的 `prd/<项目名>/build-plan.html`，并以 `revision` 绑定当前 `meta.revision`。
+2. 在“最新搭建计划确认”的同一次 `ask_human` 中，通过 `attachments` 原样使用 CLI 返回的 `confirmation.attachments` 展示可打开的内容快照，并以 `revision` 绑定当前 `meta.revision`。
 3. 结构化交互成功创建后将 `meta.planState.presentedRevision=meta.revision` 写回源 JSON，不再物化；awaiting_confirmation 在生成前写入。
 4. 提供“确认并开始搭建”和“继续调整”两个选择，并等待用户回答。
 
-`build-plan.html` 不承载对话控件或确认按钮；用户在会话中完成确认。
+`build-plan.html` 是可更新的编辑产物；确认附件必须使用 `materialize` 或 `patch --materialize` 返回的 `confirmation.attachments`（路径等于 `outputs.confirmationHtml`），不能自行拼接 canonical 路径或覆盖快照。快照包含最终合并后的 HTML，本地补充和素材变化也会产生新内容地址。HTML 不承载对话控件或确认按钮；用户在会话中完成确认。
 
 最终确认是一个 `single_select` 语义问题。它只有下面这一份可调用 schema；顶层字段集合固定为 `question`、`title`、`options`、`attachments`、`revision`、`submitLabel`。将路径和 `{revision}` 替换为本次 materialize 返回的真实值：
 
@@ -192,7 +192,7 @@ Plan Design 完成当前版本后，按以下顺序与用户交互：
   "attachments": [
     {
       "name": "build-plan.html",
-      "path": "prd/<项目名>/build-plan.html"
+      "path": "prd/<项目名>/build-plan-<content-sha256>.html"
     }
   ],
   "revision": "{revision}",

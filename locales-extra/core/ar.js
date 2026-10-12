@@ -25,6 +25,7 @@ module.exports = {
     repair_page_bindings: 'أصلح pageApplications في visual.json لتطابق customPageDetails في business.json واحدًا لواحد، دون النماذج الأصلية. يجب أن تكون visualMemoryApplications مصفوفة؛ استخدم [] عند عدم وجود عناصر مناسبة. احتفظ بالمسودة وأصلح الحقول المذكورة ثم أعد الأمر الأصلي. لا تحذف المجلد ولا تشغّل init مجددًا.',
   },
   design_document: {
+    confirmation_snapshot_conflict: 'Confirmation snapshot {0} conflicts with its content address; the file was not overwritten.',
     update_conflict: "تعذر تحديث {0} ({1}): يتعارض المحتوى الحالي مع آخر نسخة مولدة. راجع هذا القسم ووفق التعديل المحلي مع بيانات الخطة ثم أعد المحاولة. لم يتم حفظ أي ملفات.",
     theme_css_invalid: 'يحتوي CSS للسمة قرب السطر {0} على قوس أو سلسلة نصية أو تعليق غير مغلق أو غير متطابق. أصلحه ثم أعد المحاولة.',
     theme_css_unresolved: 'لا يزال رمز CSS للسمة {0} يحتوي على عنصر نائب أو تعليمات لإنشاء اللون. أكمل design.md، ثم نفّذ openyida sample yida-design app-theme --design-file <design.md> --output <app-theme.css> وارفع الملف الناتج. استبدال PRIMARY_COLOR وحده لا يكفي.',
@@ -794,6 +795,7 @@ module.exports = {
     no_login: '  ❌ Unable to get valid login credentials'
   },
   create_form: {
+    create_readback_mismatch: 'The created form does not contain all requested fields. Recover this existing form ID; do not create another form.',
     divider_type_invalid: 'نمط فاصل غير مدعوم: {0}. القيم المدعومة: {1}',
     batch_invalid: 'دفعة النماذج غير صالحة؛ تحقق من تفاصيل الخطأ',
     create_title: '  yida-create-form-page - Yida Form Page Creation Tool',
@@ -949,6 +951,7 @@ module.exports = {
     failed: '  ❌ فشل الإنشاء: {0}'
   },
   common: {
+    auth_identity_changed: 'Authentication identity changed during preflight; no write was issued.',
     http_status: '  HTTP status: {0}',
     http_response: '  HTTP response: {0}',
     response_body: '  Response body: {0}',

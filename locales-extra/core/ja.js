@@ -25,6 +25,7 @@ module.exports = {
     repair_page_bindings: 'visual.json の pageApplications を business.json の customPageDetails と一対一に対応させ、ネイティブフォームは除外してください。visualMemoryApplications は配列とし、該当なしは [] にします。既存の下書きを保持し、示されたフィールドを修正して元のコマンドを再実行してください。ディレクトリの削除や init の再実行は不要です。',
   },
   design_document: {
+    confirmation_snapshot_conflict: 'Confirmation snapshot {0} conflicts with its content address; the file was not overwritten.',
     update_conflict: "{0}（{1}）を更新できません。現在の内容が前回の生成結果と競合しています。該当箇所のローカル変更と計画データを合わせてから再試行してください。ファイルは保存されていません。",
     theme_css_invalid: 'テーマ CSS の {0} 行付近に、閉じられていないか対応しない括弧、文字列、コメントがあります。修正して再試行してください。',
     theme_css_unresolved: 'テーマ CSS の {0} にテンプレートのプレースホルダーまたは色の生成指示が残っています。design.md を完成させ、openyida sample yida-design app-theme --design-file <design.md> --output <app-theme.css> を実行してから生成ファイルをアップロードしてください。PRIMARY_COLOR の置換だけでは不十分です。',
@@ -760,6 +761,7 @@ module.exports = {
     no_login: '  ❌ Unable to get valid login credentials'
   },
   create_form: {
+    create_readback_mismatch: 'The created form does not contain all requested fields. Recover this existing form ID; do not create another form.',
     divider_type_invalid: '未対応の区切り線スタイル: {0}。対応する値: {1}',
     batch_invalid: 'フォームのバッチ設定が無効です。エラー詳細を確認してください',
     create_title: '  yida-create-form-page - Yida フォームページ作成ツール',
@@ -908,6 +910,7 @@ module.exports = {
     data_check_failed: '  ⚠️  データ確認に失敗しました。変更を続行します'
   },
   common: {
+    auth_identity_changed: 'Authentication identity changed during preflight; no write was issued.',
     http_status: '  HTTP ステータス: {0}',
     http_response: '  HTTP レスポンス: {0}',
     response_body: '  レスポンス内容: {0}',
