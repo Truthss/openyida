@@ -24,6 +24,7 @@ module.exports = {
     repair_page_bindings: 'visual.json के pageApplications को business.json के customPageDetails से एक-एक करके मिलाएँ; मूल फ़ॉर्म शामिल न करें। visualMemoryApplications एक ऐरे होना चाहिए; कोई उपयुक्त आइटम न हो तो [] दें। मौजूदा मसौदा रखें, बताए गए फ़ील्ड सुधारें और मूल कमांड फिर चलाएँ। डायरेक्टरी न हटाएँ और init दोबारा न चलाएँ।',
   },
   design_document: {
+    confirmation_snapshot_conflict: 'Confirmation snapshot {0} conflicts with its content address; the file was not overwritten.',
     update_conflict: "{0} ({1}) अपडेट नहीं हो सका: मौजूदा सामग्री पिछले जनरेट किए गए संस्करण से टकराती है। इस भाग के स्थानीय बदलावों को योजना के डेटा से मिलाएँ और फिर कोशिश करें। कोई फ़ाइल सेव नहीं हुई।",
     theme_css_invalid: 'थीम CSS में पंक्ति {0} के पास कोई बंद न किया गया या बेमेल कोष्ठक, स्ट्रिंग या टिप्पणी है। सुधार कर फिर प्रयास करें।',
     theme_css_unresolved: 'थीम CSS के {0} में अभी भी टेम्पलेट प्लेसहोल्डर या रंग बनाने का निर्देश है। design.md पूरा करें, openyida sample yida-design app-theme --design-file <design.md> --output <app-theme.css> चलाएँ, फिर बनी हुई फ़ाइल अपलोड करें। केवल PRIMARY_COLOR बदलना पर्याप्त नहीं है।',
@@ -793,6 +794,7 @@ module.exports = {
     no_login: '  ❌ Unable to get valid login credentials'
   },
   create_form: {
+    create_readback_mismatch: 'The created form does not contain all requested fields. Recover this existing form ID; do not create another form.',
     divider_type_invalid: 'असमर्थित विभाजक शैली: {0}। समर्थित मान: {1}',
     batch_invalid: 'अमान्य फ़ॉर्म बैच; त्रुटि विवरण देखें',
     create_title: '  yida-create-form-page - Yida Form Page Creation Tool',
@@ -948,6 +950,7 @@ module.exports = {
     failed: '  ❌ निर्माण विफल: {0}'
   },
   common: {
+    auth_identity_changed: 'Authentication identity changed during preflight; no write was issued.',
     http_status: '  HTTP status: {0}',
     http_response: '  HTTP response: {0}',
     response_body: '  Response body: {0}',
