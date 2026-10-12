@@ -70,3 +70,8 @@ test('Plan patch, shared design validation and Fast theme generation enforce the
     expect(() => applyDesignTokens(before[4], invalid)).toThrow(/ICON_CONTRAST_LOW/);
   } finally {fs.rmSync(dir, { recursive: true, force: true });}
 });
+
+
+test.each([undefined, {}, { library: 'lucide-react', mappings: {} }])('icon color pairs are optional for %j', iconSystem => {
+  expect(validateIconContrast(iconSystem, {})).toEqual([]);
+});

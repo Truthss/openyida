@@ -15,19 +15,13 @@ const PYTHON = [['python3', []], ['python', []], ['py', ['-3']]].find(([command,
   return !result.error && result.status === 0 && match && Number(match[1]) === 3 && Number(match[2]) >= 9;
 });
 
-test('shipped themes retain a project color placeholder or a concrete default palette and declare selected-item shadows', () => {
+test('explicit selected-item shadows stay paired without requiring every theme to declare one', () => {
   const index = JSON.parse(fs.readFileSync(path.join(THEMES, 'index.json'), 'utf8'));
   for (const theme of index.themes) {
     const source = fs.readFileSync(path.join(SKILL, theme.templatePath), 'utf8');
-    expect(source).not.toMatch(/(?:无品牌色|没有品牌色)[^。\n]*(?:默认[^。\n]*(?:蓝色|冷色|纯黑)|(?:蓝色|冷色|纯黑)[^。\n]*默认)/);
-    if (theme.themeId === 'app-platinum') {
-      expect(source).toContain('"--color-brand1-6": "#897253"');
-    } else {
-      expect(source).toContain('{{PRIMARY_COLOR}}');
-    }
     const shadow = /"--pod-nav-menu-item-selected-shadow":\s*"([^"]+)"/.exec(source);
     const css = fs.readFileSync(path.join(SKILL, theme.cssTemplatePath), 'utf8');
-    expect(css).toContain(`--pod-nav-menu-item-selected-shadow: ${shadow ? shadow[1] : 'none'};`);
+    if (shadow) {expect(css).toContain(`--pod-nav-menu-item-selected-shadow: ${shadow[1]};`);}
   }
 });
 
@@ -134,8 +128,6 @@ test.each([
   ['malformed token value', source => source.replace('"--s-5": 20px', '"--s-5": [20px, 22px]'), '仅支持映射和非空 CSS 标量'],
   ['renamed token', source => source.replace(/"--s-5":/g, '"--S-5":'), '无效 Token 声明'],
   ['token reference cycle', source => source.replace(/("--color-line1-1": )"[^"\n]+"/, '$1"var(--color-line1-2)"').replace(/("--color-line1-2": )"[^"\n]+"/, '$1"var(--color-line1-1)"'), '变量循环引用'],
-  ['primary seed', source => source.replace('"--color-brand1-6": "{{PRIMARY_COLOR}}"', '"--color-brand1-6": "#123456"'), '必须使用项目主色占位符'],
-  ['brand derivative', source => source.replace(/("--color-brand1-1": )"[^"]+"/, '$1"#123456"'), '必须与 --color-brand1-6 同源'],
   ['page bridge', source => source.replace('"--oyd-page-bg": "var(--pod-page-bg-color)"', '"--oyd-page-bg": "#000000"'), '必须继承或等于'],
   ['missing section', source => source.replace('## 4. 特色表达配方', '## 4. 其他'), 'V2 五个章节'],
   ['unknown placeholder', source => source + '\n{{UNKNOWN_VALUE}}\n', '未知'],
@@ -206,12 +198,12 @@ test.each(['design.md', 'app_theme.css', 'form-layout.json'])('validator rejects
   });
 });
 
-test.each(['--color-brand1-1', '--color-brand1-6'])('validator rejects a fixed CSS template brand color: %s', name => {
+test.each(['--color-brand1-1', '--color-brand1-6'])('validator rejects a CSS brand declaration that conflicts with its own design: %s', name => {
   withFixture(({ skill, template }) => {
     const cssFile = path.join(path.dirname(template), 'app_theme.css');
     const css = fs.readFileSync(cssFile, 'utf8').replace(new RegExp(`(${name}: )[^;]+;`), '$1#123456;');
     fs.writeFileSync(cssFile, css);
-    expect(validate(skill).stdout).toContain(`${name} 必须保留设计中的品牌配色或项目颜色占位`);
+    expect(validate(skill).stdout).toContain(`${name} 与 design.md 的声明不一致`);
   });
 });
 
@@ -255,8 +247,6 @@ test('check:skills rejects a missing public CSS root closure', () => {
 
 
 test.each([
-  ['default color mismatch', source => source.replace('themeColor: "#897253"', 'themeColor: "#123456"'), '默认主色与 themeProfile.themeColor 不一致'],
-  ['incomplete default palette', source => source.replace('"--color-brand1-9": "#755E41"', '"--color-brand1-9": "invalid"'), '默认品牌色阶必须包含完整 HEX 色值'],
   ['duplicate sequence property', source => source.replace('- name: "default"', '- name: "default"\n      name: "duplicate"'), '重复定义 name'],
 ])('default palette validation rejects %s', (_name, change, expected) => {
   withFixture(({ skill, template, original }) => {
@@ -270,6 +260,29 @@ test('default palette CSS must remain paired with the design palette', () => {
   withFixture(({ skill, template }) => {
     const file = path.join(path.dirname(template), 'app_theme.css');
     fs.writeFileSync(file, fs.readFileSync(file, 'utf8').replace('--color-brand1-6: #897253;', '--color-brand1-6: #123456;'));
-    expect(validate(skill).stdout).toContain('--color-brand1-6 必须保留设计中的品牌配色或项目颜色占位');
+    expect(validate(skill).stdout).toContain('--color-brand1-6 与 design.md 的声明不一致');
   }, 'app-platinum');
+});
+
+
+test.each(['#123456', 'rgb(18, 52, 86)', 'var(--color-text1-4)'])(
+  'a theme may use fixed, functional or referenced brand colors without a special theme ID: %s', value => {
+    withFixture(({ skill, template, original }) => {
+      const cssFile = path.join(path.dirname(template), 'app_theme.css');
+      const design = original.replace(/("--color-brand1-[0-9]+": )"[^"\n]+"/g, `$1"${value}"`)
+        .replaceAll('{{PRIMARY_COLOR}}', value).replaceAll('{{COLOR_SOURCE}}', '模板配色');
+      const css = fs.readFileSync(cssFile, 'utf8').replace(/(--color-brand1-[0-9]+: )[^;\n]+;/g, `$1${value};`);
+      fs.writeFileSync(template, design);
+      fs.writeFileSync(cssFile, css);
+      expect(validate(skill).stdout.trim()).toBe('主题索引与完整 design.md 模板校验通过。');
+    });
+  });
+
+test('a template may inherit a platform brand slot without declaring the complete palette', () => {
+  withFixture(({ skill, template, original }) => {
+    const cssFile = path.join(path.dirname(template), 'app_theme.css');
+    fs.writeFileSync(template, original.replace(/^.*"--color-brand1-9":.*\n/m, ''));
+    fs.writeFileSync(cssFile, fs.readFileSync(cssFile, 'utf8').replace(/^.*--color-brand1-9:.*\n/m, ''));
+    expect(validate(skill).status).toBe(0);
+  });
 });

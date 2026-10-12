@@ -102,11 +102,6 @@ def parse_frontmatter(text: str) -> dict:
     return root
 
 
-def has_default_palette(frontmatter: dict) -> bool:
-    profile = frontmatter.get("themeProfile", {})
-    return profile.get("themeColorSource") == "theme-default" and bool(re.fullmatch(r"#[0-9a-fA-F]{6}", profile.get("themeColor", "")))
-
-
 def collect_tokens(node: object, label: str, errors: list[str]) -> dict[str, str]:
     tokens: dict[str, str] = {}
     if not isinstance(node, dict):
@@ -132,7 +127,7 @@ def collect_tokens(node: object, label: str, errors: list[str]) -> dict[str, str
 
 def validate_tokens(frontmatter: dict, text: str, label: str, contract: dict, errors: list[str]) -> None:
     groups = contract["groups"]
-    basic_tokens = {name for names in groups.values() for name in names}
+    basic_tokens = {name for names in groups.values() for name in names if not name.startswith("--color-brand1-")}
     tokens = frontmatter.get("tokens")
     if not isinstance(tokens, dict) or set(tokens) != {"application-global", "custom-page"}:
         errors.append(f"{label} tokens 必须包含 application-global 和 custom-page 两层")
@@ -148,15 +143,6 @@ def validate_tokens(frontmatter: dict, text: str, label: str, contract: dict, er
     for name, value in contract["fixedValues"].items():
         if name in global_tokens and global_tokens[name] != str(value):
             errors.append(f"{label} {name} 应使用固定值 {value}")
-    fixed_palette = has_default_palette(frontmatter)
-    if fixed_palette:
-        for slot in (1, 2, 3, 5, 6, 9, 10):
-            if not re.fullmatch(r"#[0-9a-fA-F]{6}", global_tokens.get(f"--color-brand1-{slot}", "")):
-                errors.append(f"{label} 默认品牌色阶必须包含完整 HEX 色值")
-        if global_tokens.get("--color-brand1-6") != frontmatter["themeProfile"]["themeColor"]:
-            errors.append(f"{label} 默认主色与 themeProfile.themeColor 不一致")
-    elif global_tokens.get("--color-brand1-6") != "{{PRIMARY_COLOR}}":
-        errors.append(f"{label} --color-brand1-6 必须使用项目主色占位符")
     if "--oyd-page-bg" in custom_tokens and custom_tokens["--oyd-page-bg"] not in {"var(--pod-page-bg-color)", "transparent", "rgba(255, 255, 255, 0)", global_tokens.get("--pod-page-bg-color")}:
         errors.append(f"{label} --oyd-page-bg 必须继承或等于 --pod-page-bg-color，或使用透明底")
 
@@ -185,9 +171,6 @@ def validate_tokens(frontmatter: dict, text: str, label: str, contract: dict, er
 
     for name in declared:
         visit(name)
-    for name in global_tokens:
-        if not fixed_palette and name.startswith("--color-brand1-") and name != "--color-brand1-6" and "--color-brand1-6" not in dependencies[name]:
-            errors.append(f"{label} {name} 必须与 --color-brand1-6 同源")
 
 
 def validate(skill_root: Path) -> list[str]:
@@ -285,20 +268,19 @@ def validate(skill_root: Path) -> list[str]:
                 errors.append(f"{label} styleSummary 的导航明暗与主题模板 navTheme 不一致")
             if theme.get("navTheme") != nav_theme:
                 errors.append(f"{label} navTheme 与主题模板不一致")
-        if has_default_palette(frontmatter):
-            colors = collect_tokens(frontmatter.get("tokens", {}).get("application-global", {}), template_path, errors)
-            checks = [(f"--color-brand1-{slot}", re.escape(colors.get(f"--color-brand1-{slot}", ""))) for slot in (1, 2, 3, 5, 6, 9, 10)]
-        else:
-            checks = [("--color-brand1-6", r"\{\{PRIMARY_COLOR\}\}"), ("--color-brand1-1", r"<生成实际色值：--color-brand1-6 [^;\n]+>")]
-        for name, pattern in checks:
-            if not re.search(r"^\s*" + re.escape(name) + r":\s*" + pattern + r";", css, re.M):
-                errors.append(f"{label} app_theme.css {name} 必须保留设计中的品牌配色或项目颜色占位")
+        # Validate authored pairs, not a universal palette shape or color formula.
+        colors = collect_tokens(frontmatter.get("tokens", {}).get("application-global", {}), template_path, errors)
+        css_names = set(re.findall(r"^\s*(--[\w-]+)\s*:", css, re.M))
+        for name, value in colors.items():
+            if name.startswith("--color-brand1-") and name in css_names:
+                if not re.search(r"^\s*" + re.escape(name) + r":\s*" + re.escape(value) + r";", css, re.M):
+                    errors.append(f"{label} app_theme.css {name} 与 design.md 的声明不一致")
         validate_tokens(frontmatter, text, template_path, contract, errors)
         headings = re.findall(r"^## (.+)$", text, re.M)
         if headings != list(REQUIRED_HEADINGS):
             errors.append(f"{template_path} 必须依次包含 V2 五个章节")
         placeholders = set(re.findall(r"\{\{([A-Z0-9_]+)\}\}", text))
-        required = REQUIRED_PLACEHOLDERS - {"PRIMARY_COLOR", "COLOR_SOURCE"} if has_default_palette(frontmatter) else REQUIRED_PLACEHOLDERS
+        required = REQUIRED_PLACEHOLDERS - {"PRIMARY_COLOR", "COLOR_SOURCE"}
         if not required <= placeholders or placeholders - REQUIRED_PLACEHOLDERS:
             errors.append(f"{template_path} 项目占位符不符合 V2 契约：缺少 {sorted(required - placeholders)}，未知 {sorted(placeholders - REQUIRED_PLACEHOLDERS)}")
         if TOKEN_SUFFIX_SHORTHAND.search(text) or TOKEN_WILDCARD.search(text):

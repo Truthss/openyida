@@ -141,7 +141,7 @@ Fast 写入 `design.md`；Plan 写入 `visualStyle.forUser.iconSystem.colorPairs
 
 用户确认的整体氛围高于模板默认灰阶。根据品牌和已确认方向协调页面、卡片、导航、填充、边界和交互，同时保留文字可读性和独立状态语义；不能只改按钮，也不能统一抹掉主题原有层次与材质。
 
-Fast 与 Plan 使用同一主题的颜色推导、组件规则和页面设计标准。主色按主题公式推导，其余变量沿用主题；项目差异直接写入 token。Plan 输入使用 `visualStyle.tokens`，Fast 写入 `design.md.tokens`，最终设计相同。导航差异 token（未声明项沿用平台绑定） 沿用主题模板，并合入明确的项目差异；`navigationStyle.tone` 表示导航明暗，具体外观由这组 token 表达。导航明暗与内容画布分别设计。用户明确保留中性参考或只改强调色时尊重该范围。`--pod-nav-menu-item-selected-shadow` 作为方向无关的基础外观 Token 独立透传，`none` 表示关闭；CLI 不根据导航明暗生成替代配色。
+Fast 与 Plan 使用同一主题的颜色推导、组件规则和页面设计标准。只计算模板中已有的主色公式，固定值与变量引用按原设计保留；项目差异直接写入 token，不强制其他色阶跟随主色。Plan 输入使用 `visualStyle.tokens`，Fast 写入 `design.md.tokens`，最终设计相同。导航差异 token（未声明项沿用平台绑定） 沿用主题模板，并合入明确的项目差异；`navigationStyle.tone` 表示导航明暗，具体外观由这组 token 表达。导航明暗与内容画布分别设计。用户明确保留中性参考或只改强调色时尊重该范围。`--pod-nav-menu-item-selected-shadow` 作为方向无关的基础外观 Token 独立透传，`none` 表示关闭；CLI 不根据导航明暗生成替代配色。
 
 圆角、padding、gap、密度、背景与卡片关系按选中主题和真实任务执行，通用参考值仅补未定义项。同色画布与面板可通过边界、共容器和留白建立层次；渐变、玻璃、阴影、纹理不互相强制绑定。需要动效时提供 reduced motion 降级，装饰不覆盖内容与操作。
 

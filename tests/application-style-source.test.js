@@ -5,7 +5,7 @@ const os = require('os');
 const path = require('path');
 const { build, cssTemplate } = require('../scripts/build-application-styles');
 const { loadThemeIndex, DESIGN_SKILL_ROOT, resolveThemeColors } = require('../lib/design-plan/themes');
-const { renderDesign } = require('../lib/design-plan/materialize');
+const { renderDesign, materialize } = require('../lib/design-plan/materialize');
 const { readDesignTokens, applyDesignTokens } = require('../lib/app/theme-from-design');
 const { catalog } = require('../lib/design-plan/init');
 const { exportApplicationStyle } = require('../lib/app/application-style');
@@ -21,11 +21,11 @@ test('strict audit reports and blocks main palette findings without recoloring',
 
 test.each(loadThemeIndex().themes)('$themeId resolves placeholders or preserves its complete default palette', theme => {
   const css = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.cssTemplatePath), 'utf8');
-  if (theme.themeId === 'app-platinum') {
-    expect(() => validateThemeCssContent(css)).not.toThrow();
+  const seededCss = css.replaceAll('{{PRIMARY_COLOR}}', '#345B49');
+  if (seededCss.includes('<生成实际色值：')) {
+    expect(() => validateThemeCssContent(seededCss)).toThrow(expect.objectContaining({ code: 'THEME_CSS_UNRESOLVED_TOKEN' }));
   } else {
-    expect(() => validateThemeCssContent(css.replaceAll('{{PRIMARY_COLOR}}', '#345B49')))
-      .toThrow(expect.objectContaining({ code: 'THEME_CSS_UNRESOLVED_TOKEN' }));
+    expect(() => validateThemeCssContent(seededCss)).not.toThrow();
   }
   const source = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8');
   const creative = theme.mode === 'creative' ? '\ncreativeDirection:\n  businessRationale: Daily operations\n  composition: Single workspace\n  typography: Clear labels\n  material: Flat surfaces\n  formLayout: Single column\n' : '';
@@ -180,4 +180,43 @@ test('Plan inherits the selected template icon rules unless the project supplies
   expect(parseDesignDocument(renderDesign(plan, { draft: true })).metadata.iconSystem).toEqual(template.metadata.iconSystem);
   plan.visualStyle.forUser.iconSystem = { library: 'lucide-react', mappings: { orders: 'Package' } };
   expect(parseDesignDocument(renderDesign(plan, { draft: true })).metadata.iconSystem).toEqual(plan.visualStyle.forUser.iconSystem);
+});
+
+
+test.each([true, false])('a partial design keeps CSS colors and rejects an incomplete final stylesheet (paired=%s)', paired => {
+  const theme = loadThemeIndex().themes.find(item => item.themeId === 'app-platinum');
+  const css = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.cssTemplatePath), 'utf8');
+  const design = '---\nnavTheme: light\ntokens:\n  "--color-brand1-6": "#897253"\n  "--pod-card-border-radius": "8px"\n---\n';
+  expect(readDesignTokens(design)).toEqual({ '--color-brand1-6': '#897253', '--pod-card-border-radius': '8px' });
+  const result = applyDesignTokens(css, design, undefined, { paired });
+  expect(result).toContain('--color-brand1-9: #755E41;');
+  expect(result).toContain('--pod-card-border-radius: 8px;');
+  expect(() => validateThemeCssContent(result)).not.toThrow();
+  const incomplete = css.replace(/^.*--color-brand1-9:.*\n/gm, '');
+  expect(() => applyDesignTokens(incomplete, design, undefined, { paired }))
+    .toThrow(expect.objectContaining({ code: 'THEME_BRAND_SCALE_INCOMPLETE' }));
+});
+
+test('Plan accepts an independently authored brand slot without recoloring other slots', () => {
+  const plan = JSON.parse(JSON.stringify(fixture));
+  const theme = loadThemeIndex().themes.find(item => item.themeId === 'app-platinum');
+  plan.visualStyle.forUser.selectedTheme = { themeId: theme.themeId, source: 'user_selected', templatePath: theme.templatePath };
+  plan.visualStyle.forUser.colorStrategy.primaryColor = '#897253';
+  plan.visualStyle.tokens = { '--color-brand1-1': '#765F40' };
+  const design = renderDesign(plan, { draft: true });
+  expect(readDesignTokens(design)).toMatchObject({ '--color-brand1-1': '#765F40', '--color-brand1-6': '#897253', '--color-brand1-9': '#755E41' });
+  const paired = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.cssTemplatePath), 'utf8');
+  const css = applyDesignTokens(paired, design, undefined, { paired: true });
+  expect(css).toContain('--color-brand1-1: #765F40;');
+  expect(css).toContain('--color-brand1-9: #755E41;');
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'oyd-independent-palette-'));
+  try {
+    const file = path.join(directory, 'build-plan.json');
+    fs.writeFileSync(file, JSON.stringify(plan));
+    const output = materialize(file);
+    const generated = fs.readFileSync(output.outputs.theme, 'utf8');
+    expect(generated).toContain('--color-brand1-1: #765F40;');
+    expect(generated).toContain('--color-brand1-9: #755E41;');
+  } finally {fs.rmSync(directory, { recursive: true, force: true });}
+
 });
