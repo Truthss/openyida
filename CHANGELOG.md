@@ -10,6 +10,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 海外版宜搭暂不适用当前 OAuth token 登录与创建应用链路；如需在海外版宜搭创建应用，请使用 `2026.7.14-2` 以前的版本，例如 `npm install -g openyida@2026.7.13`。
 
+## [2026.10.12-beta.3] - 2026-10-12
+
+### 修复
+
+- 创建或新增单选字段时，将选项的默认选中值同步到表单运行态默认值。
+- 继续使用签名 Go runtime `0.1.0-beta.6`。
+
+## [2026.10.12-beta.2] - 2026-10-12
+
+### 修复
+
+- 精确依赖签名 Go runtime `0.1.0-beta.6`，修复 Windows Codex 工作目录新增 scoped writable-root 权限后第二轮无法启动的问题。
+- runtime catalog 保留原公共公钥，并加入本批 beta 的新公共签名公钥。
+
 ## [2026.10.12-beta.1] - 2026-10-12
 
 ### 更新
