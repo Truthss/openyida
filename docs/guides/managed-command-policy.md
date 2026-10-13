@@ -26,7 +26,7 @@
 | `actions` | 主命令包含不同范围的子操作 | 按子操作逐项声明；未声明的子操作拒绝，不回退到允许 |
 | `denied` | 尚不支持或不适用于受管任务 | 提供稳定 reason，例如 scope_not_audited；普通 CLI 不受影响 |
 
-命令名与参数按规范路径最长匹配。别名放在同一个命令定义的 `aliases` 中，复用同一策略。`appPosition`、`formUuidPosition`、`sourcePosition` 均相对于主命令之后的完整参数数组，包括子操作。
+命令名与参数按规范路径最长匹配。别名放在同一个命令定义的 `aliases` 中，复用同一策略。`appPosition`、`formUuidPosition`、`sourcePosition` 均相对于主命令之后的完整参数数组，包括子操作。命令通过命名参数指定表单时，mutation 使用 `formUuidOption`（如 `--form-uuid`），与 `formUuidPosition` 二选一；只提取单个明确参数，不推断资源。
 
 ## 新增命令
 
