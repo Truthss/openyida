@@ -27,6 +27,18 @@ describe('content-addressed complete local tool bundle', () => {
     expect(fs.readdirSync(path.join(fixture.config.stateDir, 'bundles'))).toEqual([result.config.bundle.id]);
     expect(fs.existsSync(path.join(fixture.config.stateDir, 'bundle-references'))).toBe(false); // Go owns references.
   });
+  test('explicit development bundles do not consult the production platform gate', () => {
+    jest.isolateModules(() => {
+      const runtimePackage = require('../lib/agent/runtime-package');
+      const platformGate = jest.spyOn(runtimePackage, 'platformPackageName').mockImplementation(() => {
+        throw new Error('production platform unavailable');
+      });
+      const { materializeBundle: materializeDevelopment } = require('../lib/agent/frozen-bundle');
+      const frozen = materializeDevelopment(fixture.runtime, fixture.config);
+      expect(verifyBundle(frozen.config.bundle.root, frozen.config.bundle.id).runtime.development).toBe(true);
+      expect(platformGate).not.toHaveBeenCalled();
+    });
+  });
   test('old bundle survives npm-like upgrade, uninstall and a new bundle publication', () => {
     const old = freeze();
     fs.writeFileSync(path.join(root, 'package/node_modules/fixture-b/index.js'), "module.exports='b-v2';\n");
