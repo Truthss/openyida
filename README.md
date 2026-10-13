@@ -201,25 +201,6 @@ openyida/
 
 For a user-facing list of supported features and matching CLI commands, see [OpenYida 功能完整列表](https://demo.aliwork.com/o/openyida/helpCenter?openyidaPath=capabilities).
 
-### Style Selection and Optional Previews
-
-Style choices use a name and a short explanation, grouped with the initial requirements questions when ready. Ask “show me these styles” or “show a Sage example” to see reference images. Choose through the conversation; the preview has no second confirmation step.
-
-Previews show only theme titles and available images: four to six cards per row on wide screens, fewer on narrow screens, with no row limit. Themes without images keep their titles. Pop art requires an explicit request or a primarily showcase-oriented task. Viewing your chosen style does not reopen selection.
-
-<details>
-<summary>Developers: generate a theme preview with the CLI</summary>
-
-```bash
-openyida sample yida-design theme-preview --theme-ids app-sage,app-teal,app-terminal,app-platinum --output .cache/theme-preview.html --json
-```
-
-The command creates read-only HTML and refuses to overwrite an existing file. Open it with the host's preview tool; ordinary chat may not render HTML. QwenWork can instead run `sample yida-design theme-selector --json` and pass the returned relative `widget_path` to `qoder_show_widget`. Neither preview submits a choice; agents collect answers through `ask_human`.
-
-Previewing pop art requires `--pop-art-context explicit-request` or `showcase`, based on actual task evidence. “Show all styles” does not qualify.
-
-</details>
-
 ### Application and Form Management
 
 ```bash

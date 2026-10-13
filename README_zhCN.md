@@ -221,25 +221,6 @@ openyida compile pages/src/employee-upload.oyd.jsx
 openyida publish pages/src/employee-upload.oyd.jsx APP_XXX FORM_XXX
 ```
 
-## 风格选择与按需预览
-
-选风格时默认看到名称和一句适用说明，与前期需求问答一起确认。想看图片时，可以说“给我看看这些风格的效果”或“展示自然绿意的示例”。效果图只供参考，选择仍在对话问答中完成，不需要在预览页再次确认。
-
-预览只显示风格标题和已有示例图，宽屏每行 4–6 款，行数不限，窄屏减少列数。没有参考图的风格保留标题。波普仅在明确指定或主要任务偏展示时出现；查看已选风格不会重新发起选型。
-
-<details>
-<summary>开发者：生成效果预览的 CLI 命令</summary>
-
-```bash
-openyida sample yida-design theme-preview --theme-ids app-sage,app-teal,app-terminal,app-platinum --output .cache/theme-preview.html --json
-```
-
-命令生成只读 HTML，不覆盖已有文件。使用当前工具支持的预览方式打开；普通聊天不一定能渲染 HTML。千问可运行 `sample yida-design theme-selector --json`，将返回的相对 `widget_path` 传给 `qoder_show_widget`。两条路径都不提交选择，Agent 统一通过 `ask_human` 收集回答。
-
-预览波普时，必须按真实需求传入 `--pop-art-context explicit-request` 或 `showcase`；“查看全部”不构成开放依据。
-
-</details>
-
 ## 表单、流程、数据与报表
 
 ### 表单建模
