@@ -1,4 +1,4 @@
-# Data Format Guide
+# 表单数据格式指南
 
 ## 基础规则
 
@@ -6,7 +6,7 @@
 - `formDataJson` 传字符串，不直接传对象
 - `updateFormDataJson` 传字符串，不直接传对象
 - `dynamicOrder` 传字符串，不直接传对象
-- 保存、更新和测试数据中，`DateField` 传毫秒时间戳数字，`CascadeDateField` 传毫秒时间戳数组；不要传日期字符串
+- 保存、更新和测试数据中，`DateField` 传毫秒时间戳数字，`CascadeDateField` 传开始、结束毫秒时间戳数组，空端点传 `""`
 
 ## 查询条件格式
 
@@ -15,9 +15,9 @@
   {
     "key": "字段ID",
     "value": "搜索值",
-    "type": "字段类型",
+    "type": "查询类型，见下表",
     "operator": "操作符",
-    "componentName": "组件名称"
+    "componentName": "组件英文名，见下表"
   }
 ]
 ```
@@ -27,6 +27,25 @@
 ```bash
 --search-json '[{"key":"textField_xxx","value":"测试","type":"TEXT","operator":"eq","componentName":"TextField"}]'
 ```
+
+## 常见字段值格式
+
+先用 `get-schema --field-map-json` 获取真实字段 ID 填入 `key`，再按表填写 `componentName`、`type`、`value` 和括号中的 `operator`。`type` 是查询类型；保存 / 更新只传字段值。多条件按 AND 组合，完整操作符见[查询条件指南](../../../references/query-condition-guide.md)。
+
+| 组件类型（`componentName`） | 查询 `type` | 查询 `value`（操作符） | 保存 / 更新值 |
+| --- | --- | --- | --- |
+| `TextField` / `TextareaField` | `TEXT` | `"文本"`（eq / like） | `"文本"` |
+| `NumberField` | `DOUBLE` | `1`（eq / gt / ge / lt / le）或 `[1,10]`（between） | `1` |
+| `RateField` | `DOUBLE` | `3`（eq / gt / ge / lt / le）或 `[2,4]`（between） | `3` |
+| `RadioField` / `SelectField` | `ARRAY` | `"选项值"`（eq）或 `["选项值"]`（contains） | `"选项值"` |
+| `CheckboxField` / `MultiSelectField` | `ARRAY` | `["选项值"]`（contains） | `["选项值一","选项值二"]` |
+| `DateField` | `DOUBLE` | 毫秒时间戳数字（eq / gt / ge / lt / le）或 `[开始毫秒时间戳,结束毫秒时间戳]`（between） | 毫秒时间戳数字，如 `1719705600000` |
+| `CascadeDateField` | `DOUBLE` | `[[开始下限,开始上限],[结束下限,结束上限]]`，省略 operator | `[开始毫秒时间戳,结束毫秒时间戳]`；空端点用 `""` |
+| `EmployeeField` | `STRING` | `"userId"`（eq）或 `["userId"]`（contains） | `["userId"]` |
+| `DepartmentSelectField` | `ARRAY` | `1123456` 或 `["1123456"]` | `["1123456"]` |
+| `CitySelectField` | `STRING` | `[省ID,市ID,区ID]` | `[省ID,市ID,区ID]` |
+| `TableField` | `TEXT` | `"关键词"`（contains）；子字段条件带 `parentId` | `[{"textField_xxx":"值"}]` |
+| `AssociationFormField` | — | 先查询关联目标表，再按业务关系定位记录 | `[{"appType":"xxx","formUuid":"xxx","formType":"receipt","instanceId":"xxx","title":"关联记录标题"}]` |
 
 ## 保存 / 更新格式
 
@@ -53,20 +72,43 @@
 {"numberField_1ac":"+"}
 ```
 
-## 常见字段值格式
+## 为空与不为空（is / is_not）
 
-| 组件类型 | 查询格式 | 保存 / 更新格式 |
-| --- | --- | --- |
-| 单行 / 多行文本 | `"文本"` | `"文本"` |
-| 数字 | `["1","10"]` 或单值 | `1` |
-| 单选 | `"选项一"` | `"选项一"` |
-| 多选 | `["选项一"]` | `["选项一","选项二"]` |
-| 日期 | `[开始毫秒时间戳,结束毫秒时间戳]` | `13 位毫秒时间戳` |
-| 成员 | `["userId"]` | `["userId"]` |
-| 部门 | `1123456` 或 `["1123456"]` | `["1123456"]` |
-| 城市 | `[省ID,市ID,区ID]` | `[省ID,市ID,区ID]` |
-| 子表单 | `"模糊搜索文本"` | `[{"textField_xxx":"值"}]` |
-| 关联表单 | 不支持直接查询 | `[{"appType":"xxx","formUuid":"xxx","formType":"receipt","instanceId":"xxx","title":"关联记录标题"}]` |
+判断字段有无值时，`is` 与 `is_not` 的 `value` 都固定传 `""`；`type` 仍使用字段的查询类型。例如 `DateField` 使用 `DOUBLE`。这里的空字符串是查询参数，保存格式仍按上表填写。
+
+日期为空：
+
+```bash
+openyida data query form APP_xxx FORM-xxx --search-json '[{"key":"dateField_xxx","componentName":"DateField","type":"DOUBLE","operator":"is","value":""}]'
+```
+
+日期不为空：
+
+```bash
+openyida data query form APP_xxx FORM-xxx --search-json '[{"key":"dateField_xxx","componentName":"DateField","type":"DOUBLE","operator":"is_not","value":""}]'
+```
+
+日期零时间戳和数字 `0` 属于有值，`is_not` 会保留这些记录。页面调用将条件数组传给 `JSON.stringify()`，再赋给 `searchFieldJson`。
+
+日期区间两端均未填，用两个端点条件按 AND 组合：
+
+```json
+[
+  {"key":"cascadeDateField_xxx.start","componentName":"DateField","type":"DOUBLE","operator":"is","value":""},
+  {"key":"cascadeDateField_xxx.end","componentName":"DateField","type":"DOUBLE","operator":"is","value":""}
+]
+```
+
+日期区间两端均已填：
+
+```json
+[
+  {"key":"cascadeDateField_xxx.start","componentName":"DateField","type":"DOUBLE","operator":"is_not","value":""},
+  {"key":"cascadeDateField_xxx.end","componentName":"DateField","type":"DOUBLE","operator":"is_not","value":""}
+]
+```
+
+“任一端已填”使用已填端点数 `gt 0`；多选未选择、子表无行分别按选项数、行数查询。计数与原值同步维护，具体见查询指南。
 
 ## 日期字段（DateField / CascadeDateField）
 
@@ -79,13 +121,7 @@
 }
 ```
 
-不要写成日期字符串：
-
-```json
-{
-  "dateField_xxx": "2024-06-30"
-}
-```
+`DateField` 的 `0` 是有效时间戳。日期区间部分填写时，空端点使用 `""`，例如 `[1719705600000, ""]`。
 
 先按业务时区转换，再将数字填入 `--data-json` 或 `--data-file`。例如业务使用北京时间，`2026-10-18` 当天零点应写为 `1792252800000`：
 
@@ -93,7 +129,7 @@
 new Date('2026-10-18T00:00:00+08:00').getTime() // 1792252800000
 ```
 
-不要直接解析不带时区的日期，也不要把秒级时间戳当毫秒传入。收到“日期组件值的格式错误，必须为时间戳”时，检查字段值是否仍为 `YYYY-MM-DD`、`YYYY-MM-DD HH:mm:ss` 或 ISO 字符串；`--resolve-aliases` 不会转换日期值。
+时间统一按业务时区转换为毫秒。空值查询使用 `is` / `is_not`；区间按 `.start` / `.end` 查询，完整写法见[查询条件指南](../../../references/query-condition-guide.md)。新增字段写入历史记录时使用 `--use-latest-version y`，再回读确认实际值。
 
 ## 关联表单字段（AssociationFormField）
 

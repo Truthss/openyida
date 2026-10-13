@@ -101,7 +101,7 @@ module.exports = {
     cmd_get_form_config: '查询表单配置',
     group_data: '資料 & 權限',
     cmd_data: '統一資料管理（表單/流程/任務/子表單）',
-    data_notes: "DateField 傳毫秒時間戳數字；CascadeDateField 傳毫秒時間戳陣列。先按業務時區轉換，不接受日期字串或秒級時間戳。--resolve-aliases 只轉換欄位名稱。",
+    data_notes: "儲存日期按業務時區轉毫秒：DateField 數字，CascadeDateField 陣列；查詢 is/is_not 的 value 為 \"\"。--resolve-aliases 支援欄位、區間端點及 parentId 別名。",
     cmd_task_center: '全域任務中心（待辦/已處理/抄送等）',
     cmd_basic_info: '查詢組織基本資訊、容量、額度和域名設定',
     cmd_read_dingtalk_doc: '取得釘釘文件的 Markdown 內容',

@@ -186,6 +186,25 @@ describe('run() 未登录场景', () => {
 // ── query form 场景 ───────────────────────────────────────────────────
 
 describe('run() query form', () => {
+  const guide = fs.readFileSync(path.join(__dirname, '../yida-skills/references/query-condition-guide.md'), 'utf8');
+  const guideConditions = [...guide.matchAll(/```json\n([\s\S]*?)\n```/g)]
+    .map(match => JSON.parse(match[1]))
+    .filter(conditions => conditions.every(condition => ['TEXT', 'DOUBLE', 'STRING', 'ARRAY'].includes(condition.type)));
+
+  test.each(guideConditions.map((conditions, index) => [index + 1, conditions]))('preserves query guide example %s and server pagination in the API request', async (index, conditions) => {
+    utils.requestWithAutoLogin.mockImplementation((fn, session) => fn(session));
+    utils.httpGet.mockResolvedValueOnce({ success: true, content: { totalCount: 0, data: [] } });
+    const log = jest.spyOn(console, 'log').mockImplementation(() => {});
+    try {
+      await run(['query', 'form', 'APP_XXX', 'FORM-XXX', '--page', '2', '--size', '7', '--search-json', JSON.stringify(conditions)]);
+      const [, endpoint, params] = utils.httpGet.mock.calls[0];
+      expect(endpoint).toBe('/dingtalk/web/APP_XXX/v1/form/searchFormDatas.json');
+      expect(params).toMatchObject({ currentPage: '2', pageSize: '7' });
+      expect(JSON.parse(params.searchFieldJson)).toEqual(conditions);
+    } finally {
+      log.mockRestore();
+    }
+  });
   test('查询成功时输出 JSON 结果', async () => {
     utils.requestWithAutoLogin.mockResolvedValue({
       success: true,
@@ -320,6 +339,45 @@ describe('run() query form', () => {
       run(['query', 'form', 'APP_XXX', 'FORM-XXX', '--search-json', 'not-json']),
       'JSON'
     );
+  });
+
+  test('查询解析区间端点与子表父字段别名，并保留空值及零值', async () => {
+    const schema = buildAliasSchema();
+    const page = schema.content.pages[0];
+    page.componentAlias.items.push({ fieldId: 'cascadeDateField_period', alias: 'period' });
+    page.componentsTree[0].children[0].children.push({
+      componentName: 'CascadeDateField', props: { fieldId: 'cascadeDateField_period' },
+    });
+    utils.requestWithAutoLogin.mockImplementation((fn, session) => fn(session));
+    utils.httpGet.mockResolvedValueOnce(schema).mockResolvedValueOnce({ success: true, content: { totalCount: 0, data: [] } });
+    const log = jest.spyOn(console, 'log').mockImplementation(() => {});
+    try {
+      const conditions = [
+        { key: 'period.start', componentName: 'DateField', type: 'DOUBLE', operator: 'is', value: '' },
+        { key: 'period.end', componentName: 'DateField', type: 'DOUBLE', operator: 'is_not', value: '' },
+        { key: 'amount', parentId: 'items', operator: 'eq', value: 0 },
+      ];
+      await run(['query', 'form', 'APP_XXX', 'FORM-XXX', '--search-json', JSON.stringify(conditions), '--resolve-aliases']);
+      expect(JSON.parse(utils.httpGet.mock.calls[1][2].searchFieldJson)).toEqual([
+        { ...conditions[0], key: 'cascadeDateField_period.start' },
+        { ...conditions[1], key: 'cascadeDateField_period.end' },
+        { ...conditions[2], key: 'numberField_amount', parentId: 'tableField_items' },
+      ]);
+    } finally {
+      log.mockRestore();
+    }
+  });
+
+  test('查询端点解析保留普通字段的点号与字面值', async () => {
+    utils.requestWithAutoLogin.mockImplementation((fn, session) => fn(session));
+    utils.httpGet.mockResolvedValueOnce(buildAliasSchema()).mockResolvedValueOnce({ success: true, content: { totalCount: 0, data: [] } });
+    const log = jest.spyOn(console, 'log').mockImplementation(() => {});
+    try {
+      await run(['query', 'form', 'APP_XXX', 'FORM-XXX', '--search-json', '[{"key":"phone.start","value":"items"}]', '--resolve-aliases']);
+      expect(JSON.parse(utils.httpGet.mock.calls[1][2].searchFieldJson)).toEqual([{ key: 'phone.start', value: 'items' }]);
+    } finally {
+      log.mockRestore();
+    }
   });
 
   test('传入 --search-file 时读取文件作为查询条件', async () => {

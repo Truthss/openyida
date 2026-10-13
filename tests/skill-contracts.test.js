@@ -28,6 +28,120 @@ function isSampleRoutingGuidanceFile(file) {
 }
 
 describe('OpenYida skill contracts', () => {
+  test('empty-value guides provide complete is and is_not examples with fixed empty values', () => {
+    for (const file of [
+      'yida-skills/references/query-condition-guide.md',
+      'yida-skills/skills/yida-data-management/SKILL.md',
+      'yida-skills/skills/yida-data-management/references/data-format-guide.md',
+    ]) {
+      const text = readSkill(file);
+      const json = [...text.matchAll(/```json\n([\s\S]*?)\n```/g)].map(match => JSON.parse(match[1])).filter(Array.isArray);
+      const cli = [...text.matchAll(/--search-json '(\[[^']*\])'/g)].map(match => JSON.parse(match[1]));
+      const conditions = json.concat(cli).flat();
+      for (const operator of ['is', 'is_not']) {
+        expect(conditions).toEqual(expect.arrayContaining([
+          expect.objectContaining({ key: 'dateField_xxx', componentName: 'DateField', type: 'DOUBLE', operator, value: '' }),
+        ]));
+      }
+      const emptyDates = conditions.filter(condition => condition.componentName === 'DateField' && ['is', 'is_not'].includes(condition.operator));
+      expect(emptyDates.every(condition => condition.value === '' && condition.type === 'DOUBLE')).toBe(true);
+      if (file.includes('yida-data-management')) {
+        for (const operator of ['is', 'is_not']) {
+          expect(json).toEqual(expect.arrayContaining([
+            [
+              { key: 'cascadeDateField_xxx.start', componentName: 'DateField', type: 'DOUBLE', operator, value: '' },
+              { key: 'cascadeDateField_xxx.end', componentName: 'DateField', type: 'DOUBLE', operator, value: '' },
+            ],
+          ]));
+        }
+      }
+    }
+  });
+
+  test('data format tables use component names and distinguish query values from saved dates', () => {
+    const tables = [
+      'yida-skills/skills/yida-data-management/SKILL.md',
+      'yida-skills/skills/yida-data-management/references/data-format-guide.md',
+    ].map(file => {
+      const text = readSkill(file);
+      const block = text.slice(text.indexOf('| 组件类型（`componentName`） |')).split('\n\n')[0];
+      const rows = block.split('\n').slice(2).map(line => line.split('|').slice(1, -1).map(cell => cell.trim()));
+      expect(rows.every(row => row.length === 4)).toBe(true);
+      expect(rows.every(row => /^`[A-Za-z]+Field`(?: \/ `[A-Za-z]+Field`)*$/.test(row[0]))).toBe(true);
+      const expectedTypes = { TextField: 'TEXT', TextareaField: 'TEXT', NumberField: 'DOUBLE', RateField: 'DOUBLE', DateField: 'DOUBLE', CascadeDateField: 'DOUBLE', RadioField: 'ARRAY', SelectField: 'ARRAY', CheckboxField: 'ARRAY', MultiSelectField: 'ARRAY', EmployeeField: 'STRING', DepartmentSelectField: 'ARRAY', CitySelectField: 'STRING', TableField: 'TEXT' };
+      for (const row of rows) {
+        for (const match of row[0].matchAll(/`([A-Za-z]+Field)`/g)) {
+          expect(row[1]).toBe(expectedTypes[match[1]] ? '`' + expectedTypes[match[1]] + '`' : '—');
+        }
+      }
+      const help = readSkill('lib/core/query-data.js');
+      const manifest = readSkill('lib/core/command-manifest.js');
+      const typeNote = help.match(/Each condition uses[^\n]+/)[0];
+      expect(manifest).toContain(typeNote);
+      for (const [component, type] of Object.entries(expectedTypes)) {
+        const group = typeNote.split(';').find(part => part.includes(component));
+        expect(group).toContain(type);
+      }
+      const date = rows.find(row => row[0] === '`DateField`');
+      const range = rows.find(row => row[0] === '`CascadeDateField`');
+      expect(date[2]).toContain('between');
+      expect(date[3]).toContain('毫秒时间戳数字');
+      expect(range[2]).toContain('[[开始下限,开始上限],[结束下限,结束上限]]');
+      expect(range[3]).toContain('[开始毫秒时间戳,结束毫秒时间戳]');
+      const table = rows.find(row => row[0] === '`TableField`');
+      expect(table[2]).toContain('contains');
+      expect(table[2]).toContain('parentId');
+      return rows;
+    });
+    expect(tables[0]).toEqual(tables[1]);
+  });
+
+  test('query guidance retains normal queries before empty-value special cases', () => {
+    const guide = readSkill('yida-skills/references/query-condition-guide.md');
+    const sections = ['## 基础格式', '## 组件与操作符速查', '## 按字段类型编写', '## 多条件组合查询（AND）', '## 为空 / 不为空'];
+    const positions = sections.map(section => guide.indexOf(section));
+    expect(positions.every(position => position >= 0)).toBe(true);
+    expect(positions).toEqual([...positions].sort((a, b) => a - b));
+    const examples = [...guide.matchAll(/```json\n([\s\S]*?)\n```/g)].map(match => JSON.parse(match[1]));
+    expect(examples.every(example => Array.isArray(example))).toBe(true);
+    const conditions = examples.flat();
+    for (const [componentName, operator] of [['RateField', 'between'], ['CascadeSelectField', 'eq'], ['TableField', 'contains'], ['TextField', 'eq'], ['DateField', 'gt'], ['DateField', 'is']]) {
+      expect(conditions).toEqual(expect.arrayContaining([expect.objectContaining({ componentName, operator })]));
+    }
+    expect(conditions).toEqual(expect.arrayContaining([expect.objectContaining({ parentId: 'tableField_xxx' })]));
+    expect(examples.some(example => example.length === 3 && example.some(condition => condition.componentName === 'DateField'))).toBe(true);
+  });
+
+  test('polling and empty-query routes agree across skills, machine index and installed root', () => {
+    const index = JSON.parse(readSkill('yida-skills/skills-index.json'));
+    const binding = index.skills.find(skill => skill.name === 'yida-canvas-data-binding');
+    const skill = readSkill('yida-skills/skills/yida-canvas-data-binding/SKILL.md');
+    const frontmatter = skill.match(/^---\n([\s\S]*?)\n---/)[1];
+    for (const signal of ['dataBinding', 'DataBridge', '数据桥', '页面显示 0 条但数据管理有数据', '轮询刷新列表或 KPI']) {
+      expect(frontmatter).toContain(signal);
+      expect(binding.positive_signals).toContain(signal);
+    }
+    expect(binding.command_ids).toEqual(expect.arrayContaining(['data', 'get-schema', 'sample']));
+    expect(index.route_groups.find(group => group.name === 'yida-skills/page').signals).toContain('轮询刷新列表或 KPI');
+    for (const file of ['yida-skills/SKILL.md', 'scripts/postinstall.js']) {
+      expect(readSkill(file)).toContain('轮询刷新列表或 KPI');
+    }
+    const sources = index.skills.find(entry => entry.name === 'yida-data-source-connectors');
+    expect(sources.positive_signals).toContain('已有 this.dataSourceMap');
+    expect(sources.negative_signals).toContain('YidaCodeCanvas');
+    expect(index.skills.find(entry => entry.name === 'yida-data-management').positive_signals).toContain('日期为空');
+    for (const name of ['yida-data-management', 'yida-canvas-data-binding', 'yida-data-source-connectors']) {
+      expect(readSkill('yida-skills/skills/' + name + '/SKILL.md')).toContain('query-condition-guide.md');
+    }
+  });
+
+  test('public theme guidance describes choices without publishing a total', () => {
+    for (const file of ['README.md', 'README_zhCN.md', 'CHANGELOG.md', 'yida-skills/skills/yida-design/templates/design-themes/README.md']) {
+      expect(readSkill(file)).not.toMatch(/\b\d+\s+(?:套(?:应用)?主题|个主题(?!运行时模块)|themes\b)/i);
+    }
+    expect(readSkill('yida-skills/skills/yida-design/SKILL.md')).toContain('不展示主题总套数');
+  });
+
   test('legacy theme upgrade routes directly to its independent application skill', () => {
     const index = JSON.parse(readSkill('yida-skills/skills-index.json'));
     const upgrade = index.skills.find(skill => skill.name === 'yida-upgrade-app-theme');

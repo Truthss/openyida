@@ -320,7 +320,7 @@ describe('CLI offline smoke', () => {
     expect(runOk(['data', 'create', '--help'])).toContain(data.notes[0]);
     const englishHelp = runOkWithEnv(['create-process', '--help'], { OPENYIDA_LANG: 'en' });
     expect(englishHelp).toContain('formTitle and fieldCount are null');
-    expect(runOkWithEnv(['data', '--help'], { OPENYIDA_LANG: 'en' })).toContain('CascadeDateField uses an array');
+    expect(runOkWithEnv(['data', '--help'], { OPENYIDA_LANG: 'en' })).toContain('CascadeDateField array');
     const { parseArgs } = require('../lib/process/create-process');
     expect(parseArgs(['APP', '审批表', 'fields.json', 'process.json', '--replace'])).toMatchObject({
       appType: 'APP', formTitle: '审批表', fieldsJsonFile: 'fields.json', processDefinitionFile: 'process.json', existingFormUuid: null, replace: true,
@@ -1881,7 +1881,13 @@ describe('CLI offline smoke', () => {
       usage: 'openyida create-form icons [--json]',
       args: [expect.objectContaining({ name: 'json', source: 'option' })],
     });
-    expect(builderCommands.get('data').examples[0]).toContain('1787932800000');
+    const dataExamples = builderCommands.get('data').examples;
+    expect(dataExamples.find(example => example.includes('data create form'))).toContain('1787932800000');
+    const emptyQueryExample = dataExamples.find(example => example.includes('data query form'));
+    expect(emptyQueryExample).toContain('--search-json');
+    expect(JSON.parse(emptyQueryExample.match(/--search-json '([^']+)'/)[1])).toEqual([
+      { key: 'dateField_due', componentName: 'DateField', type: 'DOUBLE', operator: 'is', value: '' },
+    ]);
     expect(builderCommands.get('nav-group').examples).toContain('openyida nav-group move APP_XXX FORM_XXX --to NAV_XXX');
     expect(builderCommands.get('save-permission').examples[0]).toContain('get-permission APP_XXX FORM_XXX');
     expect(parsed.recommended.preflight_command).toBe('openyida agent-capabilities --summary-json');

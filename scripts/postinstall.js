@@ -314,9 +314,9 @@ openyida copy
 | \`yida-skills/context\` | 登录、退出、组织信息、Schema、fieldId、只读预检 | \`yida-login\`, \`yida-logout\`, \`yida-basic-info\`, \`yida-get-schema\`, \`yida-corp-efficiency\` |
 | \`yida-skills/app\` | 从零搭应用、导航、多语言、AI 老应用主题升级 | \`yida-app\`, \`yida-create-app\`, \`yida-nav-group\`, \`yida-i18n\`, \`yida-upgrade-app-theme\`（仅明确要求升级，必须 ask_human 确认） |
 | \`yida-skills/design\` | 完整应用需求分析、产品 PRD、单页 UI 改造、主页面视觉设计、应用主题色、全局换肤、图片素材 | \`yida-requirement-analysis\`, \`yida-prd\`, \`yida-design\`, \`yida-image-assets\` |
-| \`yida-skills/form\` | 表单字段、公式、校验、业务规则、批量录入、数据记录 | \`yida-create-form-page\`, \`yida-formula\`, \`yida-formula-evaluate\`, \`yida-business-rule\`, \`yida-canvas-table-form\`, \`yida-table-form\`, \`yida-data-management\` |
+| \`yida-skills/form\` | 表单字段、公式、校验、业务规则、批量录入、数据记录、日期为空、日期区间筛选 | \`yida-create-form-page\`, \`yida-formula\`, \`yida-formula-evaluate\`, \`yida-business-rule\`, \`yida-canvas-table-form\`, \`yida-table-form\`, \`yida-data-management\` |
 | \`yida-skills/process\` | 审批、流程表单、流程规则、代理人 | \`yida-create-process\`, \`yida-process-rule\`, \`yida-agent-center\` |
-| \`yida-skills/page\` | 自定义展示页、YidaCodeCanvas 组件、历史平台 JSX 组件页面维护、发布、导航壳、PPT | \`yida-create-page\`, \`yida-canvas-custom-page\`, \`yida-custom-page\`, \`yida-canvas-data-binding\`, \`yida-canvas-upgrade\`, \`yida-publish-page\`, \`yida-openyida-publish-guard\`, \`yida-density\`, \`yida-nav-shell\`, \`yida-ppt-slider\` |
+| \`yida-skills/page\` | 自定义展示页、YidaCodeCanvas 组件、dataBinding、DataBridge、轮询刷新列表或 KPI、历史平台 JSX 组件页面维护、发布、导航壳、PPT | \`yida-create-page\`, \`yida-canvas-custom-page\`, \`yida-custom-page\`, \`yida-canvas-data-binding\`, \`yida-canvas-upgrade\`, \`yida-publish-page\`, \`yida-openyida-publish-guard\`, \`yida-density\`, \`yida-nav-shell\`, \`yida-ppt-slider\` |
 | \`yida-skills/analytics\` | 报表、统计、图表、Recharts、ECharts、看板、驾驶舱 | \`yida-report\`, \`yida-rechart\`, \`yida-chart\`, \`yida-dashboard\` |
 | \`yida-skills/integration\` | 连接器、钉钉开放平台、外部 API、数据源、集成自动化 | \`yida-integration\`, \`yida-dingtalk-openapi\`, \`yida-connector\`, \`yida-connector-safe-actions\`, \`yida-data-source-connectors\` |
 | \`yida-skills/access\` | 平台/应用/表单/页面权限、公开访问、分享 | \`yida-corp-manager\`, \`yida-app-permission\`, \`yida-form-permission\`, \`yida-page-config\` |
