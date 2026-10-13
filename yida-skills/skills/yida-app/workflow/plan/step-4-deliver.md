@@ -24,7 +24,7 @@ openyida design-plan materialize prd/<项目名>/build-plan.json --from-preview 
 
 CLI 校验后保存源计划、PRD、design、HTML 和主题 CSS。
 
-执行 init 返回的 `materialize.command`，使用其 `materialize.shell`：Windows 为 PowerShell，其他平台为 POSIX shell。`outputs.confirmationHtml` 用于确认，`outputs.html` 是编辑稿；revision 不向用户展示。片段职责见 [完整文件合并](../parallel-work.md#plan-的-cli-交接)。直接维护源 JSON 时先设 status=awaiting_confirmation，再运行 `openyida design-plan materialize prd/<项目名>/build-plan.json --json`；诊断加 `--check --json`，正常生成不重复预检。
+执行 init 的 `materialize.command` 与 `materialize.shell`（Windows 用 PowerShell，其他用 POSIX）。`outputs.html` 是编辑稿；确认必须同时取得 `outputs.confirmationHtml` 和 revision，缺失时先重新生成，不回退编辑稿或伪造版本。revision 不向用户展示。直接维护 JSON 时先设 status=awaiting_confirmation 再 materialize；`--check` 仅诊断，不产生确认。片段职责见 [完整文件合并](../parallel-work.md#plan-的-cli-交接)。
 
 HTML 四章与视觉展示遵守 [HTML 内容契约](../../../yida-design/sub_skill/yida-design-plan/assets/README.md#需求总览中的视觉信息)，业务与 PRD 一致。
 
@@ -34,13 +34,13 @@ HTML 四章与视觉展示遵守 [HTML 内容契约](../../../yida-design/sub_sk
 
 按 [用户交互契约](../../../yida-design/references/ask-human-interaction-contract.md) 执行：
 
-1. 在会话中展示“当前方案”，并用 3–7 条业务摘要说明方案内容；有前后台时说明各入口导航归属，平台导航管理页只实现业务内容。导航随整体方案确认，不另设技术选型确认。
+1. 展示“当前方案”和 3–7 条业务摘要；导航归属随整体确认，不另设技术选型题。
 2. 云端实际调用 `ask_human` 创建结构化提问；managed Local 使用下述 CLI 封装。遵守交互契约的唯一 payload schema，绑定当前快照与 revision，选项为 `confirm_build` 和 `continue_editing`。调用成功只表示问题已创建，收到匹配回答后才获批。
 优先原样传入本次 materialize 或 patch --materialize 返回的 `confirmation`；同级 `confirmationPolicy` 是执行规则，不放入工具 payload。不要用 `fields` 包装最终选择，也不自行拼接附件路径。生成 JSON、打开 HTML、文字问“是否执行”均不等于实际调用。工具不可用或失败时保留 `awaiting_confirmation`，说明阻塞，不能直接开始搭建或切换 Fast。
 
 3. 交互创建成功后写回 `meta.planState.presentedRevision=meta.revision`，不重复物化；queued/pending 仅表示等待。收到该次交互的 `confirm_build` 且回传 revision 匹配当前方案，才记录真实交互 ID、回答和时间，设置 `meta.status=confirmed`、`meta.planState.planConfirmed=true`、`meta.revision=presentedRevision=confirmedRevision`。无回答、超时、取消、旧版本回调和自行写入的状态都不能授权实施。
 
-恢复任务先核验真实问答记录与当前方案；同版已有效确认则复用，不重复询问。风格已明确、主题预览关闭、需求确认或泛指“继续”均不替代方案确认。只有获批后按 `assetTasks` 派发素材并创建资源；`explicitScope.allowInferredResources=false` 只实施范围内资源，不改主题、应用设置或导航。
+恢复时核验真实问答与当前方案，同版已有效确认则复用。主题、需求确认和泛指“继续”均不替代执行批准。获批后派发 `assetTasks` 并实施；`explicitScope.allowInferredResources=false` 仅执行范围内资源。
 
 managed Local 将 `confirmation` 封装为以下问题 JSON 后交给 CLI：
 
@@ -48,7 +48,7 @@ managed Local 将 `confirmation` 封装为以下问题 JSON 后交给 CLI：
 {"title":"确认搭建方案","revision":"<confirmation.revision>","attachments":[{"name":"搭建方案.html","path":"<outputs.confirmationHtml>"}],"questions":[{"id":"plan_decision","header":"搭建方案","question":"请确认当前搭建方案","type":"single_select","options":[{"label":"确认并开始搭建","value":"confirm_build"},{"label":"继续调整","value":"continue_editing"}]}]}
 ```
 
-保存到当前任务目录，执行 `openyida agent ask-human --request-key <本次确认的唯一稳定键> --questions-file <相对路径> --json`，收到 queued 立即结束本轮。附件 path 必须使用当前生成器返回的不可变 `confirmationHtml`。用户回答后，续接上下文中的 `contextRevision`、附件摘要和 `answers.plan_decision` 对应本次展示内容；只在 `confirm_build` 且标识仍与当前方案一致时继续，调整后的方案必须重新物化并用新 key 提问。不要再次询问已确认的业务需求。
+保存问题文件后执行 `openyida agent ask-human --request-key <本次确认的唯一稳定键> --questions-file <相对路径> --json`；queued 立即结束本轮。续接时核对 `contextRevision`、附件摘要及 `answers.plan_decision`，仅当前方案的 `confirm_build` 可继续。调整后重新物化并用新 key 提问，不重问业务需求。
 
 ## 4. 处理调整
 

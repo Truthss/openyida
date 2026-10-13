@@ -18,6 +18,7 @@ module.exports = {
     page_offline: 'The frontend custom page {0} is not yet published to a standalone address; publish it before registering.',
   },
   design_plan: {
+    confirmation_required: 'पुष्टि के लिए वर्तमान योजना का स्नैपशॉट और संशोधन चाहिए। पहले योजना तैयार करें।',
     rebase_required: 'पहली बार बनाने से पहले business.json/visual.json सुधारें। मुख्य योजना बदली हो तो फ़ाइलें सुरक्षित रखें और मूल कमांड में --rebase-parts जोड़ें।',
     baseline_missing: 'मूल कार्यक्षेत्र से संबंधित .build-plan-base.json बहाल करें। विश्वसनीय आधार न मिले तो मसौदे सुरक्षित रखें और अवरोध बताएँ।',
     rebase_stage_invalid: 'आधार मिलान केवल पहली बार बनाने से पहले के मसौदों के लिए है। दिखाई या बनाई जा चुकी योजना के लिए patch --materialize उपयोग करें।',

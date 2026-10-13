@@ -1188,6 +1188,9 @@ describe('design-plan materialize', () => {
     expect(result).toMatchObject({ changed: true, confirmationInvalidated: false, revision: plan.meta.revision, materialized: true });
     expect(after.meta.status).toBe(plan.meta.status);
     expect(after.meta.planState).toEqual(plan.meta.planState);
+    expect(result.confirmation.revision).toBe(plan.meta.revision);
+    expect(result.confirmationPolicy).toMatchObject({ tool: 'ask_human', requiredBeforeExecution: true });
+    expect(result.confirmationPolicy.reuse).toMatch(/same-plan approval.*asset progress/);
     expect(after.pages).toEqual(plan.pages);
     const design = fs.readFileSync(path.join(tempDir, 'design.md'), 'utf8');
     expect(design).toContain('"materialStatus":"final"');
@@ -1343,8 +1346,12 @@ describe('design-plan materialize', () => {
       'step-4-deliver.md'
     ), 'utf8');
 
-    expect(workflow).toContain('openyida design-plan materialize prd/<项目名>/build-plan.json --json');
-    expect(workflow).toContain('--check --json');
+    const examples = [...workflow.matchAll(/```bash\n([\s\S]*?)\n```/g)]
+      .map(match => match[1].replace(/\\\n/g, ' ').replace(/\s+/g, ' ').trim());
+    expect(examples).toContain('openyida design-plan materialize prd/<项目名>/build-plan.json --business-file prd/<项目名>/business.json --visual-file prd/<项目名>/visual.json --json');
+    expect(examples).toContain('openyida design-plan materialize prd/<项目名>/build-plan.json --from-preview --json');
+    expect(workflow).toContain('`--check` 仅诊断，不产生确认');
+    expect(workflow).toContain('不回退编辑稿或伪造版本');
     expect(workflow).not.toContain('python scripts/render_build_plan.py');
   });
 });

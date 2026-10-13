@@ -40,6 +40,7 @@ test('reconciles changed main source with completed part facts without deleting 
   expect(result.confirmation.revision).toBe(final.meta.revision);
   expect(result.confirmation.attachments[0].path).toBe(result.outputs.confirmationHtml);
   expect(result.confirmation.options.map(option => option.value)).toEqual(['confirm_build', 'continue_editing']);
+  expect(result.confirmationPolicy).toMatchObject({ tool: 'ask_human', requiredBeforeExecution: true, payloadField: 'confirmation' });
   // Replaying the initial parts over the materialized plan reconciles to the current plan.
   merge({ rebaseParts: true });
   expect(read(input).meta.revision).toBe(final.meta.revision);
@@ -79,7 +80,7 @@ test('patch materialization returns current confirmation on both actual and no-o
 
 test('materialization delivers the approval policy without treating generated files as consent', () => {
   const result = merge();
-  expect(result.confirmationPolicy).toEqual(require('../lib/design-plan/confirmation').confirmationPolicy);
+  expect(result.confirmationPolicy).toMatchObject({ tool: 'ask_human', requiredBeforeExecution: true, payloadField: 'confirmation' });
   expect(result.confirmation.revision).toBe(result.revision);
   expect(result.confirmation.attachments[0].path).toBe(result.outputs.confirmationHtml);
   expect(read(input).meta.planState?.planConfirmed).not.toBe(true);

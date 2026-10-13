@@ -1,0 +1,71 @@
+'use strict';
+
+const { confirmationPayload, confirmationHandoff } = require('../lib/design-plan/confirmation');
+const { getVisualDecisionPolicy } = require('../lib/design-plan/visual-policy');
+
+const snapshot = 'prd/example/build-plan-content-hash.html';
+const outputs = { html: 'prd/example/build-plan.html', confirmationHtml: snapshot };
+
+test('confirmation payload uses the immutable snapshot and keeps policy outside the callable schema', () => {
+  const result = confirmationHandoff(outputs, '2');
+  expect(result.confirmation).toEqual({
+    question: '请确认当前搭建方案',
+    options: [{ label: '确认并开始搭建', value: 'confirm_build' }, { label: '继续调整', value: 'continue_editing' }],
+    submitLabel: '提交选择',
+    attachments: [{ name: '搭建方案.html', path: snapshot }],
+    revision: '2',
+  });
+  expect(result.confirmationPolicy).toMatchObject({ tool: 'ask_human', requiredBeforeExecution: true, payloadField: 'confirmation' });
+  expect(result.confirmationPolicy.policy).toMatch(/structured ask_human.*snapshot\/revision.*wait/);
+  expect(result.confirmationPolicy.approval).toMatch(/confirm_build.*interaction and revision/);
+  expect(result.confirmationPolicy.approval).toContain('queued/pending is not consent');
+  expect(result.confirmationPolicy.unavailable).toMatch(/awaiting_confirmation.*Do not.*prose approval.*switch to Fast/);
+  expect(result.confirmationPolicy.reuse).toMatch(/same-plan approval.*recovery or asset progress/);
+  expect(result.confirmationPolicy.reuse).toContain('Fast adds no Plan approval');
+});
+
+test.each([
+  [undefined, '2'],
+  [{ html: outputs.html }, '2'],
+  [{ ...outputs, confirmationHtml: '' }, '2'],
+  [{ ...outputs, confirmationHtml: ' ' }, '2'],
+  [{ ...outputs, confirmationHtml: true }, '2'],
+  [outputs, undefined],
+  [outputs, ''],
+  [outputs, ' '],
+  [outputs, 2],
+])('missing snapshot or revision cannot fall back to editable HTML: %j / %j', (files, revision) => {
+  expect(() => confirmationPayload(files, revision)).toThrow(expect.objectContaining({
+    code: 'DESIGN_PLAN_CONFIRMATION_REQUIRED',
+  }));
+});
+
+test.each([
+  undefined,
+  { themeId: 'soft-outline-rhythm', source: 'user_explicit' },
+  { themeId: 'free-creative', source: 'material_extracted' },
+])('theme previews require explicit requests even with an existing choice: %j', selection => {
+  const policy = getVisualDecisionPolicy(selection);
+  for (const surface of [policy.themeSelection.preview, policy.themeSelection.qwenwork]) {
+    expect(surface).toMatchObject({ trigger: 'explicit_user_request', defaultEnabled: false, purpose: 'preview_only' });
+  }
+  expect(policy.themeSelection.preview.policy).toMatch(/every host.*Only explicit user requests/);
+  expect(policy.themeSelection.preview.policy).toContain('supplied references never trigger previews');
+  expect(policy.themeSelection.preview.policy).toContain('Previewing never reopens selection');
+  if (selection) {
+    expect(policy.comparison).toMatchObject({ enabled: false, candidateCount: 0 });
+    expect(policy.themeSelection.allowStyleQuestion).toBe(false);
+  }
+});
+
+test('unmapped style intent and image/site references are resolved before conditional comparison', () => {
+  const policy = getVisualDecisionPolicy();
+  expect(policy.execution).toContain('resolve_style_intent_before_any_comparison');
+  expect(policy.themeSelection.intent.policy).toContain('A missing themeId does not mean missing intent');
+  expect(policy.themeSelection.questionCondition).toContain('Ask only without style intent, visual reference, reusable choice or delegation');
+  expect(policy.comparison.onlyWhen).toBe('no_style_intent_visual_reference_or_reusable_selection_or_user_requests_alternatives');
+  expect(policy.themeSelection.intent.referenceVisual.policy).toContain('Inspect the reference website or liked image itself');
+  expect(policy.themeSelection.intent.referenceVisual.policy).toContain('not its filename or OCR alone');
+  expect(policy.themeSelection.intent.referenceVisual.policy).toContain('distinguish observations from inferred values');
+  expect(policy.themeSelection.intent.referenceVisual.policy).toContain('Data links and bug screenshots alone are not style preferences');
+});
