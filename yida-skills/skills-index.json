@@ -97,7 +97,7 @@
       "name": "yida-design",
       "path": "skills/yida-design/SKILL.md",
       "display_name": "宜搭应用设计",
-      "description": "设计或美化宜搭页面、应用外观和主题。读取整理后的用户需求；已有资源先确认视觉方案、备份，再只改 UI，不满意时恢复。本技能不写 PRD 或页面源码。",
+      "description": "基于整理后的用户需求，设计宜搭应用和页面的主题、布局与视觉效果，输出 design.md。美化已有资源时，先确认方案并备份，只改 UI，不满意时恢复；不修改业务逻辑，不编写 PRD 或页面源码。",
       "category": "yida-skills/design",
       "tags": [
         "应用设计",

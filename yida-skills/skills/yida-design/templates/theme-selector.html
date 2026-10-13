@@ -8,30 +8,22 @@
     * { box-sizing: border-box; }
     [hidden] { display: none !important; }
     body { margin: 0; background: #f5f6f8; color: #202938; font: 16px/1.6 system-ui, sans-serif; }
-    main { max-width: 1440px; margin: auto; padding: clamp(16px, 3vw, 32px); }
-    h1 { margin: 0; font-size: 24px; line-height: 1.4; }
-    p { margin: 8px 0 20px; color: #4b5563; }
-    .themes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+    main { max-width: 1800px; margin: auto; padding: clamp(16px, 3vw, 32px); }
+    .themes { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; }
     .card { position: relative; display: flex; flex-direction: column; min-width: 0; padding: 16px; background: #fff; border: 1px solid #c7cdd5; border-radius: 16px; overflow-wrap: anywhere; }
-    h2 { margin: 0; font: inherit; }
-    .heading { display: flex; align-items: flex-start; gap: 10px; font-size: 18px; font-weight: 650; }
+    h2 { margin: 0; min-height: 2.8em; font: 650 16px/1.4 system-ui, sans-serif; }
     .preview { width: 100%; aspect-ratio: 16 / 10; object-fit: contain; margin: 16px 0 0; border-radius: 8px; }
-    .description { display: block; margin-top: 12px; color: #414b5b; }
-    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
-    .tag { padding: 2px 8px; background: #e8edf8; color: #294480; border-radius: 6px; font-size: 14px; }
-    #reference-note { margin-top: 16px; font-size: 14px; }
-    @media (max-width: 1100px) { .themes { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-    @media (max-width: 820px) { .themes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-    @media (max-width: 540px) { .themes { grid-template-columns: minmax(0, 1fr); } }
+    @media (max-width: 1400px) { .themes { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+    @media (max-width: 1100px) { .themes { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    @media (max-width: 900px) { .themes { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 660px) { .themes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 420px) { .themes { grid-template-columns: minmax(0, 1fr); } }
   </style>
 </head>
 <body>
   <main>
-    <h1>风格效果参考</h1>
-    <p>以下是所需风格的效果参考。如需选择，请在对话的问题中回答。</p>
     <div id="themes" class="themes" role="list" aria-label="风格效果参考"></div>
-    <p id="reference-note" hidden>效果参考图，实际内容、布局和品牌色按本次方案调整</p>
-    <p id="status" role="status" aria-live="polite"></p>
+    <p id="status" role="status" aria-live="polite" hidden></p>
   </main>
   <script id="preview-data" type="application/json">{}</script>
   <script>
@@ -39,7 +31,6 @@
       'use strict';
       const container = document.getElementById('themes');
       const status = document.getElementById('status');
-      const note = document.getElementById('reference-note');
       let embedded = {};
       try { embedded = JSON.parse(document.getElementById('preview-data').textContent); } catch (_) {}
       const data = window.__WIDGET_DATA__ || embedded;
@@ -51,7 +42,6 @@
         seen.add(theme.id);
         return true;
       });
-      let visibleImages = 0;
       function textElement(tag, className, value) {
         const element = document.createElement(tag);
         element.className = className;
@@ -63,51 +53,30 @@
         card.className = 'card';
         card.setAttribute('role', 'listitem');
         card.setAttribute('data-theme-id', theme.id);
-        const heading = document.createElement('div');
-        heading.className = 'heading';
-        const title = textElement('h2', '', (index + 1) + ' · ' + theme.name);
+        const title = textElement('h2', '', theme.name);
         title.id = 'theme-title-' + index;
         card.setAttribute('aria-labelledby', title.id);
-        heading.appendChild(title);
-        card.appendChild(heading);
+        card.appendChild(title);
         if (typeof theme.img === 'string' && /^https:\/\//i.test(theme.img)) {
           const image = document.createElement('img');
           image.className = 'preview';
           image.alt = theme.name + ' · 效果参考图';
           image.hidden = true;
-          let loaded = false;
           image.addEventListener('load', function () {
-            if (!loaded) visibleImages += 1;
-            loaded = true;
             image.hidden = false;
-            note.hidden = false;
           });
           image.addEventListener('error', function () {
-            if (loaded) visibleImages -= 1;
-            loaded = false;
             image.remove();
-            note.hidden = visibleImages === 0;
           });
           image.src = theme.img;
           card.appendChild(image);
         }
-        if (typeof theme.desc === 'string' && theme.desc) {
-          const description = textElement('span', 'description', theme.desc);
-          description.id = 'theme-description-' + index;
-          card.setAttribute('aria-describedby', description.id);
-          card.appendChild(description);
-        }
-        if (Array.isArray(theme.tags)) {
-          const tags = document.createElement('span');
-          tags.className = 'tags';
-          theme.tags.filter(function (tag) { return typeof tag === 'string' && tag; }).forEach(function (tag) {
-            tags.appendChild(textElement('span', 'tag', tag));
-          });
-          if (tags.childNodes.length) card.appendChild(tags);
-        }
         container.appendChild(card);
       });
-      if (!themes.length) status.textContent = '当前没有可展示的风格。';
+      if (!themes.length) {
+        status.textContent = '当前没有可展示的风格。';
+        status.hidden = false;
+      }
     }());
   </script>
 </body>

@@ -171,7 +171,7 @@ Only show reference previews when the user explicitly requests them. Style choic
 openyida sample yida-design theme-preview --theme-ids app-sage,app-teal,app-terminal,app-platinum --output .cache/theme-preview.html --json
 ```
 
-This creates a read-only HTML gallery of all requested themes: at most four columns, fewer on narrow screens. It has no selection controls and refuses to overwrite existing files. Open it with the host's preview tools; raw HTML is not guaranteed to render in chat. QwenWork may alternatively prepare the same read-only template with `sample yida-design theme-selector --json` and pass its returned relative `widget_path` to `qoder_show_widget`. Neither preview path submits a choice.
+This creates a read-only HTML gallery of all requested themes: titles and images only, four to six columns on desktop, fewer on narrow screens, with no row limit. It has no selection controls and refuses to overwrite existing files. Open it with the host's preview tools; raw HTML is not guaranteed to render in chat. QwenWork may alternatively prepare the same read-only template with `sample yida-design theme-selector --json` and pass its returned relative `widget_path` to `qoder_show_widget`. Neither preview path submits a choice.
 
 Ready style questions join the same ask_human call as other necessary questions; split only for dependencies or host limits. Pop art is omitted unless explicitly requested or the primary task is showcase-oriented. Previewing app-pop requires --pop-art-context explicit-request or showcase, based on that evidence.
 

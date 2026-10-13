@@ -21,7 +21,7 @@ function element(tag) {
 }
 function mount(themes, embedded = false, popArtContext) {
   const bridge = { sendToAgent: jest.fn() };
-  const ids = Object.fromEntries(['themes', 'status', 'reference-note', 'preview-data'].map(id => [id, element('div')]));
+  const ids = Object.fromEntries(['themes', 'status', 'preview-data'].map(id => [id, element('div')]));
   ids['preview-data'].textContent = JSON.stringify(embedded ? { themes, popArtContext } : {});
   const window = { ...(embedded ? {} : { __WIDGET_DATA__: { themes, popArtContext } }), __bridge: bridge };
   vm.runInNewContext(script, { window, document: { getElementById: id => ids[id], createElement: element } });
@@ -47,7 +47,7 @@ test('renders every requested theme in order, including beyond four, from embedd
   const themes = Array.from({ length: 7 }, (_, i) => ({ id: `theme-${i}`, name: `风格${i}` }));
   const ui = mount(themes, true);
   expect(ui.nodes('article').map(node => node.attributes['data-theme-id'])).toEqual(themes.map(item => item.id));
-  expect(ui.nodes('h2').map(node => node.textContent)).toEqual(themes.map((item, i) => `${i + 1} · ${item.name}`));
+  expect(ui.nodes('h2').map(node => node.textContent)).toEqual(themes.map(item => item.name));
 });
 
 test('missing or broken images leave text choices without an empty image frame', () => {
@@ -57,10 +57,8 @@ test('missing or broken images leave text choices without an empty image frame',
   expect(image.hidden).toBe(true);
   image.handlers.load();
   expect(image.hidden).toBe(false);
-  expect(ui['reference-note'].hidden).toBe(false);
   image.handlers.error();
   expect(ui.nodes('img')).toHaveLength(0);
-  expect(ui['reference-note'].hidden).toBe(true);
   expect(ui.nodes('article')).toHaveLength(2);
 });
 
@@ -69,7 +67,7 @@ test('renders supplied text literally, rejects invalid/duplicate IDs and unsafe 
   const ui = mount([{ id: 'safe', name, img: 'javascript:alert(1)' }, { id: 'safe', name: '重复' }, { id: 'bad）', name: '错误' }, null]);
   expect(ui.nodes('article')).toHaveLength(1);
   expect(ui.nodes('img')).toHaveLength(0);
-  expect(ui.nodes('h2').some(node => node.textContent === '1 · ' + name)).toBe(true);
+  expect(ui.nodes('h2').some(node => node.textContent === name)).toBe(true);
   expect(ui.nodes('article')[0].attributes['aria-labelledby']).toBe('theme-title-0');
 });
 
@@ -94,7 +92,7 @@ test('current CLI catalog supplies optional images to template without requiring
   expect(policy).toEqual(getVisualDecisionPolicy().themeSelection);
   expect(policy.qwenwork).toMatchObject({ activeToolId: 'qwenwork', tool: 'qoder_show_widget', purpose: 'preview_only', response: 'none' });
   expect(policy.selectionTool).toBe('ask_human');
-  expect(policy.preview).toMatchObject({ trigger: 'explicit_user_request', purpose: 'preview_only', maxColumns: 4 });
+  expect(policy.preview).toMatchObject({ trigger: 'explicit_user_request', purpose: 'preview_only', maxColumns: 6, desktopColumns: [4, 5, 6], content: ['name', 'img'] });
   expect(policy.qwenwork.prepareCommand).toBe('openyida sample yida-design theme-selector --json');
   expect(policy.qwenwork.widgetPathSource).toContain('relative to the host skills root');
   expect(policy.qwenwork).not.toHaveProperty('template');
@@ -107,7 +105,7 @@ test.each(['app-sage', 'app-teal', 'app-terminal'])('%s can be previewed with it
   expect(theme.previewImage.url).toBe(previews[themeId]);
   const ui = mount([{ id: themeId, name: theme.label, img: theme.previewImage.url, desc: theme.styleSummary }]);
   expect(ui.nodes('img')[0].src).toBe(previews[themeId]);
-  expect(ui.nodes('h2')[0].textContent).toBe(`1 · ${theme.label}`);
+  expect(ui.nodes('h2')[0].textContent).toBe(theme.label);
   expect(ui.bridge.sendToAgent).not.toHaveBeenCalled();
 });
 
@@ -116,4 +114,14 @@ test.each([undefined, 'management', 'all', 'explicit-request', 'showcase'])('pop
   const ui = mount([{ id: 'app-pop', name: '波普印刷' }, candidates[0]], false, context);
   expect(ui.nodes('article').some(node => node.attributes['data-theme-id'] === 'app-pop')).toBe(['explicit-request', 'showcase'].includes(context));
   expect(ui.nodes('article').some(node => node.attributes['data-theme-id'] === candidates[0].id)).toBe(true);
+});
+
+
+test('cards contain only the title and optional image, ignoring legacy descriptions and tags', () => {
+  const ui = mount(candidates);
+  expect(ui.nodes('article')[0].childNodes.map(node => node.tag)).toEqual(['h2', 'img']);
+  expect(ui.nodes('article')[1].childNodes.map(node => node.tag)).toEqual(['h2']);
+  expect(ui.nodes('span')).toHaveLength(0);
+  expect(html).not.toContain('reference-note');
+  expect(html).not.toContain('<h1>');
 });

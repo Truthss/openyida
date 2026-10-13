@@ -119,6 +119,7 @@ test('standalone preview runs on any host and preserves requested order beyond f
   const data = JSON.parse(html.match(/<script id="preview-data" type="application\/json">([\s\S]*?)<\/script>/)[1]);
   expect(data.themes.map(item => item.id)).toEqual(ids);
   expect(data.themes[0].img).toMatch(/^https:/);
+  expect(Object.keys(data.themes[0]).sort()).toEqual(['id', 'img', 'name']);
   expect(data.themes[4]).not.toHaveProperty('img');
   expect(html).not.toContain('__bridge');
   await expect(run(['yida-design', 'theme-preview', '--theme-ids', 'app-sage', '--output', output])).rejects.toMatchObject({ code: 'EEXIST' });

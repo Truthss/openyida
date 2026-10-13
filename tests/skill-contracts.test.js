@@ -62,7 +62,7 @@ describe('OpenYida skill contracts', () => {
       'yida-skills/skills/yida-app/workflow/plan/workflow.md',
       'yida-skills/skills/yida-requirement-analysis/references/handoff.md',
     ]) { expect(readSkill(relative)).toContain('theme-selection.md#已选风格只确认一次'); }
-    expect(shared).toContain('缺少这些实施细节时');
+    expect(shared).toContain('配色、Token 或页面布局未完成时，由 AI 补齐');
     expect(shared).toContain('PRD 生成、修改或确认之后');
     expect(shared).toContain('只有用户主动明确要求换风格');
     expect(readSkill('yida-skills/skills/yida-prd/SKILL.md')).toContain('theme-selection.md#已选风格只确认一次');
@@ -557,8 +557,8 @@ describe('OpenYida skill contracts', () => {
     expect(canvasTable.negative_signals).toEqual(expect.arrayContaining(['平台 JSX/native 直接 this.utils.yida.saveFormData']));
 
     const design = byName.get('yida-design');
-    expect(design.description).toContain('读取整理后的用户需求');
-    expect(design.description).toContain('本技能不写 PRD 或页面源码');
+    expect(design.description).toContain('基于整理后的用户需求');
+    expect(design.description).toContain('不编写 PRD 或页面源码');
     expect(design.done_when).toContain('prd/<项目名>/design.md');
     expect(design.done_when).toContain('不写 prd.md');
     expect(design.tags).toEqual(expect.arrayContaining(['视觉设计', 'ui_skill']));
