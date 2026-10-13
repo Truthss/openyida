@@ -30,8 +30,10 @@ const MAX_TARBALL_BYTES = 2144 * 1024;
 // Qwen interaction sequencing adds shared guidance and policy (~3 KiB).
 // Restored Sage/Teal/Terminal guidance and selector catalog add ~24 KiB.
 // Restore general query formats, component/operator examples and AND combinations
-// alongside the verified empty-query guidance; retain the 16 KiB rounding boundary.
-const MAX_UNPACKED_BYTES = 8160 * 1024;
+// alongside the verified empty-query guidance. Windows Node 20 CI measured
+// 8,358,003 bytes after restoring README content, 2,163 above the previous cap.
+// Add one 16 KiB step for the measured package variation across environments.
+const MAX_UNPACKED_BYTES = 8176 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.

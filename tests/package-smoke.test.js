@@ -17,6 +17,10 @@ describe('npm package smoke', () => {
     expect(getPackageBudgetErrors(budgetLimit)).toEqual([]);
   });
 
+  test('package budget covers the Windows Node 20 measurement from PR 614', () => {
+    expect(getPackageBudgetErrors({ ...budgetLimit, unpackedSize: 8358003 })).toEqual([]);
+  });
+
   test.each(['size', 'unpackedSize', 'entryCount'])('package budgets reject %s above its boundary', field => {
     expect(getPackageBudgetErrors({ ...budgetLimit, [field]: budgetLimit[field] + 1 })).toHaveLength(1);
   });
