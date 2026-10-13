@@ -25,9 +25,11 @@ const path = require('path');
 // Retain modest growth headroom and round budgets to 16 KiB boundaries.
 const MAX_TARBALL_BYTES = 2144 * 1024;
 // UI improvement/restore adds eight net runtime and guidance files.
-// Restored Pop/Platinum templates and catalog validation bring the dry-run to ~8082 KiB;
-// allow 8 KiB rounding without increasing tarball, entry-count or per-file limits.
-const MAX_UNPACKED_BYTES = 8088 * 1024;
+// Restored Pop/Platinum templates plus the Qwen selector and shared host guidance
+// bring the dry-run to ~8093 KiB; retain a small rounding margin.
+// Qwen interaction sequencing adds shared guidance and policy (~3 KiB).
+// Restored Sage/Teal/Terminal guidance and selector catalog add ~24 KiB.
+const MAX_UNPACKED_BYTES = 8144 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -35,13 +37,15 @@ const MAX_UNPACKED_BYTES = 8088 * 1024;
 // removing the application-styles/navigation-styles catalogs offsets two files.
 // App theme upgrades add two CLI modules and an independent skill with its migration guide.
 // Group creation isolates icon persistence from the near-1000-line navigation module.
-// Theme selection adds one URL-only preview mapping, without bundling image binaries.
-const MAX_ENTRY_COUNT = 620;
+// Theme selection adds a URL-only preview mapping and a self-contained selector HTML,
+// without bundling image binaries. One preparation module resolves and copies the widget.
+const MAX_ENTRY_COUNT = 622;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
   'lib/app/app-theme.js',
   'lib/app/theme-source.js',
+  'lib/core/theme-widget.js',
   'lib/app/nav-group-create.js',
   'yida-skills/skills/yida-design/references/responsive-layout.md',
   'yida-skills/skills/yida-design/sub_skill/ui-improve/SKILL.md',
@@ -91,6 +95,7 @@ const REQUIRED_PACKAGE_FILES = [
   'yida-skills/skills/yida-requirement-analysis/references/handoff.md',
   'yida-skills/skills/yida-design/references/navigation-decision.md',
   'yida-skills/skills/yida-design/references/theme-preview-images.json',
+  'yida-skills/skills/yida-design/templates/theme-selector.html',
   'yida-skills/skills/yida-design/templates/design-themes/index.json',
   'yida-skills/skills/yida-design/templates/design-themes/basic-tokens.json',
   'lib/app/application-style.js',

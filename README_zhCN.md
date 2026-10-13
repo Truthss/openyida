@@ -183,6 +183,18 @@ openyida compile pages/src/employee-upload.oyd.jsx
 openyida publish pages/src/employee-upload.oyd.jsx APP_XXX FORM_XXX
 ```
 
+## 风格选择与按需预览
+
+所有环境统一通过宿主支持的 `ask_human` 收集风格选择。只有用户明确要求看风格或效果示意时，才展示预览：
+
+```bash
+openyida sample yida-design theme-preview --theme-ids app-sage,app-teal,app-terminal,app-platinum --output .cache/theme-preview.html --json
+```
+
+命令生成只读 HTML 卡片页，展示全部指定风格，只展示标题和示例图，常规宽屏每行 4–6 个，总行数不限，窄屏自动减少列数。卡片没有选择或确认按钮，已有文件不会被覆盖。通过宿主预览工具打开；不能假设普通会话能渲染 HTML 源码。千问也可用 `sample yida-design theme-selector --json` 准备相同的只读模板，再将返回的相对 `widget_path` 传给 `qoder_show_widget`。预览不提交风格选择。
+
+风格候选已准备好时，与当前必要问题合并到同一次 ask_human，仅因答案依赖或工具限制拆分。波普仅在用户明确指定或主要任务偏展示时出现；预览 app-pop 须据实传入 --pop-art-context explicit-request 或 showcase，不能因“查看全部”而放开。
+
 ## 表单、流程、数据与报表
 
 ### 表单建模
@@ -407,7 +419,7 @@ openyida integration enable APP_XXX FORM_XXX PROC_CODE
 | `openyida a2a <serve\|agent-card> [options]` | 启动本地只读 A2A Adapter 或输出 Agent Card |
 | `openyida bridge start [--token <pair-token>] [--port 6736] [--origin https://demo.aliwork.com] [--open\|--no-open]` | 启动 OpenYida 本地网页桥接服务 |
 | `openyida copy [--force]` | 复制 project 工作目录 |
-| `openyida sample [--list] [<skill> <name>] [--output <file-or-directory>] [--var KEY=VALUE ...] [--design-file <design.md>] [--style-id <themeId\|free-creative>]` | 输出代码模板 |
+| `openyida sample [--list] [<skill> <name>] [--output <file-or-directory>] [--var KEY=VALUE ...] [--design-file <design.md>] [--style-id <themeId\|free-creative>] [--theme-ids <id,...>] [--pop-art-context <explicit-request\|showcase>]` | 输出代码模板 |
 | `openyida doctor [--fix]` | 环境诊断与自动修复 |
 | `openyida db-seq-fix [--fix]` | PostgreSQL Sequence 漂移检测与修复 |
 | `openyida formula evaluate <formula\|file> [--schema file]` | 静态检查宜搭公式语法和字段引用 |

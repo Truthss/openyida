@@ -40,7 +40,7 @@ beforeEach(() => {
 afterEach(() => fs.rmSync(dir, { recursive: true, force: true }));
 
 test.each(fs.readdirSync(path.join(__dirname, '../yida-skills/skills/yida-design/templates/design-themes'))
-  .filter(id => id.startsWith('app-') && !['app-pop', 'app-platinum'].includes(id)))('unlisted %s cannot initialize or export even though its files remain', themeId => {
+  .filter(id => id.startsWith('app-') && !['app-pop', 'app-platinum', 'app-sage', 'app-teal', 'app-terminal'].includes(id)))('unlisted %s cannot initialize or export even though its files remain', themeId => {
   const { exportApplicationStyle } = require('../lib/app/application-style');
   const before = fs.readdirSync(dir);
   brief.visualSelection.themeId = themeId;
@@ -130,7 +130,7 @@ test.each(['#6F4E37', '#1677FF'])('color examples preserve the project choice %s
   save();
   const result = init();
   expect(colorExample(result)).toEqual(brief.visualSelection.colorStrategy);
-  expect(result.authoring.visualDecision).toEqual(require('../lib/design-plan/visual-policy').getVisualDecisionPolicy());
+  expect(result.authoring.visualDecision).toEqual(require('../lib/design-plan/visual-policy').getVisualDecisionPolicy({ themeId: 'soft-outline-rhythm', source: 'ai_default' }));
   const plan = JSON.parse(fs.readFileSync(result.output, 'utf8'));
   expect(plan.visualStyle.forUser.colorStrategy.primaryColor).toBe(primaryColor);
 });
@@ -145,9 +145,10 @@ test('missing color uses the existing visual-design task and leaves the example 
   ]));
   expect(result.parallelTasks.map(task => task.id)).toEqual(['business', 'visual-design']);
   expect(result.authoring.visualDecision).toMatchObject({
-    comparison: { candidateCount: 3, baseline: 'first_instinct', alternatives: 2, distinctDimensions: 2 },
-    execution: 'one_shared_three_direction_generation_pass_for_fast_and_plan',
-    presentation: 'fast_selects_internally; plan_asks_user_when_no_explicit_visual_direction',
+    comparison: { enabled: false, candidateCount: 0, baseline: null, alternatives: 0 },
+    execution: 'refine_selected_style_without_comparison_or_question',
+    presentation: 'continue_design_without_style_question',
+    themeSelection: { allowStyleQuestion: false },
   });
 });
 
@@ -498,7 +499,7 @@ test('catalog is read-only and its theme IDs initialize through the public CLI w
   }
   const previews = require('../yida-skills/skills/yida-design/references/theme-preview-images.json');
   expect(Object.keys(previews)).toHaveLength(17);
-  expect(result.themes.filter(theme => theme.previewImage)).toHaveLength(13);
+  expect(result.themes.filter(theme => theme.previewImage)).toHaveLength(16);
   for (const theme of result.themes) {
     if (previews[theme.themeId]) {
       expect(theme.previewImage).toEqual({ url: previews[theme.themeId], alt: `${theme.label} · 效果参考图` });
@@ -509,7 +510,7 @@ test('catalog is read-only and its theme IDs initialize through the public CLI w
   expect(result.themes.find(theme => theme.themeId === 'soft-inset-surfaces').previewImage.url)
     .toBe('https://img.alicdn.com/imgextra/i3/O1CN01UEEmuLlMF3I5pHky_!!6000000006290-2-tps-2870-1798.png');
   expect(result.creativeOption).not.toHaveProperty('previewImage');
-  expect(result.themes.filter(theme => theme.themeId.startsWith('app-')).map(theme => theme.themeId).sort()).toEqual(['app-platinum', 'app-pop']);
+  expect(result.themes.filter(theme => theme.themeId.startsWith('app-')).map(theme => theme.themeId).sort()).toEqual(['app-platinum', 'app-pop', 'app-sage', 'app-teal', 'app-terminal']);
   expect(result.pagePatterns).toEqual(patterns.patterns.map(({ id, label, mustKeep }) => ({ id, label, mustKeep })));
   const initialized = JSON.parse(execFileSync(process.execPath, [bin, 'design-plan', 'init', briefPath,
     '--theme-id', result.themes[0].themeId, '--output-dir', path.join(dir, 'catalog-plan'), '--json'], options));
@@ -567,7 +568,9 @@ test('returned materialize command handles spaces, quotes and shell expressions 
 test.each(require('../yida-skills/skills/yida-design/templates/design-themes/index.json').themes)(
   'initializes and materializes shared theme $themeId with its current summary and token contract', theme => {
     delete brief.visualSelection.visualDirection;
-    if (theme.themeId === 'app-platinum') {brief.visualSelection.colorStrategy.primaryColor = '#897253';}
+    const authored = require('../lib/design/document').parseDesignDocument(fs.readFileSync(
+      require('../lib/design-plan/themes').themeTemplatePath(theme), 'utf8')).metadata.tokens['application-global'].colors['--color-brand1-6'];
+    if (/^#[0-9a-f]{6}$/i.test(authored)) {brief.visualSelection.colorStrategy.primaryColor = authored;}
     if (theme.mode === 'creative') {
       const { CREATIVE_TOKENS } = require('../lib/app/application-style');
       const { resolveThemeColors, themeTemplatePath } = require('../lib/design-plan/themes');
@@ -608,6 +611,10 @@ test.each(require('../yida-skills/skills/yida-design/templates/design-themes/ind
     expect(output).toMatchObject({ previousRevision: '1', revision: '1' });
     const design = fs.readFileSync(output.outputs.design, 'utf8');
     expect(design).toContain('dashboard');
+    if (theme.themeId === 'app-terminal') {
+      expect(design).not.toMatch(/DEV\.LOG|首页 Hero|作品集|关于我|dev\.local/);
+      expect(require('../lib/design/document').parseDesignDocument(design).metadata.name).toBe(brief.appName);
+    }
     expect(design).toContain(brief.visualSelection.colorStrategy.primaryColor);
     expect(design).not.toMatch(/<生成实际色值|\{\{[A-Z_]+\}\}/);
     expect(require('../lib/app/theme-from-design').readDesignTokens(design)['--color-brand1-6']).toBe(brief.visualSelection.colorStrategy.primaryColor);
@@ -767,4 +774,50 @@ test.each(['dark', undefined])('free creative preserves authored tone without in
   expect(plan.visualStyle.forUser.navigationStyle).toMatchObject({ tone: tone || '', toneSource: 'project_defined' });
   expect(result.authoring.pendingFields.some(field => field.path === 'facts.visualStyle.forUser.navigationStyle.tone')).toBe(!tone);
   expect(fs.readFileSync(result.context, 'utf8')).toContain('自由创意需明确填写');
+});
+
+test.each([
+  ['soft-outline-rhythm', 'user_selected'],
+  ['soft-outline-rhythm', 'user_explicit'],
+  ['free-creative', 'user_selected'],
+  ['free-creative', 'user_explicit'],
+])('reuses %s (%s) while design details are still incomplete', (themeId, source) => {
+  brief.visualSelection = {
+    themeId,
+    visualDirection: { label: '用户已选方向', source },
+    navigationStyle: { structure: 'top', tone: 'light' },
+  };
+  save();
+  const result = initialize(briefPath, { outputDir: path.join(dir, 'reuse') });
+  const plan = JSON.parse(fs.readFileSync(result.output, 'utf8'));
+  expect(plan.visualStyle.internal.selectedTheme).toMatchObject({ themeId, source });
+  expect(result.authoring.visualDecision.themeSelection.currentSelection).toEqual({
+    themeId, source, action: 'reuse', askStyleAgain: false, compareFirstInstinct: false,
+  });
+  const visual = JSON.parse(fs.readFileSync(result.parallelTasks.find(task => task.id === 'visual-design').output, 'utf8'));
+  expect(visual.facts.visualStyle.internal.selectedTheme).toMatchObject({ themeId, source });
+  expect(result.authoring.pendingFields.length).toBeGreaterThan(0);
+  expect(result.authoring.visualDecision.comparison).toEqual({ enabled: false, candidateCount: 0, baseline: null, alternatives: 0 });
+  expect(result.authoring.visualDecision.themeSelection.allowStyleQuestion).toBe(false);
+  expect(result.authoring.visualDecision.presentation).toBe('continue_design_without_style_question');
+  expect(fs.readFileSync(result.context, 'utf8')).toContain('PRD 编写前后均不再比较候选');
+});
+
+
+test('initialization rejects a conflicting theme flag without writing or resetting the recorded selection', () => {
+  brief.visualSelection.themeId = 'soft-outline-rhythm';
+  brief.visualSelection.visualDirection.source = 'user_selected';
+  save();
+  const before = fs.readFileSync(briefPath, 'utf8');
+  expect(() => initialize(briefPath, { themeId: 'free-creative', outputDir: path.join(dir, 'conflict') }))
+    .toThrow(expect.objectContaining({ code: 'DESIGN_PLAN_THEME_SELECTION_CONFLICT' }));
+  expect(fs.existsSync(path.join(dir, 'conflict'))).toBe(false);
+  expect(fs.readFileSync(briefPath, 'utf8')).toBe(before);
+  expect(initialize(briefPath, { themeId: 'soft-outline-rhythm', outputDir: path.join(dir, 'same') }).authoring.visualDecision.themeSelection.allowStyleQuestion).toBe(false);
+});
+
+test('unselected catalog still describes initial comparison without reopening a selected plan', () => {
+  const { getVisualDecisionPolicy } = require('../lib/design-plan/visual-policy');
+  expect(getVisualDecisionPolicy().comparison).toMatchObject({ enabled: true, candidateCount: 3, baseline: 'first_instinct' });
+  expect(getVisualDecisionPolicy().themeSelection.allowStyleQuestion).toBe(true);
 });

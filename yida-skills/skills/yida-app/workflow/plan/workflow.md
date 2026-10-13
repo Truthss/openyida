@@ -25,7 +25,7 @@
 ## 执行顺序
 
 1. 直接复用已确认的 `requirement-brief.json`；若尚未完成 Step 2 的规划准备，先按 [交接契约](../../../yida-requirement-analysis/references/handoff.md#规划阶段补齐) 补齐页面承载、导航与主题，AI 建议保留来源，不重新询问业务或导航；本文件已经包含规划入口，不再额外读取 `step-1-understand.md` 或 `step-2-confirm.md`。
-2. 用户未给出明确完整视觉风格时，先执行 [Plan 视觉分支](../../../yida-design/sub_skill/yida-design-plan/SKILL.md)：按 Fast / Plan 共用规则生成恰好三套候选，并通过 `ask_human` 获得用户选择。不得因用户未主动要求比较而跳过。获得选择或已有明确完整风格后，再继续主题映射和初始化。
+2. 先按[已选风格只确认一次](../../../yida-design/references/theme-selection.md#已选风格只确认一次)复用已有选择；仅在尚无选择且用户未给出明确完整视觉风格时，先执行 [Plan 视觉分支](../../../yida-design/sub_skill/yida-design-plan/SKILL.md)：按 Fast / Plan 共用规则生成恰好三套候选，并按[宿主展示规则](../../../yida-design/references/theme-selection.md#选择时展示名称与效果图)获得用户选择（所有环境使用 `ask_human`，用户明确要求时才另行展示效果预览）。先按[交互顺序](../../../yida-design/references/theme-selection.md#交互顺序)将准备好的风格题合并到当前必要问答，仅答案依赖或宿主限制时拆分，同一时间不并发多次提问。不得因用户未主动要求比较而跳过。获得选择或已有明确完整风格后，再继续主题映射和初始化。
 3. 主题映射未确定时，执行一次 `openyida design-plan catalog --json`，从返回的 `themes` 选择 themeId，并复用 `pagePatterns`。已有合法主题 ID 时直接初始化。初始化计划草稿，CLI 返回编写契约与当前主题的精简上下文：
 
    ```bash

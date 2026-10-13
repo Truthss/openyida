@@ -2648,7 +2648,12 @@ test('command and agent navigation policies align with AI intake decisions', () 
     expect(route.navigation_policy).not.toContain('offer exactly two');
     expect(route.design_mode_policy).toBe(workflow.design_mode_policy);
     expect(route.design_mode_policy).toContain('Fast and Plan share one three-direction visual generation rule');
-    expect(route.design_mode_policy).toContain('generate exactly three directions and use ask_human');
+    expect(route.design_mode_policy).toContain('generate exactly three directions and follow visual_decision_policy.themeSelection');
+    expect(route.design_mode_policy).toContain('use ask_human on every host');
+    expect(route.design_mode_policy).not.toContain('use ask_human for the style choice');
+    const catalog = JSON.parse(runOk(['design-plan', 'catalog', '--json']));
+    expect(catalog.themeSelection).toEqual(route.visual_decision_policy.themeSelection);
+    expect(catalog.themeSelection.qwenwork).toMatchObject({ activeToolId: 'qwenwork', tool: 'qoder_show_widget', purpose: 'preview_only', response: 'none' });
     expect(route.design_mode_policy).not.toContain('Confirm unresolved navigation');
     expect(route.product_design_policy).toBe(workflow.product_design_policy);
     expect(route.product_design_policy).toContain('Fast, Plan and single-page design share yida-design/templates/design-themes');
@@ -2708,6 +2713,26 @@ test('plain user-facing guidance is available from manifest and both agent capab
   expect(fs.existsSync(path.join(ROOT, policy.reference))).toBe(true);
   const visual = manifest.summary.core_workflows.full_app_build.visual_decision_policy;
   expect(visual).toEqual(require('../lib/design-plan/visual-policy').getVisualDecisionPolicy());
+  const selection = visual.themeSelection;
+  expect(selection.qwenwork.prepareCommand).toBe('openyida sample yida-design theme-selector --json');
+  expect(selection.qwenwork.widgetPathSource).toContain('relative to the host skills root');
+  expect(selection.interactionOrder).toMatchObject({
+    sequence: ['prepare_known_candidates', 'optional_requested_preview', 'batched_ask_human_if_needed', 'confirm_plan_if_required'],
+    maxPendingInteractions: 1,
+    batchStyleWithOtherQuestions: true,
+  });
+  const [orderFile, orderAnchor] = selection.interactionOrder.reference.split('#');
+  expect(fs.readFileSync(path.join(ROOT, orderFile), 'utf8')).toContain(`## ${orderAnchor}`);
+  expect(manifest.summary.core_workflows.full_app_build.design_mode_policy).toContain('themeSelection.interactionOrder');
+  expect(selection.reuse.checkBeforePresentation).toEqual([
+    'current_user_reply', 'brief.visualSelection', 'visualStyle.internal.selectedTheme', 'design.md themeProfile.sourceThemeId',
+  ]);
+  expect(selection.reuse.policy).toContain('First-instinct comparison runs only before an initial choice');
+  expect(selection.reuse.policy).toContain('fill missing design details without reopening the chooser');
+  expect(selection).not.toHaveProperty('currentSelection');
+  const [reuseFile, reuseAnchor] = selection.reuse.reference.split('#');
+  expect(fs.readFileSync(path.join(ROOT, reuseFile), 'utf8')).toContain(`## ${reuseAnchor}`);
+  expect(JSON.parse(runOk(['design-plan', 'catalog', '--json'])).themeSelection).toEqual(selection);
   expect(summary.full_app_artifact_route.visual_decision_policy).toEqual(visual);
   expect(capabilities.commands.core_workflows.full_app_build.visual_decision_policy).toEqual(visual);
   expect(capabilities.recommended.default_full_app_workflow.visual_decision_policy).toEqual(visual);
@@ -2879,4 +2904,15 @@ test('QwenWork declares Bash background separately from synchronous Agent in bot
       execution: { selected_mode: 'background_shell', shell: { foregroundWork: expect.arrayContaining(['visual_image_review']) } },
     });
   }
+});
+
+
+test('catalog and manifest expose the same conditional pop art eligibility', () => {
+  const result = JSON.parse(runOk(['design-plan', 'catalog', '--json']));
+  const manifest = JSON.parse(runOk(['commands', '--json']));
+  const constraint = result.themeSelection.eligibility['app-pop'];
+  expect(constraint).toMatchObject({ defaultEligible: false, allowedContexts: ['explicit-request', 'showcase'] });
+  expect(result.themes.find(theme => theme.themeId === 'app-pop').selectionEligibility).toEqual(constraint);
+  expect(manifest.summary.core_workflows.full_app_build.visual_decision_policy.themeSelection.eligibility['app-pop']).toEqual(constraint);
+  expect(manifest.summary.core_workflows.full_app_build.design_mode_policy).toContain('batch ready independent style, scope and mode questions in one ask_human call');
 });

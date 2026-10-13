@@ -85,11 +85,10 @@ describe('parallel PRD and visual artifact quality fixtures', () => {
       const template = read(`${root}/${theme.templatePath}`);
       expect(parseDesignDocument(template).metadata.themeId).toBe(theme.themeId);
       expect(template).toContain('application-global:');
-      if (theme.themeId === 'app-platinum') {
-        expect(parseDesignDocument(template).metadata.themeProfile).toMatchObject({ themeColor: '#897253', themeColorSource: 'theme-default' });
-      } else {
-        expect(template).toContain('{{PRIMARY_COLOR}}');
-      }
+      const primary = parseDesignDocument(template).metadata.tokens['application-global'].colors['--color-brand1-6'];
+      // Each theme may author a fixed palette or require a project brand color.
+      expect(primary).toMatch(/^(?:#[0-9a-f]{6}|\{\{PRIMARY_COLOR\}\})$/i);
+      expect(read(`${root}/${theme.cssTemplatePath}`)).toContain(`--color-brand1-6: ${primary};`);
     }
     expect(fs.existsSync(path.join(ROOT, root, 'references/style-designs'))).toBe(false);
     expect(fs.existsSync(path.join(ROOT, root, 'sub_skill/yida-design-plan/templates/design-themes'))).toBe(false);
