@@ -101,7 +101,7 @@ module.exports = {
     cmd_get_form_config: 'Query form configuration',
     group_data: 'Dữ liệu & Quyền',
     cmd_data: 'Quản lý dữ liệu thống nhất (biểu mẫu/quy trình/tác vụ/biểu mẫu con)',
-    data_notes: "DateField dùng dấu thời gian Unix dạng số mili giây; CascadeDateField dùng mảng các giá trị đó. Chuyển đổi theo múi giờ nghiệp vụ; không chấp nhận chuỗi ngày hoặc số giây. --resolve-aliases chỉ chuyển đổi tên trường.",
+    data_notes: "Lưu ngày bằng mili giây theo múi giờ nghiệp vụ: DateField số, CascadeDateField mảng. is/is_not dùng value \"\". --resolve-aliases hỗ trợ bí danh trường, đầu mút và parentId.",
     cmd_task_center: 'Trung tâm tác vụ toàn cầu (cần làm/đã xử lý/CC v.v.)',
     cmd_basic_info: 'Truy van thong tin to chuc, dung luong, han muc va mien',
     cmd_read_dingtalk_doc: 'Lấy nội dung Markdown từ tài liệu DingTalk',

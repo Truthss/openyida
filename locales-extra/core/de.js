@@ -101,7 +101,7 @@ module.exports = {
     cmd_get_form_config: 'Query form configuration',
     group_data: 'Daten & Berechtigungen',
     cmd_data: 'Einheitliche Datenverwaltung (Formular/Prozess/Aufgabe/Unterformular)',
-    data_notes: "DateField erwartet numerische Unix-Zeitstempel in Millisekunden, CascadeDateField ein Array davon. In der Geschäftszeitzone umrechnen; Datumszeichenfolgen und Sekundenwerte sind ungültig. --resolve-aliases löst nur Feldnamen auf.",
+    data_notes: "Datumswerte als Millisekunden in der Geschäftszeitzone speichern: DateField Zahl, CascadeDateField Array. is/is_not verwendet value \"\". --resolve-aliases unterstützt Feld-, Bereichsgrenzen- und parentId-Aliase.",
     cmd_task_center: 'Globales Aufgabenzentrum (Aufgaben/Bearbeitet/CC etc.)',
     cmd_basic_info: 'Organisationsinfos, Kapazitaeten, Quoten und Domain-Einstellungen abfragen',
     cmd_read_dingtalk_doc: 'Markdown-Inhalt eines DingTalk-Dokuments abrufen',

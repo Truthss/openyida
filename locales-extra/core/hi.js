@@ -101,7 +101,7 @@ module.exports = {
     cmd_get_form_config: 'Query form configuration',
     group_data: 'डेटा & अनुमतियां',
     cmd_data: 'एकीकृत डेटा प्रबंधन (फॉर्म/प्रक्रिया/कार्य/उप-फॉर्म)',
-    data_notes: "DateField में मिलीसेकंड का संख्यात्मक Unix टाइमस्टैम्प और CascadeDateField में उनका ऐरे दें। व्यावसायिक समय क्षेत्र के अनुसार बदलें; तारीख की स्ट्रिंग और सेकंड मान स्वीकार नहीं हैं। --resolve-aliases केवल फ़ील्ड नाम बदलता है।",
+    data_notes: "व्यावसायिक समय क्षेत्र में मिलीसेकंड से तारीख सहेजें: DateField संख्या, CascadeDateField ऐरे। is/is_not में value \"\" दें। --resolve-aliases फ़ील्ड, सीमा और parentId के उपनाम स्वीकार करता है।",
     cmd_task_center: 'वैश्विक कार्य केंद्र (लंबित/संसाधित/CC आदि)',
     cmd_basic_info: 'संगठन की मूल जानकारी, क्षमता, कोटा और डोमेन देखें',
     cmd_read_dingtalk_doc: 'DingTalk दस्तावेज़ की Markdown सामग्री प्राप्त करें',

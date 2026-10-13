@@ -101,7 +101,7 @@ module.exports = {
     cmd_get_form_config: 'Query form configuration',
     group_data: 'Données & Permissions',
     cmd_data: 'Gestion unifiée des données (formulaire/processus/tâche/sous-formulaire)',
-    data_notes: "DateField attend un horodatage Unix numérique en millisecondes ; CascadeDateField attend un tableau de ces valeurs. Convertissez selon le fuseau métier ; les dates textuelles et les secondes sont refusées. --resolve-aliases résout uniquement les noms de champs.",
+    data_notes: "Enregistrez les dates en millisecondes du fuseau métier : DateField nombre, CascadeDateField tableau. is/is_not utilise value \"\". --resolve-aliases accepte les alias de champ, de borne et de parentId.",
     cmd_task_center: 'Centre de tâches global (à faire/traité/CC etc.)',
     cmd_basic_info: "Consulter les infos d'organisation, capacités, quotas et domaine",
     cmd_read_dingtalk_doc: "Récupérer le contenu Markdown d'un document DingTalk",

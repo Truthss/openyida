@@ -101,7 +101,7 @@ module.exports = {
     cmd_get_form_config: 'Query form configuration',
     group_data: '데이터 & 권한',
     cmd_data: '통합 데이터 관리 (양식/프로세스/작업/하위양식)',
-    data_notes: "DateField는 밀리초 숫자 타임스탬프, CascadeDateField는 해당 타임스탬프 배열을 사용합니다. 업무 시간대로 변환하세요. 날짜 문자열과 초 단위 값은 사용할 수 없습니다. --resolve-aliases는 필드 이름만 변환합니다.",
+    data_notes: "날짜 저장은 업무 시간대의 밀리초: DateField 숫자, CascadeDateField 배열. is/is_not의 value는 \"\". --resolve-aliases는 필드, 구간 끝점, parentId 별칭을 지원합니다.",
     cmd_task_center: '글로벌 작업 센터 (할일/처리됨/참조 등)',
     cmd_basic_info: '조직 기본 정보, 용량, 할당량 및 도메인 설정 조회',
     cmd_read_dingtalk_doc: 'DingTalk 문서의 Markdown 내용 가져오기',

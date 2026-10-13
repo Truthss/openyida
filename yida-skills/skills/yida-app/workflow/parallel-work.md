@@ -57,7 +57,7 @@
 `design-plan init` 返回 `parallelTasks` 和两个片段文件：
 
 - `business.json`：init 已预填业务骨架，业务任务必须先读后写，保留 base；facts 只能填写 overview、dataModels、businessFlows、pages 和可选 execution，禁止加入 visualStyle。一次补齐所有普通表单的 sampleDataPlan（不造数写 skipReason）和所有自定义页面的 permissionSummary，完成后设 ready=true。可选 meta 仅填写 businessDomain、experienceTopology。
-- `visual.json`：init 复用 `visualSelection`，将已选风格、主色和导航写入 facts.visualStyle。选择及所有自定义页的具体设计完整后，才设 `ready=true`；否则返回 `visual-design` 任务。按任务依赖读取业务页面，补齐 pageApplications；主题提供公共组件规则，不能代替逐页设计。
+- `visual.json`：init 复用 `visualSelection`，将已选风格、主色和导航写入 facts.visualStyle。选择及所有自定义页的具体设计完整后，才设 `ready=true`；否则返回 `visual-design` 任务补设计细节；这不表示需要重选风格，PRD 完成后也不再比较候选或询问风格。按任务依赖读取业务页面，补齐 pageApplications；主题提供公共组件规则，不能代替逐页设计。
 
 两个文件的 base 由 CLI 生成，保留原值；任务读取同一份需求、草稿和主题上下文。业务片段完成后保持稳定，变更时通知视觉任务重新核对页面设计。
 

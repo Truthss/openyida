@@ -163,7 +163,7 @@ test('changing the primary updates explicit references but preserves independent
 
 
 test('restored templates pass strict palette checks without rewriting their authored files', () => {
-  const themes = loadThemeIndex().themes.filter(theme => ['app-pop', 'app-platinum'].includes(theme.themeId));
+  const themes = loadThemeIndex().themes.filter(theme => ['app-pop', 'app-platinum', 'app-sage', 'app-teal', 'app-terminal'].includes(theme.themeId));
   const files = themes.flatMap(theme => [theme.templatePath, theme.cssTemplatePath, theme.formLayoutPath]);
   const before = files.map(file => fs.readFileSync(path.join(DESIGN_SKILL_ROOT, file), 'utf8'));
   expect(build({ check: true, themes })).toEqual([]);

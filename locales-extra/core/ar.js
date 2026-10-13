@@ -101,7 +101,7 @@ module.exports = {
     cmd_get_form_config: 'Query form configuration',
     group_data: 'البيانات & الأذونات',
     cmd_data: 'إدارة البيانات الموحدة (نموذج/عملية/مهمة/نموذج فرعي)',
-    data_notes: "يستخدم DateField طابع Unix زمنيًا رقميًا بالمللي ثانية، ويستخدم CascadeDateField مصفوفة منها. حوّل حسب المنطقة الزمنية للعمل؛ لا تُقبل سلاسل التاريخ أو قيم الثواني. يحوّل --resolve-aliases أسماء الحقول فقط.",
+    data_notes: "احفظ التاريخ بمللي ثانية حسب المنطقة الزمنية للعمل: DateField رقم، CascadeDateField مصفوفة. استخدم value \"\" مع is/is_not. يدعم --resolve-aliases أسماء الحقول وأطراف النطاق وparentId البديلة.",
     cmd_task_center: 'مركز المهام العالمي (معلق/معالج/نسخة إلخ)',
     cmd_basic_info: 'عرض معلومات المؤسسة والسعة والحصص والنطاق',
     cmd_read_dingtalk_doc: 'جلب محتوى Markdown من مستند DingTalk',

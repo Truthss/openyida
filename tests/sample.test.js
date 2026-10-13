@@ -8,6 +8,17 @@ const createForm = require('../lib/app/create-form');
 const { applyTemplateVariables, run } = require('../lib/core/sample');
 
 describe('sample templates', () => {
+  test('empty-query is emitted as usable helpers for form and page searches', async () => {
+    const output = path.join(tmpDir, 'empty-query.js');
+    await run(['yida-data-management', 'empty-query', '--output', output]);
+    const helpers = require(output);
+    const conditions = helpers.buildEmptyConditions({ fieldId: 'cascadeDateField_period', componentName: 'CascadeDateField' }, 'end-only');
+    expect(conditions.map(condition => [condition.key, condition.operator])).toEqual([
+      ['cascadeDateField_period.start', 'is'], ['cascadeDateField_period.end', 'is_not'],
+    ]);
+    expect(helpers.countFilledRangeEndpoints([0, ''])).toBe(1);
+    expect(helpers.buildCountConditions({ fieldId: 'numberField_count', componentName: 'NumberField' }, 'filled')[0]).toMatchObject({ operator: 'gt', value: 0 });
+  });
   let tmpDir;
   let consoleLogSpy;
   let consoleErrorSpy;
@@ -693,7 +704,10 @@ describe('application theme from design.md', () => {
 
   test.each(themeIndex.themes.filter(theme => theme.mode !== 'creative').map(theme => [theme.id || theme.themeId]))('Plan theme %s uses the public CSS pipeline', themeId => {
     const plan = JSON.parse(JSON.stringify(fixture));
-    plan.visualStyle.forUser.colorStrategy.primaryColor = themeId === 'app-platinum' ? '#897253' : '#6F4E37';
+    const theme = themeIndex.themes.find(item => item.themeId === themeId);
+    const authored = require('../lib/design/document').parseDesignDocument(fs.readFileSync(
+      require('../lib/design-plan/themes').themeTemplatePath(theme), 'utf8')).metadata.tokens['application-global'].colors['--color-brand1-6'];
+    plan.visualStyle.forUser.colorStrategy.primaryColor = /^#[0-9a-f]{6}$/i.test(authored) ? authored : '#6F4E37';
     delete plan.visualStyle.forUser.themeProfile;
     plan.visualStyle.forUser.selectedTheme = themeIndex.themes.find(theme => theme.themeId === themeId);
     plan.visualStyle.tokens = { '--pod-card-border-radius': '16px' };

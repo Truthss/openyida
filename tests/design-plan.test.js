@@ -981,10 +981,12 @@ describe('design-plan materialize', () => {
       'index.json'
     ), 'utf8'));
     expect(themeIndex.themes.filter(theme => !theme.collection)).toHaveLength(13);
-    expect(themeIndex.themes.filter(theme => theme.themeId.startsWith('app-')).map(theme => theme.themeId).sort()).toEqual(['app-platinum', 'app-pop']);
+    expect(themeIndex.themes.filter(theme => theme.themeId.startsWith('app-')).map(theme => theme.themeId).sort()).toEqual(['app-platinum', 'app-pop', 'app-sage', 'app-teal', 'app-terminal']);
 
     for (const theme of themeIndex.themes.filter(item => item.mode !== 'creative')) {
-      plan.visualStyle.forUser.colorStrategy.primaryColor = theme.themeId === 'app-platinum' ? '#897253' : '#6F4E37';
+      const template = fs.readFileSync(require('../lib/design-plan/themes').themeTemplatePath(theme), 'utf8');
+      const authored = parseDesignDocument(template).metadata.tokens['application-global'].colors['--color-brand1-6'];
+      plan.visualStyle.forUser.colorStrategy.primaryColor = /^#[0-9a-f]{6}$/i.test(authored) ? authored : '#6F4E37';
       delete plan.visualStyle.forUser.themeProfile;
       plan.visualStyle.forUser.selectedTheme.themeId = theme.themeId;
       plan.visualStyle.forUser.selectedTheme.templatePath = theme.templatePath;
@@ -1012,7 +1014,9 @@ describe('design-plan materialize', () => {
       expect(design).toContain(`"--color-brand1-6": "${plan.visualStyle.forUser.colorStrategy.primaryColor}"`);
       expect(design).not.toMatch(/\{\{[^}]+\}\}|<[^>]*(?:实际色值|生成期标记)[^>]*>/);
       expect(design).not.toMatch(/"--[^"]+"\s*:\s*"AI 根据[^"]*生成[^"]*"/);
-      expect(design).toContain(`"--color-brand1-1": "${theme.themeId === 'app-platinum' ? '#9C835F' : '#80634F'}"`);
+      const expectedTokens = require('../lib/app/theme-from-design').readDesignTokens(
+        require('../lib/design-plan/themes').resolveThemeColors(template.replace(/\{\{PRIMARY_COLOR\}\}/g, plan.visualStyle.forUser.colorStrategy.primaryColor)));
+      expect(design).toContain(`"--color-brand1-1": "${expectedTokens['--color-brand1-1']}"`);
       const { readDesignTokens, applyDesignTokens } = require('../lib/app/theme-from-design');
       const contract = require('../yida-skills/skills/yida-design/templates/design-themes/basic-tokens.json');
       const tokens = readDesignTokens(design);

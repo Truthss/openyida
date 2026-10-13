@@ -101,7 +101,7 @@ module.exports = {
     cmd_get_form_config: 'Query form configuration',
     group_data: 'Dados & Permissões',
     cmd_data: 'Gerenciamento unificado de dados (formulário/processo/tarefa/subformulário)',
-    data_notes: "DateField usa timestamps Unix numéricos em milissegundos; CascadeDateField usa um array desses valores. Converta conforme o fuso horário do negócio; datas em texto e segundos não são aceitos. --resolve-aliases resolve apenas nomes de campos.",
+    data_notes: "Salve datas em milissegundos do fuso do negócio: DateField número, CascadeDateField array. is/is_not usa value \"\". --resolve-aliases aceita aliases de campo, limites e parentId.",
     cmd_task_center: 'Centro de tarefas global (pendente/processado/CC etc.)',
     cmd_basic_info: 'Consultar info da organizacao, capacidade, cotas e dominio',
     cmd_read_dingtalk_doc: 'Obter conteúdo Markdown de um documento DingTalk',
