@@ -22,9 +22,9 @@ Describe your business in Codex, Claude Code, Cursor, QwenWork, Qoder, or anothe
 
 ## What OpenYida Provides
 
-Turn “we need a customer management system” into a Yida application your team can use. Describe the goal; the agent helps clarify requirements, design pages, and create and publish resources through OpenYida.
+OpenYida is a bridge between AI coding tools and Yida. It gives agents a stable `openyida` CLI to create resources, inspect schemas, generate source code, compile and publish pages, and diagnose issues.
 
-The result remains a native Yida application. Keep editing it in the Yida designer, use your organization's permissions, or ask the agent to extend it later.
+The result remains a native Yida application: teams can continue editing it in Yida, use existing enterprise security controls, and deploy through the Yida platform.
 
 ## Application Previews
 
