@@ -3,7 +3,7 @@
 ## 用途
 
 - 用户已说明想要的风格，就按要求设计。
-- Plan 仅在尚无有效选择且没有明确完整风格时，读取本文，准备三套配色、表面层次和组件样式方案供用户选择。
+- Plan 仅在没有风格意向、视觉参考或可复用选择且未委托 AI 决定时，读取本文，准备三套配色、表面层次和组件样式方案供用户选择。
 - 用户选界面风格，AI 负责匹配实现用的主题模板。
 
 ## 核心关系
@@ -18,7 +18,7 @@
   → CLI 读取所选完整模板并生成 design.md
 ```
 
-先复用已选风格；仅无选择时按[设计方向比较](../../../references/theme-selection.md#设计方向比较)根据项目需求发展风格，可匹配主题索引中的模板，也可独立推演。按[应用风格与自由创意](../../../references/application-style-library.md)交付。
+先按[意向识别](../../../references/theme-selection.md#已选风格只确认一次)处理用户描述，参考网站或设计图先[提取视觉 DNA](../../../references/reference-visual-dna.md)，已有意向或参考直接推演。仅均无时按[设计方向比较](../../../references/theme-selection.md#设计方向比较)根据项目需求发展风格，可匹配主题索引中的模板，也可独立推演。按[应用风格与自由创意](../../../references/application-style-library.md)交付。
 
 应用编排先根据业务需求确定导航结构。视觉设计按 [主题与导航兼容规则](../../../references/navigation-decision.md#主题与导航兼容规则) 筛选支持该结构的主题，再设计各页面共用的配色、背景、圆角和组件样式；命名模板的导航明暗采用模板 `navTheme`；自由创意由项目设计明确填写。页面内容、布局和操作顺序按业务规划执行。
 
@@ -47,7 +47,7 @@
 }
 ```
 
-`themeLabel` 与 `previewImage` 是本轮展示元数据，不写入 Plan 的视觉事实；无对应图时直接省略 `previewImage`，不传空值、不显示占位或缺图提示。
+`themeLabel` 与 `previewImage` 是内部候选元数据，不写入 Plan 的视觉事实；`previewImage` 可用不代表需要展示。未收到明确预览请求时，不将它复制到风格提问或调用展示工具；无对应图时直接省略，不传空值、不显示占位或缺图提示。
 
 规则：
 
@@ -70,7 +70,7 @@
 
 `ask_human` 选项只展示风格名称和一句适用说明，第一项标为推荐。`description` 和 `recommendationReason` 用于组织这句说明，不重复罗列。
 
-只有用户明确要求预览时，才按[预览规则](../../../references/theme-selection.md#选择时展示名称与效果图)展示标题和示例图。HTML 不显示描述、推荐理由、标签或提示文案。下例的 `previewImage` 是内部图片元数据，无图时省略，不直接传入不支持图片的提问工具。
+只有用户明确要求预览、参考图或效果时，才按[预览规则](../../../references/theme-selection.md#选择时展示名称与效果图)展示标题和示例图，千问环境同样遵守。HTML 不显示描述、推荐理由、标签或提示文案。下例是默认纯文字提问，不包含图片；内部候选的 `previewImage` 不自动进入问题。
 
 `themeId`、`templatePath` 和模板匹配结果保存在内部实施记录中；风格选择由 `ask_human` 收集，再按本轮候选映射到 `themeId`；效果卡片仅供查看，不回传选择、不展示模板路径。
 
@@ -85,13 +85,11 @@
     {
       "value": "<first.directionId>",
       "label": "1 · <first.themeLabel> · <first.directionLabel>（推荐）",
-      "previewImage": { "url": "<first.previewImage.url>", "alt": "<first.previewImage.alt>" },
       "description": "<first.description> <first.recommendationReason>"
     },
     {
       "value": "<second.directionId>",
       "label": "2 · <second.themeLabel> · <second.directionLabel>",
-      "previewImage": { "url": "<second.previewImage.url>", "alt": "<second.previewImage.alt>" },
       "description": "<second.description> <second.recommendationReason>"
     },
     {
@@ -109,7 +107,7 @@
 
 ## 一次保存选择结果
 
-选中一套方向后，一次写入四组事实：
+直接推演确定方向或用户选中方向后，一次写入四组事实。以下选项示例使用 `user_selected`；直接描述用 `user_explicit`，提取事实用 `material_extracted`，AI 决策用 `ai_default`：
 
 ```json
 {
@@ -148,7 +146,8 @@
 
 已有选择直接保留原 themeId 和来源；以下规则仅处理首次选择或用户主动改选，不能因进入 PRD 后的设计阶段而重新套用。
 
-- 只有用户已明确完整视觉风格、指定现有主题，或要求严格继承可信品牌/模板时，AI 才直接匹配一个有效基底并写入，`source=user_explicit | material_extracted`。单独的主题色、导航结构或导航明暗只作为候选约束，不视为已给出完整风格；导航明暗也不另存为可覆盖模板的输入。
+- 用户用自然语言给出风格意向、主题色、明暗、指定主题或提供视觉参考时，直接推演并内部映射有效基底，不要求完整视觉风格。用户原话标记 `user_explicit`，实际读取材料后提取的方向标记 `material_extracted`，AI 补齐细节标记 `ai_default`。单独的导航结构属于布局要求，不自动视为视觉风格；也不能因缺少色值或主题 ID 把已给出的风格重新当作未选择。
+- 参考网站或设计图优先按视觉 DNA 走 `free-creative`；命名模板能保留主要特征时才内部匹配并写入差异，不以模板选择替代参考提取。
 - 用户在三套候选中明确采用推荐方案时，选择第一项，`source=user_selected`。
 - 用户自由描述新方向时，先匹配核心视觉特征最近且不违反硬约束的模板。能够匹配则记录原文为 `customText` 并写入项目覆盖项。
 - 所有模板都不支持时，沿用自由创意选项，从已确认业务独立推演并继续规划。

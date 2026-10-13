@@ -41,9 +41,9 @@
 
 Plan 在 `design-plan init` 前必须补齐合法的导航结构（见下节）及 `visualSelection.themeId`。视觉沿用 `visualSelection` 的 `themeId/visualDirection/colorStrategy/navigationStyle.structure`，AI 补齐颜色等细节时只在对应新增字段标记 `ai_default`，保留已选 themeId 及用户选择来源；不能重置整个 visualSelection。仅无任何已选风格时才由选型流程确定主题。`navigationStyle.tone` 不在 brief 中推导，由 CLI 从所选主题模板的 `navTheme` 派生；Fast 共用同一规则。主题 ID 尚未确定时，通过 `openyida design-plan catalog --json` 查询合法主题及页面模式，复用本轮查询结果。
 
-先按[已选风格只确认一次](../../yida-design/references/theme-selection.md#已选风格只确认一次)检查并复用已有回答或选择记录；下文比较流程仅在尚无有效选择时执行。
+先按[已选风格只确认一次](../../yida-design/references/theme-selection.md#已选风格只确认一次)检查原始需求、最新补充、视觉参考和已有选择。保留用户的风格原话与参考 URL 或图片标识 到 `visualSelection.visualDirection.description`；自然语言意向用 `user_explicit`，实际提取的参考视觉事实用 `material_extracted`。没有 themeId 或色值不代表需要用户重新选择；由 AI 映射合法主题，无合适模板时用 `free-creative`。
 
-仅在尚无有效选择时，按[设计方向比较](../../yida-design/references/theme-selection.md#设计方向比较)生成共用的三套方向；Fast 内部选择，Plan 在没有明确完整风格时按[宿主展示规则](../../yida-design/references/theme-selection.md#选择时展示名称与效果图)获得选择（所有环境使用 `ask_human`，用户明确要求时才另行展示效果预览）。保留用户明确的风格，AI 建议记录具体业务依据。
+已有风格意向直接推演；视觉参考网站或设计图按[视觉 DNA 提取](../../yida-design/references/reference-visual-dna.md)实际读取后生成设计与 CSS。仅没有风格意向、视觉参考或可复用选择时，按[设计方向比较](../../yida-design/references/theme-selection.md#设计方向比较)生成三套方向；Fast 内部选择，Plan 未获 AI 决策委托时按[宿主展示规则](../../yida-design/references/theme-selection.md#选择时展示名称与效果图)获得选择。AI 建议记录具体依据，不伪造用户选项回答。
 
 `visualSelection.colorStrategy` 使用对象：`primaryColor` 填本项目选定的 6 位 HEX 色值，`primaryColorName` 填对应色名，`usage` 写配色依据及背景、主操作和强调色的关系。只有文字配色要求时也可先保存字符串；CLI 将原文放入 `usage`，并提示补齐 `primaryColor`。
 

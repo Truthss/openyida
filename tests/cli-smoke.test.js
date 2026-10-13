@@ -2653,7 +2653,7 @@ test('command and agent navigation policies align with AI intake decisions', () 
     expect(route.navigation_policy).toContain('floating requires an explicit design');
     expect(route.navigation_policy).not.toContain('offer exactly two');
     expect(route.design_mode_policy).toBe(workflow.design_mode_policy);
-    expect(route.design_mode_policy).toContain('Fast and Plan share one three-direction visual generation rule');
+    expect(route.design_mode_policy).toContain('Only without intent, visual reference or reusable choice do Fast and Plan share the three-direction comparison rule');
     expect(route.design_mode_policy).toContain('generate exactly three directions and follow visual_decision_policy.themeSelection');
     expect(route.design_mode_policy).toContain('use ask_human on every host');
     expect(route.design_mode_policy).not.toContain('use ask_human for the style choice');
@@ -2731,7 +2731,7 @@ test('plain user-facing guidance is available from manifest and both agent capab
   expect(fs.readFileSync(path.join(ROOT, orderFile), 'utf8')).toContain(`## ${orderAnchor}`);
   expect(manifest.summary.core_workflows.full_app_build.design_mode_policy).toContain('themeSelection.interactionOrder');
   expect(selection.reuse.checkBeforePresentation).toEqual([
-    'current_user_reply', 'brief.visualSelection', 'visualStyle.internal.selectedTheme', 'design.md themeProfile.sourceThemeId',
+    'original_user_request', 'current_user_reply', 'user_visual_references', 'brief.visualSelection', 'visualStyle.internal.selectedTheme', 'design.md themeProfile.sourceThemeId',
   ]);
   expect(selection.reuse.policy).toContain('First-instinct comparison runs only before an initial choice');
   expect(selection.reuse.policy).toContain('fill missing design details without reopening the chooser');
@@ -2750,7 +2750,7 @@ test('plain user-facing guidance is available from manifest and both agent capab
   const [navigationReference, navigationAnchor] = visual.applicationStyle.navigationShape.reference.split('#');
   expect(fs.readFileSync(path.join(ROOT, navigationReference), 'utf8')).toContain(`### ${navigationAnchor}`);
   expect(fs.existsSync(path.join(ROOT, visual.reference.split('#')[0]))).toBe(true);
-  expect(visual.reference).toBe('yida-skills/skills/yida-design/references/theme-selection.md#设计方向比较');
+  expect(visual.reference).toBe('yida-skills/skills/yida-design/references/theme-selection.md#已选风格只确认一次');
   expect(fs.readFileSync(path.join(ROOT, visual.reference.split('#')[0]), 'utf8')).toContain('## 设计方向比较');
   expect(visual.nativeFormLayout).toMatchObject({
     model: 'component_based_native_form_layout',

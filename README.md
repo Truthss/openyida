@@ -47,7 +47,7 @@ Example applications built with the themes below. Click an image to view it at f
   </tr>
 </table>
 
-Choose an **application theme or an independent creative direction**. The agent filters styles by your task and navigation needs. Pop art is offered only on an explicit request or for a primarily showcase-oriented task. [Browse more application examples](https://demo.aliwork.com/o/openyida/helpCenter?openyidaRoute=showcase).
+Choose an **application theme or an independent creative direction**. When you describe a style or provide a website or design image you like, the agent develops that direction without asking you to choose a theme. Otherwise, it considers your task and navigation needs. Pop art is offered only on an explicit request or for a primarily showcase-oriented task. [Browse more application examples](https://demo.aliwork.com/o/openyida/helpCenter?openyidaRoute=showcase).
 
 ## Core Capabilities
 
@@ -64,7 +64,7 @@ Choose an **application theme or an independent creative direction**. The agent 
 ## From Request to Delivery
 
 1. **Describe the goal.** Explain who will use the app, what they need to do, and any existing app or reference material.
-2. **Confirm requirements and style together.** Ready questions are grouped early. Style options use a name and a short explanation; reference images appear only when you ask to see them.
+2. **Keep your stated visual direction.** The agent develops your style description directly, or inspects a reference website or design image to produce a design document and theme CSS. Style questions are only needed when no direction is available; delegated decisions stay with the agent. Previews and reference images appear only when explicitly requested, including in QwenWork.
 3. **Choose how to build.** Fast suits clear requirements you want to move forward with. Plan produces a reviewable proposal and waits for approval before creating resources.
 4. **Review and refine.** Check the delivered app and common actions, then request page, field, or workflow changes. Your chosen style is reused unless you ask to change it.
 
@@ -72,7 +72,7 @@ For existing-app improvements, review the visual proposal before backups and imp
 
 ## Recent Updates
 
-**2026.10.13** adds existing-app visual improvements and theme backup/restore, reopens five refined themes, and improves narrow-screen layouts, readability, and style selection. Optional previews show only titles and example images; selecting a style does not lead to repeated questions. [Read the full changelog](./CHANGELOG.md#20261013---2026-10-13).
+**2026.10.14** improves style intent recognition: stated styles are developed directly, and reference websites or liked design images are inspected for visual DNA before generating the design document and theme CSS. No repeated theme choice is required. Theme previews are off by default on every host and appear only on explicit request. [Read the full changelog](./CHANGELOG.md#20261014---2026-10-14).
 
 ## Quick Start
 

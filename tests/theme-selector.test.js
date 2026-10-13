@@ -90,7 +90,9 @@ test('current CLI catalog supplies optional images to template without requiring
   expect(ui.nodes('article').some(node => node.attributes['data-theme-id'] === 'free-creative')).toBe(true);
   const policy = result.themeSelection;
   expect(policy).toEqual(getVisualDecisionPolicy().themeSelection);
-  expect(policy.qwenwork).toMatchObject({ activeToolId: 'qwenwork', tool: 'qoder_show_widget', purpose: 'preview_only', response: 'none' });
+  expect(policy.qwenwork).toMatchObject({ activeToolId: 'qwenwork', tool: 'qoder_show_widget', purpose: 'preview_only', response: 'none',
+    trigger: 'explicit_user_request', defaultEnabled: false });
+  expect(policy.preview).toMatchObject({ trigger: 'explicit_user_request', defaultEnabled: false });
   expect(policy.selectionTool).toBe('ask_human');
   expect(policy.preview).toMatchObject({ trigger: 'explicit_user_request', purpose: 'preview_only', maxColumns: 6, desktopColumns: [4, 5, 6], content: ['name', 'img'] });
   expect(policy.qwenwork.prepareCommand).toBe('openyida sample yida-design theme-selector --json');
