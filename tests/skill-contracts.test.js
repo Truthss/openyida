@@ -64,19 +64,33 @@ describe('OpenYida skill contracts', () => {
       'yida-skills/skills/yida-data-management/references/data-format-guide.md',
     ].map(file => {
       const text = readSkill(file);
-      const block = text.slice(text.indexOf('| 组件类型 |')).split('\n\n')[0];
+      const block = text.slice(text.indexOf('| 组件类型（`componentName`） |')).split('\n\n')[0];
       const rows = block.split('\n').slice(2).map(line => line.split('|').slice(1, -1).map(cell => cell.trim()));
-      expect(rows.every(row => row.length === 3)).toBe(true);
+      expect(rows.every(row => row.length === 4)).toBe(true);
       expect(rows.every(row => /^`[A-Za-z]+Field`(?: \/ `[A-Za-z]+Field`)*$/.test(row[0]))).toBe(true);
+      const expectedTypes = { TextField: 'TEXT', TextareaField: 'TEXT', NumberField: 'DOUBLE', RateField: 'DOUBLE', DateField: 'DOUBLE', CascadeDateField: 'DOUBLE', RadioField: 'ARRAY', SelectField: 'ARRAY', CheckboxField: 'ARRAY', MultiSelectField: 'ARRAY', EmployeeField: 'STRING', DepartmentSelectField: 'ARRAY', CitySelectField: 'STRING', TableField: 'TEXT' };
+      for (const row of rows) {
+        for (const match of row[0].matchAll(/`([A-Za-z]+Field)`/g)) {
+          expect(row[1]).toBe(expectedTypes[match[1]] ? '`' + expectedTypes[match[1]] + '`' : '—');
+        }
+      }
+      const help = readSkill('lib/core/query-data.js');
+      const manifest = readSkill('lib/core/command-manifest.js');
+      const typeNote = help.match(/Each condition uses[^\n]+/)[0];
+      expect(manifest).toContain(typeNote);
+      for (const [component, type] of Object.entries(expectedTypes)) {
+        const group = typeNote.split(';').find(part => part.includes(component));
+        expect(group).toContain(type);
+      }
       const date = rows.find(row => row[0] === '`DateField`');
       const range = rows.find(row => row[0] === '`CascadeDateField`');
-      expect(date[1]).toContain('between');
-      expect(date[2]).toContain('毫秒时间戳数字');
-      expect(range[1]).toContain('[[开始下限,开始上限],[结束下限,结束上限]]');
-      expect(range[2]).toContain('[开始毫秒时间戳,结束毫秒时间戳]');
+      expect(date[2]).toContain('between');
+      expect(date[3]).toContain('毫秒时间戳数字');
+      expect(range[2]).toContain('[[开始下限,开始上限],[结束下限,结束上限]]');
+      expect(range[3]).toContain('[开始毫秒时间戳,结束毫秒时间戳]');
       const table = rows.find(row => row[0] === '`TableField`');
-      expect(table[1]).toContain('contains');
-      expect(table[1]).toContain('parentId');
+      expect(table[2]).toContain('contains');
+      expect(table[2]).toContain('parentId');
       return rows;
     });
     expect(tables[0]).toEqual(tables[1]);

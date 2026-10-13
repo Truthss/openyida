@@ -246,22 +246,22 @@ openyida data query tasks <appType> --type todo|done|submitted|cc [--page 1 --si
 
 ### 常见字段格式
 
-查询列表示条件中的 `value`，保存列表示 `formDataJson` / `updateFormDataJson` 中的字段值。`key`、`type` 和 `operator` 按[查询条件指南](../../references/query-condition-guide.md)填写。
+先用 `get-schema --field-map-json` 获取真实字段 ID 填入 `key`，再按表填写 `componentName`、`type`、`value` 和括号中的 `operator`。`type` 是查询类型；保存 / 更新只传字段值。多条件按 AND 组合，完整操作符见[查询条件指南](../../references/query-condition-guide.md)。
 
-| 组件类型 | 查询格式（条件的 `value`） | 保存 / 更新格式 |
-| --- | --- | --- |
-| `TextField` / `TextareaField` | `"文本"`（eq / like） | `"文本"` |
-| `NumberField` | `1`（比较）或 `[1,10]`（between） | `1` |
-| `RateField` | `3`（比较）或 `[2,4]`（between） | `3` |
-| `RadioField` / `SelectField` | `"选项值"`（eq）或 `["选项值"]`（contains） | `"选项值"` |
-| `CheckboxField` / `MultiSelectField` | `["选项值"]`（contains） | `["选项值一","选项值二"]` |
-| `DateField` | 毫秒时间戳数字（比较）或 `[开始毫秒时间戳,结束毫秒时间戳]`（between） | 毫秒时间戳数字，如 `1719705600000` |
-| `CascadeDateField` | `[[开始下限,开始上限],[结束下限,结束上限]]`，省略 operator | `[开始毫秒时间戳,结束毫秒时间戳]`；空端点用 `""` |
-| `EmployeeField` | `"userId"`（eq）或 `["userId"]`（contains） | `["userId"]` |
-| `DepartmentSelectField` | `1123456` 或 `["1123456"]` | `["1123456"]` |
-| `CitySelectField` | `[省ID,市ID,区ID]` | `[省ID,市ID,区ID]` |
-| `TableField` | `"关键词"`（contains）；子字段条件带 `parentId` | `[{"textField_xxx":"值"}]` |
-| `AssociationFormField` | 先查询关联目标表，再按业务关系定位记录 | `[{"appType":"xxx","formUuid":"xxx","formType":"receipt","instanceId":"xxx","title":"关联记录标题"}]` |
+| 组件类型（`componentName`） | 查询 `type` | 查询 `value`（操作符） | 保存 / 更新值 |
+| --- | --- | --- | --- |
+| `TextField` / `TextareaField` | `TEXT` | `"文本"`（eq / like） | `"文本"` |
+| `NumberField` | `DOUBLE` | `1`（eq / gt / ge / lt / le）或 `[1,10]`（between） | `1` |
+| `RateField` | `DOUBLE` | `3`（eq / gt / ge / lt / le）或 `[2,4]`（between） | `3` |
+| `RadioField` / `SelectField` | `ARRAY` | `"选项值"`（eq）或 `["选项值"]`（contains） | `"选项值"` |
+| `CheckboxField` / `MultiSelectField` | `ARRAY` | `["选项值"]`（contains） | `["选项值一","选项值二"]` |
+| `DateField` | `DOUBLE` | 毫秒时间戳数字（eq / gt / ge / lt / le）或 `[开始毫秒时间戳,结束毫秒时间戳]`（between） | 毫秒时间戳数字，如 `1719705600000` |
+| `CascadeDateField` | `DOUBLE` | `[[开始下限,开始上限],[结束下限,结束上限]]`，省略 operator | `[开始毫秒时间戳,结束毫秒时间戳]`；空端点用 `""` |
+| `EmployeeField` | `STRING` | `"userId"`（eq）或 `["userId"]`（contains） | `["userId"]` |
+| `DepartmentSelectField` | `ARRAY` | `1123456` 或 `["1123456"]` | `["1123456"]` |
+| `CitySelectField` | `STRING` | `[省ID,市ID,区ID]` | `[省ID,市ID,区ID]` |
+| `TableField` | `TEXT` | `"关键词"`（contains）；子字段条件带 `parentId` | `[{"textField_xxx":"值"}]` |
+| `AssociationFormField` | — | 先查询关联目标表，再按业务关系定位记录 | `[{"appType":"xxx","formUuid":"xxx","formType":"receipt","instanceId":"xxx","title":"关联记录标题"}]` |
 
 ### 为空与不为空（is / is_not）
 
