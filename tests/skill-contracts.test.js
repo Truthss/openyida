@@ -55,8 +55,21 @@ describe('OpenYida skill contracts', () => {
     expect(shared).toContain('Fast 与 Plan 使用下面同一套三方向生成规则和候选字段');
     expect(shared).toContain('Plan 在用户没有明确完整风格时必须展示同样三套方向并按下方宿主展示规则获得用户选择');
     expect(plan).toContain('获得选择或已有明确完整风格后，再继续主题映射和初始化');
+    for (const relative of [
+      'yida-skills/skills/yida-design/SKILL.md',
+      'yida-skills/skills/yida-design/sub_skill/yida-design-plan/SKILL.md',
+      'yida-skills/skills/yida-app/workflow/step-2-design.md',
+      'yida-skills/skills/yida-app/workflow/plan/workflow.md',
+      'yida-skills/skills/yida-requirement-analysis/references/handoff.md',
+    ]) { expect(readSkill(relative)).toContain('theme-selection.md#已选风格只确认一次'); }
+    expect(shared).toContain('缺少这些实施细节时');
+    expect(shared).toContain('第一直觉”只作用于首次提出候选前');
+    expect(shared).toContain('较早交互的迟到回传不能覆盖用户后来的选择');
     expect(shared).toContain('`active.toolId`');
     expect(shared).toContain('`qoder_show_widget`');
+    expect(shared).toContain('openyida sample yida-design theme-selector --json');
+    expect(shared).toContain('skills 根目录相对路径');
+    expect(shared).not.toContain('的绝对路径，`data`');
     expect(shared).toContain('其他环境使用 `ask_human`');
     expect(interaction).toContain('theme-selection.md#千问环境的图片风格选择器');
     const handoff = readSkill('yida-skills/skills/yida-requirement-analysis/references/handoff.md');

@@ -130,7 +130,7 @@ test.each(['#6F4E37', '#1677FF'])('color examples preserve the project choice %s
   save();
   const result = init();
   expect(colorExample(result)).toEqual(brief.visualSelection.colorStrategy);
-  expect(result.authoring.visualDecision).toEqual(require('../lib/design-plan/visual-policy').getVisualDecisionPolicy());
+  expect(result.authoring.visualDecision).toEqual(require('../lib/design-plan/visual-policy').getVisualDecisionPolicy({ themeId: 'soft-outline-rhythm', source: 'ai_default' }));
   const plan = JSON.parse(fs.readFileSync(result.output, 'utf8'));
   expect(plan.visualStyle.forUser.colorStrategy.primaryColor).toBe(primaryColor);
 });
@@ -767,4 +767,27 @@ test.each(['dark', undefined])('free creative preserves authored tone without in
   expect(plan.visualStyle.forUser.navigationStyle).toMatchObject({ tone: tone || '', toneSource: 'project_defined' });
   expect(result.authoring.pendingFields.some(field => field.path === 'facts.visualStyle.forUser.navigationStyle.tone')).toBe(!tone);
   expect(fs.readFileSync(result.context, 'utf8')).toContain('自由创意需明确填写');
+});
+
+test.each([
+  ['soft-outline-rhythm', 'user_selected'],
+  ['soft-outline-rhythm', 'user_explicit'],
+  ['free-creative', 'user_selected'],
+  ['free-creative', 'user_explicit'],
+])('reuses %s (%s) while design details are still incomplete', (themeId, source) => {
+  brief.visualSelection = {
+    themeId,
+    visualDirection: { label: '用户已选方向', source },
+    navigationStyle: { structure: 'top', tone: 'light' },
+  };
+  save();
+  const result = initialize(briefPath, { outputDir: path.join(dir, 'reuse') });
+  const plan = JSON.parse(fs.readFileSync(result.output, 'utf8'));
+  expect(plan.visualStyle.internal.selectedTheme).toMatchObject({ themeId, source });
+  expect(result.authoring.visualDecision.themeSelection.currentSelection).toEqual({
+    themeId, source, action: 'reuse', askStyleAgain: false, compareFirstInstinct: false,
+  });
+  const visual = JSON.parse(fs.readFileSync(result.parallelTasks.find(task => task.id === 'visual-design').output, 'utf8'));
+  expect(visual.facts.visualStyle.internal.selectedTheme).toMatchObject({ themeId, source });
+  expect(result.authoring.pendingFields.length).toBeGreaterThan(0);
 });

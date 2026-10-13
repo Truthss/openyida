@@ -2713,6 +2713,18 @@ test('plain user-facing guidance is available from manifest and both agent capab
   expect(fs.existsSync(path.join(ROOT, policy.reference))).toBe(true);
   const visual = manifest.summary.core_workflows.full_app_build.visual_decision_policy;
   expect(visual).toEqual(require('../lib/design-plan/visual-policy').getVisualDecisionPolicy());
+  const selection = visual.themeSelection;
+  expect(selection.qwenwork.prepareCommand).toBe('openyida sample yida-design theme-selector --json');
+  expect(selection.qwenwork.widgetPathSource).toContain('relative to the host skills root');
+  expect(selection.reuse.checkBeforePresentation).toEqual([
+    'current_user_reply', 'brief.visualSelection', 'visualStyle.internal.selectedTheme', 'design.md themeProfile.sourceThemeId',
+  ]);
+  expect(selection.reuse.policy).toContain('First-instinct comparison runs only before an initial choice');
+  expect(selection.reuse.policy).toContain('fill missing design details without reopening the chooser');
+  expect(selection).not.toHaveProperty('currentSelection');
+  const [reuseFile, reuseAnchor] = selection.reuse.reference.split('#');
+  expect(fs.readFileSync(path.join(ROOT, reuseFile), 'utf8')).toContain(`## ${reuseAnchor}`);
+  expect(JSON.parse(runOk(['design-plan', 'catalog', '--json'])).themeSelection).toEqual(selection);
   expect(summary.full_app_artifact_route.visual_decision_policy).toEqual(visual);
   expect(capabilities.commands.core_workflows.full_app_build.visual_decision_policy).toEqual(visual);
   expect(capabilities.recommended.default_full_app_workflow.visual_decision_policy).toEqual(visual);

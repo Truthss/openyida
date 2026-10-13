@@ -2,6 +2,18 @@
 
 Fast、Plan 和单页设计共用 [主题索引](../templates/design-themes/index.json) 与其中列出的完整主题。命名模板共用这一主题库；另有独立的自由创意路径，不要求匹配模板。详见[应用风格模板与自由创意](application-style-library.md)。
 
+## 已选风格只确认一次
+
+每次进入选型或准备打开选择器前，先检查当前用户回答、`brief.visualSelection`、已有方案的 `visualStyle.internal.selectedTheme` 和当前应用 `design.md` 的 `themeProfile.sourceThemeId`。以同一任务中用户最新的明确选择为准；存在可复用选择就直接继续设计，不展示新一轮候选。
+
+- 用户选中了主题、自由创意，或明确采用推荐项，就已完成风格选择；不要求用户同时提供完整配色、Token 和页面设计。缺少这些实施细节时，AI 在所选风格内补齐，不能以“风格还不完整”为由重问。
+- 收到有效回答后，先将 `themeId` 和 `visualDirection.source=user_selected` 写入 brief 的 `visualSelection`，并保留已选候选的名称、说明与配色。用户直接指定主题用 `user_explicit`。Plan 初始化及视觉片段沿用该结果，最终写入 `visualStyle.internal.selectedTheme`；选择事实先保存，未完成的设计细节再补齐。
+- 切换 Skill、Fast/Plan 阶段、恢复中断、执行模板准备命令、补配色或读取完整模板，都不重启选型。已有用户回复但文件未保存时，先从回复与当时的候选恢复记录，不能因缺少文件让用户再选。
+- `qoder_show_widget` 与 `ask_human` 是同一次风格选择的不同展示方式。降级前先检查有无有效回答；用户已通过任一路径作答就停止等待另一条路径。同一选择重复回传只复用一次，较早交互的迟到回传不能覆盖用户后来的选择，也不能触发重问。
+- 名称、编号或“用推荐的”能唯一对应当时的候选时，直接确定 ID 并保存；只有回答无法对应或存在矛盾时，针对歧义澄清，不能重新展示整套风格问题。
+- “拒绝第一直觉”只作用于首次提出候选前的 AI 内部比较。用户选定的方向不是待排除的第一直觉，不能在选后、模板生成或验收时再执行该规则；也不能借更换工具重新生成候选。
+- 仅当用户明确要求换风格，或出现确实影响落地的冲突（如新增的明确导航要求不受所选主题支持）时重新讨论。先说明具体冲突并只问需变更的部分；一般内容调整、页面增补和整体方案确认都沿用已选风格。
+
 ## 输入与优先级
 
 先读取已确认需求、现有应用主题和视觉证据；页面内容、导航类型、数据、字段、流程和权限沿用业务规划。视觉证据按以下顺序处理：
@@ -65,7 +77,7 @@ Fast 与 Plan 使用下面同一套三方向生成规则和候选字段，不得
 
 ## 拒绝第一直觉
 
-用户委托“根据业务场景选择合适的风格/主题”时，AI 必须先排除第一直觉方案，再做候选比较。排除在本轮内部完成，不新增问卷或评分字段；不能仅复核后继续采用原方案。
+仅在尚无可复用选择、首次为用户准备候选时执行。用户委托“根据业务场景选择合适的风格/主题”时，AI 先排除第一直觉方案，再做候选比较。排除在本轮内部完成，不新增问卷或评分字段；不能仅复核后继续采用原方案。
 
 1. 识别最先想到的完整方案及其惯性来源，例如“销售驾驶舱 → 蓝色商务卡片”。将该方案排除，不进入后续候选、推荐或最终交付。
 2. 在排除后重新生成上述三套方向（两个命名模板方向和一个自由创意方向）。各方向相对被排除方案，在构图、字体层级、表面层次、色彩关系中至少两项有实质差异；不得仅改名称、微调色值或调换候选顺序后重新引入原方案。
@@ -78,24 +90,26 @@ Fast 与 Plan 使用下面同一套三方向生成规则和候选字段，不得
 
 ## 千问环境的图片风格选择器
 
-先检查 `openyida env --json` 的 `active.toolId`；值为 `qwenwork`（包括 `qwenwork_web` 和 `qwenwork_desktop`）时使用本流程。以当前活跃环境为准，不能因为存在千问安装目录就切换交互。仅在需要用户选择风格时展示，已有明确选择或 Fast 内部选型不额外打断用户。
+先执行[已选风格复用检查](#已选风格只确认一次)，只有尚待用户选择时才继续。检查 `openyida env --json` 的 `active.toolId`；值为 `qwenwork`（包括 `qwenwork_web` 和 `qwenwork_desktop`）时使用本流程。以当前活跃环境为准，不能因为存在千问安装目录就切换交互。仅在需要用户选择风格时展示，已有明确选择或 Fast 内部选型不额外打断用户。
 
 1. 读取 [主题索引](../templates/design-themes/index.json) 和 [效果图映射](theme-preview-images.json)，按 `themeId` 合并。也可直接使用 `openyida design-plan catalog --json` 的同源数据及 `themeSelection` 交互指引；导航兼容范围以该命令的 `supportedNavigationLayouts` 为准。
 2. 先完成本页的候选筛选，再组装 `{themes: [{id, name, img, desc, tags, selected}]}`。`id` 取 `themeId`，`name` 取 `label`（可附项目方向），`desc` 根据 `styleSummary` 简述效果、适用理由和本项目配色；`img` 只取同 ID 的图片 URL，无图省略；`tags` 为简短说明数组，可含“推荐”；`selected` 只表示初始选中，不代表用户已确认。Plan 仍展示两个命名主题方向和 `free-creative`，不能把全目录或仅有图片的历史主题直接作为候选。
-3. 调用当前宿主的 `qoder_show_widget`，`widget_path` 指向本 Skill 安装目录下 [templates/theme-selector.html](../templates/theme-selector.html) 的绝对路径，`data` 传入上述对象（按实际工具 schema 序列化）。模板从 `window.__WIDGET_DATA__.themes` 读取，不向 HTML 拼入数据或硬编码主题。
+3. 先执行 `openyida sample yida-design theme-selector --json`。CLI 按当前千问环境定位宿主 skills 根目录，只准备并核验 [theme-selector.html](../templates/theme-selector.html)，返回 `widget_path`、`skillsRoot` 和 `outputPath`。调用 `qoder_show_widget` 时，`widget_path` 原样使用返回的 **skills 根目录相对路径**；不要传绝对路径 `outputPath`，也不要按仓库路径或假设扁平安装目录拼接。`data` 传入上述对象（按实际工具 schema 序列化）。模板从 `window.__WIDGET_DATA__.themes` 读取，不向 HTML 拼入数据或硬编码主题。
 4. 等待用户点击确认。模板通过 `window.__bridge.sendToAgent()` 回传自然语言字符串：`已选择「深色侧栏 · 白底细线」风格（themeId: dark-rail-fine-lines），请继续下一步`。不回传 `{action, themeId, themeName}` JSON，也不把预选、组件打开或工具执行成功当作用户确认。用户仍可直接在对话中描述其他偏好。
-5. 从回传文本的 `themeId: …` 提取 ID，并核对属于本轮展示的候选；按 ID 找回对应的完整视觉方向和配色，沿用 Plan 的选择事实写入方式继续 `design-plan`。无 ID、未知 ID 或旧一轮选择与当前候选不符时，重新核对选择，不猜测。风格选择不代替后续搭建方案或美化实施的确认。
+5. 从回传文本的 `themeId: …` 提取 ID，并核对属于本轮展示的候选；按 ID 找回对应的完整视觉方向和配色，沿用 Plan 的选择事实写入方式继续 `design-plan`。文本未带 ID 但能唯一对应当时的名称或编号时直接恢复 ID；无法对应时只澄清歧义。较早交互的迟到回复不覆盖最新选择，不触发新一轮风格提问。风格选择不代替后续搭建方案或美化实施的确认。
 
 调用结构示意（字段类型以宿主实际 schema 为准）：
 
 ```text
 qoder_show_widget(
-  widget_path = <当前 yida-design 安装目录>/templates/theme-selector.html,
+  widget_path = <模板准备命令返回的 widget_path>,
   data = {themes: <本轮已筛选的候选数组>}
 )
 ```
 
-千问缺少该工具或组件调用失败时，说明当前无法打开图片选择器，降级为同名文字选项并保留原候选；有可用图片展示能力再附图，不能宣称图片已展示。组件回传失败时允许重试，未收到明确选择前不继续。其他环境仍按上方名称与效果图规则使用 `ask_human`。
+桌面端使用 `~/.qwenworkcn/skills/`，Web 端沿用宿主配置的 skills 搜索目录或工作区 market-skills 目录；聚合技能包的相对路径通常为 `yida-skills/skills/yida-design/templates/theme-selector.html`，以 CLI 返回为准。CLI 失败时先处理环境或目录问题；组件因路径错误失败时，执行准备命令并使用返回值重试一次，不以复制整个技能包、扁平化目录或改成内联 HTML 代替修复。
+
+千问缺少该工具或修正路径后组件仍调用失败时，说明当前无法打开图片选择器，降级为同名文字选项并保留原候选；有可用图片展示能力再附图，不能宣称图片已展示。组件回传失败时允许重试，未收到明确选择前不继续。其他环境仍按上方名称与效果图规则使用 `ask_human`。
 
 ## 三种流程的消费方式
 

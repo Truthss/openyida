@@ -36,13 +36,14 @@ const MAX_UNPACKED_BYTES = 8104 * 1024;
 // App theme upgrades add two CLI modules and an independent skill with its migration guide.
 // Group creation isolates icon persistence from the near-1000-line navigation module.
 // Theme selection adds a URL-only preview mapping and a self-contained selector HTML,
-// without bundling image binaries.
-const MAX_ENTRY_COUNT = 621;
+// without bundling image binaries. One preparation module resolves and copies the widget.
+const MAX_ENTRY_COUNT = 622;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
   'lib/app/app-theme.js',
   'lib/app/theme-source.js',
+  'lib/core/theme-widget.js',
   'lib/app/nav-group-create.js',
   'yida-skills/skills/yida-design/references/responsive-layout.md',
   'yida-skills/skills/yida-design/sub_skill/ui-improve/SKILL.md',

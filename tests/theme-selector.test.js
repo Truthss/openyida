@@ -118,5 +118,7 @@ test('current CLI catalog supplies optional images to template without requiring
   expect(policy).toEqual(getVisualDecisionPolicy().themeSelection);
   expect(policy.qwenwork).toMatchObject({ activeToolId: 'qwenwork', tool: 'qoder_show_widget', response: 'natural_language_with_themeId' });
   expect(policy.otherHosts).toBe('ask_human');
-  expect(fs.existsSync(path.join(__dirname, '..', policy.qwenwork.template))).toBe(true);
+  expect(policy.qwenwork.prepareCommand).toBe('openyida sample yida-design theme-selector --json');
+  expect(policy.qwenwork.widgetPathSource).toContain('relative to the host skills root');
+  expect(policy.qwenwork).not.toHaveProperty('template');
 });

@@ -20,6 +20,8 @@
 2. 按 [模式路由](../../yida-design/references/design-mode.md) 确定执行方式，沿用用户最后一次明确选择。
 3. AI 根据有效功能、`userTasks` 与 `entryRecommendation`，按 [导航决策](../../yida-design/references/navigation-decision.md) 规划各入口的页面和菜单，补齐稳定 `pageScenes` 与主题映射。新增建议标记来源，范围遵守 explicitScope。
 
+进入视觉阶段前，先按[已选风格只确认一次](../../yida-design/references/theme-selection.md#已选风格只确认一次)复用用户已选结果；补充设计细节不重新选型。
+
 Fast / Plan 的主题与配色统一按[设计方向比较](../../yida-design/references/theme-selection.md#设计方向比较)在本轮规划中选定，结果写回 brief，后续直接复用。两种模式使用同一组三方向生成规则：Fast 内部选一套；Plan 在用户未给出明确完整风格时，先由 `yida-design-plan` 生成恰好三套候选并按[宿主展示规则](../../yida-design/references/theme-selection.md#选择时展示名称与效果图)收集选择（千问使用图片选择器，其他环境使用 `ask_human`），获得选择后才能继续 Plan 初始化。
 
 进入 2.1 前校验规划字段完整性和 `intake.designMode`。页面、导航、主题等建议随整体搭建方案展示。

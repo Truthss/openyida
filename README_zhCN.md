@@ -183,6 +183,16 @@ openyida compile pages/src/employee-upload.oyd.jsx
 openyida publish pages/src/employee-upload.oyd.jsx APP_XXX FORM_XXX
 ```
 
+## 千问办公中的风格选择
+
+在千问环境中需要让用户选择风格时，先准备图片选择器模板：
+
+```bash
+openyida sample yida-design theme-selector --json
+```
+
+命令只准备选择器 HTML。将返回的 `widget_path` 原样传给 `qoder_show_widget`，它是相对于宿主 skills 根目录的路径；`outputPath` 仅用于排查，不能作为组件参数。该模板不接受 `--output` 或变量替换参数。其他环境沿用原有风格选择流程。
+
 ## 表单、流程、数据与报表
 
 ### 表单建模

@@ -163,6 +163,16 @@ openyida/
 
 For a user-facing list of supported features and matching CLI commands, see [OpenYida 功能完整列表](https://demo.aliwork.com/o/openyida/helpCenter?openyidaPath=capabilities).
 
+### Theme Selection in QwenWork
+
+Run this command in QwenWork when asking the user to choose a visual style:
+
+```bash
+openyida sample yida-design theme-selector --json
+```
+
+It prepares only the selector HTML. Pass the returned `widget_path` unchanged to `qoder_show_widget`; it is relative to the host skills root. `outputPath` is for diagnostics, not the widget argument. This sample does not accept `--output` or template-variable options. Other hosts keep their existing style-selection flow.
+
 ### Application and Form Management
 
 ```bash
