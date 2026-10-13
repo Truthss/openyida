@@ -26,11 +26,11 @@ description: >
 
 **品牌变量必须完整，导航装饰可以省略。** `design.md` 提供 PC 品牌色阶 `--color-brand1-1/2/3/5/6/9/10`，CLI 同时生成移动端 `--color-brand-1`、`--color-brand-2`、`--color-brand-3`、`--color-brand-4`。最终 CSS 必须在全局 `:root` 中提供这 11 个可用颜色；移动端映射不必在 design.md 重复填写。生成和上传都会检查缺失、无效颜色及循环引用。报错时修复设计后重新生成，不能只替换主色后上传模板。
 
-先按[已选风格只确认一次](references/theme-selection.md#已选风格只确认一次)检查并复用选择；用户已选主题或自由创意时，缺少配色细节也不重问。
+先按[已选风格只确认一次](references/theme-selection.md#已选风格只确认一次)检查并复用选择；用户已选主题或自由创意时，PRD 前后都不再询问风格或重新比较候选；缺少配色细节只补细节。只有用户主动要求换风格才重新选型。
 
 需要选择风格时，读取 [共享主题选择规则](references/theme-selection.md)，按 [模板来源约束](references/application-style-library.md#模板来源与重复生成) 保留配对 CSS 与所选视觉特征；先按 [主题与导航兼容规则](references/navigation-decision.md#主题与导航兼容规则) 筛选候选；已确定的导航结构不能被不兼容主题覆盖。
 
-请用户选风格时，按 [名称与效果图展示规则](references/theme-selection.md#选择时展示名称与效果图) 展示风格名称和适用说明，有对应效果图时附图；千问环境使用[图片风格选择器](references/theme-selection.md#千问环境的图片风格选择器)，其他环境用 `ask_human` 收集选择。千问须按[交互顺序](references/theme-selection.md#千问交互顺序)收齐必要问答后再展示选择器。无图时省略图片，不加占位或缺图提示。
+请用户选风格时，按[名称与效果图展示规则](references/theme-selection.md#选择时展示名称与效果图)统一通过 `ask_human` 收集。默认只列名称和说明；用户明确要求预览时才展示只读卡片，每行最多四个、窄屏重排，卡片不提交选择。遵守[交互顺序](references/theme-selection.md#交互顺序)，已选风格直接复用。候选已备齐时，风格题与当前必要问题合并到同一次问答，不单独追加一轮。波普仅在用户明确指定或主要任务偏展示时进入候选和预览，其他情况排除，见[使用条件](references/theme-selection.md#波普风格的使用条件)。
 
 向用户说明设计时，写风格和适用场景：“设计主题风格为轻盈媒体栅格，适合产品展示型品牌官网。”风格名称与场景按当前项目填写；建议阶段使用“建议采用……风格”。
 

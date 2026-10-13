@@ -163,15 +163,17 @@ openyida/
 
 For a user-facing list of supported features and matching CLI commands, see [OpenYida 功能完整列表](https://demo.aliwork.com/o/openyida/helpCenter?openyidaPath=capabilities).
 
-### Theme Selection in QwenWork
+### Style Selection and Optional Previews
 
-Run this command in QwenWork when asking the user to choose a visual style:
+Only show reference previews when the user explicitly requests them. Style choices use the host's supported ask_human tool on every platform.
 
 ```bash
-openyida sample yida-design theme-selector --json
+openyida sample yida-design theme-preview --theme-ids app-sage,app-teal,app-terminal,app-platinum --output .cache/theme-preview.html --json
 ```
 
-It prepares only the selector HTML. Pass the returned `widget_path` unchanged to `qoder_show_widget`; it is relative to the host skills root. `outputPath` is for diagnostics, not the widget argument. This sample does not accept `--output` or template-variable options. Other hosts keep their existing style-selection flow.
+This creates a read-only HTML gallery of all requested themes: at most four columns, fewer on narrow screens. It has no selection controls and refuses to overwrite existing files. Open it with the host's preview tools; raw HTML is not guaranteed to render in chat. QwenWork may alternatively prepare the same read-only template with `sample yida-design theme-selector --json` and pass its returned relative `widget_path` to `qoder_show_widget`. Neither preview path submits a choice.
+
+Ready style questions join the same ask_human call as other necessary questions; split only for dependencies or host limits. Pop art is omitted unless explicitly requested or the primary task is showcase-oriented. Previewing app-pop requires --pop-art-context explicit-request or showcase, based on that evidence.
 
 ### Application and Form Management
 
@@ -538,7 +540,7 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 | `openyida a2a <serve\|agent-card> [options]` | Start local read-only A2A adapter or print Agent Card |
 | `openyida bridge start [--token <pair-token>] [--port 6736] [--origin https://demo.aliwork.com] [--open\|--no-open]` | Start OpenYida local web bridge service |
 | `openyida copy [--force]` | Copy project working directory |
-| `openyida sample [--list] [<skill> <name>] [--output <file-or-directory>] [--var KEY=VALUE ...] [--design-file <design.md>] [--style-id <themeId\|free-creative>]` | Output code samples/templates |
+| `openyida sample [--list] [<skill> <name>] [--output <file-or-directory>] [--var KEY=VALUE ...] [--design-file <design.md>] [--style-id <themeId\|free-creative>] [--theme-ids <id,...>] [--pop-art-context <explicit-request\|showcase>]` | Output code samples/templates |
 | `openyida doctor [--fix]` | Environment diagnostics & auto-fix |
 | `openyida db-seq-fix [--fix]` | Detect and repair PostgreSQL sequence drift |
 | `openyida formula evaluate <formula\|file> [--schema file]` | Static-check Yida formula syntax and field refs |

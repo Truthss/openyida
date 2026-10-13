@@ -11,6 +11,8 @@ description: 基于整理好的需求事实编写或修改业务 PRD，负责业
 
 读取 `.cache/openyida/<项目名>/requirement-brief.json`。发现影响规划的需求缺口时，将具体问题交回 `yida-requirement-analysis`，由 `yida-app` 组织澄清。
 
+PRD 编写、修改与确认均保留 brief 的 `visualSelection`、已选 themeId 和选择来源。交给视觉设计时按[已选风格只确认一次](../yida-design/references/theme-selection.md#已选风格只确认一次)直接补齐配色和页面细节，不重问风格，不重新比较候选；选择记录缺失时先从真实历史回答恢复。
+
 开始规划前复用 brief 的 `navigation.type/source/reason`；导航未补齐时由应用编排按 [导航决策](../yida-design/references/navigation-decision.md) 作出 AI 判断，不交回首轮、不另设强制技术选择题；用户明确选择时保留其要求，按导航决策中的导航交付与确认规则处理。Plan 将该类型写入 `execution.appConfig.navigationType`，Fast 在 PRD 应用配置中记录同一选择与依据。
 
 基于输入事实，按 [页面与导航规划](workflow/step-2-information-architecture.md) 形成业务资源蓝图，再按当前模式交付：

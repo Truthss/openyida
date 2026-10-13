@@ -3,7 +3,7 @@
 ## 用途
 
 - 用户已说明想要的风格，就按要求设计。
-- Plan 没有明确完整风格时，读取本文，准备三套配色、表面层次和组件样式方案供用户选择。
+- Plan 仅在尚无有效选择且没有明确完整风格时，读取本文，准备三套配色、表面层次和组件样式方案供用户选择。
 - 用户选界面风格，AI 负责匹配实现用的主题模板。
 
 ## 核心关系
@@ -18,7 +18,7 @@
   → CLI 读取所选完整模板并生成 design.md
 ```
 
-先按[设计方向比较](../../../references/theme-selection.md#设计方向比较)根据项目需求发展风格，可匹配主题索引中的模板，也可独立推演。按[应用风格与自由创意](../../../references/application-style-library.md)交付。
+先复用已选风格；仅无选择时按[设计方向比较](../../../references/theme-selection.md#设计方向比较)根据项目需求发展风格，可匹配主题索引中的模板，也可独立推演。按[应用风格与自由创意](../../../references/application-style-library.md)交付。
 
 应用编排先根据业务需求确定导航结构。视觉设计按 [主题与导航兼容规则](../../../references/navigation-decision.md#主题与导航兼容规则) 筛选支持该结构的主题，再设计各页面共用的配色、背景、圆角和组件样式；命名模板的导航明暗采用模板 `navTheme`；自由创意由项目设计明确填写。页面内容、布局和操作顺序按业务规划执行。
 
@@ -26,11 +26,11 @@
 
 ## 公共选型规则
 
-输入证据优先级、摘要匹配和读取边界统一按 [共享主题选择规则](../../../references/theme-selection.md) 执行。候选使用 `openyida design-plan catalog --json` 的 `themes[].styleSummary`、`label` 和 `previewImage`；直接读 [公共主题索引](../../../templates/design-themes/index.json) 时按 [名称与效果图展示规则](../../../references/theme-selection.md#选择时展示名称与效果图) 关联已有图片；选中后才读取对应的一份完整模板。本文件只规定 Plan 的三套候选、用户可见内容和选择事实写入，不另设评分或主题库。
+输入证据优先级、摘要匹配和读取边界统一按 [共享主题选择规则](../../../references/theme-selection.md) 执行。候选使用 `openyida design-plan catalog --json` 的 `themes[].styleSummary`、`label` 和 `previewImage`；直接读 [公共主题索引](../../../templates/design-themes/index.json) 时按 [名称与效果图展示规则](../../../references/theme-selection.md#选择时展示名称与效果图) 关联已有图片；选中后才读取对应的一份完整模板。波普先按[使用条件](../../../references/theme-selection.md#波普风格的使用条件)过滤；准备好的风格题并入当前同一次 `ask_human`，不因进入设计阶段重开问题。本文件只规定 Plan 的三套候选、用户可见内容和选择事实写入，不另设评分或主题库。
 
 ## 候选结构与约束
 
-生成三项选择：两个具体视觉方向，加一项“自由创意：根据业务重新推演”。用户已明确风格时直接沿用，无需重选。具体方向包含风格名称和适用说明，有对应效果图时附图。下列尖括号是待填写字段，必须按当前项目替换；示例不提供默认颜色：
+生成三项选择：两个具体视觉方向，加一项“自由创意：根据业务重新推演”。用户已明确风格时直接沿用，无需重选。具体方向包含风格名称和适用说明，用户明确要求预览时，有对应效果图再附图。下列尖括号是待填写字段，必须按当前项目替换；示例不提供默认颜色：
 
 ```json
 {
@@ -78,7 +78,7 @@
 
 展示图片时统一注明“效果参考图，实际内容、布局和品牌色按本次方案调整”。展示方式按 [名称与效果图展示规则](../../../references/theme-selection.md#选择时展示名称与效果图) 适配宿主；下例为有图候选的逻辑结构，无图候选删除 `previewImage`；该字段不能直接传给不支持它的工具。文字选项宿主先展示对应图文卡片，再用相同编号和名称提问。
 
-`themeId`、`templatePath` 和模板匹配结果保存在内部实施记录中；千问组件的自然语言回传按共享规则携带 `themeId`，供 Agent 绑定选择，卡片不展示模板路径。
+`themeId`、`templatePath` 和模板匹配结果保存在内部实施记录中；风格选择由 `ask_human` 收集，再按本轮候选映射到 `themeId`；效果卡片仅供查看，不回传选择、不展示模板路径。
 
 ```json
 {
@@ -148,9 +148,11 @@
 }
 ```
 
-`build-plan.json` 保存选中方案；完整候选保留在本轮选择记录中（千问组件的候选数据和自然语言回传，或其他环境的 `ask_human` 问答）。命名模板由 CLI 补入 `navigationStyle.tone` 和 `toneSource=theme_derived`；自由创意在 visual.json 中明确编写 tone=light|dark，CLI 标记 toneSource=project_defined，后续可通过 patch 修改该 tone。上例只展示选择事实，已选方向需要的画布、字体、辅助色等差异还须写入同级 `tokens`，见 [共用主题示例](../../../references/application-theme-consistency.md#先把风格落到变量)。
+`build-plan.json` 保存选中方案；完整候选保留在本轮选择记录中（各环境的 `ask_human` 候选、真实回答及编号与主题映射；按需预览不产生选择事实）。命名模板由 CLI 补入 `navigationStyle.tone` 和 `toneSource=theme_derived`；自由创意在 visual.json 中明确编写 tone=light|dark，CLI 标记 toneSource=project_defined，后续可通过 patch 修改该 tone。上例只展示选择事实，已选方向需要的画布、字体、辅助色等差异还须写入同级 `tokens`，见 [共用主题示例](../../../references/application-theme-consistency.md#先把风格落到变量)。
 
 ## 直接选择与自定义输入
+
+已有选择直接保留原 themeId 和来源；以下规则仅处理首次选择或用户主动改选，不能因进入 PRD 后的设计阶段而重新套用。
 
 - 只有用户已明确完整视觉风格、指定现有主题，或要求严格继承可信品牌/模板时，AI 才直接匹配一个有效基底并写入，`source=user_explicit | material_extracted`。单独的主题色、导航结构或导航明暗只作为候选约束，不视为已给出完整风格；导航明暗也不另存为可覆盖模板的输入。
 - 用户在三套候选中明确采用推荐方案时，选择第一项，`source=user_selected`。
@@ -160,6 +162,6 @@
 ## 运行时读取边界
 
 - Step 2 读取本规则和主题索引中的精简风格摘要，不读取候选模板全文。
-- 候选阶段展示风格名称、配色与体验说明，有对应效果图时附图；无需读取候选模板全文。
+- 候选阶段展示风格名称、配色与体验说明，用户明确要求预览时，有对应效果图再附图；无需读取候选模板全文。
 - 用户选择后保存选中方向、内部主题绑定、导航结构和实现该方向所需的 token 差异；CLI 从模板读取导航明暗。
 - 用户确认主题后，规划时读取 CLI 返回的主题上下文；CLI 仅按已确认的 selectedTheme.themeId 读取选中的完整模板生成文档。

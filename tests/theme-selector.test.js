@@ -9,7 +9,7 @@ const { getVisualDecisionPolicy } = require('../lib/design-plan/visual-policy');
 const html = fs.readFileSync(path.join(__dirname, '../yida-skills/skills/yida-design/templates/theme-selector.html'), 'utf8');
 const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
 
-// Small DOM double for bridge/error behavior; native layout/keyboard need browser checks.
+// DOM double for passive rendering; responsive layout is checked in a browser.
 function element(tag) {
   return {
     tag, childNodes: [], handlers: {}, attributes: {}, hidden: false,
@@ -19,9 +19,11 @@ function element(tag) {
     remove() { this.parent.childNodes = this.parent.childNodes.filter(child => child !== this); },
   };
 }
-function mount(themes, bridge = { sendToAgent: jest.fn() }) {
-  const ids = Object.fromEntries(['themes', 'choices', 'confirm', 'status', 'reference-note'].map(id => [id, element('div')]));
-  const window = { __WIDGET_DATA__: { themes }, __bridge: bridge };
+function mount(themes, embedded = false, popArtContext) {
+  const bridge = { sendToAgent: jest.fn() };
+  const ids = Object.fromEntries(['themes', 'status', 'reference-note', 'preview-data'].map(id => [id, element('div')]));
+  ids['preview-data'].textContent = JSON.stringify(embedded ? { themes, popArtContext } : {});
+  const window = { ...(embedded ? {} : { __WIDGET_DATA__: { themes, popArtContext } }), __bridge: bridge };
   vm.runInNewContext(script, { window, document: { getElementById: id => ids[id], createElement: element } });
   const descendants = node => [node, ...node.childNodes.flatMap(descendants)];
   return { ...ids, window, bridge, nodes: tag => descendants(ids.themes).filter(node => node.tag === tag) };
@@ -31,48 +33,21 @@ const candidates = [
   { id: 'free-creative', name: '自由创意', desc: '重新推演' },
 ];
 
-test('requires explicit confirmation and sends a natural-language string for the chosen theme', async () => {
-  const ui = mount(candidates);
-  expect(ui.confirm.disabled).toBe(true);
-  await ui.confirm.handlers.click();
+test('preview is read-only even with legacy preselection or a bridge', () => {
+  const ui = mount([{ ...candidates[0], selected: true }, candidates[1]]);
+  expect(ui.nodes('article')).toHaveLength(2);
+  expect(ui.nodes('input')).toHaveLength(0);
+  expect(ui.nodes('button')).toHaveLength(0);
   expect(ui.bridge.sendToAgent).not.toHaveBeenCalled();
-  const radio = ui.nodes('input')[1];
-  radio.checked = true;
-  radio.handlers.change();
-  await ui.confirm.handlers.click();
-  expect(ui.bridge.sendToAgent).toHaveBeenCalledWith('已选择「自由创意」风格（themeId: free-creative），请继续下一步');
-  await ui.confirm.handlers.click();
-  expect(ui.bridge.sendToAgent).toHaveBeenCalledTimes(1);
-  expect(ui.choices.disabled).toBe(true);
+  expect(script).not.toContain('__bridge');
+  expect(html).not.toMatch(/<(?:button|input|fieldset)\b/);
 });
 
-test('preselection enables confirm but never sends automatically; locks while awaiting bridge', async () => {
-  let finish;
-  const bridge = { sendToAgent: jest.fn(() => new Promise(resolve => { finish = resolve; })) };
-  const ui = mount([{ ...candidates[0], selected: true }], bridge);
-  expect(ui.confirm.disabled).toBe(false);
-  expect(bridge.sendToAgent).not.toHaveBeenCalled();
-  const sending = ui.confirm.handlers.click();
-  expect(ui.confirm.disabled).toBe(true);
-  await ui.confirm.handlers.click();
-  expect(bridge.sendToAgent).toHaveBeenCalledTimes(1);
-  finish();
-  await sending;
-});
-
-test('missing bridge and rejection retain selection and allow retry', async () => {
-  const ui = mount([{ ...candidates[0], selected: true }], undefined);
-  ui.window.__bridge = null;
-  await ui.confirm.handlers.click();
-  expect(ui.status.textContent).toContain('暂时无法回传');
-  expect(ui.confirm.disabled).toBe(false);
-  ui.window.__bridge = { sendToAgent: jest.fn().mockRejectedValueOnce(new Error('offline')).mockResolvedValueOnce(undefined) };
-  await ui.confirm.handlers.click();
-  expect(ui.status.textContent).toContain('失败');
-  expect(ui.choices.disabled).toBe(false);
-  await ui.confirm.handlers.click();
-  expect(ui.window.__bridge.sendToAgent).toHaveBeenCalledTimes(2);
-  expect(ui.status.textContent).toContain('已提交');
+test('renders every requested theme in order, including beyond four, from embedded data', () => {
+  const themes = Array.from({ length: 7 }, (_, i) => ({ id: `theme-${i}`, name: `风格${i}` }));
+  const ui = mount(themes, true);
+  expect(ui.nodes('article').map(node => node.attributes['data-theme-id'])).toEqual(themes.map(item => item.id));
+  expect(ui.nodes('h2').map(node => node.textContent)).toEqual(themes.map((item, i) => `${i + 1} · ${item.name}`));
 });
 
 test('missing or broken images leave text choices without an empty image frame', () => {
@@ -86,22 +61,22 @@ test('missing or broken images leave text choices without an empty image frame',
   image.handlers.error();
   expect(ui.nodes('img')).toHaveLength(0);
   expect(ui['reference-note'].hidden).toBe(true);
-  expect(ui.nodes('input')).toHaveLength(2);
+  expect(ui.nodes('article')).toHaveLength(2);
 });
 
 test('renders supplied text literally, rejects invalid/duplicate IDs and unsafe image schemes', () => {
   const name = '<img src=x onerror=alert(1)>';
   const ui = mount([{ id: 'safe', name, img: 'javascript:alert(1)' }, { id: 'safe', name: '重复' }, { id: 'bad）', name: '错误' }, null]);
-  expect(ui.nodes('input')).toHaveLength(1);
+  expect(ui.nodes('article')).toHaveLength(1);
   expect(ui.nodes('img')).toHaveLength(0);
-  expect(ui.nodes('span').some(node => node.textContent === '1 · ' + name)).toBe(true);
-  expect(ui.nodes('input')[0].attributes['aria-labelledby']).toBe('theme-title-0');
+  expect(ui.nodes('h2').some(node => node.textContent === '1 · ' + name)).toBe(true);
+  expect(ui.nodes('article')[0].attributes['aria-labelledby']).toBe('theme-title-0');
 });
 
-test.each([undefined, null, {}, []])('empty or malformed data cannot confirm: %p', async themes => {
+test.each([undefined, null, {}, []])('empty or malformed data is handled: %p', themes => {
   const ui = mount(themes);
-  expect(ui.confirm.disabled).toBe(true);
-  await ui.confirm.handlers.click();
+  expect(ui.nodes('article')).toHaveLength(0);
+  expect(ui.status.textContent).toContain('没有可展示');
   expect(ui.bridge.sendToAgent).not.toHaveBeenCalled();
 });
 
@@ -111,28 +86,34 @@ test('current CLI catalog supplies optional images to template without requiring
     id: theme.themeId, name: theme.label, desc: theme.styleSummary, img: theme.previewImage?.url,
   }));
   const ui = mount(themes);
-  expect(ui.nodes('input')).toHaveLength(themes.length);
-  expect(ui.nodes('img')).toHaveLength(result.themes.filter(theme => theme.previewImage).length);
-  expect(ui.nodes('input').some(radio => radio.value === 'free-creative')).toBe(true);
+  expect(ui.nodes('article')).toHaveLength(themes.length - 1);
+  expect(ui.nodes('article').some(node => node.attributes['data-theme-id'] === 'app-pop')).toBe(false);
+  expect(ui.nodes('img')).toHaveLength(result.themes.filter(theme => theme.previewImage && theme.themeId !== 'app-pop').length);
+  expect(ui.nodes('article').some(node => node.attributes['data-theme-id'] === 'free-creative')).toBe(true);
   const policy = result.themeSelection;
   expect(policy).toEqual(getVisualDecisionPolicy().themeSelection);
-  expect(policy.qwenwork).toMatchObject({ activeToolId: 'qwenwork', tool: 'qoder_show_widget', response: 'natural_language_with_themeId' });
-  expect(policy.otherHosts).toBe('ask_human');
+  expect(policy.qwenwork).toMatchObject({ activeToolId: 'qwenwork', tool: 'qoder_show_widget', purpose: 'preview_only', response: 'none' });
+  expect(policy.selectionTool).toBe('ask_human');
+  expect(policy.preview).toMatchObject({ trigger: 'explicit_user_request', purpose: 'preview_only', maxColumns: 4 });
   expect(policy.qwenwork.prepareCommand).toBe('openyida sample yida-design theme-selector --json');
   expect(policy.qwenwork.widgetPathSource).toContain('relative to the host skills root');
   expect(policy.qwenwork).not.toHaveProperty('template');
 });
 
 
-test.each(['app-sage', 'app-teal', 'app-terminal'])('%s can be selected with its catalog name and preview', async themeId => {
+test.each(['app-sage', 'app-teal', 'app-terminal'])('%s can be previewed with its catalog name', async themeId => {
   const theme = catalog().themes.find(item => item.themeId === themeId);
   const previews = require('../yida-skills/skills/yida-design/references/theme-preview-images.json');
   expect(theme.previewImage.url).toBe(previews[themeId]);
   const ui = mount([{ id: themeId, name: theme.label, img: theme.previewImage.url, desc: theme.styleSummary }]);
   expect(ui.nodes('img')[0].src).toBe(previews[themeId]);
-  const radio = ui.nodes('input')[0];
-  radio.checked = true;
-  radio.handlers.change();
-  await ui.confirm.handlers.click();
-  expect(ui.bridge.sendToAgent).toHaveBeenCalledWith(`已选择「${theme.label}」风格（themeId: ${themeId}），请继续下一步`);
+  expect(ui.nodes('h2')[0].textContent).toBe(`1 · ${theme.label}`);
+  expect(ui.bridge.sendToAgent).not.toHaveBeenCalled();
+});
+
+
+test.each([undefined, 'management', 'all', 'explicit-request', 'showcase'])('pop art preview is gated by context: %s', context => {
+  const ui = mount([{ id: 'app-pop', name: '波普印刷' }, candidates[0]], false, context);
+  expect(ui.nodes('article').some(node => node.attributes['data-theme-id'] === 'app-pop')).toBe(['explicit-request', 'showcase'].includes(context));
+  expect(ui.nodes('article').some(node => node.attributes['data-theme-id'] === candidates[0].id)).toBe(true);
 });

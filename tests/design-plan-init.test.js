@@ -145,9 +145,10 @@ test('missing color uses the existing visual-design task and leaves the example 
   ]));
   expect(result.parallelTasks.map(task => task.id)).toEqual(['business', 'visual-design']);
   expect(result.authoring.visualDecision).toMatchObject({
-    comparison: { candidateCount: 3, baseline: 'first_instinct', alternatives: 2, distinctDimensions: 2 },
-    execution: 'one_shared_three_direction_generation_pass_for_fast_and_plan',
-    presentation: 'fast_selects_internally; plan_asks_user_when_no_explicit_visual_direction',
+    comparison: { enabled: false, candidateCount: 0, baseline: null, alternatives: 0 },
+    execution: 'refine_selected_style_without_comparison_or_question',
+    presentation: 'continue_design_without_style_question',
+    themeSelection: { allowStyleQuestion: false },
   });
 });
 
@@ -796,4 +797,27 @@ test.each([
   const visual = JSON.parse(fs.readFileSync(result.parallelTasks.find(task => task.id === 'visual-design').output, 'utf8'));
   expect(visual.facts.visualStyle.internal.selectedTheme).toMatchObject({ themeId, source });
   expect(result.authoring.pendingFields.length).toBeGreaterThan(0);
+  expect(result.authoring.visualDecision.comparison).toEqual({ enabled: false, candidateCount: 0, baseline: null, alternatives: 0 });
+  expect(result.authoring.visualDecision.themeSelection.allowStyleQuestion).toBe(false);
+  expect(result.authoring.visualDecision.presentation).toBe('continue_design_without_style_question');
+  expect(fs.readFileSync(result.context, 'utf8')).toContain('PRD 编写前后均不再比较候选');
+});
+
+
+test('initialization rejects a conflicting theme flag without writing or resetting the recorded selection', () => {
+  brief.visualSelection.themeId = 'soft-outline-rhythm';
+  brief.visualSelection.visualDirection.source = 'user_selected';
+  save();
+  const before = fs.readFileSync(briefPath, 'utf8');
+  expect(() => initialize(briefPath, { themeId: 'free-creative', outputDir: path.join(dir, 'conflict') }))
+    .toThrow(expect.objectContaining({ code: 'DESIGN_PLAN_THEME_SELECTION_CONFLICT' }));
+  expect(fs.existsSync(path.join(dir, 'conflict'))).toBe(false);
+  expect(fs.readFileSync(briefPath, 'utf8')).toBe(before);
+  expect(initialize(briefPath, { themeId: 'soft-outline-rhythm', outputDir: path.join(dir, 'same') }).authoring.visualDecision.themeSelection.allowStyleQuestion).toBe(false);
+});
+
+test('unselected catalog still describes initial comparison without reopening a selected plan', () => {
+  const { getVisualDecisionPolicy } = require('../lib/design-plan/visual-policy');
+  expect(getVisualDecisionPolicy().comparison).toMatchObject({ enabled: true, candidateCount: 3, baseline: 'first_instinct' });
+  expect(getVisualDecisionPolicy().themeSelection.allowStyleQuestion).toBe(true);
 });

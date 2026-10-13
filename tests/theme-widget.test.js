@@ -107,3 +107,58 @@ test('catalog preparation command resolves the copied widget under the host skil
   expect(sample.notes.join(' ')).toContain('Pass result.widget_path unchanged');
   expect(sample.args.find(arg => arg.name === 'output').description).toContain('Not accepted by theme-selector');
 });
+
+test('standalone preview runs on any host and preserves requested order beyond four themes', async () => {
+  const ids = ['app-terminal', 'app-sage', 'app-teal', 'app-platinum', 'free-creative'];
+  const output = path.join(temp, 'preview.html');
+  jest.spyOn(console, 'log').mockImplementation(() => {});
+  const result = await run(['yida-design', 'theme-preview', '--theme-ids', ids.join(','), '--output', output, '--json']);
+  expect(result).toMatchObject({ success: true, purpose: 'preview_only', selectionTool: 'ask_human', outputPath: output });
+  expect(result.themes.map(item => item.themeId)).toEqual(ids);
+  const html = fs.readFileSync(output, 'utf8');
+  const data = JSON.parse(html.match(/<script id="preview-data" type="application\/json">([\s\S]*?)<\/script>/)[1]);
+  expect(data.themes.map(item => item.id)).toEqual(ids);
+  expect(data.themes[0].img).toMatch(/^https:/);
+  expect(data.themes[4]).not.toHaveProperty('img');
+  expect(html).not.toContain('__bridge');
+  await expect(run(['yida-design', 'theme-preview', '--theme-ids', 'app-sage', '--output', output])).rejects.toMatchObject({ code: 'EEXIST' });
+  expect(fs.readFileSync(output, 'utf8')).toBe(html);
+});
+
+test.each([
+  [], ['--theme-ids'], ['--theme-ids', 'app-sage,'], ['--theme-ids', 'app-sage,app-sage'],
+  ['--theme-ids', 'app-sage', '--theme-ids', 'app-teal'], ['--theme-ids', 'not-a-theme'],
+  ['--theme-ids', 'app-sage', '--var', 'ANY=value'],
+])('invalid standalone preview input writes no output: %j', async (...args) => {
+  await expect(run(['yida-design', 'theme-preview', ...args, '--output', path.join(temp, 'preview.html')])).rejects.toThrow();
+  expect(fs.readdirSync(temp)).toEqual([]);
+});
+
+test('embedded metadata escapes script termination while preserving literal text', () => {
+  const init = require('../lib/design-plan/init');
+  const name = '</script><script>alert(1)</script>&\u2028';
+  jest.spyOn(init, 'catalog').mockReturnValue({ themes: [{ themeId: 'safe', label: name }], creativeOption: { themeId: 'free-creative' } });
+  const { createThemePreview } = require('../lib/core/theme-widget');
+  const output = path.join(temp, 'preview.html');
+  createThemePreview(['--theme-ids', 'safe', '--output', output]);
+  const html = fs.readFileSync(output, 'utf8');
+  expect(html).not.toContain(name);
+  expect(JSON.parse(html.match(/<script id="preview-data" type="application\/json">([\s\S]*?)<\/script>/)[1]).themes[0].name).toBe(name);
+});
+
+
+test.each([undefined, 'management', 'all', 'explicit-request', 'showcase'])('standalone pop art preview requires eligible context: %s', context => {
+  const { createThemePreview } = require('../lib/core/theme-widget');
+  const output = path.join(temp, 'preview.html');
+  const args = ['--theme-ids', 'app-pop', '--output', output, ...(context ? ['--pop-art-context', context] : [])];
+  if (['explicit-request', 'showcase'].includes(context)) {
+    const result = createThemePreview(args);
+    expect(result.themes[0].themeId).toBe('app-pop');
+    const html = fs.readFileSync(output, 'utf8');
+    const data = JSON.parse(html.match(/<script id="preview-data" type="application\/json">([\s\S]*?)<\/script>/)[1]);
+    expect(data.popArtContext).toBe(context);
+  } else {
+    expect(() => createThemePreview(args)).toThrow();
+    expect(fs.existsSync(output)).toBe(false);
+  }
+});
