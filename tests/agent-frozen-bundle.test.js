@@ -27,7 +27,15 @@ describe('content-addressed complete local tool bundle', () => {
     expect(fs.readdirSync(path.join(fixture.config.stateDir, 'bundles'))).toEqual([result.config.bundle.id]);
     expect(fs.existsSync(path.join(fixture.config.stateDir, 'bundle-references'))).toBe(false); // Go owns references.
   });
-  test('explicit development bundles do not consult the production platform gate', () => {
+  test('explicit development bundles skip optional runtime packages without the production platform gate', () => {
+    const packageFile = path.join(root, 'package/package.json');
+    const metadata = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
+    const optionalRuntime = `@openyida/local-agent-runtime-${process.platform}-${process.arch}`;
+    metadata.optionalDependencies = { [optionalRuntime]: '0.1.1' };
+    fs.writeFileSync(packageFile, JSON.stringify(metadata));
+    const installedRuntime = path.join(root, 'package/node_modules', optionalRuntime);
+    fs.mkdirSync(installedRuntime, { recursive: true });
+    fs.writeFileSync(path.join(installedRuntime, 'package.json'), 'unverified runtime package must not be read');
     jest.isolateModules(() => {
       const runtimePackage = require('../lib/agent/runtime-package');
       const platformGate = jest.spyOn(runtimePackage, 'platformPackageName').mockImplementation(() => {
@@ -147,7 +155,8 @@ describe('content-addressed complete local tool bundle', () => {
     const stdout = { write: jest.fn() };
     const children = [];
     await run([command, '--development-runtime', '--runtime-path', fixture.runtimePath, '--runtime-manifest', fixture.manifestPath,
-      '--endpoint', 'https://agent.example.test', '--endpoint-id', 'test', '--state-dir', fixture.config.stateDir], {
+      '--endpoint', 'https://agent.example.test', '--endpoint-id', 'test', '--state-dir', fixture.config.stateDir,
+      '--provider', 'qoder', '--provider-path', process.execPath], {
       // This test isolates bundle launching; enrolled multi-organization
       // Connections are exercised by agent-connection-manager.test.js.
       // The fixture is JavaScript, not a Windows PE executable. Launch the same
@@ -157,7 +166,7 @@ describe('content-addressed complete local tool bundle', () => {
         children.push(new Promise(resolve => child.on('close', resolve)));
         return child;
       },
-      packageRoot: fixture.config.node.packageRoot, stdout, disableConnectionManager: true, probe: async () => ({ status: 'passed' }),
+      packageRoot: fixture.config.node.packageRoot, stdout, env: {}, homedir: root, disableConnectionManager: true, probe: async () => ({ status: 'passed' }),
     });
     await Promise.all(children);
     const event = JSON.parse(stdout.write.mock.calls[0][0]);
