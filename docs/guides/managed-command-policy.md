@@ -70,9 +70,13 @@ managedRun: {
 }
 ```
 
-## Ask Human 文本边界
+## Ask Human 交互契约
 
-`openyida agent ask-human` 的 `openyida.ask-human.v1` 回执与 Runtime 共用单行文本约束。标题、问题、选项及非空说明必须去掉首尾空白，不能包含换行、制表符或其他 Unicode 控制字符；长度按 UTF-8 字节限制。多段说明放在普通回复中，确认问题保持单行。CLI 必须在落盘前拒绝不合规内容，避免已返回 queued 后 Runtime 拒绝回执并中断整个任务。该协议支持摘要和确认选项，不支持 HTML 附件内嵌展示。
+`openyida agent ask-human` 只使用当前唯一交互契约。CLI、Go Runtime、服务端和 UI 按同一契约发布；旧版直接弃用，不提供旧回执兼容、旧格式自动转换或降级回退。回执中的 `schemaVersion` 用于格式校验，不用于兼容旧版。完整交付链路见 [Managed output delivery and business questions](../../lib/agent/PROTOCOL.md#managed-output-delivery-and-business-questions)。
+
+问题文件顶层使用 `title`、`questions`，方案确认还应携带生成器返回的 `revision` 和显式声明的 `attachments`；选项保留稳定 `value`。CLI 将 `revision` 写入回执的 `contextRevision`，与交互自身的整数 revision 区分。附件仅支持当前任务工作目录中的 HTML、Markdown 或文本，每文件至多 1 MiB，至多 10 个。CLI 冻结附件内容，Runtime 验证并上传，服务端持久化确认后才展示问题；前端复用现有文件读取与隔离 HTML 预览。续接时，回答与原问题、方案标识及文件引用保持绑定；修改后的方案必须物化新快照并使用新 request-key。
+
+标题、问题、选项及非空说明必须去掉首尾空白，不能包含换行、制表符或其他 Unicode 控制字符；长度按 UTF-8 字节限制。多段说明放在普通回复或附件中，确认问题保持单行。CLI 必须在落盘前拒绝不合规内容，避免已返回 queued 后 Runtime 拒绝回执并中断整个任务。
 
 ## 校验与发布
 
