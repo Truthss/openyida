@@ -28,6 +28,30 @@ function isSampleRoutingGuidanceFile(file) {
 }
 
 describe('OpenYida skill contracts', () => {
+  test('data format tables use component names and distinguish query values from saved dates', () => {
+    const tables = [
+      'yida-skills/skills/yida-data-management/SKILL.md',
+      'yida-skills/skills/yida-data-management/references/data-format-guide.md',
+    ].map(file => {
+      const text = readSkill(file);
+      const block = text.slice(text.indexOf('| 组件类型 |')).split('\n\n')[0];
+      const rows = block.split('\n').slice(2).map(line => line.split('|').slice(1, -1).map(cell => cell.trim()));
+      expect(rows.every(row => row.length === 3)).toBe(true);
+      expect(rows.every(row => /^`[A-Za-z]+Field`(?: \/ `[A-Za-z]+Field`)*$/.test(row[0]))).toBe(true);
+      const date = rows.find(row => row[0] === '`DateField`');
+      const range = rows.find(row => row[0] === '`CascadeDateField`');
+      expect(date[1]).toContain('between');
+      expect(date[2]).toContain('毫秒时间戳数字');
+      expect(range[1]).toContain('[[开始下限,开始上限],[结束下限,结束上限]]');
+      expect(range[2]).toContain('[开始毫秒时间戳,结束毫秒时间戳]');
+      const table = rows.find(row => row[0] === '`TableField`');
+      expect(table[1]).toContain('contains');
+      expect(table[1]).toContain('parentId');
+      return rows;
+    });
+    expect(tables[0]).toEqual(tables[1]);
+  });
+
   test('query guidance retains normal queries before empty-value special cases', () => {
     const guide = readSkill('yida-skills/references/query-condition-guide.md');
     const sections = ['## 基础格式', '## 组件与操作符速查', '## 按字段类型编写', '## 多条件组合查询（AND）', '## 为空 / 不为空'];
