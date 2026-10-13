@@ -6,7 +6,7 @@
 
 在 Codex、Claude Code、Cursor、千问办公、Qoder 等 AI 工具中说明你要做的业务，OpenYida 帮助 AI 创建表单、审批流程、工作台、门户和报表，也能继续调整已有应用。
 
-[快速开始](#快速开始) · [搭建效果](#搭建效果) · [核心能力](#核心能力) · [帮助文档](https://demo.aliwork.com/o/openyida/helpCenter) · [更新日志](./CHANGELOG.md) · [CLI 命令参考](#cli-命令参考)
+[快速开始](#快速开始) · [帮助网站&文档](https://demo.aliwork.com/o/openyida/helpCenter) · [核心能力](#核心能力) · [完整功能列表](https://demo.aliwork.com/o/openyida/helpCenter?openyidaPath=capabilities) · [案例展示](https://demo.aliwork.com/o/openyida/helpCenter?openyidaRoute=showcase) · [自定义页面开发](#自定义页面开发) · [常用命令](https://demo.aliwork.com/o/openyida/helpCenter?openyidaPath=features/skills) · [开发与校验](#开发与校验) · [搭建效果](#搭建效果) · [贡献](./CONTRIBUTING.md)
 
 [![npm version](https://img.shields.io/npm/v/openyida?color=brightgreen&label=npm)](https://www.npmjs.com/package/openyida)
 [![npm downloads](https://img.shields.io/npm/dm/openyida?color=blue)](https://www.npmjs.com/package/openyida)
@@ -47,16 +47,15 @@ OpenYida 是 AI 编程工具和宜搭之间的桥接层。AI Agent 不需要直�
 
 ## 核心能力
 
-| 你想做什么 | OpenYida 可以帮助你 |
-| --- | --- |
-| 从零搭建业务系统 | 创建客户管理、采购、库存、工单等应用，组织表单、导航分组和业务页面 |
-| 先看方案再搭建 | 使用 Plan 模式查看功能、页面、数据关系和设计方案，确认后开始创建 |
-| 制作工作台与门户 | 搭建列表、详情、图表、品牌展示页等自定义页面，并连接实际业务数据 |
-| 统一应用外观 | 选择主题和配色，让导航、表单、详情、自定义页面及抽屉等界面协调一致 |
-| 美化已有应用 | 先查看视觉方案并确认，修改前备份；仅调整 UI，保留原业务逻辑 |
-| 处理审批与业务数据 | 配置审批流程，管理表单记录、权限、报表和统计看板 |
-| 连接外部服务 | 配置 HTTP 连接器与集成自动化，把外部服务接入业务流程 |
-| 交付后继续维护 | 调整页面和字段、配置分享、导入导出应用，检查环境与发布结果 |
+| 领域 | 能力 |
+|------|------|
+| 应用交付 | 创建、更新、导出、导入宜搭应用 |
+| 表单建模 | 创建表单、更新字段、查询 Schema、配置权限 |
+| 自定义页面 | 生成 Code Canvas / 普通 JSX 页面、检查、编译、发布 |
+| 流程自动化 | 创建流程表单、配置审批流、预览流程实例 |
+| 数据管理 | 查询/新增/更新表单、流程、任务、子表数据 |
+| 连接器与集成 | 管理 HTTP 连接器、鉴权账号、连接器动作和集成自动化 |
+| 运营与诊断 | 登录态、组织上下文、环境诊断、页面分享、CDN 素材上传 |
 
 ## 从需求到交付
 

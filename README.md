@@ -6,7 +6,7 @@
 
 Describe your business in Codex, Claude Code, Cursor, QwenWork, Qoder, or another supported AI tool. OpenYida helps the agent build forms, approval workflows, workspaces, portals, and reports—and improve applications you already use.
 
-[Quick Start](#quick-start) · [Application Previews](#application-previews) · [What You Can Build](#core-capabilities) · [Help Center](https://demo.aliwork.com/o/openyida/helpCenter) · [Changelog](./CHANGELOG.md) · [CLI Reference](#cli-reference)
+[Quick Start](#quick-start) · [帮助网站&文档](https://demo.aliwork.com/o/openyida/helpCenter) · [Capabilities](#capabilities) · [Full Capability List](https://demo.aliwork.com/o/openyida/helpCenter?openyidaPath=capabilities) · [CLI Reference](https://demo.aliwork.com/o/openyida/helpCenter?openyidaPath=features/skills) · [Examples](https://demo.aliwork.com/o/openyida/helpCenter?openyidaRoute=showcase) · [Contributing](./CONTRIBUTING.md) · [Changelog](https://demo.aliwork.com/o/openyida/helpCenter?openyidaRoute=changelog) · [Application Previews](#application-previews)
 
 [![npm version](https://img.shields.io/npm/v/openyida?color=brightgreen&label=npm)](https://www.npmjs.com/package/openyida)
 [![npm downloads](https://img.shields.io/npm/dm/openyida?color=blue)](https://www.npmjs.com/package/openyida)
@@ -49,16 +49,15 @@ Choose an **application theme or an independent creative direction**. The agent 
 
 ## Core Capabilities
 
-| What you want to do | How OpenYida helps |
-| --- | --- |
-| Build a business application | Create CRM, procurement, inventory, or service apps with forms, navigation groups, and pages |
-| Review a plan before building | Use Plan mode to review features, pages, data relationships, and visual design before approving creation |
-| Create workspaces and portals | Build lists, detail views, charts, and brand pages connected to business data |
-| Give the app a consistent appearance | Coordinate navigation, forms, details, custom pages, and drawers with shared themes and colors |
-| Improve an existing application | Review a visual proposal, back up affected resources, and change UI while preserving business logic |
-| Handle approvals and data | Configure approval workflows, records, permissions, reports, and dashboards |
-| Connect external services | Use HTTP connectors and integration automations in business workflows |
-| Maintain after delivery | Update pages and fields, configure sharing, import/export applications, and inspect publishing results |
+| Area | What you can do |
+|------|-----------------|
+| Application delivery | Create, update, export, and import Yida applications |
+| Form modeling | Create forms, update fields, inspect schemas, and manage permissions |
+| Custom pages | Generate React-based pages, lint Yida runtime rules, compile, and publish |
+| Workflow automation | Create process forms, configure approval flows, preview process instances |
+| Data operations | Query form/process/task/subform data and run anomaly checks |
+| Integrations | Manage HTTP connectors, connector actions, auth accounts, and automation flows |
+| Operations | Diagnose environment issues, manage login state, configure sharing, upload CDN assets |
 
 ## From Request to Delivery
 
@@ -673,7 +672,23 @@ For Codex, `npm install -g openyida` additionally creates a local plugin marketp
 
 ## Examples
 
-Start with the [application previews](#application-previews) above, or visit the [case gallery](https://demo.aliwork.com/o/openyida/helpCenter?openyidaRoute=showcase) for more examples. A visual reference helps choose an appearance; describe your own forms, actions, and approval requirements when building an app.
+### Business Systems: IPD and CRM
+
+Describe your requirements in one sentence; the agent can create a complete multi-form Yida application.
+
+![IPD](https://img.alicdn.com/imgextra/i2/O1CN01YBEMa929J7sD9v8U1_!!6000000008046-2-tps-3840-3366.png)
+
+![CRM](https://img.alicdn.com/imgextra/i3/O1CN01kn0Vcn1H5OkbQaizA_!!6000000000706-2-tps-3840-2168.png)
+
+### Custom Pages and Utilities
+
+![Salary Calculator](https://gw.alicdn.com/imgextra/i2/O1CN017TeJuE1reVH2Dj7b7_!!6000000005656-2-tps-5114-2468.png)
+
+![Enterprise Collaboration](https://gw.alicdn.com/imgextra/i1/O1CN01EZtvfs1cxXV00UaXi_!!6000000003667-2-tps-5118-2470.png)
+
+### Interactive Campaigns
+
+![Lantern Riddle Game](https://img.alicdn.com/imgextra/i3/O1CN01dCoscP25jSAtAB9o3_!!6000000007562-2-tps-2144-1156.png)
 
 ## Common Prompts
 
