@@ -1,22 +1,18 @@
 <div align="center">
 
-![OpenYida](https://img.alicdn.com/imgextra/i2/O1CN01fwUxry9qUtJ3OTaP_!!6000000008165-2-tps-1672-941.png)
-
 # OpenYida
 
-**AI-native CLI for building DingTalk Yida low-code applications.**
+**Build Yida applications in natural language, from business needs to working pages.**
 
-OpenYida connects AI coding agents with Yida's low-code platform, so developers can create apps, forms, workflows, custom pages, reports, integrations, and deployment configuration from a normal chat-driven development workflow.
+Describe your business in Codex, Claude Code, Cursor, QwenWork, Qoder, or another supported AI tool. OpenYida helps the agent build forms, approval workflows, workspaces, portals, and reports—and improve applications you already use.
 
-[Quick Start](#quick-start) · [帮助网站&文档](https://demo.aliwork.com/o/openyida/helpCenter) · [Capabilities](#capabilities) · [Full Capability List](https://demo.aliwork.com/o/openyida/helpCenter?openyidaPath=capabilities) · [CLI Reference](https://demo.aliwork.com/o/openyida/helpCenter?openyidaPath=features/skills) · [Examples](https://demo.aliwork.com/o/openyida/helpCenter?openyidaRoute=showcase) · [Contributing](./CONTRIBUTING.md) · [Changelog](https://demo.aliwork.com/o/openyida/helpCenter?openyidaRoute=changelog)
+[Quick Start](#quick-start) · [Application Previews](#application-previews) · [What You Can Build](#core-capabilities) · [Help Center](https://demo.aliwork.com/o/openyida/helpCenter) · [Changelog](./CHANGELOG.md) · [CLI Reference](#cli-reference)
 
 [![npm version](https://img.shields.io/npm/v/openyida?color=brightgreen&label=npm)](https://www.npmjs.com/package/openyida)
 [![npm downloads](https://img.shields.io/npm/dm/openyida?color=blue)](https://www.npmjs.com/package/openyida)
 [![CI](https://github.com/openyida/openyida/actions/workflows/ci.yml/badge.svg)](https://github.com/openyida/openyida/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Node.js >=18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
-
-**帮助网站&文档:** [帮助网站&文档](https://demo.aliwork.com/o/openyida/helpCenter)
 
 [English README](./README.md) · [简体中文 README](./README_zhCN.md)
 
@@ -26,19 +22,56 @@ OpenYida connects AI coding agents with Yida's low-code platform, so developers 
 
 ## What OpenYida Provides
 
-OpenYida is a bridge between AI coding tools and Yida. It gives agents a stable command-line interface for the full application lifecycle:
+Turn “we need a customer management system” into a Yida application your team can use. Describe the goal; the agent helps clarify requirements, design pages, and create and publish resources through OpenYida.
 
-| Area | What you can do |
-|------|-----------------|
-| Application delivery | Create, update, export, and import Yida applications |
-| Form modeling | Create forms, update fields, inspect schemas, and manage permissions |
-| Custom pages | Generate React-based pages, lint Yida runtime rules, compile, and publish |
-| Workflow automation | Create process forms, configure approval flows, preview process instances |
-| Data operations | Query form/process/task/subform data and run anomaly checks |
-| Integrations | Manage HTTP connectors, connector actions, auth accounts, and automation flows |
-| Operations | Diagnose environment issues, manage login state, configure sharing, upload CDN assets |
+The result remains a native Yida application. Keep editing it in the Yida designer, use your organization's permissions, or ask the agent to extend it later.
 
-The result remains a native Yida application: teams can continue editing it in Yida, use existing enterprise security controls, and deploy through the Yida platform.
+## Application Previews
+
+Example applications built with the themes below. Click an image to view it at full size. These are visual references, not ready-made business applications: content, data, brand colors, and layouts are adapted to your requirements.
+
+<table>
+  <tr>
+    <td width="50%" align="center"><strong>Dark Rail · Fine Lines</strong><br><a href="https://img.alicdn.com/imgextra/i1/O1CN01oFp7XMYEjSI5r31K_!!6000000006946-2-tps-2884-1794.png"><img src="https://img.alicdn.com/imgextra/i1/O1CN01oFp7XMYEjSI5r31K_!!6000000006946-2-tps-2884-1794.png" alt="Dark Rail · Fine Lines example application" width="100%"></a></td>
+    <td width="50%" align="center"><strong>Soft Inset Surfaces</strong><br><a href="https://img.alicdn.com/imgextra/i3/O1CN01UEEmuLlMF3I5pHky_!!6000000006290-2-tps-2870-1798.png"><img src="https://img.alicdn.com/imgextra/i3/O1CN01UEEmuLlMF3I5pHky_!!6000000006290-2-tps-2870-1798.png" alt="Soft Inset Surfaces example application" width="100%"></a></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><strong>Sage</strong><br><a href="https://img.alicdn.com/imgextra/i1/O1CN01NiHI4pBsbOK5qIC4_!!6000000007377-2-tps-2878-1798.png"><img src="https://img.alicdn.com/imgextra/i1/O1CN01NiHI4pBsbOK5qIC4_!!6000000007377-2-tps-2878-1798.png" alt="Sage example application" width="100%"></a></td>
+    <td width="50%" align="center"><strong>Teal</strong><br><a href="https://img.alicdn.com/imgextra/i2/O1CN01hLAdOTwuEWF5qXno_!!6000000004848-2-tps-2880-1796.png"><img src="https://img.alicdn.com/imgextra/i2/O1CN01hLAdOTwuEWF5qXno_!!6000000004848-2-tps-2880-1796.png" alt="Teal example application" width="100%"></a></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><strong>Terminal</strong><br><a href="https://img.alicdn.com/imgextra/i3/O1CN01PPHEYDv6nMB5qXnq_!!6000000004777-2-tps-2880-1798.png"><img src="https://img.alicdn.com/imgextra/i3/O1CN01PPHEYDv6nMB5qXnq_!!6000000004777-2-tps-2880-1798.png" alt="Terminal example application" width="100%"></a></td>
+    <td width="50%" align="center"><strong>Platinum</strong><br><a href="https://img.alicdn.com/imgextra/i2/O1CN01eDGhh1WCtFI5soHi_!!6000000007333-2-tps-2898-1792.png"><img src="https://img.alicdn.com/imgextra/i2/O1CN01eDGhh1WCtFI5soHi_!!6000000007333-2-tps-2898-1792.png" alt="Platinum example application" width="100%"></a></td>
+  </tr>
+</table>
+
+Choose from **18 themes and an independent creative direction**. The agent filters styles by your task and navigation needs. Pop art is offered only on an explicit request or for a primarily showcase-oriented task. [Browse more application examples](https://demo.aliwork.com/o/openyida/helpCenter?openyidaRoute=showcase).
+
+## Core Capabilities
+
+| What you want to do | How OpenYida helps |
+| --- | --- |
+| Build a business application | Create CRM, procurement, inventory, or service apps with forms, navigation groups, and pages |
+| Review a plan before building | Use Plan mode to review features, pages, data relationships, and visual design before approving creation |
+| Create workspaces and portals | Build lists, detail views, charts, and brand pages connected to business data |
+| Give the app a consistent appearance | Coordinate navigation, forms, details, custom pages, and drawers with shared themes and colors |
+| Improve an existing application | Review a visual proposal, back up affected resources, and change UI while preserving business logic |
+| Handle approvals and data | Configure approval workflows, records, permissions, reports, and dashboards |
+| Connect external services | Use HTTP connectors and integration automations in business workflows |
+| Maintain after delivery | Update pages and fields, configure sharing, import/export applications, and inspect publishing results |
+
+## From Request to Delivery
+
+1. **Describe the goal.** Explain who will use the app, what they need to do, and any existing app or reference material.
+2. **Confirm requirements and style together.** Ready questions are grouped early. Style options use a name and a short explanation; reference images appear only when you ask to see them.
+3. **Choose how to build.** Fast suits clear requirements you want to move forward with. Plan produces a reviewable proposal and waits for approval before creating resources.
+4. **Review and refine.** Check the delivered app and common actions, then request page, field, or workflow changes. Your chosen style is reused unless you ask to change it.
+
+For existing-app improvements, review the visual proposal before backups and implementation. Restoration uses the saved backups; page content and theme settings need separate backups, with the supported scope explained before changes.
+
+## Recent Updates
+
+**2026.10.13** adds existing-app visual improvements and theme backup/restore, reopens five refined themes, and improves narrow-screen layouts, readability, and style selection. Optional previews show only titles and example images; selecting a style does not lead to repeated questions. [Read the full changelog](./CHANGELOG.md#20261013---2026-10-13).
 
 ## Quick Start
 
@@ -50,9 +83,14 @@ npm install -g openyida
 
 OpenYida requires Node.js 18 or later. The package exposes both `openyida` and `yida` commands.
 
-For npm global installations, OpenYida checks the npm registry before a normal command at most once every 24 hours. When a newer version is available, it installs that exact version and then reruns the original command. This behavior is identical whether the local command is launched from a terminal, Codex, Claude Code, or Qoder. Managed cloud Agent runtimes are excluded before any cache access, registry request, or npm invocation.
+Global npm installations check for updates at most once a day and update automatically. Run `openyida update` to update manually, or set `OPENYIDA_NO_AUTO_UPDATE=1` to keep your installed version.
 
-Set `OPENYIDA_NO_AUTO_UPDATE=1` to disable automatic updates. `OPENYIDA_AUTO_UPDATE_SECS` can override the check interval for development and testing. The explicit `openyida update` command remains available.
+<details>
+<summary>Auto-update environments and development settings</summary>
+
+Local terminals and AI tools share the same policy. Managed cloud Agent runtimes skip automatic updates. For development and testing, `OPENYIDA_AUTO_UPDATE_SECS` changes the check interval.
+
+</details>
 
 If Codex is already installed, OpenYida also imports a local Codex plugin during postinstall. Restart Codex after installation, then type `@宜搭` or `@openyida` in the composer to attach the OpenYida context.
 
@@ -64,7 +102,7 @@ Run this from the AI coding workspace where you want OpenYida to operate:
 openyida agent-capabilities --summary-json
 ```
 
-OpenYida returns a compact machine-readable summary with the version, login state, workspace/cache paths, and command manifest digest. `openyida agent-capabilities --json` is the full diagnostic snapshot, where compact `workdir` maps to `active.projectRoot` and `workdir_exists` maps to `active.projectRootExists`. `openyida commands --json` remains available when an agent only needs the command manifest.
+This checks the installed version, login state, and workspace. Use `openyida agent-capabilities --json` for detailed diagnostics.
 
 ### 3. Log In
 
@@ -72,7 +110,9 @@ OpenYida returns a compact machine-readable summary with the version, login stat
 openyida login
 ```
 
-OpenYida login defaults to OAuth token mode. It opens the DingTalk OAuth authorization page, receives the local loopback callback, exchanges `code` / `authCode` with the Yida server, and stores `access_token` / `refresh_token` in the user auth store when available. If the user auth store is not writable, OpenYida explicitly falls back to the current project cache and reports that narrower persistence scope.
+Follow the browser prompts to authorize with DingTalk. Login information is saved locally; you do not need to extract browser cookies.
+
+The current OAuth login and app-creation flow does not support Global YiDA. See the [version guidance](./CHANGELOG.md#说明) before using an overseas environment.
 
 When the user names a target Yida entry URL, pass it to the login command so OpenYida can select the matching environment and auth profile. For example:
 
@@ -105,8 +145,9 @@ Ask your coding agent for a concrete Yida application or workflow:
 
 ```text
 Create a CRM application in Yida with customer, contact, opportunity, and follow-up forms.
-Build an IPD workflow for chip production, including approval nodes and dashboard pages.
-Generate a public landing page and publish it to my Yida app.
+Use Plan mode to design a procurement app with requests, approvals, and dashboards. Show me the proposal first.
+Build an oolong tea brand storefront and order management back office, with navigation groups.
+Improve the appearance of this existing app. Show me the proposal first, preserve business logic, and back up before changes.
 ```
 
 The agent can then call OpenYida commands to create the application, generate source files, publish pages, and return the final Yida URLs. In Codex, QwenWork, Qoder, Qoder IDE, and QoderWork environments, successful creation and publish commands also include a browser handoff so the agent can open the resulting Yida page in the in-app browser. Use `--open` to force this handoff or `--no-open` to suppress it.
@@ -165,15 +206,22 @@ For a user-facing list of supported features and matching CLI commands, see [Ope
 
 ### Style Selection and Optional Previews
 
-Only show reference previews when the user explicitly requests them. Style choices use the host's supported ask_human tool on every platform.
+Style choices use a name and a short explanation, grouped with the initial requirements questions when ready. Ask “show me these styles” or “show a Sage example” to see reference images. Choose through the conversation; the preview has no second confirmation step.
+
+Previews show only theme titles and available images: four to six cards per row on wide screens, fewer on narrow screens, with no row limit. Themes without images keep their titles. Pop art requires an explicit request or a primarily showcase-oriented task. Viewing your chosen style does not reopen selection.
+
+<details>
+<summary>Developers: generate a theme preview with the CLI</summary>
 
 ```bash
 openyida sample yida-design theme-preview --theme-ids app-sage,app-teal,app-terminal,app-platinum --output .cache/theme-preview.html --json
 ```
 
-This creates a read-only HTML gallery of all requested themes: titles and images only, four to six columns on desktop, fewer on narrow screens, with no row limit. It has no selection controls and refuses to overwrite existing files. Open it with the host's preview tools; raw HTML is not guaranteed to render in chat. QwenWork may alternatively prepare the same read-only template with `sample yida-design theme-selector --json` and pass its returned relative `widget_path` to `qoder_show_widget`. Neither preview path submits a choice.
+The command creates read-only HTML and refuses to overwrite an existing file. Open it with the host's preview tool; ordinary chat may not render HTML. QwenWork can instead run `sample yida-design theme-selector --json` and pass the returned relative `widget_path` to `qoder_show_widget`. Neither preview submits a choice; agents collect answers through `ask_human`.
 
-Ready style questions join the same ask_human call as other necessary questions; split only for dependencies or host limits. Pop art is omitted unless explicitly requested or the primary task is showcase-oriented. Previewing app-pop requires --pop-art-context explicit-request or showcase, based on that evidence.
+Previewing pop art requires `--pop-art-context explicit-request` or `showcase`, based on actual task evidence. “Show all styles” does not qualify.
+
+</details>
 
 ### Application and Form Management
 
@@ -625,23 +673,7 @@ For Codex, `npm install -g openyida` additionally creates a local plugin marketp
 
 ## Examples
 
-### Business Systems: IPD and CRM
-
-Describe your requirements in one sentence; the agent can create a complete multi-form Yida application.
-
-![IPD](https://img.alicdn.com/imgextra/i2/O1CN01YBEMa929J7sD9v8U1_!!6000000008046-2-tps-3840-3366.png)
-
-![CRM](https://img.alicdn.com/imgextra/i3/O1CN01kn0Vcn1H5OkbQaizA_!!6000000000706-2-tps-3840-2168.png)
-
-### Custom Pages and Utilities
-
-![Salary Calculator](https://gw.alicdn.com/imgextra/i2/O1CN017TeJuE1reVH2Dj7b7_!!6000000005656-2-tps-5114-2468.png)
-
-![Enterprise Collaboration](https://gw.alicdn.com/imgextra/i1/O1CN01EZtvfs1cxXV00UaXi_!!6000000003667-2-tps-5118-2470.png)
-
-### Interactive Campaigns
-
-![Lantern Riddle Game](https://img.alicdn.com/imgextra/i3/O1CN01dCoscP25jSAtAB9o3_!!6000000007562-2-tps-2144-1156.png)
+Start with the [application previews](#application-previews) above, or visit the [case gallery](https://demo.aliwork.com/o/openyida/helpCenter?openyidaRoute=showcase) for more examples. A visual reference helps choose an appearance; describe your own forms, actions, and approval requirements when building an app.
 
 ## Common Prompts
 

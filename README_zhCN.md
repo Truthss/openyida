@@ -2,18 +2,16 @@
 
 # OpenYida
 
-**面向 AI 编程工具的宜搭低代码 CLI。**
+**用自然语言搭建宜搭应用，从业务需求到可使用的页面。**
 
-OpenYida 把 Codex、Claude Code、Cursor、QwenWork（千问办公）、Qoder 等 AI 编程助手连接到宜搭低代码平台，让开发者可以通过自然语言和命令行完成应用创建、表单建模、流程审批、自定义页面、报表、连接器和发布配置。
+在 Codex、Claude Code、Cursor、千问办公、Qoder 等 AI 工具中说明你要做的业务，OpenYida 帮助 AI 创建表单、审批流程、工作台、门户和报表，也能继续调整已有应用。
 
-[快速开始](#快速开始) · [帮助网站&文档](https://demo.aliwork.com/o/openyida/helpCenter) · [核心能力](#核心能力) · [完整功能列表](https://demo.aliwork.com/o/openyida/helpCenter?openyidaPath=capabilities) · [案例展示](https://demo.aliwork.com/o/openyida/helpCenter?openyidaRoute=showcase) · [自定义页面开发](#自定义页面开发) · [常用命令](https://demo.aliwork.com/o/openyida/helpCenter?openyidaPath=features/skills) · [开发与校验](#开发与校验)
+[快速开始](#快速开始) · [搭建效果](#搭建效果) · [核心能力](#核心能力) · [帮助文档](https://demo.aliwork.com/o/openyida/helpCenter) · [更新日志](./CHANGELOG.md) · [CLI 命令参考](#cli-命令参考)
 
 [![npm version](https://img.shields.io/npm/v/openyida?color=brightgreen&label=npm)](https://www.npmjs.com/package/openyida)
 [![npm downloads](https://img.shields.io/npm/dm/openyida?color=blue)](https://www.npmjs.com/package/openyida)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Node.js >=18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
-
-**帮助网站&文档:** [帮助网站&文档](https://demo.aliwork.com/o/openyida/helpCenter)
 
 [English README](./README.md) · [简体中文 README](./README_zhCN.md)
 </div>
@@ -22,21 +20,56 @@ OpenYida 把 Codex、Claude Code、Cursor、QwenWork（千问办公）、Qoder �
 
 ## OpenYida 是什么
 
-OpenYida 是 AI 编程工具和宜搭之间的桥接层。AI Agent 不需要直接猜测宜搭接口或页面运行时细节，而是通过稳定的 `openyida` CLI 完成资源创建、Schema 查询、源码生成、编译发布和诊断。
+把“我想做一个客户管理系统”变成团队可以使用的宜搭应用。你描述业务目标，AI 协助梳理需求、设计页面，再通过 OpenYida 创建和发布资源。
 
-最终产物仍是原生宜搭应用：团队可以继续在宜搭设计器中编辑，沿用组织权限、安全和部署体系。
+搭建结果仍是原生宜搭应用：可以继续在宜搭设计器中修改，按组织权限供团队使用，也可以让 AI 在已有应用上继续完善。
+
+## 搭建效果
+
+以下是主题的示例搭建效果，点击图片可查看大图。示例内容不代表一键安装的业务成品；实际页面、数据、品牌色和布局会按你的需求设计。
+
+<table>
+  <tr>
+    <td width="50%" align="center"><strong>深色侧栏 · 白底细线</strong><br><a href="https://img.alicdn.com/imgextra/i1/O1CN01oFp7XMYEjSI5r31K_!!6000000006946-2-tps-2884-1794.png"><img src="https://img.alicdn.com/imgextra/i1/O1CN01oFp7XMYEjSI5r31K_!!6000000006946-2-tps-2884-1794.png" alt="深色侧栏 · 白底细线搭建效果示例" width="100%"></a></td>
+    <td width="50%" align="center"><strong>柔灰嵌白</strong><br><a href="https://img.alicdn.com/imgextra/i3/O1CN01UEEmuLlMF3I5pHky_!!6000000006290-2-tps-2870-1798.png"><img src="https://img.alicdn.com/imgextra/i3/O1CN01UEEmuLlMF3I5pHky_!!6000000006290-2-tps-2870-1798.png" alt="柔灰嵌白搭建效果示例" width="100%"></a></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><strong>自然绿意</strong><br><a href="https://img.alicdn.com/imgextra/i1/O1CN01NiHI4pBsbOK5qIC4_!!6000000007377-2-tps-2878-1798.png"><img src="https://img.alicdn.com/imgextra/i1/O1CN01NiHI4pBsbOK5qIC4_!!6000000007377-2-tps-2878-1798.png" alt="自然绿意搭建效果示例" width="100%"></a></td>
+    <td width="50%" align="center"><strong>青绿协作</strong><br><a href="https://img.alicdn.com/imgextra/i2/O1CN01hLAdOTwuEWF5qXno_!!6000000004848-2-tps-2880-1796.png"><img src="https://img.alicdn.com/imgextra/i2/O1CN01hLAdOTwuEWF5qXno_!!6000000004848-2-tps-2880-1796.png" alt="青绿协作搭建效果示例" width="100%"></a></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><strong>终端像素</strong><br><a href="https://img.alicdn.com/imgextra/i3/O1CN01PPHEYDv6nMB5qXnq_!!6000000004777-2-tps-2880-1798.png"><img src="https://img.alicdn.com/imgextra/i3/O1CN01PPHEYDv6nMB5qXnq_!!6000000004777-2-tps-2880-1798.png" alt="终端像素搭建效果示例" width="100%"></a></td>
+    <td width="50%" align="center"><strong>铂金商务</strong><br><a href="https://img.alicdn.com/imgextra/i2/O1CN01eDGhh1WCtFI5soHi_!!6000000007333-2-tps-2898-1792.png"><img src="https://img.alicdn.com/imgextra/i2/O1CN01eDGhh1WCtFI5soHi_!!6000000007333-2-tps-2898-1792.png" alt="铂金商务搭建效果示例" width="100%"></a></td>
+  </tr>
+</table>
+
+目前提供 **18 套主题和自由创意入口**。AI 会结合业务场景和导航方式筛选合适风格；波普仅适用于用户明确指定或以展示为主的任务。[查看更多应用案例](https://demo.aliwork.com/o/openyida/helpCenter?openyidaRoute=showcase)。
 
 ## 核心能力
 
-| 领域 | 能力 |
-|------|------|
-| 应用交付 | 创建、更新、导出、导入宜搭应用 |
-| 表单建模 | 创建表单、更新字段、查询 Schema、配置权限 |
-| 自定义页面 | 生成 Code Canvas / 普通 JSX 页面、检查、编译、发布 |
-| 流程自动化 | 创建流程表单、配置审批流、预览流程实例 |
-| 数据管理 | 查询/新增/更新表单、流程、任务、子表数据 |
-| 连接器与集成 | 管理 HTTP 连接器、鉴权账号、连接器动作和集成自动化 |
-| 运营与诊断 | 登录态、组织上下文、环境诊断、页面分享、CDN 素材上传 |
+| 你想做什么 | OpenYida 可以帮助你 |
+| --- | --- |
+| 从零搭建业务系统 | 创建客户管理、采购、库存、工单等应用，组织表单、导航分组和业务页面 |
+| 先看方案再搭建 | 使用 Plan 模式查看功能、页面、数据关系和设计方案，确认后开始创建 |
+| 制作工作台与门户 | 搭建列表、详情、图表、品牌展示页等自定义页面，并连接实际业务数据 |
+| 统一应用外观 | 选择主题和配色，让导航、表单、详情、自定义页面及抽屉等界面协调一致 |
+| 美化已有应用 | 先查看视觉方案并确认，修改前备份；仅调整 UI，保留原业务逻辑 |
+| 处理审批与业务数据 | 配置审批流程，管理表单记录、权限、报表和统计看板 |
+| 连接外部服务 | 配置 HTTP 连接器与集成自动化，把外部服务接入业务流程 |
+| 交付后继续维护 | 调整页面和字段、配置分享、导入导出应用，检查环境与发布结果 |
+
+## 从需求到交付
+
+1. **说明目标**：告诉 AI 谁会使用、要处理什么业务，以及已有应用或参考材料。
+2. **集中确认需求和风格**：必要问题尽量在前期一起问，已经回答的不重复询问。默认用名称和一句说明选风格；你说“给我看效果图”时，再展示参考图。
+3. **选择搭建方式**：Fast 适合范围清楚、希望直接推进的任务；Plan 先生成可查看的完整方案，经你确认后再创建资源。
+4. **检查并继续完善**：交付后查看应用和常用操作，继续提出页面、字段或流程调整。风格选定后会沿用，只有你主动要求更换才重新选型。
+
+美化已有应用同样先确认方案，再按范围备份和实施。不满意时按备份恢复；页面和主题需分别备份，恢复范围会在实施前说明。
+
+## 最近更新
+
+**2026.10.13** 增加已有应用整体美化与主题备份恢复，重新开放五款优化主题，并完善窄屏布局、阅读体验和风格选择。效果预览只展示标题与示例图，选定风格后不重复询问。[查看完整更新日志](./CHANGELOG.md#20261013---2026-10-13)。
 
 ## 快速开始
 
@@ -48,9 +81,14 @@ npm install -g openyida
 
 OpenYida 要求 Node.js 18 或更高版本。安装后会提供 `openyida` 和 `yida` 两个命令。
 
-如果 OpenYida 是通过 npm 全局安装的，普通命令执行前至多每 24 小时检查一次 npm registry；发现新版本后安装查询到的精确版本，再用新版本重跑原命令。本地终端、Codex、Claude Code、Qoder 启动的命令采用同一策略。托管云端 Agent 会在读取缓存、访问 registry 或调用 npm 之前直接跳过，不受这一机制影响。
+通过 npm 全局安装后，OpenYida 至多每天检查一次新版本并自动更新。也可以运行 `openyida update` 手动更新；需要固定版本时，设置 `OPENYIDA_NO_AUTO_UPDATE=1` 关闭自动更新。
 
-设置 `OPENYIDA_NO_AUTO_UPDATE=1` 可关闭自动更新；开发和测试时可用 `OPENYIDA_AUTO_UPDATE_SECS` 调整检查间隔。显式的 `openyida update` 命令仍然保留。
+<details>
+<summary>自动更新的环境与开发配置</summary>
+
+本地终端和 AI 工具使用相同策略；托管云端 Agent 跳过自动更新。开发和测试可使用 `OPENYIDA_AUTO_UPDATE_SECS` 调整检查间隔。
+
+</details>
 
 如果本机已安装 Codex，OpenYida 会在安装后尝试导入本地 Codex 插件。重启 Codex 后，在输入框中输入 `@宜搭` 或 `@openyida` 即可挂载 OpenYida 上下文。
 
@@ -75,7 +113,7 @@ openyida login --check-only --json
 openyida login
 ```
 
-OpenYida 默认使用 OAuth token 模式：打开钉钉 OAuth 授权页，通过本地 loopback 回调接收授权码，再由宜搭服务换取并缓存 `access_token` / `refresh_token`。Agent 不需要提取浏览器 Cookie，也不需要手写 `.cache/cookies.json`。
+按提示在浏览器中完成钉钉授权，登录信息会保存在本机。无需提取浏览器 Cookie。
 
 AI 工具中建议登录后用下面任一命令确认 token session 可用：
 
@@ -100,11 +138,7 @@ openyida login https://yida-group.alibaba-inc.com/
 openyida login --alibaba
 ```
 
-海外 / Global YiDA 场景使用：
-
-```bash
-openyida login --intl
-```
+当前版本的 OAuth 登录与应用创建链路暂不适用于海外版宜搭；相关版本说明见 [更新日志](./CHANGELOG.md#说明)。
 
 ### 4. 让 AI Agent 构建应用
 
@@ -112,8 +146,9 @@ openyida login --intl
 
 ```text
 帮我创建一个 CRM 应用，包含客户、联系人、商机、跟进记录表单和首页看板。
-帮我搭建一个采购申请流程，包含审批节点和数据看板。
-帮我生成一个品牌官网首页并发布到宜搭应用。
+帮我用 Plan 模式搭建采购管理应用，包含采购申请、审批和看板，先给我看方案。
+帮我搭建乌龙茶品牌前台和订单管理后台，用导航分组区分业务入口。
+美化这个已有应用，先给我看方案，只改 UI，保留业务逻辑，修改前做好备份。
 ```
 
 Agent 会读取 `yida-skills/` 中的技能说明，调用 OpenYida CLI 创建应用、表单、页面、流程和报表，并返回最终访问链接。
@@ -185,15 +220,22 @@ openyida publish pages/src/employee-upload.oyd.jsx APP_XXX FORM_XXX
 
 ## 风格选择与按需预览
 
-所有环境统一通过宿主支持的 `ask_human` 收集风格选择。只有用户明确要求看风格或效果示意时，才展示预览：
+选风格时默认看到名称和一句适用说明，与前期需求问答一起确认。想看图片时，可以说“给我看看这些风格的效果”或“展示自然绿意的示例”。效果图只供参考，选择仍在对话问答中完成，不需要在预览页再次确认。
+
+预览只显示风格标题和已有示例图，宽屏每行 4–6 款，行数不限，窄屏减少列数。没有参考图的风格保留标题。波普仅在明确指定或主要任务偏展示时出现；查看已选风格不会重新发起选型。
+
+<details>
+<summary>开发者：生成效果预览的 CLI 命令</summary>
 
 ```bash
 openyida sample yida-design theme-preview --theme-ids app-sage,app-teal,app-terminal,app-platinum --output .cache/theme-preview.html --json
 ```
 
-命令生成只读 HTML 卡片页，展示全部指定风格，只展示标题和示例图，常规宽屏每行 4–6 个，总行数不限，窄屏自动减少列数。卡片没有选择或确认按钮，已有文件不会被覆盖。通过宿主预览工具打开；不能假设普通会话能渲染 HTML 源码。千问也可用 `sample yida-design theme-selector --json` 准备相同的只读模板，再将返回的相对 `widget_path` 传给 `qoder_show_widget`。预览不提交风格选择。
+命令生成只读 HTML，不覆盖已有文件。使用当前工具支持的预览方式打开；普通聊天不一定能渲染 HTML。千问可运行 `sample yida-design theme-selector --json`，将返回的相对 `widget_path` 传给 `qoder_show_widget`。两条路径都不提交选择，Agent 统一通过 `ask_human` 收集回答。
 
-风格候选已准备好时，与当前必要问题合并到同一次 ask_human，仅因答案依赖或工具限制拆分。波普仅在用户明确指定或主要任务偏展示时出现；预览 app-pop 须据实传入 --pop-art-context explicit-request 或 showcase，不能因“查看全部”而放开。
+预览波普时，必须按真实需求传入 `--pop-art-context explicit-request` 或 `showcase`；“查看全部”不构成开放依据。
+
+</details>
 
 ## 表单、流程、数据与报表
 
