@@ -2653,6 +2653,8 @@ test('command and agent navigation policies align with AI intake decisions', () 
     expect(route.navigation_policy).toContain('floating requires an explicit design');
     expect(route.navigation_policy).not.toContain('offer exactly two');
     expect(route.design_mode_policy).toBe(workflow.design_mode_policy);
+    expect(route.plan_confirmation_policy).toEqual(require('../lib/design-plan/confirmation').confirmationPolicy);
+    expect(route.plan_confirmation_policy).toEqual(workflow.plan_confirmation_policy);
     expect(route.design_mode_policy).toContain('Only without intent, visual reference or reusable choice do Fast and Plan share the three-direction comparison rule');
     expect(route.design_mode_policy).toContain('generate exactly three directions and follow visual_decision_policy.themeSelection');
     expect(route.design_mode_policy).toContain('use ask_human on every host');

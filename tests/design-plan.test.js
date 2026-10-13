@@ -1473,13 +1473,19 @@ describe('Plan contract and file consistency', () => {
 
     for (const content of [interactionContract, workflow]) {
       expect(content).toContain('attachments');
-      expect(content).toContain('prd/<项目名>/build-plan-<content-sha256>.html');
+      expect(content).toContain('outputs.confirmationHtml');
       expect(content).toContain('revision');
     }
     expect(interactionContract).toContain('同一次 `ask_human`');
     expect(interactionContract).toContain('附件、问题与 `revision` 是一个原子交互');
     expect(workflow).toContain('实际调用 `ask_human` 创建结构化提问');
-    expect(workflow).toContain('一次成功调用同时建立方案展示、版本绑定和最终选择');
+    expect(workflow).toContain('调用成功只表示问题已创建');
+    expect(interactionContract).toContain('方案执行确认不适用此降级');
+    expect(workflow).toContain('queued/pending 仅表示等待');
+    expect(workflow).toContain('同版已有效确认则复用');
+    const beautify = fs.readFileSync(path.join(ROOT, 'yida-skills/skills/yida-design/sub_skill/ui-improve/references/confirmation.md'), 'utf8');
+    expect(beautify).toContain('必须实际调用 `ask_human`');
+    expect(beautify).not.toContain('用对话展示同一方案并明确提问');
   });
 
   test('plan final confirmation uses the callable single-select ask_human schema only', () => {

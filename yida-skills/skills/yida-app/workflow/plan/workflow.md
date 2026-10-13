@@ -40,7 +40,7 @@
 6. **补齐视觉事实。** 在 `visual.json` 的 facts.visualStyle 中落实用户风格意向或已提取的参考视觉 DNA，填写具体 Token；自由创意补齐 creativeDirection 和导航明暗。补齐自定义页的焦点、布局、主操作、响应式和验收。仅在存在品牌稿、参考图、页面级特殊风格或用户明确要求精修时，执行 `optionalTasks.visual-refinement`。纯原生资源没有这些待补项时沿用 init 的视觉内容。
 7. **标记片段就绪。** 复核两个片段覆盖已确认需求且必填内容齐全，将已完成片段设为 `ready=true`。两个片段均已就绪后进入生成步骤。
 8. **生成首版产物。** 直接执行 init 返回的 `materialize.command`。成功后进入展示步骤；`maxSuccessfulCalls: 1` 表示首版成功后不重复物化。失败按 `repairPolicy` 修复，不能重复提交未修改的输入，具体停止条件见[本地校验修复](../../../../references/source-repair.md)。标准首版不先试 `--from-preview`、`preview`、`--check` 或无参数 materialize。
-9. **展示并确认。** 成功 JSON 已返回 HTML 路径和 revision，直接按 `workflow/plan/step-4-deliver.md` 展示并确认当前方案；不再用 Glob、Read 或帮助命令检查产物。
+9. **实际提问并等待。** 按返回的 `confirmationPolicy` 和 [Plan 交付](step-4-deliver.md) 实际调用 `ask_human`，传入 `confirmation`；managed Local 用 `agent ask-human` 封装。生成成功不代表用户同意。只有当前交互与 revision 匹配的 `confirm_build` 才能实施；queued/pending 时等待，无工具或失败时保留待确认，不能用普通对话、文件链接或状态标记代替。已有同版有效确认直接复用。
 
 超大需求需要展示中间进展或用户明确要求边生成边查看时，使用[按模块更新方案](../incremental-preview.md)。普通首版按上述步骤完成，不逐模块预览和重复渲染。
 

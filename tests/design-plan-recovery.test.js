@@ -70,8 +70,22 @@ test('patch materialization returns current confirmation on both actual and no-o
     const result = patchPlan(input, ['overview.summary=本轮调整后的概要'], { materialize: true });
     expect(result.confirmation.revision).toBe(read(input).meta.revision);
     expect(result.confirmation.attachments[0].path).toBe(result.outputs.confirmationHtml);
+    expect(result.confirmationPolicy).toMatchObject({ tool: 'ask_human', requiredBeforeExecution: true, payloadField: 'confirmation' });
+    expect(result.confirmation).not.toHaveProperty('confirmationPolicy');
+    expect(read(input).meta.planState.planConfirmed).toBe(false);
     expect(result.changed).toBe(attempt === 0);
   }
+});
+
+test('materialization delivers the approval policy without treating generated files as consent', () => {
+  const result = merge();
+  expect(result.confirmationPolicy).toEqual(require('../lib/design-plan/confirmation').confirmationPolicy);
+  expect(result.confirmation.revision).toBe(result.revision);
+  expect(result.confirmation.attachments[0].path).toBe(result.outputs.confirmationHtml);
+  expect(read(input).meta.planState?.planConfirmed).not.toBe(true);
+  const check = materialize(input, { check: true });
+  expect(check).not.toHaveProperty('confirmation');
+  expect(check).not.toHaveProperty('confirmationPolicy');
 });
 
 
