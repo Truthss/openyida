@@ -222,20 +222,42 @@ describe('design-plan materialize', () => {
     }
   });
 
-  test('one render process fills the preset HTML and returns all artifacts from the same plan', () => {
+  test('materialize and draft preview work with no executables on PATH', () => {
+    const output = path.join(tempDir, 'no-python');
+    const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => key.toLowerCase() !== 'path'));
+    env.PATH = '';
+    const code = `const fs=require('fs');
+      const {materialize,renderHtml,normalizePlan}=require(${JSON.stringify(path.join(ROOT,'lib/design-plan/materialize'))});
+      const plan=normalizePlan(JSON.parse(fs.readFileSync(${JSON.stringify(FIXTURE)},'utf8')));
+      const result=materialize(${JSON.stringify(FIXTURE)},{outputDir:${JSON.stringify(output)}});
+      const draft=JSON.parse(renderHtml(plan,['data-models']));
+      console.log(JSON.stringify({success:result.success, draft:draft['data-models']}));`;
+    const result = spawnSync(process.execPath, ['-e', code], { env, encoding: 'utf8' });
+    expect(result.error).toBeUndefined();
+    expect(result.status).toBe(0);
+    expect(JSON.parse(result.stdout)).toMatchObject({ success: true, draft: expect.stringContaining('采购申请') });
+    expect(fs.readFileSync(path.join(output, 'build-plan.html'), 'utf8')).toContain('采购管理应用');
+  });
+
+  test('Node renders the preset HTML without a Python process and keeps artifacts consistent', () => {
     const input = path.join(tempDir, 'build-plan.json');
     const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
     plan.overview.dataModelSummary = ['采购订单负责记录每批交货的核对结果'];
     plan.overview.navigationSummary = ['审核人员从待办入口进入采购审批'];
     plan.overview.businessGraph.description = '采购申请关联订单，订单承接交付核对';
     fs.writeFileSync(input, JSON.stringify(plan));
-    const spawn = jest.spyOn(require('child_process'), 'spawnSync');
+    const spawn = jest.spyOn(require('child_process'), 'spawnSync').mockImplementation(() => { throw new Error('External runtime unavailable'); });
     try {
-      jest.isolateModules(() => require('../lib/design-plan/materialize').materialize(input));
-      expect(spawn).toHaveBeenCalledTimes(1);
-      const [, args, options] = spawn.mock.calls[0];
-      expect(args.slice(1)).toEqual(['--input', '-', '--output', '-']);
-      const normalized = JSON.parse(options.input);
+      let normalized;
+      jest.isolateModules(() => {
+        const render = jest.spyOn(require('../lib/design-plan/render-html'), 'renderHtml');
+        try {
+          require('../lib/design-plan/materialize').materialize(input);
+          expect(render).toHaveBeenCalledTimes(1);
+          normalized = render.mock.calls[0][0];
+        } finally {render.mockRestore();}
+      });
+      expect(spawn).not.toHaveBeenCalled();
       const prd = fs.readFileSync(path.join(tempDir, 'prd.md'), 'utf8');
       const html = fs.readFileSync(path.join(tempDir, 'build-plan.html'), 'utf8');
       const handoff = JSON.parse(prd.match(/```json\n([\s\S]*?)\n```/)[1]);
