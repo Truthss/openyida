@@ -42,7 +42,9 @@ describe('content-addressed complete local tool bundle', () => {
   });
   test('deterministically reuses the same bundle without creating a Node execution lease', () => {
     const first = freeze();
+    const write = jest.spyOn(fs, 'writeFileSync');
     const second = freeze();
+    expect(write).not.toHaveBeenCalled();
     expect(second.config.bundle).toEqual(first.config.bundle);
     expect(fs.readdirSync(path.join(fixture.config.stateDir, 'bundles'))).toEqual([first.config.bundle.id]);
   });
@@ -78,19 +80,21 @@ describe('content-addressed complete local tool bundle', () => {
     fs.writeFileSync(path.join(frozen.config.bundle.root, 'extra'), 'unexpected');
     expect(() => verifyBundle(frozen.config.bundle.root, frozen.config.bundle.id)).toThrow();
     fs.unlinkSync(path.join(frozen.config.bundle.root, 'extra'));
-    fs.symlinkSync('/tmp', path.join(frozen.config.bundle.root, 'escape'));
+    fs.symlinkSync(root, path.join(frozen.config.bundle.root, 'escape'), process.platform === 'win32' ? 'junction' : 'dir');
     expect(() => verifyBundle(frozen.config.bundle.root, frozen.config.bundle.id)).toThrow();
   });
   test('fails closed on source links or unavailable required dependencies', () => {
-    fs.symlinkSync(path.join(root, 'package/lib/fixture.js'), path.join(root, 'package/lib/link'));
+    fs.symlinkSync(path.join(root, 'package/node_modules'), path.join(root, 'package/lib/link'), process.platform === 'win32' ? 'junction' : 'dir');
     expect(freeze).toThrow();
-    fs.unlinkSync(path.join(root, 'package/lib/link'));
+    if (process.platform === 'win32') {fs.rmdirSync(path.join(root, 'package/lib/link'));}
+    else {fs.unlinkSync(path.join(root, 'package/lib/link'));}
     fs.renameSync(path.join(root, 'package/node_modules/fixture-b'), path.join(root, 'uninstalled-dependency'));
     expect(freeze).toThrow(expect.objectContaining({ code: 'AGENT_BUNDLE_DEPENDENCY_MISSING' }));
     expect(fs.readdirSync(path.join(fixture.config.stateDir, 'bundles'))).toEqual([]);
   });
   test('failed materialization publishes nothing and does not affect prior bundles', () => {
     const previous = freeze();
+    fs.writeFileSync(path.join(root, 'package/lib/fixture.js'), 'new candidate');
     const originalWrite = fs.writeFileSync;
     jest.spyOn(fs, 'writeFileSync').mockImplementation((filename, ...args) => {
       if (String(filename).includes('.staging-') && String(filename).endsWith('fixture.js')) {throw Object.assign(new Error('disk full'), { code: 'ENOSPC' });}
@@ -129,14 +133,23 @@ describe('content-addressed complete local tool bundle', () => {
   });
   test.each(['connect', 'run'])('%s launches only frozen paths and carries explicit development marker', async (command) => {
     const stdout = { write: jest.fn() };
+    const children = [];
     await run([command, '--development-runtime', '--runtime-path', fixture.runtimePath, '--runtime-manifest', fixture.manifestPath,
       '--endpoint', 'https://agent.example.test', '--endpoint-id', 'test', '--state-dir', fixture.config.stateDir], {
       // This test isolates bundle launching; enrolled multi-organization
       // Connections are exercised by agent-connection-manager.test.js.
+      // The fixture is JavaScript, not a Windows PE executable. Launch the same
+      // frozen fixture bytes with Node while preserving the stdio contract.
+      spawn: (executable, args, options) => {
+        const child = process.platform === 'win32' ? spawn(process.execPath, [executable, ...args], options) : spawn(executable, args, options);
+        children.push(new Promise(resolve => child.on('close', resolve)));
+        return child;
+      },
       packageRoot: fixture.config.node.packageRoot, stdout, disableConnectionManager: true, probe: async () => ({ status: 'passed' }),
     });
+    await Promise.all(children);
     const event = JSON.parse(stdout.write.mock.calls[0][0]);
-    expect(event.config).toMatchObject({ command, developmentRuntime: true, parentWatchFD: 3, bundle: { schemaVersion: 1 } });
+    expect(event.config).toMatchObject({ command, developmentRuntime: true, ...(process.platform === 'win32' ? {} : { parentWatchFD: 3 }), bundle: { schemaVersion: 1 } });
     expect(event.config.node.packageRoot).toBe(path.join(event.config.bundle.root, 'openyida'));
     expect(event.config).not.toHaveProperty('profile');
   });
