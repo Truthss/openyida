@@ -2,9 +2,9 @@
 
 # OpenYida
 
-**Build Yida applications in natural language, from business needs to working pages.**
+**AI-native CLI for building DingTalk Yida low-code applications.**
 
-Describe your business in Codex, Claude Code, Cursor, QwenWork, Qoder, or another supported AI tool. OpenYida helps the agent build forms, approval workflows, workspaces, portals, and reports—and improve applications you already use.
+OpenYida connects AI coding agents with Yida's low-code platform, so developers can create apps, forms, workflows, custom pages, reports, integrations, and deployment configuration from a normal chat-driven development workflow.
 
 [Quick Start](#quick-start) · [帮助网站&文档](https://demo.aliwork.com/o/openyida/helpCenter) · [Capabilities](#capabilities) · [Full Capability List](https://demo.aliwork.com/o/openyida/helpCenter?openyidaPath=capabilities) · [CLI Reference](https://demo.aliwork.com/o/openyida/helpCenter?openyidaPath=features/skills) · [Examples](https://demo.aliwork.com/o/openyida/helpCenter?openyidaRoute=showcase) · [Contributing](./CONTRIBUTING.md) · [Changelog](https://demo.aliwork.com/o/openyida/helpCenter?openyidaRoute=changelog) · [Application Previews](#application-previews)
 
