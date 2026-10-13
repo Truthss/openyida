@@ -1,9 +1,10 @@
-# Local runtime launcher contract (development implementation)
+# Local runtime launcher contract
 
-This Node package contains no Go source or build/download fallback. The runtime
-catalog is intentionally empty until release ownership, signing keys, platform
-support and real package publication are approved. Internal test injection is not
-a CLI trust-root option. Ordinary commands do not resolve or spawn this runtime.
+This Node package ships no Go source. The packaged catalog and exact optional
+platform dependencies select signed runtime binaries for macOS and Windows,
+x64 and ARM64. npm installs the package matching the actual OS/CPU. Ordinary
+commands do not resolve or spawn this runtime. There is no arbitrary URL, PATH
+runtime discovery, or build/download fallback.
 
 ## Production metadata and development mode
 
@@ -21,9 +22,8 @@ fail closed; no TOFU, downloaded trust key, arbitrary URL or PATH fallback exist
 
 Each approved release entry is `{platform, arch, packageName, packageVersion,
 runtimeVersion, manifestSha256}`. The main package must declare that exact
-`optionalDependencies` version. Candidate naming is
-`@openyida/local-agent-runtime-${process.platform}-${process.arch}`; this is not a
-claim those names are registered or published. Platform metadata must match its
+`optionalDependencies` version. Public package naming is
+`@openyida/local-agent-runtime-${process.platform}-${process.arch}`. Platform metadata must match its
 exact name/version and single-element `os`/`cpu`, and have no lifecycle scripts.
 Main-package-relative Node resolution supports hoisting; platform packages must
 make `package.json` resolvable. Missing optional packages block Local Agent only.
@@ -180,3 +180,22 @@ runtimes reject unknown fields, so release the updated runtime and update the
 CLI's exact runtime dependencies and signed catalog together before publishing
 this launcher. Do not pair the updated launcher with a previously published
 runtime and assume compatibility.
+
+## Managed output delivery and business questions
+
+Only `openyida.ask-human.v2` receipts are accepted. The CLI explicitly declares
+bounded text attachments and freezes their bytes in the attempt's private
+`.files` directory. Runtime verifies each snapshot and uploads it with device
+authentication to `/api/local-runtime/v1/runs/{runId}/artifacts`, with bounded
+base64url JSON metadata in `X-OpenYida-Output` and an octet-stream body.
+Server-owned paths, digests and sizes are durably acknowledged in the attempt
+journal before `question_opened`; local paths and file bytes never enter events.
+No recursive directory sync or v1 receipt compatibility is implemented.
+
+Question choices retain stable `value` separately from display labels; business
+`contextRevision` is distinct from the integer interaction revision. Answers and
+file references remain bound to the displayed question on continuation. The UI
+uses the existing authenticated project-file reader and isolated HTML preview.
+Permanent upload errors fail the turn; bounded transient retries remain cancellable.
+Persisted ACKs/events can be replayed without executing business commands again.
+An interrupted upload does not silently resume an unconfirmed provider execution.

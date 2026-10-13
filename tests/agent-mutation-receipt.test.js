@@ -59,8 +59,8 @@ describe('managed mutation receipt', () => {
     expect(classifyManagedMutation('i18n', ['overview', 'APP_X'])).toBeNull();
     expect(classifyManagedMutation('i18n', ['config', 'get', 'APP_X'])).toBeNull();
     expect(classifyManagedMutation('i18n', ['translate', 'APP_X'])).toBeNull();
-    expect(classifyManagedMutation('i18n', ['config', 'set', 'APP_X'])).toBeNull();
-    expect(classifyManagedMutation('i18n', ['translate-all', 'APP_X'])).toBeNull();
+    expect(classifyManagedMutation('i18n', ['config', 'set', 'APP_X'])).toEqual({ operation: 'update_app' });
+    expect(classifyManagedMutation('i18n', ['translate-all', 'APP_X'])).toEqual({ operation: 'update_app' });
     expect(classifyManagedMutation('create-page', ['--help'])).toBeNull();
     expect(classifyManagedMutation('data', ['create', 'process', 'APP_X', 'FORM_X'])).toBeNull();
   });

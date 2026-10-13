@@ -29,7 +29,7 @@ openyida agent doctor --provider codex --json
 
 桌面版是否存在与 CLI 是否可用是两个独立事实。Qoder 桌面程序不会作为 CLI 启动；Codex 内置程序被发现后仍需通过检查。
 
-Qoder 检查版本、ACP 初始化和 CLI 模型列表；Codex 检查版本、app-server 初始化和登录状态。不发送模型 prompt、不创建业务对象、不自动安装程序、不发起登录、不复制其他应用的凭据。每个类型的预检预算为 30 秒。
+Qoder 检查版本、ACP 初始化和 CLI 模型列表；Codex 检查版本、app-server 初始化和登录状态。不发送模型 prompt、不创建业务对象、不自动安装程序、不发起登录、不复制其他应用的凭据。Windows 单次子进程检查超时为 45 秒，每个 Provider 总预算为 135 秒；其他平台分别为 15 秒与 30 秒。总预算耗尽即停止探测，不把超时当作未安装。
 
 当前接入范围为 Qoder 和 Codex。
 

@@ -63,9 +63,7 @@ test.each(['catalog', 'init', 'preview', 'materialize', 'patch'])('Plan %s is ad
 test.each([
   ['design-plan', ['future-action']], ['auth', ['login']], ['auth', ['status', 'login']],
   ['env', ['switch', 'prod']], ['login', ['--check-only', '--refresh']], ['agent', ['disconnect']],
-  ['create-form', ['resume', 'APP_BOUND']], ['nav-group', ['unknown', 'APP_BOUND']],
-  ['app-theme', ['snapshot', 'APP_BOUND', '--output-dir', 'backup']],
-  ['app-theme', ['restore', 'APP_BOUND', '--confirm']],
+  ['nav-group', ['unknown', 'APP_BOUND']],
   ['nav-group', ['toString', 'APP_BOUND']], ['auth', ['constructor']],
   ['connector', ['delete', 'any']], ['update', []], ['export', ['APP_BOUND']],
 ])('identity, unaudited actions and unknown arguments remain blocked: %s %j', (command, args) => {
@@ -146,4 +144,32 @@ test('theme preparation produces no cloud mutation receipt; app entry writes do'
   expect(classifyManagedMutation('app-entry', ['get', 'APP_BOUND'])).toBeNull();
   expect(classifyManagedMutation('app-entry', ['set', 'APP_BOUND', 'FORM-entry']))
     .toEqual({ operation: 'update_app_entry' });
+});
+
+
+test.each([
+  ['create-form', ['resume', 'APP_BOUND', 'FORM-x', 'fields.json']],
+  ['get-permission', ['APP_BOUND', 'FORM-x']],
+  ['app-theme', ['snapshot', 'APP_BOUND', '--output-dir', 'backup']],
+  ['app-theme', ['restore', 'APP_BOUND', '--confirm']],
+  ['data', ['query', 'form', 'APP_BOUND', 'FORM-x']],
+  ['data', ['create', 'form', 'APP_BOUND', 'FORM-x', 'data.json']],
+  ['i18n', ['config', 'set', 'APP_BOUND']],
+  ['i18n', ['overview', 'APP_BOUND']],
+  ['asset', ['resolve', 'tasks.json', '--app-type', 'APP_BOUND']],
+])('audited command binds every application target: %s %j', (command, args) => {
+  expect(run(command, args)).toMatchObject({ appType: 'APP_BOUND' });
+  expect(() => run(command, args.map(arg => arg === 'APP_BOUND' ? 'APP_OTHER' : arg)))
+    .toThrow(expect.objectContaining({ code: 'MANAGED_APP_MISMATCH' }));
+});
+
+test('nested unknown actions and duplicate app options remain blocked', () => {
+  expect(() => run('data', ['query', 'future', 'APP_BOUND'])).toThrow();
+  expect(() => run('i18n', ['config', 'future', 'APP_BOUND'])).toThrow();
+  expect(() => run('asset', ['resolve', 'tasks.json', '--app-type', 'APP_BOUND', '--app-type', 'APP_OTHER'])).toThrow();
+  expect(() => run('asset', ['resolve', 'tasks.json'])).toThrow();
+  expect(run('connector', ['parse-api', 'api.json'])).toBeTruthy();
+  expect(classifyManagedMutation('upgrade-app-theme', ['APP_BOUND', '--confirm'])).toEqual({ operation: 'update_app' });
+  expect(classifyManagedMutation('app-theme', ['restore', 'APP_BOUND', '--check'])).toBeNull();
+  expect(classifyManagedMutation('create-form', ['batch', 'APP_BOUND', 'plan.json', '--check'])).toBeNull();
 });

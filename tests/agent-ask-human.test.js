@@ -39,7 +39,7 @@ test('writes one idempotent secret-free managed receipt', () => {
   const files = fs.readdirSync(env.OPENYIDA_AGENT_INTERACTIONS_DIR).filter(name => name.endsWith('.json'));
   expect(files).toHaveLength(1);
   const receipt = JSON.parse(fs.readFileSync(path.join(env.OPENYIDA_AGENT_INTERACTIONS_DIR, files[0]), 'utf8'));
-  expect(receipt).toMatchObject({ schemaVersion: 'openyida.ask-human.v1', runId: 'run', attemptId: 'attempt', requestKey: 'scope-v1' });
+  expect(receipt).toMatchObject({ schemaVersion: 'openyida.ask-human.v2', runId: 'run', attemptId: 'attempt', requestKey: 'scope-v1' });
   expect(JSON.stringify(receipt)).not.toContain(env.OPENYIDA_AGENT_TASK_GRANT);
 });
 
@@ -97,4 +97,39 @@ test('preserves Unicode text and optional empty descriptions accepted by runtime
     expect(receipt.title).toBe('方案确认 🌱');
     expect(receipt.questions[0].options[0].description).toBe('');
   } finally {fs.rmSync(root, { recursive: true, force: true });}
+});
+
+
+test('freezes the displayed file and binds revision and stable option values', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-delivery-'));
+  const env = managed(root);
+  const html = path.join(root, 'plan.html');
+  const invoke = key => run(['--request-key', key, '--questions-file', 'questions.json', '--json'], { env, cwd: root, stdout: { write() {} } });
+  const document = { title: '确认方案', revision: 'plan-revision-1', attachments: [{ name: '搭建方案.html', path: 'plan.html' }],
+    questions: [{ id: 'decision', header: '方案', question: '请选择下一步', type: 'single_select', options: [{ label: '确认并开始搭建', value: 'confirm_build' }, { label: '继续调整', value: 'continue_editing' }] }] };
+  try {
+    fs.writeFileSync(html, '<html>第一版</html>');
+    fs.writeFileSync(path.join(root, 'questions.json'), JSON.stringify(document));
+    const first = invoke('plan-1');
+    const receipt = JSON.parse(fs.readFileSync(path.join(env.OPENYIDA_AGENT_INTERACTIONS_DIR, first.requestId + '.json')));
+    expect(receipt.contextRevision).toBe('plan-revision-1');
+    expect(receipt.questions[0].options[0].value).toBe('confirm_build');
+    fs.writeFileSync(html, '<html>第二版</html>');
+    expect(fs.readFileSync(path.join(env.OPENYIDA_AGENT_INTERACTIONS_DIR, receipt.attachments[0].path), 'utf8')).toContain('第一版');
+    expect(() => invoke('plan-1')).toThrow(expect.objectContaining({ code: 'AGENT_ASK_HUMAN_CONFLICT' }));
+    const second = invoke('plan-2');
+    const newer = JSON.parse(fs.readFileSync(path.join(env.OPENYIDA_AGENT_INTERACTIONS_DIR, second.requestId + '.json')));
+    expect(newer.attachments[0].path).not.toBe(receipt.attachments[0].path);
+    document.questions[0].options[1].value = 'confirm_build';
+    fs.writeFileSync(path.join(root, 'questions.json'), JSON.stringify(document));
+    expect(() => invoke('duplicate')).toThrow(expect.objectContaining({ code: 'AGENT_ASK_HUMAN_INVALID' }));
+  } finally { fs.rmSync(root, { recursive: true, force: true }); }
+});
+
+test.each(['../outside.html', '.env.html', '.git/config.html', 'plan.json'])('does not deliver credential, outside or unsupported file: %s', source => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-delivery-'));
+  const document = { title: '确认', attachments: [{ name: '方案', path: source }], questions: [{ id: 'decision', header: '范围', question: '请选择', type: 'text' }] };
+  fs.writeFileSync(path.join(root, 'questions.json'), JSON.stringify(document));
+  try { expect(() => run(['--request-key', 'denied', '--questions-file', 'questions.json', '--json'], { env: managed(root), cwd: root, stdout: { write() {} } })).toThrow(expect.objectContaining({ code: 'AGENT_ASK_HUMAN_INVALID' })); }
+  finally { fs.rmSync(root, { recursive: true, force: true }); }
 });
