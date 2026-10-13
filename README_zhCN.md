@@ -112,7 +112,7 @@ openyida login --check-only --json
 openyida login
 ```
 
-按提示在浏览器中完成钉钉授权，登录信息会保存在本机。无需提取浏览器 Cookie。
+OpenYida 默认使用 OAuth token 模式：打开钉钉 OAuth 授权页，通过本地 loopback 回调接收授权码，再由宜搭服务换取并缓存 `access_token` / `refresh_token`。Agent 不需要提取浏览器 Cookie，也不需要手写 `.cache/cookies.json`。
 
 AI 工具中建议登录后用下面任一命令确认 token session 可用：
 
@@ -137,7 +137,11 @@ openyida login https://yida-group.alibaba-inc.com/
 openyida login --alibaba
 ```
 
-当前版本的 OAuth 登录与应用创建链路暂不适用于海外版宜搭；相关版本说明见 [更新日志](./CHANGELOG.md#说明)。
+海外 / Global YiDA 场景使用：
+
+```bash
+openyida login --intl
+```
 
 ### 4. 让 AI Agent 构建应用
 

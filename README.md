@@ -109,9 +109,7 @@ This checks the installed version, login state, and workspace. Use `openyida age
 openyida login
 ```
 
-Follow the browser prompts to authorize with DingTalk. Login information is saved locally; you do not need to extract browser cookies.
-
-The current OAuth login and app-creation flow does not support Global YiDA. See the [version guidance](./CHANGELOG.md#说明) before using an overseas environment.
+OpenYida login defaults to OAuth token mode. It opens the DingTalk OAuth authorization page, receives the local loopback callback, exchanges `code` / `authCode` with the Yida server, and stores `access_token` / `refresh_token` in the user auth store when available. If the user auth store is not writable, OpenYida explicitly falls back to the current project cache and reports that narrower persistence scope.
 
 When the user names a target Yida entry URL, pass it to the login command so OpenYida can select the matching environment and auth profile. For example:
 
