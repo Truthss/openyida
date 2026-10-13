@@ -72,7 +72,43 @@
 | `TableField` | `"关键词"`（contains）；子字段条件带 `parentId` | `[{"textField_xxx":"值"}]` |
 | `AssociationFormField` | 先查询关联目标表，再按业务关系定位记录 | `[{"appType":"xxx","formUuid":"xxx","formType":"receipt","instanceId":"xxx","title":"关联记录标题"}]` |
 
-日期为空使用 `is` / `is_not`；区间端点用 `字段ID.start` / `.end` 按 `DateField` 查询。多选“未选择”、子表“无行”和区间“任一端已填”使用同步维护的计数字段，具体见查询指南。
+## 为空与不为空（is / is_not）
+
+判断字段有无值时，`is` 与 `is_not` 的 `value` 都固定传 `""`；`type` 仍使用字段的查询类型。例如 `DateField` 使用 `DOUBLE`。这里的空字符串是查询参数，保存格式仍按上表填写。
+
+日期为空：
+
+```bash
+openyida data query form APP_xxx FORM-xxx --search-json '[{"key":"dateField_xxx","componentName":"DateField","type":"DOUBLE","operator":"is","value":""}]'
+```
+
+日期不为空：
+
+```bash
+openyida data query form APP_xxx FORM-xxx --search-json '[{"key":"dateField_xxx","componentName":"DateField","type":"DOUBLE","operator":"is_not","value":""}]'
+```
+
+日期零时间戳和数字 `0` 属于有值，`is_not` 会保留这些记录。页面调用将条件数组传给 `JSON.stringify()`，再赋给 `searchFieldJson`。
+
+日期区间两端均未填，用两个端点条件按 AND 组合：
+
+```json
+[
+  {"key":"cascadeDateField_xxx.start","componentName":"DateField","type":"DOUBLE","operator":"is","value":""},
+  {"key":"cascadeDateField_xxx.end","componentName":"DateField","type":"DOUBLE","operator":"is","value":""}
+]
+```
+
+日期区间两端均已填：
+
+```json
+[
+  {"key":"cascadeDateField_xxx.start","componentName":"DateField","type":"DOUBLE","operator":"is_not","value":""},
+  {"key":"cascadeDateField_xxx.end","componentName":"DateField","type":"DOUBLE","operator":"is_not","value":""}
+]
+```
+
+“任一端已填”使用已填端点数 `gt 0`；多选未选择、子表无行分别按选项数、行数查询。计数与原值同步维护，具体见查询指南。
 
 ## 日期字段（DateField / CascadeDateField）
 

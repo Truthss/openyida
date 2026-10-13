@@ -28,6 +28,36 @@ function isSampleRoutingGuidanceFile(file) {
 }
 
 describe('OpenYida skill contracts', () => {
+  test('empty-value guides provide complete is and is_not examples with fixed empty values', () => {
+    for (const file of [
+      'yida-skills/references/query-condition-guide.md',
+      'yida-skills/skills/yida-data-management/SKILL.md',
+      'yida-skills/skills/yida-data-management/references/data-format-guide.md',
+    ]) {
+      const text = readSkill(file);
+      const json = [...text.matchAll(/```json\n([\s\S]*?)\n```/g)].map(match => JSON.parse(match[1])).filter(Array.isArray);
+      const cli = [...text.matchAll(/--search-json '(\[[^']*\])'/g)].map(match => JSON.parse(match[1]));
+      const conditions = json.concat(cli).flat();
+      for (const operator of ['is', 'is_not']) {
+        expect(conditions).toEqual(expect.arrayContaining([
+          expect.objectContaining({ key: 'dateField_xxx', componentName: 'DateField', type: 'DOUBLE', operator, value: '' }),
+        ]));
+      }
+      const emptyDates = conditions.filter(condition => condition.componentName === 'DateField' && ['is', 'is_not'].includes(condition.operator));
+      expect(emptyDates.every(condition => condition.value === '' && condition.type === 'DOUBLE')).toBe(true);
+      if (file.includes('yida-data-management')) {
+        for (const operator of ['is', 'is_not']) {
+          expect(json).toEqual(expect.arrayContaining([
+            [
+              { key: 'cascadeDateField_xxx.start', componentName: 'DateField', type: 'DOUBLE', operator, value: '' },
+              { key: 'cascadeDateField_xxx.end', componentName: 'DateField', type: 'DOUBLE', operator, value: '' },
+            ],
+          ]));
+        }
+      }
+    }
+  });
+
   test('data format tables use component names and distinguish query values from saved dates', () => {
     const tables = [
       'yida-skills/skills/yida-data-management/SKILL.md',

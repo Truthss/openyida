@@ -231,7 +231,13 @@ const result = await bridge.searchFormDatas({
 });
 ```
 
-切换为“不为空”时设置 `operator: 'is_not'`。数字 `0` 和日期零时间戳属于有值。
+日期不为空的完整条件如下；`value` 同样固定传 `""`，`type` 仍是 `DOUBLE`：
+
+```json
+[{"key":"dateField_xxx","componentName":"DateField","type":"DOUBLE","operator":"is_not","value":""}]
+```
+
+数字 `0` 和日期零时间戳属于有值，`is_not` 会保留这些记录。
 
 表中的 `is` / `is_not` 和区间端点空值方法已在普通表单实测；文本样本的空白内容保存后归为空值。
 
