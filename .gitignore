@@ -87,3 +87,6 @@ project/prd/demo-*/*.local.js
 project/tmp/
 /tmp/
 /examples/
+
+# Local verification report
+/docs/verification/form-empty-query-20261013.md
