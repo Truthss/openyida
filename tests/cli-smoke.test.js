@@ -320,7 +320,7 @@ describe('CLI offline smoke', () => {
     expect(runOk(['data', 'create', '--help'])).toContain(data.notes[0]);
     const englishHelp = runOkWithEnv(['create-process', '--help'], { OPENYIDA_LANG: 'en' });
     expect(englishHelp).toContain('formTitle and fieldCount are null');
-    expect(runOkWithEnv(['data', '--help'], { OPENYIDA_LANG: 'en' })).toContain('CascadeDateField uses an array');
+    expect(runOkWithEnv(['data', '--help'], { OPENYIDA_LANG: 'en' })).toContain('CascadeDateField array');
     const { parseArgs } = require('../lib/process/create-process');
     expect(parseArgs(['APP', '审批表', 'fields.json', 'process.json', '--replace'])).toMatchObject({
       appType: 'APP', formTitle: '审批表', fieldsJsonFile: 'fields.json', processDefinitionFile: 'process.json', existingFormUuid: null, replace: true,

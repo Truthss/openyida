@@ -57,6 +57,12 @@ describe('empty-query sample', () => {
     const example = data.examples.find(command => command.includes('--search-json'));
     const searchJson = example.match(/--search-json '([^']+)'/)[1];
     expect(JSON.parse(searchJson)).toEqual(buildEmptyConditions({ fieldId: 'dateField_due', componentName: 'DateField' }, 'empty'));
+    for (const locale of ['zh', 'en']) {
+      const note = require('../lib/core/locales/' + locale).help.data_notes;
+      expect(note).toContain('is/is_not');
+      expect(note).toContain('""');
+      expect(note).toContain('parentId');
+    }
     expect(data.notes.join(' ')).toContain('parentId aliases');
     expect(data.notes.join(' ')).toContain('rangeAlias.start/.end');
     expect(sample.notes.join(' ')).toContain('sample yida-data-management empty-query');

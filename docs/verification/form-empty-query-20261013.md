@@ -60,9 +60,13 @@
 ## 本地回归
 
 - `check:quick`（结构、命令、生成文档、i18n、主题、语法、lint）、`check:skills`、changelog、发布风险、包体预算和打包预检通过。
-- 最终全量 Jest：**237 / 237 套、4496 / 4496 项通过**，0 失败。使用 Node 26.4.0，设置 `NODE_NO_WARNINGS=1`，关闭会混入结构化 stderr 的实验性 localStorage 警告。结果保存在仓库 `.cache/test-results/final-alignment.json`。
+- 首次对齐时全量 Jest：**237 / 237 套、4496 / 4496 项通过**，0 失败。使用 Node 26.4.0，设置 `NODE_NO_WARNINGS=1`，关闭会混入结构化 stderr 的实验性 localStorage 警告。结果保存在仓库 `.cache/test-results/final-alignment.json`。
 - 新增空值模板、日期区间端点与子表父字段别名回归通过；sample 命令实际输出文件与仓库模板一致。
 - 指南的 JSON 示例逐条校验并经 CLI 参数传递测试，保留基础格式、组件操作符、原有值查询和 AND 组合；机器技能索引、轮询触发词、安装后入口与共享指南的契约检查通过。
 - 增加 Canvas 轮询、Canvas 空值筛选、CLI 空值查询和历史 JSX 数据源的路由场景。路由用例与静态契约已通过；本次未另行运行真实 agent 路由评测。
 - CLI agent-capabilities 的 data 示例测试改为按查询/新增类型查找，同时验证时间戳写入示例和新空值查询示例，避免依赖示例排序。
 - `check:ci` 原始入口在安装阶段被本机 npm 11 的项目级 allow-scripts 配置限制阻断；后续检查使用现有依赖分项执行。未修改全局 npm 配置。
+
+## 最新对齐复核
+
+README 保留 main 的能力表、功能列表、原有案例和贡献入口。CLI、manifest、skill 的查询类型、空值参数及别名说明一致，各语言提示已同步。最新相关 Jest：5 套、281 项通过，结果见 `.cache/test-results/latest-alignment.json`；文档、技能、i18n、语法、lint 和包体检查通过。本轮未重跑线上查询。

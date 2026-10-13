@@ -101,7 +101,7 @@ module.exports = {
     cmd_get_form_config: 'Query form configuration',
     group_data: 'データ & 権限',
     cmd_data: '統合データ管理（フォーム/プロセス/タスク/サブフォーム）',
-    data_notes: "DateField はミリ秒単位の数値タイムスタンプ、CascadeDateField はその配列を指定します。業務のタイムゾーンで変換してください。日付文字列と秒単位の値は使えません。--resolve-aliases はフィールド名のみ変換します。",
+    data_notes: "日付保存は業務タイムゾーンのミリ秒：DateField は数値、CascadeDateField は配列。is/is_not の value は \"\"。--resolve-aliases はフィールド、区間端点、parentId の別名に対応。",
     cmd_task_center: 'グローバルタスクセンター（未処理/処理済/CC等）',
     cmd_basic_info: '組織の基本情報、容量、クォータ、ドメイン設定を照会',
     cmd_read_dingtalk_doc: 'DingTalk ドキュメントの Markdown 内容を取得',
