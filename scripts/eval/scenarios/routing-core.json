@@ -148,5 +148,29 @@
     "prompt": "我要退出登录切换到另一个组织",
     "expectedSkill": "yida-logout",
     "note": "切换账号/组织 → logout"
+  },
+  {
+    "id": "canvas-polling-data",
+    "prompt": "现有 YidaCodeCanvas 页面需要轮询刷新列表或 KPI，刷新时保留旧数据。",
+    "expectedSkill": "yida-canvas-data-binding",
+    "note": "Canvas 数据桥负责轮询静默刷新与请求清理"
+  },
+  {
+    "id": "canvas-empty-filter",
+    "prompt": "现有 .canvas.jsx 页面接真实表单数据，增加日期为空和日期区间端点筛选，并使用服务端分页。",
+    "expectedSkill": "yida-canvas-data-binding",
+    "note": "已有 Canvas 页面查询接入和筛选"
+  },
+  {
+    "id": "form-empty-query",
+    "prompt": "用 CLI 查询普通表单里日期为空的记录，给出 searchFieldJson 多条件组合。",
+    "expectedSkill": "yida-data-management",
+    "note": "普通表单数据查询"
+  },
+  {
+    "id": "jsx-datasource-search",
+    "prompt": "已有 renderJsx 页面需要维护 this.dataSourceMap 搜索参数，设计器左侧数据源保持可见。",
+    "expectedSkill": "yida-data-source-connectors",
+    "note": "历史平台 JSX 设计器数据源维护"
   }
 ]

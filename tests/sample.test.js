@@ -8,6 +8,17 @@ const createForm = require('../lib/app/create-form');
 const { applyTemplateVariables, run } = require('../lib/core/sample');
 
 describe('sample templates', () => {
+  test('empty-query is emitted as usable helpers for form and page searches', async () => {
+    const output = path.join(tmpDir, 'empty-query.js');
+    await run(['yida-data-management', 'empty-query', '--output', output]);
+    const helpers = require(output);
+    const conditions = helpers.buildEmptyConditions({ fieldId: 'cascadeDateField_period', componentName: 'CascadeDateField' }, 'end-only');
+    expect(conditions.map(condition => [condition.key, condition.operator])).toEqual([
+      ['cascadeDateField_period.start', 'is'], ['cascadeDateField_period.end', 'is_not'],
+    ]);
+    expect(helpers.countFilledRangeEndpoints([0, ''])).toBe(1);
+    expect(helpers.buildCountConditions({ fieldId: 'numberField_count', componentName: 'NumberField' }, 'filled')[0]).toMatchObject({ operator: 'gt', value: 0 });
+  });
   let tmpDir;
   let consoleLogSpy;
   let consoleErrorSpy;

@@ -22,7 +22,7 @@
 | `legacyTemplatePath` | 已迁移主题的原 Markdown 路径，供历史方案读取；新方案使用 `templatePath` |
 | `styleSummary` | 以“深色/浅色导航，深色/浅色内容界面。”开头，再从模板“风格摘要”精简约 150–250 字；使用自然语言，避免把 `dark` 误解为纯黑色，同时保留外观、核心差异、偏离风险与真实内容适用条件 |
 
-33 个主题入口均采用三文件结构，可通过 `sample yida-design application-style --style-id <themeId>` 导出。一条索引记录对应一个主题目录，所有模板均须登记。修改风格摘要后同步修改索引摘要，不增加原文没有的特征或另一组关键词。`openyida design-plan catalog --json` 返回同一份索引；三种设计入口不得维护平行主题清单。主题不按业务领域或产品形态限制候选资格，具体布局与特色表达由真实内容决定。
+主题入口均采用三文件结构，可通过 `sample yida-design application-style --style-id <themeId>` 导出。一条索引记录对应一个主题目录，所有模板均须登记。修改风格摘要后同步修改索引摘要，不增加原文没有的特征或另一组关键词。`openyida design-plan catalog --json` 返回同一份索引；三种设计入口不得维护平行主题清单。主题不按业务领域或产品形态限制候选资格，具体布局与特色表达由真实内容决定。
 
 ## V2 模板结构
 

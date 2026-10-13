@@ -43,7 +43,7 @@
   </tr>
 </table>
 
-目前提供 **18 套主题和自由创意入口**。AI 会结合业务场景和导航方式筛选合适风格；波普仅适用于用户明确指定或以展示为主的任务。[查看更多应用案例](https://demo.aliwork.com/o/openyida/helpCenter?openyidaRoute=showcase)。
+支持**应用主题选择和自由创意**。AI 会结合业务场景和导航方式筛选合适风格；波普仅适用于用户明确指定或以展示为主的任务。[查看更多应用案例](https://demo.aliwork.com/o/openyida/helpCenter?openyidaRoute=showcase)。
 
 ## 核心能力
 

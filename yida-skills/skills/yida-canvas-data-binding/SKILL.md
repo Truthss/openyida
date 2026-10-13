@@ -1,6 +1,6 @@
 ---
 name: yida-canvas-data-binding
-description: 自定义页面真实数据接入技能。用于在使用 `YidaCodeCanvas` 组件实现的页面中用 dataBinding + 发布层 yida/utils window 桥接入宜搭表单、流程 API、连接器代理或同源接口数据，处理返回体包裹解析、totalCount 保护、DataBridge 状态和静默刷新。触发词：dataBinding、DataBridge、数据桥、YidaCodeCanvas 真实数据、页面显示 0 条但数据管理有数据、表单数据接入、流程数据接入、轮询刷新列表或 KPI。
+description: 为 YidaCodeCanvas 自定义页面接入真实表单、流程、连接器或同源接口数据，处理数据解析、空值筛选、服务端分页、totalCount 和轮询静默刷新。触发词：dataBinding、DataBridge、数据桥、YidaCodeCanvas 真实数据、页面显示 0 条但数据管理有数据、表单数据接入、流程数据接入、轮询刷新列表或 KPI。
 ---
 
 # 自定义页面数据绑定
@@ -181,11 +181,14 @@ async function fetchFormRows(binding, signal) {
 
 ### 搜索与分页参数
 
-此处调用的是页面 JS-API 桥。简单字段筛选沿用普通自定义页的字段 ID 字典，不把 CLI 或其他查询接口的条件数组、`conditionType/children` 树混入这里：
+页面 JS-API 桥的 `searchFormDatas` 支持字段 ID 字典和条件数组。空值、比较和组合查询统一使用[查询条件指南](../../references/query-condition-guide.md)的条件数组：
 
 ```javascript
-var query = {};
-if (keyword.trim()) query[fields.name] = keyword.trim();
+var query = [];
+if (keyword.trim()) query.push({ key: fields.name, componentName: 'TextField', type: 'TEXT', operator: 'like', value: keyword.trim() });
+if (dateState === 'empty' || dateState === 'filled') {
+  query.push({ key: fields.date, componentName: 'DateField', type: 'DOUBLE', operator: dateState === 'empty' ? 'is' : 'is_not', value: '' });
+}
 var payload = await bridge.searchFormDatas({
   formUuid: binding.formUuid,
   currentPage: 1,
@@ -194,7 +197,7 @@ var payload = await bridge.searchFormDatas({
 });
 ```
 
-清空搜索时传空字典，并把 `currentPage` 重置为 1。需要复杂条件时先核对所调用接口的具体契约；不要凭字段名相似套用其他格式。验收必须输入一条已知记录的筛选值，确认返回行数与内容，再清空确认全量恢复；页面显示数据不代表筛选有效。
+清空搜索时传空数组，并把 `currentPage` 重置为 1。日期区间使用真实字段 ID 加 `.start` / `.end`，分别按 `DateField` 查询；双端条件按 AND 组合。需要“任一端已填”、多选选项数或子表行数时，按指南维护计数字段并由服务端筛选。可用 `openyida sample yida-data-management empty-query` 取得条件构造器。验收核对空值、有值、零值、半填区间及分页总数，再清空筛选确认全部样本恢复。
 
 ## 表单数据读取要点
 

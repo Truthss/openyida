@@ -50,6 +50,8 @@ coverage/
 !.claude/skills
 .qoder/*
 !.qoder/skills
+# 千问办公本地配置和安装的技能副本
+.qwenwork/
 
 mydocs/
 

@@ -1,6 +1,6 @@
 ---
 name: yida-data-management
-description: 宜搭数据管理。表单实例/子表/流程实例/任务中心的查询、新增、更新，以及普通表单单实例的精确删除。表单走 /v1/form/，流程走 /v1/process/，不能混用。
+description: 查询、新增、更新宜搭表单和流程数据，精确删除普通表单单条记录。支持日期为空、日期区间端点、多选数量、子表条件及服务端分页；表单使用 /v1/form/，流程使用 /v1/process/。
 ---
 
 # 数据管理
@@ -55,7 +55,7 @@ description: 宜搭数据管理。表单实例/子表/流程实例/任务中心�
 - 删除完成只以 `deleted=true && readbackVerified=true` 为准；`alreadyAbsent=true` 表示本次未再次发删除请求，可按幂等成功处理
 - 当前不支持删除流程实例；禁止生成 `openyida data delete process`，禁止在 CLI 报不支持后探索一次性脚本、浏览器私有请求或底层 API 绕过正式能力
 - **录入/更新数据前，必须先执行 `openyida get-schema` 获取真实字段 ID，并将字段 ID 映射记录到 `.cache/<项目名>-schema.json`**
-- **生成测试数据或录入/更新数据时，`DateField` 传毫秒时间戳数字（如 `1719705600000`），`CascadeDateField` 传毫秒时间戳数组；不要传日期字符串。转换方法见 [日期字段格式](references/data-format-guide.md#日期字段datefield--cascadedatefield)**
+- **生成测试数据或录入/更新数据时，`DateField` 传毫秒时间戳数字（如 `1719705600000`），`CascadeDateField` 传开始、结束毫秒时间戳数组；半填区间的空端点传 `""`。转换方法见 [日期字段格式](references/data-format-guide.md#日期字段datefield--cascadedatefield)**
 - **录入数据后，必须执行 `openyida data query` 抽查至少 1 条目标记录，核对实例 ID 和本次写入的可见字段值；隐藏字段缺失或字段数据为空按“CLI 查询隐藏字段”规则处理，可见字段值不符合预期时再核对字段 ID 和写入参数**
 - **读取子表明细超过 50 行时，必须使用 `openyida data query subform` 或 `listTableDataByFormInstIdAndTableId` 分页查询完整子表；不要把 `searchFormDatas.currentPage` 当作子表分页**
 - **本技能不读写 memory**：数据操作通过 CLI 命令写入宜搭平台，不依赖跨会话的 memory 状态
@@ -133,7 +133,7 @@ description: 宜搭数据管理。表单实例/子表/流程实例/任务中心�
 
 ## 命令
 
-`data create/update` 的 `--data-json` 和 `--data-file` 中，`DateField` 传毫秒时间戳数字，`CascadeDateField` 传毫秒时间戳数组；不要传日期字符串或秒级时间戳。按业务时区转换，示例见 [日期字段格式](references/data-format-guide.md#日期字段datefield--cascadedatefield)。`--resolve-aliases` 只转换字段名，不转换日期值。
+`data create/update` 的 `--data-json` 和 `--data-file` 中，日期按业务时区转换为毫秒时间戳，区间按 `[开始,结束]` 提交，空端点使用 `""`。示例见 [日期字段格式](references/data-format-guide.md#日期字段datefield--cascadedatefield)。`--resolve-aliases` 负责字段名解析，日期值由调用方转换。
 
 ### 表单实例
 
@@ -228,11 +228,13 @@ openyida data query tasks <appType> --type todo|done|submitted|cc [--page 1 --si
 
 ### 查询条件 `searchFieldJson`
 
-必须传**字符串**：
+传条件数组的 **JSON 字符串**，多个条件按 AND 组合：
 
 ```json
 [{"key":"textField_xxx","value":"测试","type":"TEXT","operator":"eq","componentName":"TextField"}]
 ```
+
+日期为空使用 `operator: "is", value: ""`，不为空使用 `operator: "is_not", value: ""`，`type` 为 `DOUBLE`。日期区间用真实字段 ID 加 `.start` / `.end`，按 `DateField` 分别查询端点。业务“任一端已填”、多选未选择、子表无行使用同步维护的计数字段筛选，保留服务端分页。完整格式见[查询条件指南](../../references/query-condition-guide.md)，可复用 `openyida sample yida-data-management empty-query`。
 
 ### 保存/更新数据
 
@@ -250,18 +252,18 @@ openyida data query tasks <appType> --type todo|done|submitted|cc [--page 1 --si
 | 数字 | `["1","10"]` 或单值 | `1` |
 | 单选 | `"选项一"` | `"选项一"` |
 | 多选 | `["选项一"]` | `["选项一","选项二"]` |
-| 日期 | `[开始毫秒时间戳,结束毫秒时间戳]` | `13 位毫秒时间戳` |
+| 日期 | `[开始毫秒时间戳,结束毫秒时间戳]` | 毫秒时间戳数字 |
 | 成员 | `["userId"]` | `["userId"]` |
 | 部门 | `["deptId"]` | `["deptId"]` |
-| 子表 | `"模糊搜索"` | `[{"textField_xxx":"值"}]` |
+| 子表 | 子字段条件带 `parentId`；整体按行数筛选 | `[{"textField_xxx":"值"}]` |
 | 关联表单 | 不支持直接查询 | `[{"appType":"xxx","formUuid":"xxx","formType":"receipt","instanceId":"xxx","title":"关联记录标题"}]` |
 
 ### 日期字段写入约定
 
-- `DateField` 保存/更新值必须是 13 位毫秒时间戳，例如 `1719705600000`。
-- `CascadeDateField` 保存/更新值必须是毫秒时间戳数组，例如 `[1719705600000,1722384000000]`。
-- 生成测试数据时，先用 `new Date('2024-06-30T00:00:00+08:00').getTime()` 或等价方式转换，不要直接写 `"2024-06-30"`。
-- 日期字符串可能导致保存失败、字段为空，或后续报表/筛选异常。
+- `DateField` 保存/更新值使用毫秒时间戳数字，例如 `1719705600000`；`0` 是有效时间戳。
+- `CascadeDateField` 保存/更新值使用 `[开始毫秒时间戳,结束毫秒时间戳]`，半填区间的空端点使用 `""`。
+- 先用 `new Date('2024-06-30T00:00:00+08:00').getTime()` 按业务时区转换，再提交数字。
+- 给历史记录填写新增字段时，使用 `--use-latest-version y`；保存后回读字段值和查询结果，确认新结构与数据都已生效。
 
 ```bash
 openyida data create form APP_xxx FORM-xxx --expect-form-name 合同信息 --expect-form-type receipt --data-json '{

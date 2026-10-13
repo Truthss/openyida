@@ -45,7 +45,7 @@ Example applications built with the themes below. Click an image to view it at f
   </tr>
 </table>
 
-Choose from **18 themes and an independent creative direction**. The agent filters styles by your task and navigation needs. Pop art is offered only on an explicit request or for a primarily showcase-oriented task. [Browse more application examples](https://demo.aliwork.com/o/openyida/helpCenter?openyidaRoute=showcase).
+Choose an **application theme or an independent creative direction**. The agent filters styles by your task and navigation needs. Pop art is offered only on an explicit request or for a primarily showcase-oriented task. [Browse more application examples](https://demo.aliwork.com/o/openyida/helpCenter?openyidaRoute=showcase).
 
 ## Core Capabilities
 

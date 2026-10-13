@@ -140,7 +140,7 @@ description: >
 | 自定义页面开发 | `yida-canvas-custom-page`，新建和默认页面源码开发入口，源码使用 `.canvas.jsx`；Canvas 发布层会自动注入 `window.__OPENYIDA_YIDA_API__` 和 `window.__OPENYIDA_UTILS__` |
 | JSX 自定义页面开发 | `yida-custom-page`，仅用于已检测到的 `.oyd.jsx` / `.oyb.jsx` / `renderJsx` / 平台 `Jsx` 组件页面维护 |
 | `.canvas.jsx` 页面使用成员/部门/上传等宜搭运行态组件 | `yida-canvas-custom-page`，读取 `native-components-bridge.md` |
-| `.canvas.jsx` 页面接真实数据、表单 API、流程 API 或根级工具 | `yida-canvas-data-binding`，默认消费发布层注入的 yida/utils window 桥 |
+| `.canvas.jsx` 页面接真实数据、表单 API、流程 API、根级工具，轮询刷新列表或 KPI，排查页面 0 条但数据管理有数据 | `yida-canvas-data-binding`，默认消费发布层注入的 yida/utils window 桥 |
 | 已有 `.oyd.jsx` / `renderJsx` 迁到 `YidaCodeCanvas` 组件实现 | `yida-canvas-upgrade` |
 | 高级图表、可视化、看板图表 | 默认 `yida-rechart` |
 | 明确 ECharts、维护旧 ECharts 页面、复杂 option 超出 Recharts 能力 | `yida-chart` |
@@ -215,7 +215,7 @@ description: >
 | [公式函数库](references/formula-functions.md) | 公式函数速查 | 编写公式前 |
 | [官方示例 Schema 范式](references/official-example-schema-patterns.md) | 脱敏 schema 承载范式 | 蒸馏官方示例时 |
 | [任务复盘与沉淀规范](references/task-retrospective.md) | 任务收尾沉淀、CLI/skill/页面骨架反哺、视觉参考和主题经验 | 任务完成前、用户要求总结经验或多次纠正同类问题时 |
-| [查询条件构造](references/query-condition-guide.md) | 数据查询条件写法 | 数据查询/筛选时 |
+| [查询条件构造](references/query-condition-guide.md) | 日期空值、区间端点、业务计数、子表条件与服务端分页；CLI 和页面共享 | 数据查询/筛选时 |
 | [报表字段配置](references/report-field-config-guide.md) | 报表字段配置规范 | 配置报表时 |
 | [版本功能差异](references/edition-features-guide.md) | 各版本能力差异 | 版本能力查询时 |
 | [模型 API](references/model-api.md) | 宜搭模型接口 | 调用宜搭模型能力时 |
