@@ -27,6 +27,8 @@ description: >
 2. 执行 `openyida agent ask-human --request-key <稳定业务键> --questions-file <相对路径> --json`；
 3. 收到 `queued` 后立即结束当前轮次，不再执行写操作；用户在宜搭回答后，系统会在同一会话创建续接轮次。
 
+问题文件使用本地 CLI 的 `questions` 数组，不能直接复制云端 `ask_human` 的顶层 `question/options/submitLabel` 对象。格式示例可通过 `openyida agent ask-human --help` 查看。
+
 方案确认也使用同一命令：问题 JSON 顶层携带生成器返回的 `revision`、`attachments`，选项保留稳定 `value`。附件 `path` 是当前任务工作目录内显式声明的 HTML/Markdown/文本（每文件至多 1 MiB，至多 10 个），CLI 会冻结其内容，Runtime 上传成功后才展示问题。不要把本机路径作为网页链接，不扫描或上传整个目录。同一 request-key 不能换题或换文件；方案修改后使用新 key。续接上下文包含原方案标识、文件引用和结构化答案；确认后只能执行用户实际确认的方案，不能将旧答案套用到新稿。
 
 受管任务中的素材命令 `asset resolve` 必须显式携带当前绑定应用的 `--app-type`。应用级数据、多语言、表单恢复和权限读取按统一命令声明校验目标；组织级连接器管理仍需普通 CLI 独立授权，不能通过当前应用任务扩大组织操作范围。

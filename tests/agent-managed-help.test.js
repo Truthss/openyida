@@ -65,6 +65,20 @@ describe('managed CLI static help has no execution side effects', () => {
     expect(fs.readdirSync(dir)).toEqual([]);
   });
 
+  test('ask-human help includes the local questions-file format without executing a command', () => {
+    const result = invoke(['agent', 'ask-human', '--help']);
+    expect(result.status).toBe(0);
+    const example = JSON.parse(result.stdout.split('\n').find(line => line.startsWith('{')));
+    expect(example.questions).toHaveLength(1);
+    expect(example.questions[0]).toMatchObject({ id: 'plan_decision', type: 'single_select' });
+    expect(example.questions[0].options.map(option => option.value)).toEqual(['confirm_build', 'continue_editing']);
+    expect(example).toHaveProperty('revision');
+    expect(example.attachments).toHaveLength(1);
+    expect(example).not.toHaveProperty('question');
+    expect(example).not.toHaveProperty('submitLabel');
+    expect(fs.readdirSync(dir)).toEqual([]);
+  });
+
   test('JSON help contains only matching static manifest commands', () => {
     const result = invoke(['create-form', 'batch', '--help', '--json', '--quiet']);
     expect(result.status).toBe(0);
