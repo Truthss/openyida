@@ -158,7 +158,6 @@ The agent can then call OpenYida commands to create the application, generate so
 | [Codex](https://openai.com/codex/) | Full support |
 | [Claude Code](https://claude.ai/code) | Full support |
 | [MuleRun](https://mulerun.com) | Full support |
-| [OpenCode](https://opencode.ai) | Full support |
 | [Cursor](https://cursor.com/) | Full support |
 | [Visual Studio Code](https://code.visualstudio.com/) | Full support |
 | QwenWork（千问办公） | Full support |
@@ -565,6 +564,7 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 |---------|-------------|
 | `openyida commands [--json]` | Output machine-readable command manifest |
 | `openyida agent-capabilities [--json] [--summary-json\|--compact]` | Output one-shot agent capability snapshot |
+| `openyida agent <doctor\|diagnose\|status\|connect\|run\|disconnect\|logout\|logs> [options]` | Connect a local Agent (Go runtime, development preview) |
 | `openyida a2a <serve\|agent-card> [options]` | Start local read-only A2A adapter or print Agent Card |
 | `openyida bridge start [--token <pair-token>] [--port 6736] [--origin https://demo.aliwork.com] [--open\|--no-open]` | Start OpenYida local web bridge service |
 | `openyida copy [--force]` | Copy project working directory |
@@ -632,6 +632,31 @@ Form field definitions can include `alias` or `componentAlias` to populate Yida 
 #### Workflow, Reports, and Integrations
 
 `openyida integration create` supports form events (`insert`, `update`, `delete`, `comment`) and approval events (`processFinish`, `activityTask`; aliases: `approval`, `approvalNode`). Approval events require `--approval-actions agree,disagree,terminated`; `activityTask` also requires `--approval-node-ids <nodeId,...>`. Passing `--process-code` selects a full graph replacement and now requires explicit `--replace`; it is not a safe update. `integration update` currently performs capability detection only: because full platform `processJson` + `viewJson` readback is unproven, it writes a redacted local probe artifact and returns `PLATFORM_PROBE_REQUIRED` before authentication, spec reading, or remote writes. It does not edit a flow.
+
+### Local Agent development preview
+
+`openyida agent` is a thin Node launcher for a separately supplied Go runtime. Node does not connect to the agent service or manage provider sessions. Four signed platform packages support macOS/Windows x64 and ARM64; npm installs the package matching the current platform. Node does not discover a Go executable on `PATH` or install provider CLIs.
+
+The Local Agent Beta production allowlist contains macOS and Windows only. Linux remains supported by the ordinary OpenYida CLI and by the explicit development-runtime workflow below, but Linux Local Agent packages are not published and production `connect`/`run` are rejected until native acceptance is complete.
+
+```bash
+openyida agent doctor --json
+openyida agent doctor --development-runtime --runtime-path /absolute/path/openyida-runtime --runtime-manifest /absolute/path/runtime-manifest.json
+openyida agent connect --development-runtime --runtime-path /absolute/path/openyida-runtime --runtime-manifest /absolute/path/runtime-manifest.json --endpoint https://agent.example.test --endpoint-id configured-platform-id
+openyida agent run --development-runtime --runtime-path /absolute/path/openyida-runtime --runtime-manifest /absolute/path/runtime-manifest.json --endpoint https://agent.example.test --endpoint-id configured-platform-id --provider qoder --provider-path /absolute/path/qodercli
+```
+
+Development manifest v1 specifies runtime version, protocol `1`, Node-style OS/architecture names, and `binary: {file, sha256}`; it requires the explicit `--development-runtime` flag. This is an integrity check, **not a publisher signature**. The production loader requires a strictly validated v2 manifest, exact approved platform-package version/digest, and an Ed25519 signature over the original manifest bytes using trust roots bundled in the Node host. The bundled catalog pins the approved runtime version, manifest digest and signing public key. See the [launcher contract](lib/agent/PROTOCOL.md).
+
+`connect` supports two equivalent enrollment entries. CLI-first opens the Yida browser approval page and returns through a state/PKCE-protected loopback callback. Web-first copies one five-minute command containing `--enroll`; the token is single-use and carries no business authority. Neither path reads or uploads an ordinary OpenYida login profile.
+
+One installation may connect to multiple organizations. Node keeps only a shared Installation ID at the installation root; each organization authorization gets an isolated private Connection state directory, device credentials, journals, control socket, and frozen bundle. `agent connect` and `agent run` start an independent background daemon by default and return once it is ready. `status`, `logs`, `disconnect`, and `logout` enumerate valid Connections. Background mode is not boot-time autostart. Each Connection registers all locally discovered Qoder and Codex Runtimes, and the web UI selects computer, CLI, and model.
+
+For each attempt, Go injects `OPENYIDA_MANAGED_RUN=1`, the cloud user/corp/app/run/attempt context, and a fixed-value Tianshu task grant with an initial 60-minute lease. The CLI uses that grant instead of local auth and sends scope-correlation headers. While the authenticated device connection and server-side Run remain active, yida-agent can renew the same bearer server-to-server; the CLI cannot renew it and never receives a task refresh token. Tianshu independently checks the grant against the requested app and rejects application creation, identity/environment changes, cross-application requests and unsupported organization-wide operations; declared application-bound batches are supported. `formUuid` remains optional per-turn page-focus context, so one app-bound session can work across pages in that application. Without `OPENYIDA_MANAGED_RUN`, existing login, token refresh, and command behavior are unchanged.
+
+Before `connect` or `run`, Node now freezes the verified runtime bytes, CLI, full production dependency closure, and packaged Skills into a private content-addressed bundle. Source changes during copying fail closed. Existing bundles are verified, never silently repaired or garbage-collected by Node, and survive replacement/removal of the original npm directory. Go owns active/session references and version activation; the external Node executable and provider installations are not copied or managed by npm. A separate parent-watch pipe and a 15-second stop grace prevent normal config EOF from being mistaken for parent death; an unconfirmed forced stop remains unknown.
+
+This is not an OS sandbox or an authorization boundary against arbitrary shell code. Production signing/release infrastructure, full Go/provider recovery and upgrade acceptance, and OS/architecture-specific provider E2E are not claimed by these fake-process tests. Auto-update is disabled for `agent` and managed invocations; ordinary CLI commands neither spawn nor download the runtime.
 
 ## Agent Skills
 

@@ -23,28 +23,21 @@ const path = require('path');
 // app-entry/fix-theme commands and WAF-safe authoring guidance push the gzipped tarball
 // past the previous 2128 KiB ratchet (CI Node 20 gzip runs ~2 KiB heavier than newer Node).
 // Retain modest growth headroom and round budgets to 16 KiB boundaries.
-const MAX_TARBALL_BYTES = 2144 * 1024;
-// UI improvement/restore adds eight net runtime and guidance files.
-// Restored Pop/Platinum templates plus the Qwen selector and shared host guidance
-// bring the dry-run to ~8093 KiB; retain a small rounding margin.
-// Qwen interaction sequencing adds shared guidance and policy (~3 KiB).
-// Restored Sage/Teal/Terminal guidance and selector catalog add ~24 KiB.
-// Restore general query formats, component/operator examples and AND combinations
-// alongside the verified empty-query guidance. Windows Node 20 CI measured
-// 8,358,003 bytes after restoring README content, 2,163 above the previous cap.
-// Add one 16 KiB step for the measured package variation across environments.
-const MAX_UNPACKED_BYTES = 8176 * 1024;
+// Merging the theme preview/query guidance with Local Agent adds runtime modules
+// and skills, including the JavaScript Plan renderer replacing the Python dependency.
+// Measured combined package (Node 22): 2,273,268 compressed bytes,
+// 8,602,259 unpacked bytes and 647 files. Retain modest cross-Node gzip headroom.
+const MAX_TARBALL_BYTES = 2240 * 1024;
+// Round unpacked content to the next 16 KiB boundary.
+const MAX_UNPACKED_BYTES = 8416 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
 // Theme scope, brand-scale and palette validation add three runtime modules;
 // removing the application-styles/navigation-styles catalogs offsets two files.
 // App theme upgrades add two CLI modules and an independent skill with its migration guide.
-// Group creation isolates icon persistence from the near-1000-line navigation module.
-// Theme selection adds a URL-only preview mapping and a self-contained selector HTML,
-// without bundling image binaries. One preparation module resolves and copies the widget.
-// One additional reusable empty-query sample.
-const MAX_ENTRY_COUNT = 623;
+// Retain two entries of headroom; per-file limits remain unchanged.
+const MAX_ENTRY_COUNT = 649;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -61,6 +54,7 @@ const REQUIRED_PACKAGE_FILES = [
   'yida-skills/skills/yida-upgrade-app-theme/SKILL.md',
   'yida-skills/skills/yida-upgrade-app-theme/references/page-migration.md',
   'bin/yida.js',
+  'lib/core/managed-policy.js',
   'lib/app/create-form/batch.js',
   'lib/app/application-entry-urls.js',
   'lib/app/app-entry.js',

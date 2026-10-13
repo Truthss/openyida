@@ -10,6 +10,32 @@ description: >
 
 在执行宜搭应用/页面/审批流等任务前先确认环境与登录态，再根据用户需求和已解析的 app/page/form/process 等上下文资源，分析任务属于完整搭建、已有资源补齐还是单点任务，并加载对应子技能执行。
 
+## 本地 Agent 故障分流
+
+当用户描述“网页找不到本地 CLI / 电脑离线 / 本地 Agent 忙碌或不执行”，或提供
+带 `sessionId=local_*` 的宜搭会话链接时，先读取并执行
+[本地 Agent 诊断](references/local-agent-diagnostics.md)，不要先要求用户提供
+`runId`、`runtimeId` 或日志文件。排障通常发生在另一个普通本地 Agent 会话中，
+不能只依据 `OPENYIDA_MANAGED_RUN` 判断是否属于云端关联本地 Agent 场景。
+
+## 云端关联本地 Agent 的业务澄清
+
+只有当前工作区 `AGENTS.md` 明确声明这是 OpenYida managed local-agent Run 时，才可使用
+`openyida agent ask-human`。当继续搭建确实缺少会改变业务结构的关键信息时：
+
+1. 在当前工作区写入不含密码、Token、Cookie 或其他秘密的结构化问题 JSON；
+2. 执行 `openyida agent ask-human --request-key <稳定业务键> --questions-file <相对路径> --json`；
+3. 收到 `queued` 后立即结束当前轮次，不再执行写操作；用户在宜搭回答后，系统会在同一会话创建续接轮次。
+
+问题文件使用本地 CLI 的 `questions` 数组，不能直接复制云端 `ask_human` 的顶层 `question/options/submitLabel` 对象。格式示例可通过 `openyida agent ask-human --help` 查看。
+
+方案确认也使用同一命令：问题 JSON 顶层携带生成器返回的 `revision`、`attachments`，选项保留稳定 `value`。附件 `path` 是当前任务工作目录内显式声明的 HTML/Markdown/文本（每文件至多 1 MiB，至多 10 个），CLI 会冻结其内容，Runtime 上传成功后才展示问题。不要把本机路径作为网页链接，不扫描或上传整个目录。同一 request-key 不能换题或换文件；方案修改后使用新 key。续接上下文包含原方案标识、文件引用和结构化答案；确认后只能执行用户实际确认的方案，不能将旧答案套用到新稿。
+
+受管任务中的素材命令 `asset resolve` 必须显式携带当前绑定应用的 `--app-type`；`materialize.assetTasks.resolve.argv` 已自动包含该参数，直接复用，不重复追加。手动构造命令时补入绑定应用。应用级数据、多语言、表单恢复和权限读取按统一命令声明校验目标；组织级连接器管理仍需普通 CLI 独立授权，不能通过当前应用任务扩大组织操作范围。
+
+不要用普通 Markdown 问句、provider 原生业务问答或权限弹框模拟该能力。普通 OpenYida
+本地使用、非 managed Run 和故障诊断会话都不得调用此命令；命令本身也会 fail closed。
+
 ## 步骤模版（进行时展示给用户看的步骤）
 
 完整应用搭建时，直接使用对应模式的步骤名称。
@@ -211,6 +237,8 @@ description: >
 | [路由补充说明](references/routing-supplement.md) | 索引精排方法、无独立子技能 CLI | Step 3 排障或索引匹配不准时 |
 | [常见问题解决方案](references/execution-rules.md) | 常见问题处理路径 | 遇到发布、字段、表单更新或 corpId 问题时 |
 | [环境准备与登录检测](references/setup-and-env.md) | 环境依赖、env 解读、多环境 token 登录、project 初始化 | 环境异常或登录问题时 |
+| [本地 Agent 连接预检](references/local-agent-preflight.md) | connect/doctor、指定 Provider、桌面版与 CLI、安装与登录修复 | 用户需要接入本地 Agent 或预检失败时 |
+| [本地 Agent 诊断](references/local-agent-diagnostics.md) | 电脑/CLI 发现、连接鉴权、local_ 会话投递诊断 | 用户反馈网页关联本地 Agent 异常时 |
 | [宜搭 API](references/yida-api.md) | 宜搭 API 完整参数 | 调用 API 前 |
 | [公式函数库](references/formula-functions.md) | 公式函数速查 | 编写公式前 |
 | [官方示例 Schema 范式](references/official-example-schema-patterns.md) | 脱敏 schema 承载范式 | 蒸馏官方示例时 |
@@ -221,3 +249,5 @@ description: >
 | [模型 API](references/model-api.md) | 宜搭模型接口 | 调用宜搭模型能力时 |
 
 本地设计与 Canvas 编译校验失败时读取[本地校验修复](references/source-repair.md)，按字段修复并限制无进展重试。
+
+执行 `openyida agent connect` 时，CLI 检测输出仅供参考。除非用户明确要求，不得下载安装、升级、登录或修改其他 CLI 配置；发现支持的 CLI 即可连接并上报；未登录的 CLI 也要保留并展示“未登录”，不能据此自动登录。没有可上报 CLI 或用户取消时报告结果并停止。

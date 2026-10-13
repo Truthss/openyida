@@ -20,7 +20,7 @@ description: >
 | Agent 只有同步调用，但 Bash 支持后台执行 | 可脚本化步骤用后台 Bash；宿主专有搜图、生图、看图判断留在前台分批处理，不整包交给同步 Agent |
 | 两种后台能力均不可用或未能验证 | 先做已获授权的应用/表单创建或复用、范围内种子数据、无图页面及有图页面布局交互，再分批素材；批次间继续独立工作，记录限制 |
 
-QwenWork 优先检查实际 Bash 工具是否提供 `run_in_background`；支持时这是 **Bash 工具参数**，不是 `openyida` CLI 参数。用它后台执行已具备命令入口的搜索、允许的下载上传、`asset resolve`。从 `assetTasks.resolve.argv` 构造命令，路径按实际 shell 正确引用；上传填真实 appType。保存工具返回的任务编号、日志/清单路径和派发返回时间后立刻继续主流程，不紧接着调用等待工具。到所属页面接图时再读取任务状态、退出码和清单；退出码 2 表示仍有素材缺口，不能当成功。宿主若只有轮询就按需查询，不承诺自动通知。
+QwenWork 优先检查实际 Bash 工具是否提供 `run_in_background`；支持时这是 **Bash 工具参数**，不是 `openyida` CLI 参数。用它后台执行已具备命令入口的搜索、允许的下载上传、`asset resolve`。从 `assetTasks.resolve.argv` 构造命令，路径按实际 shell 正确引用；受管任务的 argv 已包含绑定应用，不重复追加 `--app-type`。普通 CLI 上传时填真实 appType。保存工具返回的任务编号、日志/清单路径和派发返回时间后立刻继续主流程，不紧接着调用等待工具。到所属页面接图时再读取任务状态、退出码和清单；退出码 2 表示仍有素材缺口，不能当成功。宿主若只有轮询就按需查询，不承诺自动通知。
 
 Bash 不能直接执行仅 Agent 可用的搜图/生图/看图工具。后台 shell 只证明可脚本化部分异步，不能据此宣称整条采集链都在后台。普通命令末尾加 `&` 或看到 PID 不足以证明任务能跨工具调用存活、收取结果和取消。只有真实工具核实后才设置 `OPENYIDA_AGENT_BACKGROUND_AGENT` / `OPENYIDA_AGENT_BACKGROUND_SHELL` 为 1/0；未知保持 unknown，CLI 不凭 QwenWork 名称自动放行。
 

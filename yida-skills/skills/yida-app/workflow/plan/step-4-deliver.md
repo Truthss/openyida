@@ -24,7 +24,7 @@ openyida design-plan materialize prd/<项目名>/build-plan.json --from-preview 
 
 CLI 完整校验后一起保存源计划、`prd.md`、`design.md`、`build-plan.html` 和 `app-theme.css`。
 
-执行 init 返回的 `materialize.command`，使用其 `materialize.shell`：Windows 为 PowerShell，其他平台为 POSIX shell。成功结果的 `outputs.html` 用于展示方案，`revision` 仅用于内部确认绑定，不透出给用户。片段职责见 [完整文件合并](../parallel-work.md#plan-的-cli-交接)。直接维护源 JSON 时先设 status=awaiting_confirmation，再运行 `openyida design-plan materialize prd/<项目名>/build-plan.json --json`；诊断加 `--check --json`，正常生成不重复预检。
+执行 init 返回的 `materialize.command`，使用其 `materialize.shell`：Windows 为 PowerShell，其他平台为 POSIX shell。成功结果的 `outputs.confirmationHtml` 用于确认展示；`outputs.html` 只是当前编辑稿，`revision` 仅用于内部确认绑定，不透出给用户。片段职责见 [完整文件合并](../parallel-work.md#plan-的-cli-交接)。直接维护源 JSON 时先设 status=awaiting_confirmation，再运行 `openyida design-plan materialize prd/<项目名>/build-plan.json --json`；诊断加 `--check --json`，正常生成不重复预检。
 
 HTML 使用预置模板，保留需求总览、数据模型、业务流程、页面规划四章；整体视觉在总览、逐页视觉在详情，业务与 PRD 一致。见 [HTML 内容契约](../../../yida-design/sub_skill/yida-design-plan/assets/README.md#需求总览中的视觉信息)。
 
@@ -35,14 +35,14 @@ HTML 使用预置模板，保留需求总览、数据模型、业务流程、页
 按 [用户交互契约](../../../yida-design/references/ask-human-interaction-contract.md) 执行：
 
 1. 在会话中展示“当前方案”，并用 3–7 条业务摘要说明方案内容；有前后台时说明各入口导航归属，平台导航管理页只实现业务内容。导航随整体方案确认，不另设技术选型确认。
-2. 实际调用 `ask_human` 创建结构化提问。调用对象严格采用交互契约中的唯一 payload schema；`attachments` 携带 `name: "build-plan.html"`、`path: "prd/<项目名>/build-plan-<content-sha256>.html"`，`revision` 使用当前 `meta.revision`，`options` 固定为 `confirm_build` 和 `continue_editing`。一次成功调用同时建立方案展示、版本绑定和最终选择。
+2. 云端实际调用 `ask_human` 创建结构化提问；managed Local 使用下述 CLI 封装。调用对象严格采用交互契约中的唯一 payload schema；`attachments` 携带 `name: "build-plan.html"`、`path: "prd/<项目名>/build-plan-<content-sha256>.html"`，`revision` 使用当前 `meta.revision`，`options` 固定为 `confirm_build` 和 `continue_editing`。一次成功调用同时建立方案展示、版本绑定和最终选择。
 最终确认直接使用如下顶层字段，不要再包装成 `fields` 问卷；`fields` 用于需求澄清或用户选择“继续调整”后的补充问题。
 
 ```json
 {"question":"请确认当前搭建方案","options":[{"label":"确认并开始搭建","value":"confirm_build"},{"label":"继续调整","value":"continue_editing"}],"submitLabel":"提交选择","attachments":[{"name":"build-plan.html","path":"<outputs.confirmationHtml>"}],"revision":"<revision>"}
 ```
 
-优先将本次 materialize 或 patch --materialize 返回的 `confirmation` 对象原样传给 ask_human，它已经绑定同调用附件、revision 和固定选项。不得退回可覆盖的 `outputs.html`；需要重建方案时先通过当前 CLI 物化快照，禁止另造值或省略 options/attachments/revision。确认前不创建业务资源。
+云端优先将本次 materialize 或 patch --materialize 返回的 `confirmation` 对象原样传给 ask_human，它已经绑定同调用附件、revision 和固定选项。不得退回可覆盖的 `outputs.html`；需要重建方案时先通过当前 CLI 物化快照，禁止另造值或省略 options/attachments/revision。确认前不创建业务资源。
 
 3. 结构化交互成功创建后将 `meta.planState.presentedRevision=meta.revision` 写回源 JSON，仅保存展示事实，不重新物化。询问“确认并开始搭建”或“继续调整”，提交时由宿主原样回传 revision，将确认结果绑定到本次展示版本。用户可见标题、摘要、附件名称与确认问题统一使用“搭建方案”或“当前方案”，不展示修订序号。内部 revision、展示记录和确认失效机制照常维护。
 
@@ -53,6 +53,14 @@ HTML 使用预置模板，保留需求总览、数据模型、业务流程、页
 - `meta.revision=presentedRevision=confirmedRevision`
 
 收到 `confirm_build` 且回传 revision 与展示版本一致后，保存运行时确认并实施同版产物。按 `assetTasks` 派发素材任务、记录编号后继续创建资源和页面，见 [并行调度](../parallel-work.md#素材与页面同时推进)。素材进度沿用确认，业务/视觉变更按下节处理；`explicitScope.allowInferredResources=false` 只实施范围内资源，不改主题、应用设置或导航。
+
+managed Local 的最终确认使用相同的附件、revision 和选项语义，将生成器 `confirmation` 封装成问题 JSON（不把云端顶层 payload 直接交给 CLI）：
+
+```json
+{"title":"确认搭建方案","revision":"<confirmation.revision>","attachments":[{"name":"搭建方案.html","path":"<outputs.confirmationHtml>"}],"questions":[{"id":"plan_decision","header":"搭建方案","question":"请确认当前搭建方案","type":"single_select","options":[{"label":"确认并开始搭建","value":"confirm_build"},{"label":"继续调整","value":"continue_editing"}]}]}
+```
+
+保存到当前任务目录，执行 `openyida agent ask-human --request-key <本次确认的唯一稳定键> --questions-file <相对路径> --json`，收到 queued 立即结束本轮。附件 path 必须使用当前生成器返回的不可变 `confirmationHtml`。用户回答后，续接上下文中的 `contextRevision`、附件摘要和 `answers.plan_decision` 对应本次展示内容；只在 `confirm_build` 且标识仍与当前方案一致时继续，调整后的方案必须重新物化并用新 key 提问。不要再次询问已确认的业务需求。
 
 ## 4. 处理调整
 

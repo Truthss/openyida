@@ -1,23 +1,10 @@
 'use strict';
 
-const path = require('path');
-const { spawnSync } = require('child_process');
-
-const renderer = path.join(__dirname, '../yida-skills/skills/yida-design/sub_skill/yida-design-plan/scripts/render_build_plan.py');
+const { collectGraph, renderHtml } = require('../lib/design-plan/render-html');
 function collect(dataModels, graph) {
-  const result = spawnSync('python3', ['-B', '-c', [
-    'import importlib.util, json, sys',
-    'spec = importlib.util.spec_from_file_location("renderer", sys.argv[1])',
-    'module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)',
-    'data = json.load(sys.stdin)',
-    'nodes, edges = module.collect_graph_data(data["graph"], data["models"])',
-    'print(json.dumps({"nodes": nodes, "edges": edges, "html": module.render_business_graph(data["graph"], data["models"])}, ensure_ascii=False))',
-  ].join('\n'), renderer], {
-    encoding: 'utf8', input: JSON.stringify({ models: dataModels, graph }),
-    env: { ...process.env, PYTHONIOENCODING: 'utf-8' },
-  });
-  if (result.status !== 0) {throw new Error(result.stderr || result.error?.message);}
-  return JSON.parse(result.stdout);
+  const { nodes, relations } = collectGraph(graph, dataModels);
+  const html = JSON.parse(renderHtml({ dataModels, overview: { businessGraph: graph } }, ['overview'])).overview;
+  return { nodes, edges: relations, html };
 }
 
 test('six forms remain six nodes when graph labels and relation endpoints use short names', () => {

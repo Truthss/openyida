@@ -175,6 +175,8 @@ Plan Design 完成当前版本后，按以下顺序与用户交互：
 
 `build-plan.html` 是可更新的编辑产物；确认附件必须使用 `materialize` 或 `patch --materialize` 返回的 `confirmation.attachments`（路径等于 `outputs.confirmationHtml`），不能自行拼接 canonical 路径或覆盖快照。快照包含最终合并后的 HTML，本地补充和素材变化也会产生新内容地址。HTML 不承载对话控件或确认按钮；用户在会话中完成确认。
 
+managed Local Agent 通过 `openyida agent ask-human` 提问时，必须将下方云端 payload 封装为本地 CLI 问题文件：`title/revision/attachments` 保留在顶层，`question/options` 放入 `questions` 数组中的一个 `single_select` 问题，并提供 `id: "plan_decision"`、`header`。问题文件不携带 `submitLabel`；完整示例见 [Plan 交付](../../yida-app/workflow/plan/step-4-deliver.md) 或 `openyida agent ask-human --help`。
+
 最终确认是一个 `single_select` 语义问题。它只有下面这一份可调用 schema；顶层字段集合固定为 `question`、`title`、`options`、`attachments`、`revision`、`submitLabel`。将路径和 `{revision}` 替换为本次 materialize 返回的真实值：
 
 #### 最终确认 `ask_human` payload

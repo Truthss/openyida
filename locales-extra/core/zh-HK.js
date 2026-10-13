@@ -1015,6 +1015,7 @@ module.exports = {
     err_open_url_chars: 'openUrl 路徑部分只支援 a-z A-Z 0-9 _ -，可用 / 分隔多級路徑，目前值：{0}'
   },
   update_app: {
+    name_not_persisted: '應用名稱儲存後讀回不一致，尚未確認修改成功。請核對目前應用名稱，不要重複建立應用。',
     legacy_style_confirm_required: 'Application CSS is discouraged for legacy or unverified themes. Review CSS scope and ask the human to confirm injection into this exact application (navigation, forms and visit pages may be affected). Only then pass --confirm-legacy-app-style. Otherwise use page-scoped styles.',
     disable_theme_conflict: '--disable-custom-theme only disables CSS and cannot be combined with other application updates.',
     custom_theme_config_invalid: 'customThemeStyle is missing, malformed, or lacks a nonempty cssUrl. No disable request was submitted; inspect the latest app configuration.',
@@ -2075,6 +2076,8 @@ module.exports.connector_e2e = {
   action_mutated: '連接器測試改變了持久化動作定義。',
 };
 module.exports.connector_auth = require('../../lib/core/locales/zh').connector_auth;
+module.exports.agent = require('../../lib/core/locales/zh').agent;
+module.exports.help.cmd_agent = '連接本地 Agent（Go runtime，開發預覽）';
 
 Object.assign(module.exports.process_errors || (module.exports.process_errors = {}), {
   action_config_invalid: '節點 {0} 的審批動作設定無效：{1}',
