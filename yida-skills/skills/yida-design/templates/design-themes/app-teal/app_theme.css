@@ -38,33 +38,33 @@
 .pod-premium.nav-theme-gray,
 :root {
   /* 品牌色与跨端桥接 */
-  --color-brand1-1: <生成实际色值：--color-brand1-6 88% + #FFFFFF 12%，sRGB 逐通道混合>;
-  --color-brand1-2: <生成实际色值：--color-brand1-6 12% + #FFFFFF 88%，sRGB 逐通道混合>;
-  --color-brand1-3: <生成实际色值：--color-brand1-6 4% + #FFFFFF 96%，sRGB 逐通道混合>;
-  --color-brand1-5: <生成实际色值：--color-brand1-6 38% + #171717 62%，sRGB 逐通道混合>;
-  --color-brand1-6: {{PRIMARY_COLOR}};
-  --color-brand1-9: <生成实际色值：--color-brand1-6 76% + #000000 24%，sRGB 逐通道混合>;
-  --color-brand1-10: <生成实际色值：--color-brand1-6 26% + #202020 74%，sRGB 逐通道混合>;
+  --color-brand1-1: #3E7872;
+  --color-brand1-2: #E5EDEC;
+  --color-brand1-3: #F6F9F9;
+  --color-brand1-5: #1C3532;
+  --color-brand1-6: #24665F;
+  --color-brand1-9: #1B4E48;
+  --color-brand1-10: #213230;
   --color-brand-1: var(--color-brand1-10);
   --color-brand-2: var(--color-brand1-1);
   --color-brand-3: var(--color-brand1-6);
   --color-brand-4: var(--color-brand1-9);
 
   /* 边界、填充与文字颜色 */
-  --color-line1-1: <生成实际色值：--color-brand1-6 8% + #C1C1C1 92%，sRGB 逐通道混合>;
-  --color-line1-2: <生成实际色值：--color-brand1-6 8% + #B1B1B1 92%，sRGB 逐通道混合>;
-  --color-fill1-1: <生成实际色值：--color-brand1-6 4% + #F8F8F8 96%，sRGB 逐通道混合>;
-  --color-fill1-2: <生成实际色值：--color-brand1-6 4% + #F2F2F2 96%，sRGB 逐通道混合>;
-  --color-fill1-3: <生成实际色值：--color-brand1-6 8% + #D1D1D1 92%，sRGB 逐通道混合>;
+  --color-line1-1: #C3C8C8;
+  --color-line1-2: #C3C8C8;
+  --color-fill1-1: #F0F2F2;
+  --color-fill1-2: #EAECEC;
+  --color-fill1-3: #C3C8C8;
   --color-fill1-5: #ffffff;
   --color-fill1-6: var(--color-text1-3);
   --color-fill1-10: #262626;
   --color-text1-5: #FFFFFF;
-  --color-text1-4: <生成实际色值：--color-brand1-6 4% + #3F3F3F 96%，sRGB 逐通道混合>;
+  --color-text1-4: #3E4140;
   --color-text1-10: var(--color-text1-3);
-  --color-text1-3: <生成实际色值：--color-brand1-6 4% + #646464 96%，sRGB 逐通道混合>;
-  --color-text1-2: <生成实际色值：--color-brand1-6 4% + #868686 96%，sRGB 逐通道混合>;
-  --color-text1-1: <生成实际色值：--color-brand1-6 4% + #D1D1D1 96%，sRGB 逐通道混合>;
+  --color-text1-3: #616464;
+  --color-text1-2: #828584;
+  --color-text1-1: #CACDCC;
 
   /* 字体 */
   --font-family-base:

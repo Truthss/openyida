@@ -25,7 +25,7 @@
 ## 执行顺序
 
 1. 直接复用已确认的 `requirement-brief.json`；若尚未完成 Step 2 的规划准备，先按 [交接契约](../../../yida-requirement-analysis/references/handoff.md#规划阶段补齐) 补齐页面承载、导航与主题，AI 建议保留来源，不重新询问业务或导航；本文件已经包含规划入口，不再额外读取 `step-1-understand.md` 或 `step-2-confirm.md`。
-2. 先按[已选风格只确认一次](../../../yida-design/references/theme-selection.md#已选风格只确认一次)复用已有选择；仅在尚无选择且用户未给出明确完整视觉风格时，先执行 [Plan 视觉分支](../../../yida-design/sub_skill/yida-design-plan/SKILL.md)：按 Fast / Plan 共用规则生成恰好三套候选，并按[宿主展示规则](../../../yida-design/references/theme-selection.md#选择时展示名称与效果图)获得用户选择（千问使用图片选择器，其他环境使用 `ask_human`）。不得因用户未主动要求比较而跳过。获得选择或已有明确完整风格后，再继续主题映射和初始化。
+2. 先按[已选风格只确认一次](../../../yida-design/references/theme-selection.md#已选风格只确认一次)复用已有选择；仅在尚无选择且用户未给出明确完整视觉风格时，先执行 [Plan 视觉分支](../../../yida-design/sub_skill/yida-design-plan/SKILL.md)：按 Fast / Plan 共用规则生成恰好三套候选，并按[宿主展示规则](../../../yida-design/references/theme-selection.md#选择时展示名称与效果图)获得用户选择（千问使用图片选择器，其他环境使用 `ask_human`）。千问先按[交互顺序](../../../yida-design/references/theme-selection.md#千问交互顺序)收齐必要问答，选风格期间不并发其他提问。不得因用户未主动要求比较而跳过。获得选择或已有明确完整风格后，再继续主题映射和初始化。
 3. 主题映射未确定时，执行一次 `openyida design-plan catalog --json`，从返回的 `themes` 选择 themeId，并复用 `pagePatterns`。已有合法主题 ID 时直接初始化。初始化计划草稿，CLI 返回编写契约与当前主题的精简上下文：
 
    ```bash

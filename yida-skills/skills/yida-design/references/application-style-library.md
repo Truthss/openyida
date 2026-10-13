@@ -4,7 +4,7 @@
 
 ## 找到和导出
 
-`openyida design-plan catalog --json` 返回模板 `themes` 与独立的 `creativeOption`。当前索引包含 15 套模板与独立的自由创意入口，均采用三文件目录并可用 `application-style` 导出。`app-pop`（波普印刷）与 `app-platinum`（铂金商务）已开放选用；其余 16 套 `app-*` 模板及 `dark-inset-hairline` 暂未列入索引，文件保留；候选只从当前索引取得。目录元数据提供完整设计、CSS 和原生布局的相对路径，可直接定位对应文件。
+`openyida design-plan catalog --json` 返回模板 `themes` 与独立的 `creativeOption`。当前索引包含 18 套模板与独立的自由创意入口，均采用三文件目录并可用 `application-style` 导出。`app-pop`（波普印刷）、`app-platinum`（铂金商务）、`app-sage`（自然绿意）、`app-teal`（青绿协作）与 `app-terminal`（终端像素）已开放选用；其余 13 套 `app-*` 模板及 `dark-inset-hairline` 暂未列入索引，文件保留；候选只从当前索引取得。目录元数据提供完整设计、CSS 和原生布局的相对路径，可直接定位对应文件。
 
 ```bash
 openyida sample yida-design application-style --style-id soft-inset-surfaces --output prd/my-app/style-start
@@ -13,7 +13,7 @@ openyida sample yida-design application-style --style-id free-creative --output 
 
 选型先读取`openyida design-plan catalog --json` 返回的 `supportedNavigationLayouts`，按 [主题与导航兼容规则](navigation-decision.md#主题与导航兼容规则) 与实际布局匹配；`navTheme` 不能代替布局限制。
 
-每套导出 `design.md`、`app_theme.css`、`form-layout.json`；目标目录中任一同名文件已存在时，CLI 报错并保留原文件。每份 `design.md` 同时包含自定义页面的逐页设计引导，以及表单的组件位置、布局、样式、状态和响应式引导。设计与 CSS 按所选模板保留配色；固定值、变量引用和主色推导可以按主题组合使用，不要求每套模板都有主色占位、相同的色阶声明或图标配色数组。声明了图标配色时才校验对应颜色与对比度。`app-platinum` 默认使用雾面灰金整套色阶；需要品牌化时成组调整，并检查文字与状态的对比度。有品牌占位或推导公式时，只按该模板的实际表达生成色值，不要求其他色阶跟随主色变化。设计文件可以沿用配对 CSS 中已有的色阶，无需重复声明；最终生成的应用主题文件仍需通过上传前的格式与色值校验。项目占位符与空字段布局是项目化起点；使用时替换真实项目内容、完成最终设计并生成项目主题与表单布局。上传主题时使用项目实际生成的 CSS 路径，`app-theme.css` 与 `app_theme.css` 均可。
+每套导出 `design.md`、`app_theme.css`、`form-layout.json`；目标目录中任一同名文件已存在时，CLI 报错并保留原文件。每份 `design.md` 同时包含自定义页面的逐页设计引导，以及表单的组件位置、布局、样式、状态和响应式引导。设计与 CSS 按所选模板保留配色；固定值、变量引用和主色推导可以按主题组合使用，不要求每套模板都有主色占位、相同的色阶声明或图标配色数组。声明了图标配色时才校验对应颜色与对比度。`app-platinum` 默认使用雾面灰金、`app-teal` 使用青绿、`app-terminal` 使用终端绿的已实例化色阶；需要品牌化时成组调整，并检查文字与状态的对比度。有品牌占位或推导公式时，只按该模板的实际表达生成色值，不要求其他色阶跟随主色变化。设计文件可以沿用配对 CSS 中已有的色阶，无需重复声明；最终生成的应用主题文件仍需通过上传前的格式与色值校验。项目占位符与空字段布局是项目化起点；使用时替换真实项目内容、完成最终设计并生成项目主题与表单布局。上传主题时使用项目实际生成的 CSS 路径，`app-theme.css` 与 `app_theme.css` 均可。
 
 ## 模板来源与重复生成
 

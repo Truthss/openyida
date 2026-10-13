@@ -2716,6 +2716,13 @@ test('plain user-facing guidance is available from manifest and both agent capab
   const selection = visual.themeSelection;
   expect(selection.qwenwork.prepareCommand).toBe('openyida sample yida-design theme-selector --json');
   expect(selection.qwenwork.widgetPathSource).toContain('relative to the host skills root');
+  expect(selection.qwenwork.interactionOrder).toMatchObject({
+    sequence: ['resolve_required_ask_human', 'reuse_or_select_style', 'confirm_plan_if_required'],
+    maxPendingInteractions: 1,
+  });
+  const [orderFile, orderAnchor] = selection.qwenwork.interactionOrder.reference.split('#');
+  expect(fs.readFileSync(path.join(ROOT, orderFile), 'utf8')).toContain(`## ${orderAnchor}`);
+  expect(manifest.summary.core_workflows.full_app_build.design_mode_policy).toContain('themeSelection.qwenwork.interactionOrder');
   expect(selection.reuse.checkBeforePresentation).toEqual([
     'current_user_reply', 'brief.visualSelection', 'visualStyle.internal.selectedTheme', 'design.md themeProfile.sourceThemeId',
   ]);

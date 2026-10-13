@@ -27,7 +27,9 @@ const MAX_TARBALL_BYTES = 2144 * 1024;
 // UI improvement/restore adds eight net runtime and guidance files.
 // Restored Pop/Platinum templates plus the Qwen selector and shared host guidance
 // bring the dry-run to ~8093 KiB; retain a small rounding margin.
-const MAX_UNPACKED_BYTES = 8104 * 1024;
+// Qwen interaction sequencing adds shared guidance and policy (~3 KiB).
+// Restored Sage/Teal/Terminal guidance and selector catalog add ~24 KiB.
+const MAX_UNPACKED_BYTES = 8144 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.

@@ -30,7 +30,7 @@ description: >
 
 需要选择风格时，读取 [共享主题选择规则](references/theme-selection.md)，按 [模板来源约束](references/application-style-library.md#模板来源与重复生成) 保留配对 CSS 与所选视觉特征；先按 [主题与导航兼容规则](references/navigation-decision.md#主题与导航兼容规则) 筛选候选；已确定的导航结构不能被不兼容主题覆盖。
 
-请用户选风格时，按 [名称与效果图展示规则](references/theme-selection.md#选择时展示名称与效果图) 展示风格名称和适用说明，有对应效果图时附图；千问环境使用[图片风格选择器](references/theme-selection.md#千问环境的图片风格选择器)，其他环境用 `ask_human` 收集选择。无图时省略图片，不加占位或缺图提示。
+请用户选风格时，按 [名称与效果图展示规则](references/theme-selection.md#选择时展示名称与效果图) 展示风格名称和适用说明，有对应效果图时附图；千问环境使用[图片风格选择器](references/theme-selection.md#千问环境的图片风格选择器)，其他环境用 `ask_human` 收集选择。千问须按[交互顺序](references/theme-selection.md#千问交互顺序)收齐必要问答后再展示选择器。无图时省略图片，不加占位或缺图提示。
 
 向用户说明设计时，写风格和适用场景：“设计主题风格为轻盈媒体栅格，适合产品展示型品牌官网。”风格名称与场景按当前项目填写；建议阶段使用“建议采用……风格”。
 

@@ -268,11 +268,11 @@ test('older generated CSS gains menu shape consumers once and keeps project rule
 });
 
 test.each([
-  ['app-pop', 'light', '0px', '8px'],
-  ['app-nordic', 'light', '8px', '8px'],
-  ['app-ticket', 'light', '0px', '8px'],
-  ['app-terminal', 'dark', '0px', '4px'],
-])('%s retained source keeps the restrained menu shape in bundled CSS and Fast generation', (id, tone, radius, gap) => {
+  ['app-pop', 'light', '0px', '8px', false],
+  ['app-nordic', 'light', '8px', '8px', false],
+  ['app-ticket', 'light', '0px', '8px', false],
+  ['app-terminal', 'dark', '0px', '4px', true],
+])('%s retained source keeps the restrained menu shape in bundled CSS and Fast generation', (id, tone, radius, gap, instantiated) => {
   const markdown = resolveThemeColors(fs.readFileSync(path.join(__dirname,
     `../yida-skills/skills/yida-design/templates/design-themes/${id}/design.md`), 'utf8').replaceAll('{{PRIMARY_COLOR}}', '#6F4E37'));
   const expected = {
@@ -282,8 +282,14 @@ test.each([
   };
   expect(readDesignTokens(markdown)).toMatchObject(expected);
   const bundle = fs.readFileSync(path.join(__dirname, `../yida-skills/skills/yida-design/templates/design-themes/${id}/app_theme.css`), 'utf8');
-  // Authoring CSS must be instantiated before it is valid for upload.
-  expect(() => validateThemeCssContent(bundle)).toThrow(expect.objectContaining({ code: 'THEME_CSS_UNRESOLVED_TOKEN' }));
+  // The retained DEV.LOG snapshot already contains its complete green palette.
+  // Other authoring bundles still require project color instantiation.
+  if (instantiated) {
+    expect(() => validateThemeCssContent(bundle)).not.toThrow();
+    expect(cascade(bundle, tone)['--color-brand1-6']).toBe('#22C55E');
+  } else {
+    expect(() => validateThemeCssContent(bundle)).toThrow(expect.objectContaining({ code: 'THEME_CSS_UNRESOLVED_TOKEN' }));
+  }
   expect(cascade(applyDesignTokens(template, markdown), tone)).toMatchObject(expected);
   expect(cascade(applyDesignTokens(bundle, markdown), tone)).toMatchObject(expected);
   expect(readDesignTokens(markdown)).not.toHaveProperty('--pod-nav-menu-item-selected-border');

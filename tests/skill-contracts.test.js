@@ -78,6 +78,23 @@ describe('OpenYida skill contracts', () => {
     expect(interaction).toContain('必须使用“应用设计风格”交互展示共用规则生成的三套候选');
   });
 
+  test('Qwen intake and design serialize questions through one shared contract', () => {
+    for (const file of [
+      'yida-design/SKILL.md',
+      'yida-design/references/ask-human-interaction-contract.md',
+      'yida-app/workflow/plan/workflow.md',
+      'yida-requirement-analysis/workflow/prepare-brief.md',
+    ]) {
+      expect(readSkill(`yida-skills/skills/${file}`)).toContain('theme-selection.md#千问交互顺序');
+    }
+    const shared = readSkill('yida-skills/skills/yida-design/references/theme-selection.md');
+    expect(shared).toContain('同一任务最多一个待答交互');
+    expect(shared).toContain('不为排序新增 `ask_human`');
+    expect(shared).toContain('未答、关闭或超时不算失败');
+    expect(shared).toContain('旧回调不得覆盖当前答案');
+    expect(shared).toContain('后续搭建或美化方案确认仍在方案完成后进行');
+  });
+
   test('platform workspace pages keep cross-module navigation with the host in Fast and Plan', () => {
     const guide = readSkill('yida-skills/skills/yida-canvas-custom-page/references/navigation-and-entry-guide.md');
     expect(guide).toContain('即便使用 React 状态切换');

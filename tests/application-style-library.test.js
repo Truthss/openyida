@@ -45,15 +45,17 @@ afterEach(() => { fs.rmSync(directory, { recursive: true, force: true }); });
 function planFor(themeId) {
   const plan = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/design-plan.json'), 'utf8'));
   plan.visualStyle.forUser.selectedTheme = { themeId, source: 'user_selected', templatePath: loadThemeIndex().themes.find(theme => theme.themeId === themeId).templatePath };
-  if (themeId === 'app-platinum') {plan.visualStyle.forUser.colorStrategy.primaryColor = '#897253';}
+  const theme = themeIndex.find(item => item.themeId === themeId);
+  const raw = parseDesignDocument(fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.templatePath), 'utf8')).metadata.tokens['application-global'].colors['--color-brand1-6'];
+  if (/^#[0-9a-f]{6}$/i.test(raw)) {plan.visualStyle.forUser.colorStrategy.primaryColor = raw;}
   plan.pages.customPageDetails[0].pageSpecHandoff = { designRefs: ['themeProfile'] };
   return plan;
 }
 
-test('catalog exposes fifteen presets and creative while eighteen style bundles remain preserved', () => {
+test('catalog exposes eighteen presets and creative while eighteen style bundles remain preserved', () => {
   expect(styles).toHaveLength(18);
-  expect(catalog().themes).toHaveLength(15);
-  expect(catalog().themes.filter(theme => theme.themeId.startsWith('app-')).map(theme => theme.themeId).sort()).toEqual(['app-platinum', 'app-pop']);
+  expect(catalog().themes).toHaveLength(18);
+  expect(catalog().themes.filter(theme => theme.themeId.startsWith('app-')).map(theme => theme.themeId).sort()).toEqual(['app-platinum', 'app-pop', 'app-sage', 'app-teal', 'app-terminal']);
   expect(catalog().creativeOption).toMatchObject({ themeId: 'free-creative', mode: 'creative' });
   expect(catalog().themes.some(theme => theme.mode === 'creative')).toBe(false);
   const layouts = new Set(styles.map(theme => JSON.parse(fs.readFileSync(path.join(DESIGN_SKILL_ROOT, theme.formLayoutPath), 'utf8'))[0].layout));
@@ -98,7 +100,7 @@ test('every named theme keeps main navigation tokens without imposing an unrelat
     }
     palettes.add(NAVIGATION_COLOR_TOKENS.map(token => navigation[token]).join('|'));
   });
-  expect(palettes.size).toBe(15);
+  expect(palettes.size).toBe(18);
 });
 
 test('application preset navigation text is readable in ordinary, hover and selected states', () => {
@@ -242,14 +244,12 @@ test('form skills describe component capabilities with direct instructions', () 
 
 test.each(themeIndex.filter(theme => theme.mode !== 'creative').map(style => [style.themeId, style]))('%s pairs generate valid CSS and compile the form layout', (_id, style) => {
   const templateCss = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, style.cssTemplatePath), 'utf8');
-  expect(templateCss).toContain(`--color-brand1-6: ${style.themeId === 'app-platinum' ? '#897253' : '{{PRIMARY_COLOR}}'};`);
-  if (style.themeId !== 'app-platinum') {expect(templateCss).toContain('--color-brand1-1: <生成实际色值：');}
   const template = fs.readFileSync(path.join(DESIGN_SKILL_ROOT, style.templatePath), 'utf8');
   const design = resolveThemeColors(template.replace(/\{\{PRIMARY_COLOR\}\}/g, '#357942'));
   const css = applyDesignTokens(templateCss, design);
   expect(() => validateThemeCssContent(css)).not.toThrow();
   expect(css).not.toMatch(/\{\{|<生成实际色值：/);
-  expect(css).toContain(`--color-brand1-6: ${style.themeId === 'app-platinum' ? '#897253' : '#357942'};`);
+  expect(css).toContain(`--color-brand1-6: ${readDesignTokens(design)['--color-brand1-6']};`);
   if (style.collection === 'application-styles') {
     expect(css.match(/OPENYIDA APPLICATION STYLE RECIPES START/g)).toHaveLength(1);
   }

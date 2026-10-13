@@ -122,3 +122,17 @@ test('current CLI catalog supplies optional images to template without requiring
   expect(policy.qwenwork.widgetPathSource).toContain('relative to the host skills root');
   expect(policy.qwenwork).not.toHaveProperty('template');
 });
+
+
+test.each(['app-sage', 'app-teal', 'app-terminal'])('%s can be selected with its catalog name and preview', async themeId => {
+  const theme = catalog().themes.find(item => item.themeId === themeId);
+  const previews = require('../yida-skills/skills/yida-design/references/theme-preview-images.json');
+  expect(theme.previewImage.url).toBe(previews[themeId]);
+  const ui = mount([{ id: themeId, name: theme.label, img: theme.previewImage.url, desc: theme.styleSummary }]);
+  expect(ui.nodes('img')[0].src).toBe(previews[themeId]);
+  const radio = ui.nodes('input')[0];
+  radio.checked = true;
+  radio.handlers.change();
+  await ui.confirm.handlers.click();
+  expect(ui.bridge.sendToAgent).toHaveBeenCalledWith(`已选择「${theme.label}」风格（themeId: ${themeId}），请继续下一步`);
+});

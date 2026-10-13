@@ -40,7 +40,7 @@ beforeEach(() => {
 afterEach(() => fs.rmSync(dir, { recursive: true, force: true }));
 
 test.each(fs.readdirSync(path.join(__dirname, '../yida-skills/skills/yida-design/templates/design-themes'))
-  .filter(id => id.startsWith('app-') && !['app-pop', 'app-platinum'].includes(id)))('unlisted %s cannot initialize or export even though its files remain', themeId => {
+  .filter(id => id.startsWith('app-') && !['app-pop', 'app-platinum', 'app-sage', 'app-teal', 'app-terminal'].includes(id)))('unlisted %s cannot initialize or export even though its files remain', themeId => {
   const { exportApplicationStyle } = require('../lib/app/application-style');
   const before = fs.readdirSync(dir);
   brief.visualSelection.themeId = themeId;
@@ -498,7 +498,7 @@ test('catalog is read-only and its theme IDs initialize through the public CLI w
   }
   const previews = require('../yida-skills/skills/yida-design/references/theme-preview-images.json');
   expect(Object.keys(previews)).toHaveLength(17);
-  expect(result.themes.filter(theme => theme.previewImage)).toHaveLength(13);
+  expect(result.themes.filter(theme => theme.previewImage)).toHaveLength(16);
   for (const theme of result.themes) {
     if (previews[theme.themeId]) {
       expect(theme.previewImage).toEqual({ url: previews[theme.themeId], alt: `${theme.label} · 效果参考图` });
@@ -509,7 +509,7 @@ test('catalog is read-only and its theme IDs initialize through the public CLI w
   expect(result.themes.find(theme => theme.themeId === 'soft-inset-surfaces').previewImage.url)
     .toBe('https://img.alicdn.com/imgextra/i3/O1CN01UEEmuLlMF3I5pHky_!!6000000006290-2-tps-2870-1798.png');
   expect(result.creativeOption).not.toHaveProperty('previewImage');
-  expect(result.themes.filter(theme => theme.themeId.startsWith('app-')).map(theme => theme.themeId).sort()).toEqual(['app-platinum', 'app-pop']);
+  expect(result.themes.filter(theme => theme.themeId.startsWith('app-')).map(theme => theme.themeId).sort()).toEqual(['app-platinum', 'app-pop', 'app-sage', 'app-teal', 'app-terminal']);
   expect(result.pagePatterns).toEqual(patterns.patterns.map(({ id, label, mustKeep }) => ({ id, label, mustKeep })));
   const initialized = JSON.parse(execFileSync(process.execPath, [bin, 'design-plan', 'init', briefPath,
     '--theme-id', result.themes[0].themeId, '--output-dir', path.join(dir, 'catalog-plan'), '--json'], options));
@@ -567,7 +567,9 @@ test('returned materialize command handles spaces, quotes and shell expressions 
 test.each(require('../yida-skills/skills/yida-design/templates/design-themes/index.json').themes)(
   'initializes and materializes shared theme $themeId with its current summary and token contract', theme => {
     delete brief.visualSelection.visualDirection;
-    if (theme.themeId === 'app-platinum') {brief.visualSelection.colorStrategy.primaryColor = '#897253';}
+    const authored = require('../lib/design/document').parseDesignDocument(fs.readFileSync(
+      require('../lib/design-plan/themes').themeTemplatePath(theme), 'utf8')).metadata.tokens['application-global'].colors['--color-brand1-6'];
+    if (/^#[0-9a-f]{6}$/i.test(authored)) {brief.visualSelection.colorStrategy.primaryColor = authored;}
     if (theme.mode === 'creative') {
       const { CREATIVE_TOKENS } = require('../lib/app/application-style');
       const { resolveThemeColors, themeTemplatePath } = require('../lib/design-plan/themes');
@@ -608,6 +610,10 @@ test.each(require('../yida-skills/skills/yida-design/templates/design-themes/ind
     expect(output).toMatchObject({ previousRevision: '1', revision: '1' });
     const design = fs.readFileSync(output.outputs.design, 'utf8');
     expect(design).toContain('dashboard');
+    if (theme.themeId === 'app-terminal') {
+      expect(design).not.toMatch(/DEV\.LOG|首页 Hero|作品集|关于我|dev\.local/);
+      expect(require('../lib/design/document').parseDesignDocument(design).metadata.name).toBe(brief.appName);
+    }
     expect(design).toContain(brief.visualSelection.colorStrategy.primaryColor);
     expect(design).not.toMatch(/<生成实际色值|\{\{[A-Z_]+\}\}/);
     expect(require('../lib/app/theme-from-design').readDesignTokens(design)['--color-brand1-6']).toBe(brief.visualSelection.colorStrategy.primaryColor);

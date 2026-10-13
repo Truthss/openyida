@@ -200,6 +200,48 @@
       "styleSummary": "浅色导航，浅色内容界面。珍珠奶油白画布、轻香槟金焦点与暖银细线，搭配低圆角和克制底影。弹性网格按业务组织主次区域，适合金融服务、客户经营、合同与专业审批。"
     },
     {
+      "themeId": "app-sage",
+      "label": "自然绿意",
+      "mode": "template",
+      "collection": "application-styles",
+      "contentTone": "light",
+      "navTheme": "light",
+      "navigationSummary": "柔绿导航和圆润控件衔接浅色画布，轻内凹表面与纵向状态清单保持舒展。",
+      "templatePath": "templates/design-themes/app-sage/design.md",
+      "cssTemplatePath": "templates/design-themes/app-sage/app_theme.css",
+      "formLayoutPath": "templates/design-themes/app-sage/form-layout.json",
+      "previewPrimaryColor": "#789383",
+      "styleSummary": "浅色导航，浅色内容界面。宽松双列与柔和分区，柔绿表面搭配轻内凹和圆润控件，适合健康服务、员工关怀与资源协作。"
+    },
+    {
+      "themeId": "app-teal",
+      "label": "青绿协作",
+      "mode": "template",
+      "collection": "application-styles",
+      "contentTone": "light",
+      "navTheme": "light",
+      "navigationSummary": "浅青绿导航连接白色工作区，深青绿文字和弱填充状态明确标识当前位置。",
+      "templatePath": "templates/design-themes/app-teal/design.md",
+      "cssTemplatePath": "templates/design-themes/app-teal/app_theme.css",
+      "formLayoutPath": "templates/design-themes/app-teal/form-layout.json",
+      "previewPrimaryColor": "#24665F",
+      "styleSummary": "浅色导航，浅色内容界面。二比一主次区、任务流和状态摘要条，青绿弱填充搭配清晰分组与适度圆角，适合运营排班、供应与项目协同。"
+    },
+    {
+      "themeId": "app-terminal",
+      "label": "终端像素",
+      "mode": "template",
+      "collection": "application-styles",
+      "contentTone": "dark",
+      "navTheme": "dark",
+      "navigationSummary": "深绿导航与暗色画布相连，绿色文字、直角菜单和点线分隔延续终端风格。",
+      "templatePath": "templates/design-themes/app-terminal/design.md",
+      "cssTemplatePath": "templates/design-themes/app-terminal/app_theme.css",
+      "formLayoutPath": "templates/design-themes/app-terminal/form-layout.json",
+      "previewPrimaryColor": "#22C55E",
+      "styleSummary": "深色导航，深色内容界面。紧凑双列与可扫描清单，深绿画布搭配绿色强调、像素直角、点线边界和等宽排版，适合明确要求终端风格的技术工具。"
+    },
+    {
       "themeId": "free-creative",
       "label": "自由创意",
       "mode": "creative",
