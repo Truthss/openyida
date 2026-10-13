@@ -1,5 +1,7 @@
 <div align="center">
 
+![OpenYida](https://img.alicdn.com/imgextra/i2/O1CN01fwUxry9qUtJ3OTaP_!!6000000008165-2-tps-1672-941.png)
+
 # OpenYida
 
 **AI-native CLI for building DingTalk Yida low-code applications.**
