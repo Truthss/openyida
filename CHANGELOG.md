@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 修复
 
 - **Windows Local Agent**：统一运行时与执行包路径规范化，预检以 PowerShell 文件模式保留 CLI 标准输入和字面参数；父进程监控按 Windows PID 与 Unix 管道契约验证。
+- **Windows 执行包目录**：使用与连接凭证相同的私有目录创建机制，显式绑定当前用户所有者，避免提升权限运行时默认 Administrators 所有者被 Go runtime 拒绝。
 - **Windows 验证覆盖**：保留 Unicode 排序、签名、原子发布和后台生命周期断言；增加签名 Go runtime 的本地控制面集成验证，覆盖接入、模型刷新、心跳、主动断开及父进程退出，不调用付费模型或真实业务应用。
 
 ## [2026.10.14] - 2026-10-14

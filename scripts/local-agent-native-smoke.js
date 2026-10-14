@@ -14,6 +14,7 @@ const { resolveRuntime, canonicalPath } = require('../lib/agent/runtime-package'
 const { materializeBundle, verifyBundle } = require('../lib/agent/frozen-bundle');
 const { launchRuntime, launchBackgroundRuntime } = require('../lib/agent/stdio');
 const { preflight } = require('../lib/agent/provider-preflight');
+const { prepareConnection } = require('../lib/agent/connection-store');
 const { removeFixture } = require('../tests/helpers/agent-bundle-fixture');
 
 const packageRoot = path.resolve(__dirname, '..');
@@ -43,7 +44,7 @@ async function main() {
         devicePublicKey = crypto.createPublicKey({format:'der', type:'spki', key:Buffer.concat([
           Buffer.from('302a300506032b6570032100','hex'), Buffer.from(body.devicePublicKey,'base64url'),
         ])});
-        assert.ok(crypto.verify(null, Buffer.from('openyida-enrollment-v1\nsmoke\nnative-installation\n'+ticket),
+        assert.ok(crypto.verify(null, Buffer.from('openyida-enrollment-v1\nsmoke\n'+body.installationId+'\n'+ticket),
           devicePublicKey, Buffer.from(body.deviceSignature,'base64url')));
         const now = Math.floor(Date.now()/1000);
         response = {protocolVersion:1,deviceId:'native-device',accessToken:access,expiresAt:now+3600,
@@ -112,8 +113,10 @@ async function main() {
     assert.equal(checked.ready,true,'native CLI version/auth/ACP handshake');
     phase='runtime-resolution';
     const runtime=resolveRuntime({packageRoot});
+    const connectionRoot=path.join(root,'local-agent');
+    const prepared=prepareConnection(connectionRoot,'smoke.'+ticket);
     const config={protocolVersion:1,command:'connect',endpoint:'http://127.0.0.1:'+server.address().port,endpointId,
-      installationId:'native-installation',enrollmentToken:'smoke.'+ticket,stateDir:path.join(root,'state'),sessionStateDir:path.join(root,'sessions'),
+      installationId:prepared.installationId,enrollmentToken:'smoke.'+ticket,stateDir:prepared.stateDir,sessionStateDir:path.join(connectionRoot,'sessions'),
       // Windows uses production DPAPI; Mac fixture avoids altering user Keychain.
       ...(process.platform==='darwin'?{developmentRuntime:true}:{}),
       node:{executable:process.execPath,packageRoot,cliEntry:path.join(packageRoot,'bin/yida.js'),version:require('../package.json').version},
