@@ -22,16 +22,21 @@ describe('runtime parent-watch and bounded stop contract', () => {
     const binary = path.join(root, 'fake-runtime.js');
     const receipt = path.join(root, 'parent-ended.json');
     const source = `const fs=require('fs');let text='';process.stdin.on('data',c=>text+=c);process.stdin.on('end',()=>{
-      const c=JSON.parse(text);const stopped=()=>{fs.writeFileSync(${JSON.stringify(receipt)},JSON.stringify({parentStopped:true,notCompletion:true}));process.exit(0);};
+      const c=JSON.parse(text);const stopped=()=>{fs.writeFileSync(${JSON.stringify(receipt)},JSON.stringify({parentStopped:true,notCompletion:true}));process.chdir(require('os').tmpdir());process.exit(0);};
+      const ready=()=>console.log(JSON.stringify({type:'ready',pid:process.pid,stdinEnded:true,parentPID:c.parentPID,watchFD:c.parentWatchFD}));
       if(c.parentPID){
-        // Node kill(pid,0) is not a Windows process-wait handle. Mirror Go's
-        // native wait with Wait-Process, including the already-exited race.
+        // Acquire the native process handle before reporting ready. PowerShell
+        // cold module loading can exceed 15s; it is not a slow parent exit.
         const ps=require('path').join(process.env.SystemRoot,'System32/WindowsPowerShell/v1.0/powershell.exe');
-        const monitor=require('child_process').spawn(ps,['-NoProfile','-NonInteractive','-Command','Wait-Process -Id '+c.parentPID+' -ErrorAction SilentlyContinue'],{stdio:'ignore',windowsHide:true});
-        monitor.once('exit',stopped);
+        const command='$ErrorActionPreference="Stop";$p=Get-Process -Id '+c.parentPID+';[Console]::Out.WriteLine("watch-ready");$p.WaitForExit()';
+        const monitor=require('child_process').spawn(ps,['-NoProfile','-NonInteractive','-Command',command],{stdio:['ignore','pipe','pipe'],windowsHide:true});
+        let output='';let announced=false;
+        monitor.stdout.on('data',chunk=>{output+=chunk;if(!announced && output.includes('watch-ready')){announced=true;ready();}});
+        monitor.stderr.on('data',chunk=>process.stderr.write(chunk));
+        monitor.once('error',()=>process.exit(1));
+        monitor.once('exit',code=>{if(code===0 && announced){stopped();}else{process.exit(1);}});
       }
-      else{const watch=fs.createReadStream(null,{fd:c.parentWatchFD,autoClose:false});watch.on('end',stopped);watch.resume();}
-      console.log(JSON.stringify({type:'ready',pid:process.pid,stdinEnded:true,parentPID:c.parentPID,watchFD:c.parentWatchFD}));});`;
+      else{const watch=fs.createReadStream(null,{fd:c.parentWatchFD,autoClose:false});watch.on('end',stopped);watch.resume();ready();}});`;
     fs.writeFileSync(binary, source);
     const modulePath = path.resolve(__dirname, '../lib/agent/stdio.js');
     const config = { command: 'run', protocolVersion: 1, developmentRuntime: true, node: { packageRoot: root } };
@@ -39,7 +44,7 @@ describe('runtime parent-watch and bounded stop contract', () => {
       {spawn:(file,args,options)=>spawn(process.execPath,[file,...args],options)}).catch(()=>{process.exitCode=1;});`;
     outer = spawn(process.execPath, ['-e', code], { stdio: ['ignore', 'pipe', 'pipe'] });
     const event = await new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => reject(new Error('fixture readiness timed out')), 10000);
+      const timeout = setTimeout(() => reject(new Error('fixture readiness timed out')), process.platform === 'win32' ? 45000 : 10000);
       let text = '';
       outer.stdout.on('data', chunk => {
         text += chunk;
@@ -60,7 +65,7 @@ describe('runtime parent-watch and bounded stop contract', () => {
       }, 25);
     });
     expect(JSON.parse(fs.readFileSync(receipt, 'utf8'))).toEqual({ parentStopped: true, notCompletion: true });
-  }, 25000);
+  }, process.platform === 'win32' ? 65000 : 25000);
 
   function childFixture() {
     const child = new EventEmitter();
