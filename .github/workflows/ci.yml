@@ -68,9 +68,9 @@ jobs:
       run: npm ci --ignore-scripts
 
 
-    - name: Verify native Local Agent processes and runtime
-      if: runner.os == 'Windows' || runner.os == 'macOS'
-      run: node scripts/local-agent-native-smoke.js
-
     - name: Run tests
       run: npm run test:unit
+
+    - name: Verify native Local Agent processes and runtime
+      if: (success() || failure()) && (runner.os == 'Windows' || runner.os == 'macOS')
+      run: node scripts/local-agent-native-smoke.js
