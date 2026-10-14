@@ -10,6 +10,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 海外版宜搭暂不适用当前 OAuth token 登录与创建应用链路；如需在海外版宜搭创建应用，请使用 `2026.7.14-2` 以前的版本，例如 `npm install -g openyida@2026.7.13`。
 
+## [2026.10.14] - 2026-10-14
+
+正式交付下方 `2026.10.13-2` 中介绍的 Local Agent 能力，继续精确依赖四个平台的签名 Go runtime `0.1.1`；修复此前阻断正式发布的 Linux CI 问题。
+
+### 修复
+
+- **开发执行包的平台检查**：显式开发 runtime 可在 Linux 测试环境构建冻结执行包，不再误触发正式平台包检查；正式 Local Agent 仍仅支持 macOS 和 Windows，签名与完整性检查保持不变。
+- **跨平台测试更独立**：runtime 配置测试显式指定目标平台，执行包启动测试使用指定的模拟 CLI，不再依赖测试机器已经安装 Codex 或 Qoder。
+
 ## [2026.10.13-2] - 2026-10-13
 
 新增宜搭连接本地 Agent 的能力，支持在用户电脑上运行已安装的 Codex、Qoder 或 OpenCode CLI，并在网页中查看执行进度、回答问题和处理操作审批。

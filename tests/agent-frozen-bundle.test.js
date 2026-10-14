@@ -6,6 +6,7 @@ const path = require('path');
 const { execFileSync, spawn } = require('child_process');
 const { materializeBundle, verifyBundle } = require('../lib/agent/frozen-bundle');
 const { run } = require('../lib/agent/cmd');
+const { resolveRuntime } = require('../lib/agent/runtime-package');
 const { createBundleFixture, removeFixture } = require('./helpers/agent-bundle-fixture');
 
 describe('content-addressed complete local tool bundle', () => {
@@ -26,6 +27,22 @@ describe('content-addressed complete local tool bundle', () => {
     expect(JSON.parse(execFileSync(process.execPath, [result.config.node.cliEntry], { encoding: 'utf8' }))).toEqual({ dependency: 'a/b-v1', skill: 'frozen skill v1\n' });
     expect(fs.readdirSync(path.join(fixture.config.stateDir, 'bundles'))).toEqual([result.config.bundle.id]);
     expect(fs.existsSync(path.join(fixture.config.stateDir, 'bundle-references'))).toBe(false); // Go owns references.
+  });
+  // Simulated Linux filesystem checks require Unix ownership and mode semantics.
+  const unixTest = process.platform === 'win32' ? test.skip : test;
+  unixTest('freezes an explicit Linux development runtime without opening production Linux support', () => {
+    const platform = Object.getOwnPropertyDescriptor(process, 'platform');
+    try {
+      Object.defineProperty(process, 'platform', { value: 'linux' });
+      fixture = createBundleFixture(root);
+      const frozen = freeze();
+      expect(verifyBundle(frozen.config.bundle.root, frozen.config.bundle.id).runtime)
+        .toMatchObject({ development: true, signature: null });
+      expect(() => resolveRuntime({ platform: 'linux', arch: 'x64' }))
+        .toThrow(expect.objectContaining({ code: 'AGENT_RUNTIME_PLATFORM_UNSUPPORTED' }));
+    } finally {
+      Object.defineProperty(process, 'platform', platform);
+    }
   });
   test('old bundle survives npm-like upgrade, uninstall and a new bundle publication', () => {
     const old = freeze();
@@ -135,7 +152,8 @@ describe('content-addressed complete local tool bundle', () => {
     const stdout = { write: jest.fn() };
     const children = [];
     await run([command, '--development-runtime', '--runtime-path', fixture.runtimePath, '--runtime-manifest', fixture.manifestPath,
-      '--endpoint', 'https://agent.example.test', '--endpoint-id', 'test', '--state-dir', fixture.config.stateDir], {
+      '--endpoint', 'https://agent.example.test', '--endpoint-id', 'test', '--state-dir', fixture.config.stateDir,
+      '--provider', 'qoder', '--provider-path', fixture.runtimePath], {
       // This test isolates bundle launching; enrolled multi-organization
       // Connections are exercised by agent-connection-manager.test.js.
       // The fixture is JavaScript, not a Windows PE executable. Launch the same
@@ -145,7 +163,7 @@ describe('content-addressed complete local tool bundle', () => {
         children.push(new Promise(resolve => child.on('close', resolve)));
         return child;
       },
-      packageRoot: fixture.config.node.packageRoot, stdout, disableConnectionManager: true, probe: async () => ({ status: 'passed' }),
+      packageRoot: fixture.config.node.packageRoot, stdout, env: {}, homedir: root, disableConnectionManager: true, probe: async () => ({ status: 'passed' }),
     });
     await Promise.all(children);
     const event = JSON.parse(stdout.write.mock.calls[0][0]);
