@@ -20,6 +20,7 @@ const packageRoot = path.resolve(__dirname, '..');
 async function main() {
   const root = canonicalPath(fs.mkdtempSync(path.join(os.tmpdir(), 'oy-native-')));
   const children = new Set();
+  let phase='setup';
   let controllerError, devicePublicKey, heartbeatCount = 0, models, epoch = 0, refreshClaimed = false, foreground, nativePid;
   const access = 'old1_' + 'fixture'.repeat(8), ticket = 'a'.repeat(43), endpointId = 'native-smoke';
   const nonce = 'native-smoke-proof-0123456789abcdef';
@@ -81,7 +82,15 @@ async function main() {
   });
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
   function trackedSpawn(executable,args,options) {
-    const child=cp.spawn(executable,args,options); children.add(child); child.once('close',()=>children.delete(child)); return child;
+    const child=cp.spawn(executable,args,options); children.add(child); child.once('close',()=>children.delete(child));
+    if(child.stdout && executable !== process.execPath){
+      let pending='';child.stdout.on('data',chunk=>{pending+=chunk;let end;
+        while((end=pending.indexOf('\n'))>=0){const line=pending.slice(0,end);pending=pending.slice(end+1);
+          try{const event=JSON.parse(line);if(event.type==='error'){console.error(JSON.stringify({phase,code:event.code,message:event.message}));}}catch{/* Non-event output. */}
+        }
+      });
+    }
+    return child;
   }
   try {
     const dir=path.join(root,"中文 user's folder"); fs.mkdirSync(dir);
@@ -98,8 +107,10 @@ async function main() {
       const quote=value=>"'"+value.replace(/'/g,"''")+"'";
       fs.writeFileSync(provider.replace(/\.cmd$/,'.ps1'), `\ufeff& ${quote(process.execPath)} ${quote(peer)} @args\nexit $LASTEXITCODE\n`);
     }else{provider=path.join(dir,'qodercli');fs.writeFileSync(provider,`#!${process.execPath}\nrequire(${JSON.stringify(peer)});\n`,{mode:0o700});}
+    phase='cli-preflight';
     const checked=await preflight({provider:'qoder',providerPath:provider});
     assert.equal(checked.ready,true,'native CLI version/auth/ACP handshake');
+    phase='runtime-resolution';
     const runtime=resolveRuntime({packageRoot});
     const config={protocolVersion:1,command:'connect',endpoint:'http://127.0.0.1:'+server.address().port,endpointId,
       installationId:'native-installation',enrollmentToken:'smoke.'+ticket,stateDir:path.join(root,'state'),sessionStateDir:path.join(root,'sessions'),
@@ -109,17 +120,23 @@ async function main() {
       providers:[{profileId:'openyida.qoder',provider:'qoder',executable:provider}]};
     const frozen=materializeBundle(runtime,config); verifyBundle(frozen.config.bundle.root,frozen.config.bundle.id);
     const stdout={write() {}};
+    phase='native-enrollment';
     await launchRuntime(frozen.runtime,frozen.config,{stdout,spawn:trackedSpawn});
     delete frozen.config.enrollmentToken;
+    phase='native-background';
     const started=await launchBackgroundRuntime(frozen.runtime,{...frozen.config,command:'run'}, {spawn:trackedSpawn,startupTimeoutMs:60000});
     assert.ok(process.kill(started.pid,0));
+    phase='native-model-refresh';
     await waitFor(()=>models,'Go CLI model refresh',90000);
     assert.equal(models.errorCode,undefined); assert.equal(models.models[0].id,'fixture-model');
+    phase='heartbeat';
     await waitFor(()=>heartbeatCount>0,'authenticated heartbeat');
+    phase='authenticated-disconnect';
     await launchRuntime(frozen.runtime,{...frozen.config,command:'disconnect'},{stdout,spawn:trackedSpawn});
     await waitFor(()=>!children.size,'graceful background exit');
     // A new foreground runtime must stop when its Node owner dies, on both
     // Windows (native PID wait) and Unix (separate lifetime pipe).
+    phase='parent-death';
     const launcher=path.join(root,'launcher.js');
     fs.writeFileSync(launcher,`const {spawn}=require('child_process');require(${JSON.stringify(path.join(packageRoot,'lib/agent/stdio'))})
       .launchRuntime(${JSON.stringify({executable:frozen.runtime.executable})},${JSON.stringify({...frozen.config,command:'run'})},{spawn:(exe,args,opts)=>{
@@ -134,7 +151,7 @@ async function main() {
     console.log(JSON.stringify({platform:process.platform,runtimeVersion:runtime.runtimeVersion,signatureVerified:true,
       frozenBundleVerified:true,cliProtocolPassed:true,goModelRefreshPassed:true,backgroundReady:true,heartbeatPassed:true,
       authenticatedStopPassed:true,nativeParentDeathPassed:true,fixtureController:true,paidModelCalled:false}));
-  } finally {
+  } catch(error){error.smokePhase=phase;throw error;} finally {
     if(nativePid){try{process.kill(nativePid,'SIGKILL');}catch{/* Already exited. */}}
     if(foreground){try{foreground.kill('SIGKILL');}catch{/* Already exited. */}}
     for(const child of children){try{child.kill('SIGKILL');}catch{/* Already exited. */}}
@@ -144,4 +161,4 @@ async function main() {
     removeFixture(root);
   }
 }
-main().catch(error=>{console.error(error.message);process.exitCode=1;});
+main().catch(error=>{console.error(JSON.stringify({phase:error.smokePhase,code:error.code,message:error.message}));process.exitCode=1;});
