@@ -38,7 +38,7 @@ describe('background runtime readiness', () => {
     expect(fs.readdirSync(root).filter(name => name.startsWith('startup-'))).toEqual([]);
   });
   test('the daemon survives a launcher that exits after readiness', async () => {
-    const f = fixture(`fs.writeFileSync(path.join(c.stateDir,'daemon.pid'),String(process.pid));${ready}setInterval(()=>{},1000);`);
+    const f = fixture(`fs.writeFileSync(path.join(c.stateDir,'daemon.pid'),String(process.pid));${ready}setInterval(()=>{if(fs.existsSync(path.join(c.stateDir,'stop-fixture'))){process.chdir(require('os').tmpdir());process.exit(0);}},25);`);
     const script = `const {spawn}=require('child_process');const {launchBackgroundRuntime}=require(${JSON.stringify(require.resolve('../lib/agent/stdio'))});launchBackgroundRuntime(${JSON.stringify(f.runtime)},${JSON.stringify(f.config)},{spawn:(file,args,opts)=>spawn(process.execPath,[file,...args],opts)}).then(r=>console.log(r.pid)).catch(()=>process.exitCode=1);`;
     const launcher = spawn(process.execPath, ['-e', script]);
     children.add(launcher); launcher.once('close', () => children.delete(launcher));
@@ -56,7 +56,7 @@ describe('background runtime readiness', () => {
       const pidFile = path.join(root, 'daemon.pid');
       if (fs.existsSync(pidFile)) {
         const pid = Number(fs.readFileSync(pidFile, 'utf8'));
-        try {process.kill(pid, 'SIGTERM');} catch { /* Already exited. */ }
+        fs.writeFileSync(path.join(root, 'stop-fixture'), 'stop');
         if (process.platform === 'win32') {
           await new Promise((resolve, reject) => execFile(path.join(process.env.SystemRoot, 'System32/WindowsPowerShell/v1.0/powershell.exe'),
             ['-NoProfile', '-NonInteractive', '-Command', '$p=Get-Process -Id ' + pid + " -ErrorAction SilentlyContinue;if($p -and !$p.WaitForExit(10000)){throw 'Owned daemon did not exit'};exit 0"],

@@ -162,13 +162,13 @@ describe('OpenYida skill contracts', () => {
     expect(skill).toContain('ask_human');
   });
 
-  test('Fast and Plan share three visual directions while Plan requires a style choice', () => {
+  test('Fast and Plan resolve style intent before offering visual directions', () => {
     const shared = readSkill('yida-skills/skills/yida-design/references/theme-selection.md');
     const plan = readSkill('yida-skills/skills/yida-app/workflow/plan/workflow.md');
     const interaction = readSkill('yida-skills/skills/yida-design/references/ask-human-interaction-contract.md');
     expect(shared).toContain('Fast 与 Plan 使用下面同一套三方向生成规则和候选字段');
-    expect(shared).toContain('Plan 仅在尚无有效选择且用户没有明确完整风格时必须展示同样三套方向并按下方宿主展示规则获得用户选择');
-    expect(plan).toContain('获得选择或已有明确完整风格后，再继续主题映射和初始化');
+    expect(shared).toContain('Plan 仅在没有风格意向、视觉参考或可复用选择且未委托 AI 决定时');
+    expect(plan).toContain('已有意向或已获得选择后，AI 补齐主题映射并初始化');
     for (const relative of [
       'yida-skills/skills/yida-design/SKILL.md',
       'yida-skills/skills/yida-design/sub_skill/yida-design-plan/SKILL.md',
@@ -1733,7 +1733,7 @@ describe('OpenYida skill contracts', () => {
     expect(selection).toContain('## 拒绝第一直觉');
     expect(selection).toContain('被排除方案不计入三套候选');
     expect(selection).toContain('不得仅改名称、微调色值或调换候选顺序后重新引入原方案');
-    expect(selection).toContain('用户明确指定的完整风格、品牌约束、参考材料或已有满意主题优先保留');
+    expect(selection).toContain('用户明确的风格意向、品牌约束、参考材料或已有满意主题优先保留');
     expect(visualThemeSelection).toContain('../../../references/theme-selection.md');
     expect(selection).toContain('不能三套都是同一蓝色底稿只换名称');
     expect(selection).not.toContain('不强制淘汰首选');

@@ -18,6 +18,7 @@ module.exports = {
     page_offline: 'The frontend custom page {0} is not yet published to a standalone address; publish it before registering.',
   },
   design_plan: {
+    confirmation_required: '確認には現在の計画スナップショットと版が必要です。先に計画を生成してください。',
     rebase_required: '初回生成前は business.json/visual.json を修正してください。元計画が変わった場合はファイルを保持し、元コマンドに --rebase-parts を追加してください。',
     baseline_missing: '元の作業領域から対応する .build-plan-base.json を復元してください。信頼できる基準がなければ下書きを保持して問題を報告してください。',
     rebase_stage_invalid: '基準の統合は初回生成前の下書きのみです。表示・生成済みの計画には patch --materialize を使用してください。',

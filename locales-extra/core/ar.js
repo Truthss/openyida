@@ -18,6 +18,7 @@ module.exports = {
     page_offline: 'The frontend custom page {0} is not yet published to a standalone address; publish it before registering.',
   },
   design_plan: {
+    confirmation_required: 'يتطلب التأكيد لقطة من الخطة الحالية ورقم مراجعتها. أنشئ الخطة أولاً.',
     rebase_required: 'قبل الإنشاء الأول، صحح business.json/visual.json. إذا تغيرت الخطة الرئيسية، احتفظ بالملفات وأضف --rebase-parts إلى الأمر الأصلي.',
     baseline_missing: 'استعد ملف .build-plan-base.json المطابق من مساحة العمل الأصلية. عند غياب أساس موثوق، احتفظ بالمسودات وأبلغ عن العائق.',
     rebase_stage_invalid: 'دمج الأساس متاح للمسودات قبل الإنشاء الأول فقط. للخطط المعروضة أو المنشأة، استخدم patch --materialize.',
