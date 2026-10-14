@@ -12,7 +12,7 @@ describe('background runtime readiness', () => {
     await Promise.all([...children].map(child => new Promise(resolve => {
       child.once('close', resolve); child.kill('SIGKILL');
     })));
-    fs.rmSync(root, { recursive: true, force: true });
+    fs.rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
   });
   function fixture(body) {
     const executable = path.join(root, 'runtime.js');

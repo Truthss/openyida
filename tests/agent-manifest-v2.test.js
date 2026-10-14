@@ -41,7 +41,7 @@ describe('production runtime manifest and platform package', () => {
   });
   afterEach(() => fs.rmSync(root, { recursive: true, force: true }));
   test('validates trusted Ed25519 raw bytes, fixed package version, OS and digest without spawning', () => {
-    expect(resolve()).toMatchObject({ executable: fs.realpathSync(binary), development: false, runtimeVersion: '0.1.0', sha256: manifest.binary.sha256 });
+    expect(resolve()).toMatchObject({ executable: fs.realpathSync.native(binary), development: false, runtimeVersion: '0.1.0', sha256: manifest.binary.sha256 });
   });
   test.each([
     ['product', 'another-product'], ['runtimeVersion', 'latest'], ['sourceRevision', 'internal-branch'],

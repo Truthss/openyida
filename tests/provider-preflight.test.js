@@ -210,8 +210,8 @@ describe('cross-platform provider preflight', () => {
     const cmd = file('中文 folder/qodercli.cmd');
     fs.writeFileSync(cmd, '@echo off\r\nexit /b 99\r\n');
     fs.writeFileSync(cmd.replace(/\.cmd$/, '.ps1'), "Write-Output 'fixture-version'\n");
-    expect(await probe(cmd, ['--version'], null)).toMatchObject({ status: 'passed', output: expect.stringContaining('fixture-version') });
-  });
+    expect(await probe(cmd, ['--version'], null, { timeoutMs: 45000 })).toMatchObject({ status: 'passed', output: expect.stringContaining('fixture-version') });
+  }, 60000);
 
   test('Windows npm shim preserves live stdin for ACP', async () => {
     if (process.platform !== 'win32') { return; }

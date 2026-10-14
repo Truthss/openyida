@@ -84,7 +84,8 @@ describe('content-addressed complete local tool bundle', () => {
     const frozen = freeze();
     const manifest = verifyBundle(frozen.config.bundle.root, frozen.config.bundle.id);
     const paths = manifest.files.map((file) => file.path);
-    expect(paths.indexOf('openyida/lib/\uE000.js')).toBeLessThan(paths.indexOf('openyida/lib/\u{10000}.js'));
+    expect(paths).toEqual(expect.arrayContaining([`openyida/lib/order-${String.fromCodePoint(0xE000)}.js`, `openyida/lib/order-${String.fromCodePoint(0x1F680)}.js`]));
+    expect(paths.indexOf(`openyida/lib/order-${String.fromCodePoint(0xE000)}.js`)).toBeLessThan(paths.indexOf(`openyida/lib/order-${String.fromCodePoint(0x1F680)}.js`));
     expect(paths).toEqual([...paths].sort((a, b) => Buffer.compare(Buffer.from(a), Buffer.from(b))));
   });
   test('rejects existing bundle tampering and never silently repairs or deletes it', () => {
