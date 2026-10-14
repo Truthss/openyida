@@ -2,7 +2,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { spawn } = require('child_process');
+const { spawn, execFile } = require('child_process');
 const { launchBackgroundRuntime } = require('../lib/agent/stdio');
 
 describe('background runtime readiness', () => {
@@ -13,7 +13,7 @@ describe('background runtime readiness', () => {
     await Promise.all([...children].map(child => new Promise(resolve => {
       child.once('close', resolve); child.kill('SIGKILL');
     })));
-    fs.rmSync(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+    fs.rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
   });
   function fixture(body) {
     const executable = path.join(root, 'runtime.js');
@@ -57,10 +57,17 @@ describe('background runtime readiness', () => {
       if (fs.existsSync(pidFile)) {
         const pid = Number(fs.readFileSync(pidFile, 'utf8'));
         try {process.kill(pid, 'SIGTERM');} catch { /* Already exited. */ }
-        const deadline = Date.now() + 5000;
-        while (Date.now() < deadline) {
-          try {process.kill(pid, 0);} catch {daemonExited = true; break;}
-          await new Promise(resolve => setTimeout(resolve, 50));
+        if (process.platform === 'win32') {
+          await new Promise((resolve, reject) => execFile(path.join(process.env.SystemRoot, 'System32/WindowsPowerShell/v1.0/powershell.exe'),
+            ['-NoProfile', '-NonInteractive', '-Command', '$p=Get-Process -Id ' + pid + " -ErrorAction SilentlyContinue;if($p -and !$p.WaitForExit(10000)){throw 'Owned daemon did not exit'};exit 0"],
+            {windowsHide:true, timeout:15000}, (error) => error ? reject(error) : resolve()));
+          daemonExited = true;
+        } else {
+          const deadline = Date.now() + 5000;
+          while (Date.now() < deadline) {
+            try {process.kill(pid, 0);} catch {daemonExited = true; break;}
+            await new Promise(resolve => setTimeout(resolve, 50));
+          }
         }
       }
     }

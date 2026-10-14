@@ -23,7 +23,13 @@ describe('runtime parent-watch and bounded stop contract', () => {
     const receipt = path.join(root, 'parent-ended.json');
     const source = `const fs=require('fs');let text='';process.stdin.on('data',c=>text+=c);process.stdin.on('end',()=>{
       const c=JSON.parse(text);const stopped=()=>{fs.writeFileSync(${JSON.stringify(receipt)},JSON.stringify({parentStopped:true,notCompletion:true}));process.exit(0);};
-      if(c.parentPID){setInterval(()=>{try{process.kill(c.parentPID,0);}catch{stopped();}},50);}
+      if(c.parentPID){
+        // Node kill(pid,0) is not a Windows process-wait handle. Mirror Go's
+        // native wait with Wait-Process, including the already-exited race.
+        const ps=require('path').join(process.env.SystemRoot,'System32/WindowsPowerShell/v1.0/powershell.exe');
+        const monitor=require('child_process').spawn(ps,['-NoProfile','-NonInteractive','-Command','Wait-Process -Id '+c.parentPID+' -ErrorAction SilentlyContinue'],{stdio:'ignore',windowsHide:true});
+        monitor.once('exit',stopped);
+      }
       else{const watch=fs.createReadStream(null,{fd:c.parentWatchFD,autoClose:false});watch.on('end',stopped);watch.resume();}
       console.log(JSON.stringify({type:'ready',pid:process.pid,stdinEnded:true,parentPID:c.parentPID,watchFD:c.parentWatchFD}));});`;
     fs.writeFileSync(binary, source);

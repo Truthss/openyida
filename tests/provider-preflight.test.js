@@ -209,7 +209,7 @@ describe('cross-platform provider preflight', () => {
     if (process.platform !== 'win32') { return; }
     const cmd = file('中文 folder/qodercli.cmd');
     fs.writeFileSync(cmd, '@echo off\r\nexit /b 99\r\n');
-    fs.writeFileSync(cmd.replace(/\.cmd$/, '.ps1'), "Write-Output 'fixture-version'\n");
+    fs.writeFileSync(cmd.replace(/\.cmd$/, '.ps1'), "Write-Output 'fixture-version'\nexit 0\n");
     expect(await probe(cmd, ['--version'], null, { timeoutMs: 15000 })).toMatchObject({ status: 'passed', output: expect.stringContaining('fixture-version') });
   }, 30000);
 

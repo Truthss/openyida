@@ -149,7 +149,11 @@ async function main() {
     await waitFor(()=>output.includes('"type":"ready"'),'foreground native readiness',60000);
     nativePid=output.split('\n').filter(Boolean).map(line=>JSON.parse(line)).find(event=>event.type==='native-pid').pid;
     foreground.kill('SIGKILL');
-    await waitFor(()=>{try{process.kill(nativePid,0);return false;}catch{return true;}},'native runtime after parent death');
+    if(process.platform==='win32'){
+      await new Promise((resolve,reject)=>cp.execFile(path.join(process.env.SystemRoot,'System32/WindowsPowerShell/v1.0/powershell.exe'),
+        ['-NoProfile','-NonInteractive','-Command','$p=Get-Process -Id '+nativePid+" -ErrorAction SilentlyContinue;if($p -and !$p.WaitForExit(10000)){throw 'Native runtime did not exit'};exit 0"],
+        {windowsHide:true,timeout:15000},error=>error?reject(error):resolve()));
+    }else{await waitFor(()=>{try{process.kill(nativePid,0);return false;}catch{return true;}},'native runtime after parent death');}
     await waitFor(()=>!children.size,'launcher exit');
     console.log(JSON.stringify({platform:process.platform,runtimeVersion:runtime.runtimeVersion,signatureVerified:true,
       frozenBundleVerified:true,cliProtocolPassed:true,goModelRefreshPassed:true,backgroundReady:true,heartbeatPassed:true,
