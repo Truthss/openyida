@@ -2150,12 +2150,14 @@ module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en'
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
 module.exports.data_manage_style = {
-  'usage': 'openyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
+  'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': 'Parâmetros de estilo inválidos. Use IDs reais e um estilo do catálogo.',
   'data_style_base': 'Forneça o CSS existente com a cor principal, até 20 MB.',
   'data_style_marker': 'Marcadores de estilo danificados ou duplicados. Verifique o arquivo base.',
   'data_style_output': 'A saída deve ser um novo arquivo CSS, sem substituir arquivos existentes.',
   'generated': 'Estilos gerados: {0}. Não publicados; conclua o backup, a publicação e a verificação real.'
 };
-module.exports.help.cmd_data_manage_style_list = 'Listar estilos de gestão de dados e opções de layout';
-module.exports.help.cmd_data_manage_style_generate = 'Gerar CSS local para a página selecionada';
+module.exports.help.cmd_data_manage_style_list = 'Listar exemplos opcionais de estilos de gestão de dados';
+module.exports.help.cmd_data_manage_style_generate = 'Gerar CSS de um exemplo opcional (apenas local)';
+
+module.exports.help.cmd_data_manage_style_guide = 'Consultar direções de UI, tokens e CSS para gestão de dados';

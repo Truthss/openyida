@@ -2148,12 +2148,14 @@ module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en'
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
 module.exports.data_manage_style = {
-  'usage': 'openyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
+  'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': 'Tham số kiểu không hợp lệ. Dùng ID thực và kiểu trong danh mục.',
   'data_style_base': 'Cung cấp CSS ứng dụng hiện có với màu chính, tối đa 20 MB.',
   'data_style_marker': 'Dấu kiểu bị hỏng hoặc trùng lặp. Kiểm tra tệp gốc.',
   'data_style_output': 'Đầu ra phải là tệp CSS mới, không ghi đè tệp hiện có.',
   'generated': 'Đã tạo kiểu: {0}. Chưa xuất bản; hãy sao lưu, xuất bản và kiểm tra trang thực tế.'
 };
-module.exports.help.cmd_data_manage_style_list = 'Liệt kê kiểu quản lý dữ liệu và hướng bố cục tùy chỉnh';
-module.exports.help.cmd_data_manage_style_generate = 'Tạo CSS cục bộ cho trang quản lý dữ liệu';
+module.exports.help.cmd_data_manage_style_list = 'Liệt kê ví dụ kiểu giao diện quản lý dữ liệu tùy chọn';
+module.exports.help.cmd_data_manage_style_generate = 'Tạo CSS từ ví dụ tùy chọn (chỉ cục bộ)';
+
+module.exports.help.cmd_data_manage_style_guide = 'Xem hướng cải tiến UI, token và CSS cho quản lý dữ liệu';

@@ -182,3 +182,9 @@ test('column emphasis flags remain local managed generation with no mutation rec
   expect(run('data-manage-style', args)).toMatchObject({ appType: 'APP_BOUND' });
   expect(classifyManagedMutation('data-manage-style', args)).toBeNull();
 });
+
+test('data-management authoring guide is a read-only local managed action', () => {
+  expect(run('data-manage-style', ['guide', '--json'])).toMatchObject({ appType: 'APP_BOUND' });
+  expect(classifyManagedMutation('data-manage-style', ['guide', '--json'])).toBeNull();
+  expect(() => run('data-manage-style', ['guide', '--output', 'out.css'])).toThrow();
+});

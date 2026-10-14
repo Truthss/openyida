@@ -2150,12 +2150,14 @@ module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en'
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
 module.exports.data_manage_style = {
-  'usage': 'openyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
+  'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': 'معاملات النمط غير صالحة. استخدم معرّفات حقيقية ونمطًا من القائمة.',
   'data_style_base': 'قدّم CSS التطبيق الحالي مع اللون الأساسي، بحجم لا يتجاوز 20 ميغابايت.',
   'data_style_marker': 'علامات النمط تالفة أو مكررة. راجع الملف الأساسي.',
   'data_style_output': 'يجب أن يكون الإخراج ملف CSS جديدًا دون استبدال الملفات الحالية.',
   'generated': 'تم إنشاء الأنماط: {0}. لم تُنشر؛ أكمل النسخ الاحتياطي والنشر والتحقق من الصفحة الفعلية.'
 };
-module.exports.help.cmd_data_manage_style_list = 'عرض أنماط إدارة البيانات واتجاهات التخطيط المخصص';
-module.exports.help.cmd_data_manage_style_generate = 'إنشاء CSS محلي لصفحة إدارة البيانات';
+module.exports.help.cmd_data_manage_style_list = 'عرض أمثلة أنماط اختيارية لإدارة البيانات';
+module.exports.help.cmd_data_manage_style_generate = 'إنشاء CSS محلي من مثال نمط اختياري';
+
+module.exports.help.cmd_data_manage_style_guide = 'عرض اتجاهات تحسين واجهة إدارة البيانات ورموز الأنماط ومواضع CSS';

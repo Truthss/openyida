@@ -2075,12 +2075,14 @@ module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en'
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
 module.exports.data_manage_style = {
-  'usage': 'openyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
+  'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': 'スタイル引数が無効です。実際の ID と一覧のスタイルを使用してください。',
   'data_style_base': 'ブランドの基本色を含む既存のアプリ CSS（20 MB 以下）を指定してください。',
   'data_style_marker': 'スタイルマーカーが破損または重複しています。元のファイルを確認してください。',
   'data_style_output': '出力先は新しい CSS ファイルにしてください。既存ファイルは上書きできません。',
   'generated': 'スタイルを生成しました：{0}。未公開です。バックアップ、公開、実画面の検証を行ってください。'
 };
-module.exports.help.cmd_data_manage_style_list = 'ネイティブのデータ管理スタイルとカスタムレイアウト案を表示';
-module.exports.help.cmd_data_manage_style_generate = '対象ページの CSS をローカル生成';
+module.exports.help.cmd_data_manage_style_list = '任意のデータ管理スタイル例を一覧表示';
+module.exports.help.cmd_data_manage_style_generate = '任意のスタイル例から CSS をローカル生成';
+
+module.exports.help.cmd_data_manage_style_guide = 'データ管理 UI の調整方針、トークンと CSS の適用箇所を確認';

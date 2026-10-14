@@ -2148,12 +2148,14 @@ module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en'
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
 module.exports.data_manage_style = {
-  'usage': 'openyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
+  'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': 'शैली के पैरामीटर अमान्य हैं। वास्तविक ID और सूची की शैली उपयोग करें।',
   'data_style_base': 'मुख्य ब्रांड रंग सहित मौजूदा ऐप CSS दें, अधिकतम 20 MB।',
   'data_style_marker': 'शैली चिह्न क्षतिग्रस्त या दोहराए गए हैं। मूल फ़ाइल जाँचें।',
   'data_style_output': 'आउटपुट नई CSS फ़ाइल होना चाहिए; मौजूदा फ़ाइलें नहीं बदली जाएँगी।',
   'generated': 'शैली बनी: {0}। प्रकाशित नहीं हुई; बैकअप, प्रकाशन और वास्तविक पृष्ठ जाँच पूरी करें।'
 };
-module.exports.help.cmd_data_manage_style_list = 'डेटा प्रबंधन शैलियाँ और कस्टम लेआउट दिशाएँ दिखाएँ';
-module.exports.help.cmd_data_manage_style_generate = 'चुने डेटा प्रबंधन पृष्ठ के लिए स्थानीय CSS बनाएँ';
+module.exports.help.cmd_data_manage_style_list = 'डेटा प्रबंधन के वैकल्पिक शैली उदाहरण सूचीबद्ध करें';
+module.exports.help.cmd_data_manage_style_generate = 'वैकल्पिक शैली उदाहरण से स्थानीय CSS बनाएँ';
+
+module.exports.help.cmd_data_manage_style_guide = 'डेटा प्रबंधन UI दिशाएँ, टोकन और CSS मार्गदर्शन देखें';

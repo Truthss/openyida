@@ -2100,12 +2100,14 @@ module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en'
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
 module.exports.data_manage_style = {
-  'usage': 'openyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
+  'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': '資料管理樣式參數無效，請使用真實 ID 和目錄中的樣式。',
   'data_style_base': '請提供含品牌主色且不超過 20 MB 的現有應用 CSS。',
   'data_style_marker': '樣式標記損壞或重複，請核對基線檔案。',
   'data_style_output': '輸出須為新 CSS 檔案，不可覆蓋輸入或已有檔案。',
   'generated': '樣式已產生：{0}。尚未發佈，請完成備份、發佈及實際頁面驗證。'
 };
-module.exports.help.cmd_data_manage_style_list = '列出原生資料管理樣式及自訂版面方向';
-module.exports.help.cmd_data_manage_style_generate = '產生指定資料管理頁的 CSS（僅本機）';
+module.exports.help.cmd_data_manage_style_list = '列出可選的資料管理樣式配方參考';
+module.exports.help.cmd_data_manage_style_generate = '按可選配方產生資料管理 CSS（僅本機）';
+
+module.exports.help.cmd_data_manage_style_guide = '查詢資料管理 UI 改造方向、token 與 CSS 定位方法';

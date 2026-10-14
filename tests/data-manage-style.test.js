@@ -104,9 +104,9 @@ test('CLI generates a new file offline, never overwrites base/output, returns tr
   } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });
 
-test('manifest, managed scope and independent skill agree on both command IDs', () => {
+test('manifest, managed scope and independent skill expose authoring plus optional recipe commands', () => {
   const commands = flattenCommandManifest().filter(c => c.id.startsWith('data-manage-style.'));
-  expect(commands).toHaveLength(2);
+  expect(commands.map(c => c.id)).toEqual(['data-manage-style.guide', 'data-manage-style.list', 'data-manage-style.generate']);
   expect(commands.every(c => c.requiresLogin === false)).toBe(true);
   for (const command of commands) {
     expect(command.managedRun.scope).toBe('local');
@@ -118,6 +118,26 @@ test('manifest, managed scope and independent skill agree on both command IDs', 
   expect(index.positive_signals).toContain('针对当前数据管理页换一种风格');
   const skill = fs.readFileSync(path.join(__dirname, '..', 'yida-skills', index.path), 'utf8');
   expect(skill).toContain('--focus actions');
+});
+
+test('guide works offline without a style ID or creating files and advertises scoped authoring', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'data-ui-guide-'));
+  try {
+    const run = spawnSync(process.execPath, [path.join(__dirname, '../bin/yida.js'), 'data-manage-style', 'guide', '--json'], {
+      cwd: dir, encoding: 'utf8', env: { ...process.env, OPENYIDA_AUTO_UPDATE: '0' },
+    });
+    expect(run.status).toBe(0);
+    const guide = JSON.parse(run.stdout);
+    expect(guide).toMatchObject({ mode: 'composable-css', presetRequired: false, runtimeVerified: false, published: false });
+    expect(guide.tokenGroups.header).toContain('--table-header-bg');
+    expect(guide.cssTargets.cell).toContain('[data-field-id]');
+    expect(guide.preserve).toContain('virtual-grid-geometry');
+    expect(guide).not.toHaveProperty('styles');
+    expect(fs.existsSync(path.join(__dirname, '..', guide.reference))).toBe(true);
+    expect(fs.readdirSync(dir)).toEqual([]);
+    expect(resolveManagedPolicy('data-manage-style', ['guide', '--json']).policy.scope).toBe('local');
+    expect(() => parseArgs(['guide', '--style', 'rose'])).toThrow();
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
 });
 
 

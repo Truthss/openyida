@@ -2149,12 +2149,14 @@ module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en'
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
 module.exports.data_manage_style = {
-  'usage': 'openyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
+  'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': '잘못된 스타일 인수입니다. 실제 ID와 목록의 스타일을 사용하세요.',
   'data_style_base': '브랜드 기본색을 포함하는 기존 앱 CSS(20 MB 이하)를 지정하세요.',
   'data_style_marker': '스타일 마커가 손상되었거나 중복되었습니다. 기준 파일을 확인하세요.',
   'data_style_output': '새 CSS 파일을 출력 경로로 지정하세요. 기존 파일은 덮어쓸 수 없습니다.',
   'generated': '스타일 생성 완료: {0}. 아직 게시되지 않았습니다. 백업, 게시 및 실제 화면 검증을 완료하세요.'
 };
-module.exports.help.cmd_data_manage_style_list = '기본 데이터 관리 스타일과 사용자 지정 레이아웃 방향 나열';
-module.exports.help.cmd_data_manage_style_generate = '대상 데이터 관리 페이지의 CSS를 로컬에서 생성';
+module.exports.help.cmd_data_manage_style_list = '선택 가능한 데이터 관리 스타일 예시 표시';
+module.exports.help.cmd_data_manage_style_generate = '선택한 스타일 예시로 CSS 로컬 생성';
+
+module.exports.help.cmd_data_manage_style_guide = '데이터 관리 UI 개선 방향, 토큰 및 CSS 적용 지침 조회';

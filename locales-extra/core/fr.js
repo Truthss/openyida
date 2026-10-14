@@ -2150,12 +2150,14 @@ module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en'
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
 module.exports.data_manage_style = {
-  'usage': 'openyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
+  'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': 'Paramètres de style invalides. Utilisez des identifiants réels et un style du catalogue.',
   'data_style_base': 'Fournissez le CSS existant avec la couleur principale, de 20 Mo maximum.',
   'data_style_marker': 'Marqueurs de style endommagés ou dupliqués. Vérifiez le fichier source.',
   'data_style_output': 'La sortie doit être un nouveau fichier CSS sans écraser un fichier existant.',
   'generated': 'Styles générés : {0}. Non publiés ; sauvegardez, publiez et vérifiez la page réelle.'
 };
-module.exports.help.cmd_data_manage_style_list = 'Lister les styles de gestion des données et les pistes de mise en page';
-module.exports.help.cmd_data_manage_style_generate = 'Générer le CSS ciblé localement';
+module.exports.help.cmd_data_manage_style_list = 'Lister les exemples de styles facultatifs de gestion des données';
+module.exports.help.cmd_data_manage_style_generate = 'Générer du CSS à partir d’un exemple facultatif (local uniquement)';
+
+module.exports.help.cmd_data_manage_style_guide = 'Consulter les axes UI, tokens et cibles CSS de gestion des données';

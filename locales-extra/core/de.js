@@ -2148,12 +2148,14 @@ module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en'
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
 module.exports.data_manage_style = {
-  'usage': 'openyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
+  'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': 'Ungültige Stilparameter. Verwenden Sie echte IDs und einen Katalogstil.',
   'data_style_base': 'Bestehendes App-CSS mit primärer Markenfarbe angeben, höchstens 20 MB.',
   'data_style_marker': 'Stilmarkierungen sind beschädigt oder doppelt. Ausgangsdatei prüfen.',
   'data_style_output': 'Die Ausgabe muss eine neue CSS-Datei sein. Bestehende Dateien werden nicht überschrieben.',
   'generated': 'Stile erstellt: {0}. Nicht veröffentlicht; Sicherung, Veröffentlichung und Laufzeitprüfung durchführen.'
 };
-module.exports.help.cmd_data_manage_style_list = 'Datenverwaltungsstile und eigene Layoutideen auflisten';
-module.exports.help.cmd_data_manage_style_generate = 'CSS für die gewählte Datenverwaltungsseite lokal erstellen';
+module.exports.help.cmd_data_manage_style_list = 'Optionale Stilbeispiele für die Datenverwaltung auflisten';
+module.exports.help.cmd_data_manage_style_generate = 'CSS aus einem optionalen Stilbeispiel lokal erzeugen';
+
+module.exports.help.cmd_data_manage_style_guide = 'UI-Anpassungen, Tokens und CSS-Ziele für die Datenverwaltung anzeigen';

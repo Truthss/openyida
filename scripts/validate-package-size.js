@@ -29,13 +29,16 @@ const path = require('path');
 // 8,602,259 unpacked bytes and 647 files. Retain modest cross-Node gzip headroom.
 // Data-management UI measures 2,296,797 tarball bytes on Node 20;
 // retain under 16 KiB headroom across supported compression runtimes.
-const MAX_TARBALL_BYTES = 2256 * 1024;
+// Composable UI authoring guide: 2,314,474 compressed bytes on Node 20.
+const MAX_TARBALL_BYTES = 2272 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.
 // Column emphasis adds runtime options and one skill reference: measured
 // 8,704,842 bytes / 655 entries on Node 20; next 16 KiB boundary.
-const MAX_UNPACKED_BYTES = 8512 * 1024;
+// Token/CSS reference and guide: 8,722,920 unpacked bytes / 656 entries;
+// retain less than 16 KiB headroom, without changing per-file or entry limits.
+const MAX_UNPACKED_BYTES = 8528 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -52,6 +55,7 @@ const REQUIRED_PACKAGE_FILES = [
   'lib/style/data-manage-presets.json',
   'yida-skills/skills/yida-data-manage-ui/SKILL.md',
   'yida-skills/skills/yida-data-manage-ui/references/style-decisions.md',
+  'yida-skills/skills/yida-data-manage-ui/references/token-and-css.md',
   'yida-skills/skills/yida-data-manage-ui/references/custom-layouts.md',
   'yida-skills/skills/yida-data-manage-ui/references/column-emphasis.md',
   'lib/app/app-theme.js',
