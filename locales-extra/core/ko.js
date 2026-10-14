@@ -2149,7 +2149,7 @@ module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en'
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
 module.exports.data_manage_style = {
-  'usage': 'openyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--follow-shell] [--json]',
+  'usage': 'openyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': '잘못된 스타일 인수입니다. 실제 ID와 목록의 스타일을 사용하세요.',
   'data_style_base': '브랜드 기본색을 포함하는 기존 앱 CSS(20 MB 이하)를 지정하세요.',
   'data_style_marker': '스타일 마커가 손상되었거나 중복되었습니다. 기준 파일을 확인하세요.',

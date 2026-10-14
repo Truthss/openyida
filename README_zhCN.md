@@ -322,7 +322,7 @@ openyida integration enable APP_XXX FORM_XXX PROC_CODE
 | `openyida design-plan patch <build-plan.json> --set <path=value> [--set <path=value> ...] [--materialize] [--output-dir <dir>] [--json]` | 按字段修改方案，按需同步文档和主题 |
 | `openyida update-app <appType> [--name "..."] [--desc "..."] [--icon <name>] [--icon-color <color>] [--colour <key>] [--theme-color <color>] [--theme-file <css>] [--confirm-legacy-app-style] [--disable-custom-theme] [--nav-theme light\|dark\|white\|gray] [--logo-source appIcon\|customImage] [--layout side\|top\|l_shape] [--hide-app-nav\|--show-app-nav]` | 更新应用信息 |
 | `openyida data-manage-style list [--json]` | 列出原生数据管理样式及自定义布局方向 |
-| `openyida data-manage-style generate --app <appType> --form <formUuid> --style <id> --base-css <theme.css> --output <new.css> [--focus balanced\|actions] [--field-id <actualId>]... [--follow-shell] [--json]` | 生成指定数据管理页的样式 CSS（仅本地） |
+| `openyida data-manage-style generate --app <appType> --form <formUuid> --style <id> --base-css <theme.css> --output <new.css> [--focus balanced\|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]` | 生成指定数据管理页的样式 CSS（仅本地） |
 | `openyida app-theme snapshot <appType> --output-dir <new-dir> [--json]` | 保存应用主题配置与 CSS 快照（只读） |
 | `openyida app-theme restore <appType> --snapshot <before.json> --expected-current <after.json> [--check \| --confirm --output-dir <new-dir>] [--json]` | 检查或恢复应用主题快照（仅支持可精确恢复的配置） |
 | `openyida upgrade-app-theme <appType> --explicit-request [--confirm \| --prepare --output-dir <dir>] [--json]` | AI 老应用升级新版主题（明确要求并经 ask_human 确认） |

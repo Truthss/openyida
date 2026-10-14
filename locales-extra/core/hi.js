@@ -2148,7 +2148,7 @@ module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en'
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
 module.exports.data_manage_style = {
-  'usage': 'openyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--follow-shell] [--json]',
+  'usage': 'openyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': 'शैली के पैरामीटर अमान्य हैं। वास्तविक ID और सूची की शैली उपयोग करें।',
   'data_style_base': 'मुख्य ब्रांड रंग सहित मौजूदा ऐप CSS दें, अधिकतम 20 MB।',
   'data_style_marker': 'शैली चिह्न क्षतिग्रस्त या दोहराए गए हैं। मूल फ़ाइल जाँचें।',

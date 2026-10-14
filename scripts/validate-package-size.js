@@ -33,7 +33,9 @@ const MAX_TARBALL_BYTES = 2256 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.
-const MAX_UNPACKED_BYTES = 8496 * 1024;
+// Column emphasis adds runtime options and one skill reference: measured
+// 8,704,842 bytes / 655 entries on Node 20; next 16 KiB boundary.
+const MAX_UNPACKED_BYTES = 8512 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -51,6 +53,7 @@ const REQUIRED_PACKAGE_FILES = [
   'yida-skills/skills/yida-data-manage-ui/SKILL.md',
   'yida-skills/skills/yida-data-manage-ui/references/style-decisions.md',
   'yida-skills/skills/yida-data-manage-ui/references/custom-layouts.md',
+  'yida-skills/skills/yida-data-manage-ui/references/column-emphasis.md',
   'lib/app/app-theme.js',
   'lib/app/theme-source.js',
   'lib/core/theme-widget.js',

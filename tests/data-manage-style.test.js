@@ -119,3 +119,63 @@ test('manifest, managed scope and independent skill agree on both command IDs', 
   const skill = fs.readFileSync(path.join(__dirname, '..', 'yida-skills', index.path), 'utf8');
   expect(skill).toContain('--focus actions');
 });
+
+
+test.each(presets)('column emphasis follows $id and preserves geometry without a side line', preset => {
+  const css = buildStylesheet(base, { ...config, style: preset.id, fieldIds: [],
+    emphasizeFields: ['textField_name', 'numberField_amount'], tagFields: ['selectField_status'] });
+  expect(css.startsWith(base)).toBe(true);
+  expect(css).toContain('[data-column-key="textField_name"]');
+  expect(css).toContain('[data-column-key="numberField_amount"]');
+  expect(css).toContain('[data-field-id="selectField_status"] [data-componentname="SelectField"]');
+  const normal = css.match(/[^{}]* \.DataCellWrapper\[data-field-id="textField_name"\]\[role="gridcell"\] \{([^}]+)\}/)[1];
+  expect(normal).toContain('font-weight:600 !important');
+  expect(normal).not.toMatch(/box-shadow|border-left|height:|width:|padding:|transform:|top:/);
+  expect(css).toContain('[data-in-selected-area="true"]');
+  const emphasis = css.slice(css.indexOf('font-weight:700 !important'));
+  expect(emphasis).not.toContain('inset 3px');
+});
+
+test('repeatable column args normalize nav-free evidence and round-trip regeneration', () => {
+  const p = parseArgs(['generate', '--app', config.app, '--form', config.form, '--style', 'rose',
+    '--base-css', 'base.css', '--output', 'new.css', '--emphasize-field', 'textField_name',
+    '--emphasize-field', 'numberField_amount', '--tag-field', 'selectField_status']);
+  expect(p.emphasizeFields).toEqual(['textField_name', 'numberField_amount']);
+  expect(p.fieldIds).toEqual(['textField_name', 'numberField_amount', 'selectField_status']);
+  const emphasized = buildStylesheet(base, p);
+  expect(buildStylesheet(emphasized, p)).toBe(emphasized);
+  const plain = { ...config, style: 'rose', fieldIds: p.fieldIds };
+  expect(buildStylesheet(emphasized, plain)).toBe(buildStylesheet(base, plain));
+  const withOther = buildStylesheet(emphasized, { ...config, form: 'FORM-OTHER' });
+  const stripped = buildStylesheet(withOther, plain);
+  const marker = '/* openyida-data-manage:APP_TEST:FORM-OTHER:start */';
+  expect(stripped.slice(stripped.indexOf(marker))).toBe(withOther.slice(withOther.indexOf(marker)));
+});
+
+test.each([
+  { emphasizeFields: ['x"]{}body{'] }, { tagFields: ['selectField_x"]{}body{'] },
+  { emphasizeFields: ['textField_x', 'textField_x'] }, { tagFields: ['textField_name'] },
+  { emphasizeFields: ['selectField_status'], tagFields: ['selectField_status'] },
+])('rejects unsafe or conflicting column configuration %j', columns => {
+  expect(() => buildStylesheet(base, { ...config, ...columns })).toThrow();
+});
+
+test('CLI publishes column metadata offline and manifest allows both repeatable flags', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'column-style-'));
+  try {
+    const input = path.join(dir, 'base.css'), output = path.join(dir, 'column.css');
+    fs.writeFileSync(input, base);
+    const result = spawnSync(process.execPath, [path.join(__dirname, '../bin/yida.js'), 'data-manage-style', 'generate',
+      '--app', config.app, '--form', config.form, '--style', 'rose', '--base-css', input, '--output', output,
+      '--emphasize-field', 'textField_name', '--tag-field', 'selectField_status', '--json'],
+    { encoding: 'utf8', env: { ...process.env, OPENYIDA_AUTO_UPDATE: '0' } });
+    expect(result.status).toBe(0);
+    expect(JSON.parse(result.stdout)).toMatchObject({ emphasizeFields: ['textField_name'], tagFields: ['selectField_status'],
+      navFreeSupported: true, published: false, runtimeVerified: false });
+    expect(fs.readFileSync(input, 'utf8')).toBe(base);
+    const command = flattenCommandManifest().find(c => c.id === 'data-manage-style.generate');
+    for (const flag of ['--emphasize-field', '--tag-field']) {
+      expect(command.args.find(arg => arg.builder_options.includes(flag)).repeatable).toBe(true);
+    }
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); }
+});

@@ -2150,7 +2150,7 @@ module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en'
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
 module.exports.data_manage_style = {
-  'usage': 'openyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--follow-shell] [--json]',
+  'usage': 'openyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': 'معاملات النمط غير صالحة. استخدم معرّفات حقيقية ونمطًا من القائمة.',
   'data_style_base': 'قدّم CSS التطبيق الحالي مع اللون الأساسي، بحجم لا يتجاوز 20 ميغابايت.',
   'data_style_marker': 'علامات النمط تالفة أو مكررة. راجع الملف الأساسي.',

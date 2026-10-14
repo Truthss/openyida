@@ -2075,7 +2075,7 @@ module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en'
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
 module.exports.data_manage_style = {
-  'usage': 'openyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--follow-shell] [--json]',
+  'usage': 'openyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': 'スタイル引数が無効です。実際の ID と一覧のスタイルを使用してください。',
   'data_style_base': 'ブランドの基本色を含む既存のアプリ CSS（20 MB 以下）を指定してください。',
   'data_style_marker': 'スタイルマーカーが破損または重複しています。元のファイルを確認してください。',

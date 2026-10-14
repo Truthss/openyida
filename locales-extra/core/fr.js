@@ -2150,7 +2150,7 @@ module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en'
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
 module.exports.data_manage_style = {
-  'usage': 'openyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--follow-shell] [--json]',
+  'usage': 'openyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': 'Paramètres de style invalides. Utilisez des identifiants réels et un style du catalogue.',
   'data_style_base': 'Fournissez le CSS existant avec la couleur principale, de 20 Mo maximum.',
   'data_style_marker': 'Marqueurs de style endommagés ou dupliqués. Vérifiez le fichier source.',

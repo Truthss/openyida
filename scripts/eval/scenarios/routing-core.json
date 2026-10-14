@@ -190,5 +190,11 @@
     "prompt": "用自定义页面实现简单的数据管理，希望卡片和看板差异大一些。",
     "expectedSkill": "yida-data-manage-ui",
     "note": "明确自定义数据管理布局"
+  },
+  {
+    "id": "data-manage-ui-column-emphasis",
+    "prompt": "当前数据管理页突出客户名称列，用浅底色和加粗文字，不要左侧竖线；合作状态列改成标签。",
+    "expectedSkill": "yida-data-manage-ui",
+    "note": "列级外观调整，先读取真实字段，不修改业务数据或推断条件颜色"
   }
 ]

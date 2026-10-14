@@ -173,7 +173,7 @@ description: >
 | 产品化经营分析看板/驾驶舱交付 | `yida-dashboard`，按指标分析任务触发 |
 | 待办、操作队列、业务工作台或办事门户页面 | `yida-canvas-custom-page`；接真实数据时加载 `yida-canvas-data-binding`，不因页面名称或辅助统计转为经营看板 |
 | 批量录入、表格填写、多行编辑 | 默认 `yida-canvas-table-form`；已检测到平台 JSX 组件页面、native 页面或存量源码使用 `this.utils.yida.saveFormData` 时用 `yida-table-form` |
-| 当前数据管理页换风格、只留横线、突出新增/筛选/行操作、数据管理 UI 异常、自定义简单数据管理 | `yida-data-manage-ui`（优先于通用美化）；保留承载类型和业务，按页生成样式、备份发布并实测 |
+| 当前数据管理页换风格、只留横线、突出新增/筛选/行操作、列级强调、状态列标签、数据管理 UI 异常、自定义简单数据管理 | `yida-data-manage-ui`（优先于通用美化）；保留承载类型和业务，按页生成样式、备份发布并实测 |
 | 页面视觉方向、页面美化、去 AI 味、优化应用 UI、不好看、太乱、美化后不满意或恢复 | `yida-design`；已有资源优先走 `sub_skill/ui-improve/SKILL.md`，先展示视觉方案，经 `ask_human` 确认并备份后才交接实施，只改 UI；不满意恢复本轮前状态。新页面设计沿用原设计流程 |
 | 应用级主题、品牌色、全局换肤 | `yida-design`；已有应用按 ui-improve 确认应用级影响范围和恢复方式后执行 |
 | 图片需求、搜图、生图 | `yida-image-assets`；完整应用按 `design.md.assetStrategy` 加载 |

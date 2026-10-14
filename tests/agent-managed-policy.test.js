@@ -173,3 +173,12 @@ test('nested unknown actions and duplicate app options remain blocked', () => {
   expect(classifyManagedMutation('app-theme', ['restore', 'APP_BOUND', '--check'])).toBeNull();
   expect(classifyManagedMutation('create-form', ['batch', 'APP_BOUND', 'plan.json', '--check'])).toBeNull();
 });
+
+
+test('column emphasis flags remain local managed generation with no mutation receipt', () => {
+  const args = ['generate', '--app', 'APP_BOUND', '--form', 'FORM-DEMO', '--style', 'rose',
+    '--base-css', 'before.css', '--output', 'after.css', '--emphasize-field', 'textField_name',
+    '--emphasize-field', 'numberField_amount', '--tag-field', 'selectField_status'];
+  expect(run('data-manage-style', args)).toMatchObject({ appType: 'APP_BOUND' });
+  expect(classifyManagedMutation('data-manage-style', args)).toBeNull();
+});
