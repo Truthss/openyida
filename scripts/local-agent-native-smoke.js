@@ -148,13 +148,33 @@ async function main() {
     let output=''; foreground.stdout.on('data',chunk=>output+=chunk); foreground.stderr.resume();
     await waitFor(()=>output.includes('"type":"ready"'),'foreground native readiness',60000);
     nativePid=output.split('\n').filter(Boolean).map(line=>JSON.parse(line)).find(event=>event.type==='native-pid').pid;
-    foreground.kill('SIGKILL');
     if(process.platform==='win32'){
-      await new Promise((resolve,reject)=>cp.execFile(path.join(process.env.SystemRoot,'System32/WindowsPowerShell/v1.0/powershell.exe'),
-        ['-NoProfile','-NonInteractive','-Command','$p=Get-Process -Id '+nativePid+" -ErrorAction SilentlyContinue;if($p -and !$p.WaitForExit(10000)){throw 'Native runtime did not exit'};exit 0"],
-        {windowsHide:true,timeout:15000},error=>error?reject(error):resolve()));
-    }else{await waitFor(()=>{try{process.kill(nativePid,0);return false;}catch{return true;}},'native runtime after parent death');}
+      // Open and retain the actual process handle before killing its parent.
+      // Looking up a PID afterwards can attach to a reused Windows PID.
+      const watchScript = `$ErrorActionPreference='Stop';$p=Get-Process -Id ${nativePid};$null=$p.Handle;`+
+        '[Console]::Out.WriteLine(\'watch-ready\');if(!$p.WaitForExit(15000)){throw \'Native runtime did not exit\'};exit 0';
+      const watcher=trackedSpawn(path.join(process.env.SystemRoot,'System32/WindowsPowerShell/v1.0/powershell.exe'),
+        ['-NoProfile','-NonInteractive','-Command',watchScript],{windowsHide:true,stdio:['ignore','pipe','pipe']});
+      let watching='',watchError='';
+      watcher.stdout.on('data',chunk=>watching+=chunk);watcher.stderr.on('data',chunk=>watchError+=chunk);
+      let watchExit;
+      watcher.once('close',code=>{watchExit=code;});
+      await waitFor(()=>watching.includes('watch-ready') || watchExit!==undefined,'native handle readiness',45000);
+      assert.equal(watchExit,undefined,watchError || 'native watcher exited before readiness');
+      foreground.kill('SIGKILL');
+      // Go's drain budget is 12s; match the launcher's 15s stop grace.
+      await waitFor(()=>watchExit!==undefined,'native parent-death exit',20000);
+      assert.equal(watchExit,0,watchError || 'native runtime did not exit');
+    }else{
+      foreground.kill('SIGKILL');
+      await waitFor(()=>{try{process.kill(nativePid,0);return false;}catch{return true;}},'native runtime after parent death');
+    }
     await waitFor(()=>!children.size,'launcher exit');
+    const statusOutput=[];
+    await launchRuntime(frozen.runtime,{...frozen.config,command:'status'},
+      {stdout:{write:line=>statusOutput.push(line)},spawn:trackedSpawn});
+    const stopped=JSON.parse(statusOutput.join('').trim());
+    assert.equal(stopped.running,false);assert.equal(stopped.executionStopped,true);assert.equal(stopped.reconciliationRequired,false);
     console.log(JSON.stringify({platform:process.platform,runtimeVersion:runtime.runtimeVersion,signatureVerified:true,
       frozenBundleVerified:true,cliProtocolPassed:true,goModelRefreshPassed:true,backgroundReady:true,heartbeatPassed:true,
       authenticatedStopPassed:true,nativeParentDeathPassed:true,fixtureController:true,paidModelCalled:false}));
