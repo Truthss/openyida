@@ -52,18 +52,29 @@ Fast（直接搭建）与 Plan（先确认方案）使用同一份入口规划�
 
 | 要改变什么 | 对应设置 | 同时有前台和管理端时怎么做 |
 | --- | --- | --- |
-| 整个应用是否显示平台导航 | `hideAppNav` | 保留 `n`，让管理端继续使用平台导航 |
-| 某一页是否显示平台导航 | `isRenderNav` | 独立前台页设为 `false`，其他页面按需配置 |
+| 整个应用是否显示平台导航 | `hideAppNav` | 后台沿用平台导航时保留 `n`；只有整套应用自绘导航才隐藏 |
+| 某一页是否显示平台导航 | 写入 `isRenderNav`，回读 `renderNav` | 独立前台页设为 `false`，其他页面按需配置 |
 | 某个菜单项是否显示 | `hidden/mobileHidden` | 分别设置电脑端、移动端的显示范围 |
 | 某个人能访问和操作什么 | 页面、数据、视图和操作权限 | 按业务角色配置，并重新查询确认 |
 
 隐藏菜单不会撤销权限；显示菜单也不会授予权限。页面隐藏导航后，仍需满足原有登录和访问要求。公开访问或组织内分享要单独配置。
 
+### 区分 URL 参数、写入字段与回读字段
+
+- **URL 参数 `isRenderNav=false`**：用于原生提交页、详情页等本次打开的导航显示，可与持久配置并存，不代表页面配置已保存。混合前后台共用表单时，嵌入参数不应改成永久隐藏该表单导航。
+- **页面配置写入字段 `isRenderNav`**：`update-form-config` 仍按接口约定提交这个字段，不能改名为 `renderNav`。
+- **页面配置回读字段 `renderNav`**：创建、发布、查询、入口解析和 `keep` 都优先读取它；仅缺少该字段时兼容读取返回对象中的 `isRenderNav`。这不是从 URL 读取参数。布尔值及字符串 `true/false` 均可；缺失或无效值保持未知。
+
+三者不冲突。独立自定义前台采用持久化配置及干净的 `standaloneUrl`，原生提交/详情仍保留所需 URL 参数。写入成功、配置回读通过、实际访问验证是三种证据，不能相互替代。
+
+页面内跳转链接与应用访问地址登记也有不同边界：`app-entry` 只接受平台支持的入口路径和参数，不表示任意页面 URL 都能登记。完整地址被拒绝时，不删除必要参数冒充等价入口；保留原地址并说明登记未完成。
+
 ### 使用正确的入口链接
 
 以下路径均接在当前应用地址后：
 
-- **独立前台**：使用 `/custom/{formUuid}`。先查询页面配置，确认 `isRenderNav=false`，再打开链接检查效果。
+- **独立前台**：先查询页面配置，确认 `renderNav=false`（兼容规则见上），使用 CLI 返回的 `standaloneUrl`，即 `/custom/{formUuid}`，再打开链接检查效果。
+- **明确保留平台导航的前台**：沿用用户决定和 `platform-shell`，使用已验证的 `workbenchUrl` 登记前台地址，不强制隐藏导航或改成独立页。前后台身份由用途决定，不仅由 URL 路径判断。
 - **业务管理端**：使用 `/workbench`，或指定任务的 `/workbench/{formUuid}?viewUuid=...`。使用应用根入口时，要确认它确实打开了预期任务。
 - **管理端的“查看前台”**：如有需要，使用独立前台链接。不要把带有另一套导航的完整页面嵌进管理端内容区。
 - **前台嵌入共用表单**：只设置本次打开链接的嵌入参数，不永久隐藏该表单在管理端的导航。
@@ -138,7 +149,7 @@ Fast（直接搭建）与 Plan（先确认方案）使用同一份入口规划�
 
 ## 规划字段速查（Fast / Plan）
 
-前台用途已经确定时，自定义承载页面默认采用独立入口。`role=service` 与页面 `sceneKey` 对应后，Plan 自动推导遗漏的 `entryMode=standalone`，Fast 执行同样规则；不靠页面名称猜测，不新增 CLI 参数。显式的导航要求优先，冲突需核对。取得页面 ID 后持久化隐藏页面导航并回读，发布后交付 `publish` 或 `get-form-config` 返回的 `standaloneUrl`，不追加导航 URL 参数。前台入口属于交付范围时不能因字段漏写或只拿到工作台地址而静默省略；未确认成功须明确列为未完成。
+前台用途已经确定时，自定义承载页面默认采用独立入口。`role=service` 与页面 `sceneKey` 对应后，Plan 自动推导遗漏的 `entryMode=standalone`，Fast 执行同样规则；不靠页面名称猜测，不新增 CLI 参数。用户明确保留平台导航时沿用 `platform-shell` 和已验证的 `workbenchUrl`。独立前台取得页面 ID 后持久化隐藏页面导航并回读，发布后交付 `publish` 或 `get-form-config` 返回的 `standaloneUrl`，不追加导航 URL 参数。前台入口属于交付范围时不能因字段漏写或只拿到工作台地址而静默省略；未确认成功须明确列为未完成。
 
 需求文件中的 `entryRecommendation` 在 Plan 初始化后保存在 `execution.entryRecommendation`；Fast 在 PRD 中使用同一结构。旧计划没有此字段时仍可使用；首次完整生成时应明确入口规划。保留已有 `source/reason/taskRefs` 等需求依据。
 
@@ -147,7 +158,7 @@ Fast（直接搭建）与 Plan（先确认方案）使用同一份入口规划�
 | `mode` | `unified`：不分前后台；`service-management`：分前后台；`frontend-only`：只有访问前台；`backend-only`：只有访问后台。实施前必须选定，不能为 `undetermined`；旧 unified 计划保留原字段、值和角色，不自动改分类 |
 | `entries[]` | backend-only 的每个入口 role 必须为 management；新建 unified 入口通常使用 workspace。每个入口填写 `key/name/role/menu/defaultMenuKey`；访客入口或包含 `local` 菜单的任意入口还需 `sceneKey` |
 | `role` | `service`：前台使用者，如客户或报修员工，不表示匿名访问；`management`：业务处理人员；`workspace`：不分前后台时的使用者。实际数据和操作按权限配置 |
-| `sceneKey` | 关联唯一承载页面的顶层 `sceneKey`；service 入口必须关联 `entryMode=standalone`；management/workspace 含 local 菜单时也必须填写 |
+| `sceneKey` | 关联唯一承载页面的顶层 `sceneKey`；service 入口默认 `entryMode=standalone`，明确保留平台导航时可为 `platform-shell`；management/workspace 含 local 菜单时也必须填写 |
 | `menu[]` | 数组及 children 的先后就是本入口展示顺序；分组用 `{key,label,children}`；可点击菜单用 `{key,label,resource,targetType,viewUuid?,viewKey?,access}` |
 | `resource` | 规划中的资源名称；实施时创建或查询资源，换成真实 ID |
 | `targetType` | `local`：本页业务视图，入口 sceneKey 关联承载页面、resource 等于页面 name、viewKey 非空；`submission`：原生填写页；`page`：原生管理工作区；`custom`：独立自定义页面 |

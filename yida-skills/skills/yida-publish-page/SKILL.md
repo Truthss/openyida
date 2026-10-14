@@ -77,7 +77,7 @@ description: 将已编写的宜搭自定义页面源码发布或更新到指定�
 - 本轮业务用途已确定为前台自定义页面时，默认持久化隐藏该页的平台导航；缺少 `entryMode` 时按用途补齐独立入口，不要求用户提供新参数。发布前查询 `get-form-config`，未隐藏时执行 `update-form-config <appType> <formUuid> false "<页面标题>"` 并回读。用户明确保留导航或仅修改后台内容页时保留原配置；不要全局隐藏应用导航。
 - `publish` 默认读取页面导航配置。确认 `renderNav=false` 后，`url` 和 `standaloneUrl` 返回干净的 `/custom/<formUuid>`，另保留 `workbenchUrl`；无须新 CLI 开关，不追加 `isRenderNav=false` 等导航 URL 参数。
 - 缺失、无效或失败的回读不等于隐藏成功：`standaloneUrl=null` 时检查 `navigationVerification` / `navigationWarning`，修复配置后用 `get-form-config --json` 取得最新地址，不为补链接重复发布源码。确认页面类型为 display 才返回自定义页地址。
-- 最终回复必须包含前台单页面链接；若无法确认，明确说明前台入口未完成，不能仅给工作台或开发后台。现有已验证的公开/分享地址保留原样，不因隐藏导航而开启公开访问。
+- 本轮包含前台时，最终回复必须包含对应的前台页面链接；显式保留平台导航的前台使用已验证的 `workbenchUrl`，独立前台使用 `standaloneUrl`；若无法确认，明确说明前台入口未完成，不能仅给工作台或开发后台。现有已验证的公开/分享地址保留原样，不因隐藏导航而开启公开访问。完整应用继续按[入口登记](../yida-app/workflow/step-9-output-finish.md#登记应用访问入口)保存并回读两端地址；单页更新不扩大登记范围。
 
 ## Canvas 主题处理
 

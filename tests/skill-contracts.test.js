@@ -848,7 +848,9 @@ describe('OpenYida skill contracts', () => {
     expect(manifest).toContain('include one concise verified delivery manifest in that description');
     expect(manifest).toContain('every resource count, seed-record count, and completed/verified claim');
     expect(manifest).toContain('never one artifact or link card per form, process, report');
-    expect(manifest).toContain('when PRD entryMode=standalone');
+    expect(manifest).toContain('infer standalone when entryMode is missing');
+    expect(manifest).toContain('preserve an explicit platform-shell choice and its verified workbenchUrl');
+    expect(manifest).toContain('only for standalone pages when get-form-config readback confirms renderNav=false');
     expect(manifest).toContain('application_entry_policy.entries.admin=include');
     expect(manifest).toContain('{base_url}/{appType}/workbench');
     expect(byName.get('yida-app').description).toContain('表单/流程先于自定义页面');

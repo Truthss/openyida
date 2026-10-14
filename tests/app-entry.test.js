@@ -109,6 +109,19 @@ test('clear is explicit and leaves other entries alone', async () => {
   await run(['set', 'APP_TEST', '--clear-frontend']);
   expect(JSON.parse(client.postForm.mock.calls[0][1].accessEntries)).toEqual({ frontend: null });
 });
+
+test('registers an explicit platform-shell frontend without rewriting backend or page navigation', async () => {
+  const frontend = { url: `${origin}/APP_TEST/workbench/FORM_FRONT?viewUuid=VIEW_FRONT#mine` };
+  const management = { url: `${origin}/APP_TEST/workbench/FORM_BACK?viewUuid=VIEW_BACK` };
+  client.get.mockResolvedValueOnce(response({ management })).mockResolvedValueOnce(response({ frontend, management }, 'v2'));
+  const result = await run(['set', 'APP_TEST', '--frontend', frontend.url, '--json']);
+  expect(result.urls).toEqual({ frontend: frontend.url, management: management.url });
+  expect(result.verification).toEqual({ configurationReadback: true, runtimeVerified: false });
+  expect(client.postForm).toHaveBeenCalledTimes(1);
+  expect(JSON.parse(client.postForm.mock.calls[0][1].accessEntries)).toEqual({ frontend });
+  expect(fetchFormSchemaInfo).not.toHaveBeenCalled();
+  expect(fetchFormPageList).not.toHaveBeenCalled();
+});
 test('conflict does not retry or overwrite', async () => {
   client.get.mockResolvedValue(response({}));
   client.postForm.mockResolvedValue({ success: false, errorMsg: 'conflict' });

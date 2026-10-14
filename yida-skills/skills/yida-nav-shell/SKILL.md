@@ -24,7 +24,7 @@ description: 为应用或独立前台页面编写自己的顶部、侧边等导�
 关键区别：
 
 - 应用导航隐藏：`hideAppNav='y'`，通过应用基础设置控制。
-- 页面导航隐藏：`isRenderNav=false`，只控制某个页面/表单页的导航显示。
+- 页面持久配置：写入 `isRenderNav=false`，回读 `renderNav=false`；与原生提交/详情 URL 上的 `isRenderNav` 参数分开，见[字段口径](../yida-app/references/entry-navigation.md#区分-url-参数写入字段与回读字段)。
 - 不要用 `isRenderNav=false` 代替 `hideAppNav`。
 - 不要让平台应用导航和自绘应用级导航同时出现。
 

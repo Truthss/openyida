@@ -77,6 +77,29 @@ test.each([undefined, null, 'unknown'])('keep rejects ambiguous navigation state
   expect(httpPost).toHaveBeenCalledTimes(1);
 });
 
+test.each([
+  [{ renderNav: false }, 'false'],
+  [{ renderNav: 'true' }, 'true'],
+  [{ renderNav: false, isRenderNav: true }, 'false'],
+  [{ renderNav: true, isRenderNav: false }, 'true'],
+  [{ isRenderNav: 'false' }, 'false'],
+])('keep uses persisted navigation and retains the write API field (%j)', async (config, expected) => {
+  const { command, httpPost } = fixture({ success: true, content: config });
+  jest.spyOn(console, 'log').mockImplementation(() => undefined);
+  await command.run(['APP_X', 'FORM_X', 'keep', 'Test']);
+  const payload = querystring.parse(httpPost.mock.calls[1][2]);
+  expect(payload.isRenderNav).toBe(expected);
+  expect(payload).not.toHaveProperty('renderNav');
+  expect(httpPost).toHaveBeenCalledTimes(2);
+});
+
+test.each([null, 'unknown', undefined])('keep does not fall back from a present invalid renderNav (%j)', async renderNav => {
+  const { command, httpPost } = fixture({ success: true, content: { renderNav, isRenderNav: false } });
+  await expect(command.run(['APP_X', 'FORM_X', 'keep', 'Test']))
+    .rejects.toMatchObject({ code: 'CONFIG_READ_FAILED' });
+  expect(httpPost).toHaveBeenCalledTimes(1);
+});
+
 // FormDesignVoAdapter reads NEEDREPORTLINE as y/n; the write API stores it verbatim.
 test.each([[true, 'y'], [false, 'n'], ['y', 'y'], ['n', 'n']])(
   'round-trips the reporting-line flag (%j -> %s)', (currentValue, expected) => {

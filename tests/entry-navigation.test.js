@@ -56,10 +56,20 @@ describe('entry planning and platform navigation', () => {
     expect(handoff(plan).pageNavigation).toEqual([]);
   });
 
-  test('does not override an explicit conflicting platform-shell service page', () => {
+  test('preserves an explicit platform-shell service page without hiding backend navigation', () => {
     const plan = planFixture();
     plan.pages.customPageDetails[0].pageSpecHandoff = { entryMode: 'platform-shell' };
-    expect(() => handoff(plan)).toThrow(/访客入口.*必须关联独立页面/);
+    const result = handoff(plan);
+    expect(result.pages[0].pageSpecHandoff.entryMode).toBe('platform-shell');
+    expect(result.pageNavigation).toEqual([]);
+    expect(result.appConfig.hideAppNav).toBe('n');
+    expect(result.navigationOrder).toEqual(['采购订单', '采购申请']);
+  });
+
+  test('a service entry still needs a real page binding', () => {
+    const plan = planFixture();
+    delete plan.execution.entryRecommendation.entries[0].sceneKey;
+    expect(() => handoff(plan)).toThrow(/访客入口.*必须关联页面/);
   });
 
   test('derives management order without a management homepage and preserves frontend menu order', () => {
