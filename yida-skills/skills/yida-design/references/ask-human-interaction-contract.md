@@ -236,3 +236,31 @@ managed Local Agent 通过 `openyida agent ask-human` 提问时，必须将下�
 4. 用户在最终确认交互中选择 `confirm_build`（确认并开始搭建）且回传 revision 等于展示 revision 时，设置 `meta.status=confirmed`、`planConfirmed=true`、`confirmedRevision=meta.revision`，同时记录交互 ID 和确认时间。
 5. 只有 `meta.status=confirmed`、`planConfirmed=true` 且 `meta.revision=presentedRevision=confirmedRevision` 时，Plan Design 才能返回 `yida-app` Step 3。
 6. 用户选择“继续调整”时保持在 Plan Design，本轮不创建应用资源；下一轮单独收集调整内容，生成新 revision 并重新确认。用户取消或关闭交互时停止执行，不创建应用资源。
+
+
+## 风格预览与选择同步
+
+用户显式要求预览来辅助选择时，先按[共享预览规则](theme-selection.md#选择时展示名称与效果图)匹配模板、读取对应原图并生成静态 HTML 卡片。Fast 也遵从用户自行选择的请求。CLI `theme-preview` 返回的 `attachment` 可直接放入同一次提问；不要把 `presentation` 或整个 CLI 结果塞进问题字段，也不要先创建不带预览的选择题。
+
+下面是现有 managed Local `agent ask-human` 问题文件契约，不增加选择协议；云端按实际工具 schema 组织 `question/options/attachments`，不要照搬本地 `questions` 包装。`path/name` 来自本次 `result.attachment`，选项名称和 value 来自同次 `result.themes`。名称和推荐说明按当前应用组织：
+
+```json
+{
+  "title": "选择作品集风格",
+  "attachments": [{"name": "<result.attachment.name>", "path": "<result.attachment.path>"}],
+  "questions": [{
+    "id": "visual_direction",
+    "header": "作品集风格",
+    "question": "结合这些效果参考，你希望作品集采用哪种风格？",
+    "type": "single_select",
+    "options": [
+      {"label": "<result.themes[0].name>", "value": "<result.themes[0].themeId>"},
+      {"label": "<result.themes[1].name>", "value": "<result.themes[1].themeId>"}
+    ]
+  }]
+}
+```
+
+managed Local 将该文档保存为任务目录中的 questions.json，再调用 `openyida agent ask-human --request-key <本轮稳定键> --questions-file <相对路径> --json`。HTML 必须在任务目录内；CLI 冻结附件与问题为同一回执。`queued` 只表示已排队，不等于用户已看到或已选择。
+
+宿主提问工具不支持附件时，不添加未声明字段；使用对话内 HTML widget 紧接一次提问完成同轮展示。若没有内嵌 HTML 能力，如实说明并提供降级入口，不能把外部浏览器或文件链接称为对话内卡片。只要求看效果时不创建问题；已有待答题时复用映射，不再创建第二个待答交互。

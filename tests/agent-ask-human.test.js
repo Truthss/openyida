@@ -133,3 +133,28 @@ test.each(['../outside.html', '.env.html', '.git/config.html', 'plan.json'])('do
   try { expect(() => run(['--request-key', 'denied', '--questions-file', 'questions.json', '--json'], { env: managed(root), cwd: root, stdout: { write() {} } })).toThrow(expect.objectContaining({ code: 'AGENT_ASK_HUMAN_INVALID' })); }
   finally { fs.rmSync(root, { recursive: true, force: true }); }
 });
+
+
+test('theme preview and matching choices are frozen in one ask-human receipt', () => {
+  const { createThemePreview } = require('../lib/core/theme-widget');
+  const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-style-choice-')));
+  try {
+    const preview = createThemePreview(['--theme-ids', 'app-sage,app-terminal', '--output', path.join(root, 'preview.html')]);
+    const document = { title: '选择作品集风格', attachments: [preview.attachment], questions: [{
+      id: 'visual_direction', header: '作品集风格', question: '结合效果图选择风格', type: 'single_select',
+      options: preview.themes.map(theme => ({ label: theme.name, value: theme.themeId })),
+    }] };
+    fs.writeFileSync(path.join(root, 'questions.json'), JSON.stringify(document));
+    const env = managed(root);
+    const result = run(['--request-key', 'portfolio-style-v1', '--questions-file', 'questions.json', '--json'], { env, cwd: root, stdout: { write() {} } });
+    const files = fs.readdirSync(env.OPENYIDA_AGENT_INTERACTIONS_DIR).filter(name => name.endsWith('.json'));
+    expect(files).toHaveLength(1);
+    expect(result.status).toBe('queued');
+    const receipt = JSON.parse(fs.readFileSync(path.join(env.OPENYIDA_AGENT_INTERACTIONS_DIR, files[0]), 'utf8'));
+    expect(receipt.questions[0].options).toEqual(document.questions[0].options);
+    expect(receipt.attachments).toHaveLength(1);
+    const frozen = fs.readFileSync(path.join(env.OPENYIDA_AGENT_INTERACTIONS_DIR, receipt.attachments[0].path), 'utf8');
+    expect(frozen).toBe(fs.readFileSync(preview.outputPath, 'utf8'));
+    expect(frozen.match(/<article /g)).toHaveLength(2);
+  } finally { fs.rmSync(root, { recursive: true, force: true }); }
+});

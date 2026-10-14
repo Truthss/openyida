@@ -4,6 +4,48 @@
   "entry": "openyida",
   "skills": [
     {
+      "name": "yida-data-manage-ui",
+      "path": "skills/yida-data-manage-ui/SKILL.md",
+      "display_name": "数据管理页美化",
+      "description": "从当前页面与用户目标推导数据管理 UI 调整方向，定位实际 token 和局部 CSS，自由组合操作层级、表头、线条、配色与列强调；保留业务逻辑，配方仅为可选参考。",
+      "category": "yida-skills/design",
+      "tags": [
+        "数据管理美化",
+        "列表风格",
+        "操作优先"
+      ],
+      "aliases": [
+        "数据管理UI提升",
+        "美化数据管理页"
+      ],
+      "positive_signals": [
+        "针对当前数据管理页换一种风格",
+        "数据管理页重在操作，需要更突出操作",
+        "数据管理页只保留横线",
+        "数据管理表头看不清",
+        "用自定义页面实现简单数据管理",
+        "突出客户名称列",
+        "列级强调",
+        "状态列改成标签"
+      ],
+      "negative_signals": [
+        "修改表单字段",
+        "新增业务记录",
+        "查询数据",
+        "升级应用主题"
+      ],
+      "command_ids": [
+        "data-manage-style.guide",
+        "data-manage-style.list",
+        "data-manage-style.generate",
+        "app-theme.snapshot",
+        "app-theme.restore",
+        "update-app",
+        "get-schema"
+      ],
+      "requires_login": true
+    },
+    {
       "name": "yida-upgrade-app-theme",
       "path": "skills/yida-upgrade-app-theme/SKILL.md",
       "display_name": "老应用升级新版主题",

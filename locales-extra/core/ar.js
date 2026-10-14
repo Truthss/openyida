@@ -7,6 +7,7 @@
 module.exports = {
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
+    frontend_nav_required: 'لم يتم التحقق من إخفاء التنقل للصفحة {0}. احفظ renderNav=false ثم أعد قراءة الإعدادات قبل تسجيل عنوان الواجهة المستقلة.',
     desc_get: 'Read frontend and management runtime entries',
     desc_set: 'Register application entries with partial update and readback',
     usage: 'Usage: openyida app-entry get <appType> [--json]\n       openyida app-entry set <appType> [--frontend <url>] [--management <url>] [--clear-frontend] [--clear-management] [--json]\nRegister only published, verified runtime URLs for this application. Omitted entries remain unchanged.',
@@ -2147,3 +2148,16 @@ module.exports.help.cmd_upgrade_app_theme = require('../../lib/core/locales/en')
 module.exports.app_theme = require('../../lib/core/locales/en').app_theme;
 module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en').help.cmd_app_theme_snapshot;
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
+
+module.exports.data_manage_style = {
+  'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
+  'data_style_invalid': 'معاملات النمط غير صالحة. استخدم معرّفات حقيقية ونمطًا من القائمة.',
+  'data_style_base': 'قدّم CSS التطبيق الحالي مع اللون الأساسي، بحجم لا يتجاوز 20 ميغابايت.',
+  'data_style_marker': 'علامات النمط تالفة أو مكررة. راجع الملف الأساسي.',
+  'data_style_output': 'يجب أن يكون الإخراج ملف CSS جديدًا دون استبدال الملفات الحالية.',
+  'generated': 'تم إنشاء الأنماط: {0}. لم تُنشر؛ أكمل النسخ الاحتياطي والنشر والتحقق من الصفحة الفعلية.'
+};
+module.exports.help.cmd_data_manage_style_list = 'عرض أمثلة أنماط اختيارية لإدارة البيانات';
+module.exports.help.cmd_data_manage_style_generate = 'إنشاء CSS محلي من مثال نمط اختياري';
+
+module.exports.help.cmd_data_manage_style_guide = 'عرض اتجاهات تحسين واجهة إدارة البيانات ورموز الأنماط ومواضع CSS';

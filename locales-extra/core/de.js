@@ -7,6 +7,7 @@
 module.exports = {
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
+    frontend_nav_required: 'Die ausgeblendete Navigation der Seite {0} ist nicht bestätigt. Speichern und prüfen Sie renderNav=false, bevor Sie den eigenständigen Frontend-Zugang registrieren.',
     desc_get: 'Read frontend and management runtime entries',
     desc_set: 'Register application entries with partial update and readback',
     usage: 'Usage: openyida app-entry get <appType> [--json]\n       openyida app-entry set <appType> [--frontend <url>] [--management <url>] [--clear-frontend] [--clear-management] [--json]\nRegister only published, verified runtime URLs for this application. Omitted entries remain unchanged.',
@@ -2145,3 +2146,16 @@ module.exports.help.cmd_upgrade_app_theme = require('../../lib/core/locales/en')
 module.exports.app_theme = require('../../lib/core/locales/en').app_theme;
 module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en').help.cmd_app_theme_snapshot;
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
+
+module.exports.data_manage_style = {
+  'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
+  'data_style_invalid': 'Ungültige Stilparameter. Verwenden Sie echte IDs und einen Katalogstil.',
+  'data_style_base': 'Bestehendes App-CSS mit primärer Markenfarbe angeben, höchstens 20 MB.',
+  'data_style_marker': 'Stilmarkierungen sind beschädigt oder doppelt. Ausgangsdatei prüfen.',
+  'data_style_output': 'Die Ausgabe muss eine neue CSS-Datei sein. Bestehende Dateien werden nicht überschrieben.',
+  'generated': 'Stile erstellt: {0}. Nicht veröffentlicht; Sicherung, Veröffentlichung und Laufzeitprüfung durchführen.'
+};
+module.exports.help.cmd_data_manage_style_list = 'Optionale Stilbeispiele für die Datenverwaltung auflisten';
+module.exports.help.cmd_data_manage_style_generate = 'CSS aus einem optionalen Stilbeispiel lokal erzeugen';
+
+module.exports.help.cmd_data_manage_style_guide = 'UI-Anpassungen, Tokens und CSS-Ziele für die Datenverwaltung anzeigen';

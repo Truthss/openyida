@@ -7,6 +7,7 @@
 module.exports = {
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
+    frontend_nav_required: 'La navigation masquée de la page {0} reste à vérifier. Enregistrez renderNav=false puis relisez la configuration avant de définir une entrée autonome.',
     desc_get: 'Read frontend and management runtime entries',
     desc_set: 'Register application entries with partial update and readback',
     usage: 'Usage: openyida app-entry get <appType> [--json]\n       openyida app-entry set <appType> [--frontend <url>] [--management <url>] [--clear-frontend] [--clear-management] [--json]\nRegister only published, verified runtime URLs for this application. Omitted entries remain unchanged.',
@@ -2147,3 +2148,16 @@ module.exports.help.cmd_upgrade_app_theme = require('../../lib/core/locales/en')
 module.exports.app_theme = require('../../lib/core/locales/en').app_theme;
 module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en').help.cmd_app_theme_snapshot;
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
+
+module.exports.data_manage_style = {
+  'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
+  'data_style_invalid': 'Paramètres de style invalides. Utilisez des identifiants réels et un style du catalogue.',
+  'data_style_base': 'Fournissez le CSS existant avec la couleur principale, de 20 Mo maximum.',
+  'data_style_marker': 'Marqueurs de style endommagés ou dupliqués. Vérifiez le fichier source.',
+  'data_style_output': 'La sortie doit être un nouveau fichier CSS sans écraser un fichier existant.',
+  'generated': 'Styles générés : {0}. Non publiés ; sauvegardez, publiez et vérifiez la page réelle.'
+};
+module.exports.help.cmd_data_manage_style_list = 'Lister les exemples de styles facultatifs de gestion des données';
+module.exports.help.cmd_data_manage_style_generate = 'Générer du CSS à partir d’un exemple facultatif (local uniquement)';
+
+module.exports.help.cmd_data_manage_style_guide = 'Consulter les axes UI, tokens et cibles CSS de gestion des données';

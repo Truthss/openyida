@@ -942,6 +942,11 @@ async function main() {
       break;
     }
 
+    case 'data-manage-style': {
+      await require('../lib/style/data-manage-style').run(args);
+      break;
+    }
+
     case 'app-theme': {
       await require('../lib/app/app-theme').run(args);
       break;

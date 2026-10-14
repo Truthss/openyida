@@ -33,7 +33,7 @@ description: 宜搭自定义页面开发规范，使用 `YidaCodeCanvas` 组件�
 
 ## 运行时事实
 
-- 独立前台需向应用管理员提供业务工作台入口时，按 [管理员入口](references/navigation-and-entry-guide.md#管理员返回业务工作台) 提取 `canvas-admin-entry`。核对当前应用 loginUser.isAppAdmin 的明确允许值，未知时隐藏；目标来自真实管理页资源，不从访客菜单或 CLI 登录身份推断。
+- 分前后台时默认考虑按当前访问者身份展示“进入后台”次级入口，见 [设计建议](../yida-app/references/entry-navigation.md#前台返回业务后台设计建议)，不新增强校验。独立前台向应用管理员提供业务工作台入口时，按 [管理员入口](references/navigation-and-entry-guide.md#管理员返回业务工作台) 提取 `canvas-admin-entry`。核对当前应用 loginUser.isAppAdmin 的明确允许值，未知时隐藏；目标来自真实管理页资源，不从访客菜单或 CLI 登录身份推断。
 - 使用 `YidaCodeCanvas` 组件实现的源码写成 `.canvas.jsx` / `.canvas.tsx`，`openyida publish` 会自动写入 `YidaCodeCanvas` Schema。
 - 页面源码路径按 Bash cwd 选择：从工作区根执行命令时用 `project/pages/src/...`；cwd 已是 `<workspace>/project` 时用 `pages/src/...`。
 - `runtimeCode` 在运行页面真实 `window` 中执行，入口必须返回 `YidaComp` / `YidaComp.default` / 组件函数。

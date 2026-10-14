@@ -7,6 +7,7 @@
 module.exports = {
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
+    frontend_nav_required: 'ページ {0} のナビゲーション非表示設定が未確認です。renderNav=false を保存して再取得してから、独立したフロント画面を登録してください。',
     desc_get: 'Read frontend and management runtime entries',
     desc_set: 'Register application entries with partial update and readback',
     usage: 'Usage: openyida app-entry get <appType> [--json]\n       openyida app-entry set <appType> [--frontend <url>] [--management <url>] [--clear-frontend] [--clear-management] [--json]\nRegister only published, verified runtime URLs for this application. Omitted entries remain unchanged.',
@@ -2072,3 +2073,16 @@ module.exports.help.cmd_upgrade_app_theme = require('../../lib/core/locales/en')
 module.exports.app_theme = require('../../lib/core/locales/en').app_theme;
 module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en').help.cmd_app_theme_snapshot;
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
+
+module.exports.data_manage_style = {
+  'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
+  'data_style_invalid': 'スタイル引数が無効です。実際の ID と一覧のスタイルを使用してください。',
+  'data_style_base': 'ブランドの基本色を含む既存のアプリ CSS（20 MB 以下）を指定してください。',
+  'data_style_marker': 'スタイルマーカーが破損または重複しています。元のファイルを確認してください。',
+  'data_style_output': '出力先は新しい CSS ファイルにしてください。既存ファイルは上書きできません。',
+  'generated': 'スタイルを生成しました：{0}。未公開です。バックアップ、公開、実画面の検証を行ってください。'
+};
+module.exports.help.cmd_data_manage_style_list = '任意のデータ管理スタイル例を一覧表示';
+module.exports.help.cmd_data_manage_style_generate = '任意のスタイル例から CSS をローカル生成';
+
+module.exports.help.cmd_data_manage_style_guide = 'データ管理 UI の調整方針、トークンと CSS の適用箇所を確認';

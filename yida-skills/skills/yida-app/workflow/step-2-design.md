@@ -41,6 +41,8 @@ Fast / Plan 先按[已选风格只确认一次](../../yida-design/references/the
 
 Plan 分支从已加载 `yida-app` 的 Available Files 读取精确路径 `workflow/plan/workflow.md`；不要把当前文件名当目录拼成 `workflow/step-2-design/plan/workflow.md`，也不要用 Glob 猜路径。
 
+用户显式要求“预览效果辅助风格选择”时，先匹配 catalog 中的模板原图，以对话内 HTML 卡片与 `ask_human` 同轮展示；该请求优先于 Fast 内部选型，不能只返回链接或替用户选定。仅查看效果不重新提问。
+
 共享需求只整理一次。创建出的资源 ID 写入执行上下文；用户需求或范围实质变化时再更新需求与相关规划。需求文件与实施文档供内部执行，Plan 的 HTML 用于用户查看和确认方案。
 
 ## 2.2 同时生成 PRD 和视觉设计
@@ -93,3 +95,6 @@ Fast 设计就绪后按 [素材调度](parallel-work.md#素材与页面同时推
 ## 下一步
 
 → [Step 3：创建或复用应用](step-3-create-or-reuse-app.md)
+
+
+分前后台时，把 [前台返回业务后台](../references/entry-navigation.md#前台返回业务后台设计建议) 作为默认设计考虑：在现有页面操作说明中交接入口位置、可见身份和管理端目标。已有等效入口直接复用；单前台不额外创建后台。该建议不增加必填字段或确认轮次，不作为发布门禁。

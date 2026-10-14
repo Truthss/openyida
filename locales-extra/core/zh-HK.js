@@ -7,6 +7,7 @@
 module.exports = {
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
+    frontend_nav_required: '頁面 {0} 尚未確認隱藏平台導覽；請先儲存 renderNav=false 並讀回，再登記獨立前台地址。',
     desc_get: 'Read frontend and management runtime entries',
     desc_set: 'Register application entries with partial update and readback',
     usage: 'Usage: openyida app-entry get <appType> [--json]\n       openyida app-entry set <appType> [--frontend <url>] [--management <url>] [--clear-frontend] [--clear-management] [--json]\nRegister only published, verified runtime URLs for this application. Omitted entries remain unchanged.',
@@ -2097,3 +2098,16 @@ module.exports.help.cmd_upgrade_app_theme = require('../../lib/core/locales/en')
 module.exports.app_theme = require('../../lib/core/locales/en').app_theme;
 module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en').help.cmd_app_theme_snapshot;
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
+
+module.exports.data_manage_style = {
+  'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
+  'data_style_invalid': '資料管理樣式參數無效，請使用真實 ID 和目錄中的樣式。',
+  'data_style_base': '請提供含品牌主色且不超過 20 MB 的現有應用 CSS。',
+  'data_style_marker': '樣式標記損壞或重複，請核對基線檔案。',
+  'data_style_output': '輸出須為新 CSS 檔案，不可覆蓋輸入或已有檔案。',
+  'generated': '樣式已產生：{0}。尚未發佈，請完成備份、發佈及實際頁面驗證。'
+};
+module.exports.help.cmd_data_manage_style_list = '列出可選的資料管理樣式配方參考';
+module.exports.help.cmd_data_manage_style_generate = '按可選配方產生資料管理 CSS（僅本機）';
+
+module.exports.help.cmd_data_manage_style_guide = '查詢資料管理 UI 改造方向、token 與 CSS 定位方法';

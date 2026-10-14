@@ -848,7 +848,9 @@ describe('OpenYida skill contracts', () => {
     expect(manifest).toContain('include one concise verified delivery manifest in that description');
     expect(manifest).toContain('every resource count, seed-record count, and completed/verified claim');
     expect(manifest).toContain('never one artifact or link card per form, process, report');
-    expect(manifest).toContain('when PRD entryMode=standalone');
+    expect(manifest).toContain('infer standalone when entryMode is missing');
+    expect(manifest).toContain('preserve an explicit platform-shell choice and its verified workbenchUrl');
+    expect(manifest).toContain('only for standalone pages when get-form-config readback confirms renderNav=false');
     expect(manifest).toContain('application_entry_policy.entries.admin=include');
     expect(manifest).toContain('{base_url}/{appType}/workbench');
     expect(byName.get('yida-app').description).toContain('表单/流程先于自定义页面');
@@ -2127,4 +2129,28 @@ describe('OpenYida skill contracts', () => {
     expect(dataSources).toContain('`YidaCodeCanvas` 组件没有平台 JSX 组件页面实例 `this`，也没有 `dataSourceMap`');
     expect(dataSources).toContain('use_skill("yida-canvas-data-binding"');
   });
+});
+
+
+test('explicit portfolio preview choice overrides Fast defaults and attaches catalog cards', () => {
+  const shared = fs.readFileSync(path.join(__dirname, '../yida-skills/skills/yida-design/references/theme-selection.md'), 'utf8');
+  const interaction = fs.readFileSync(path.join(__dirname, '../yida-skills/skills/yida-design/references/ask-human-interaction-contract.md'), 'utf8');
+  expect(shared).toContain('显式预览选型优先于模式默认行为');
+  expect(shared).toContain('先匹配模板，再取原图');
+  expect(shared).toContain('在对话内展示 HTML 卡片，并与 `ask_human` 同轮出现');
+  expect(interaction).toContain('result.attachment.path');
+  expect(interaction).toContain('只要求看效果时不创建问题');
+});
+
+
+test('complete applications persist scoped business entries before emitting role-specific links', () => {
+  const finish = fs.readFileSync(path.join(__dirname, '../yida-skills/skills/yida-app/workflow/step-9-output-finish.md'), 'utf8');
+  const publish = fs.readFileSync(path.join(__dirname, '../yida-skills/skills/yida-app/workflow/step-8-publish-navigation.md'), 'utf8');
+  expect(finish).toContain('完整应用交付前默认必须登记并回读');
+  expect(finish).toContain('urls.frontend');
+  expect(finish).toContain('urls.management');
+  expect(finish).toContain('不能混用、交换或拿最后发布的页面覆盖两端');
+  expect(publish).toContain('不能先宣布交付完成再补配置');
+  const manifest = require('../lib/core/command-manifest').flattenCommandManifest();
+  expect(manifest.find(command => command.id === 'app-entry.set').notes.join(' ')).toContain('live hidden-navigation readback');
 });
