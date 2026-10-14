@@ -12,8 +12,25 @@ describe('background runtime readiness', () => {
     await Promise.all([...children].map(child => new Promise(resolve => {
       child.once('close', resolve); child.kill('SIGKILL');
     })));
+    const pidFile = path.join(root, 'daemon.pid');
+    if (fs.existsSync(pidFile)) {
+      const pid = Number(fs.readFileSync(pidFile, 'utf8'));
+      fs.writeFileSync(path.join(root, 'stop-fixture'), 'stop');
+      const deadline = Date.now() + 5000;
+      for (;;) {
+        try {process.kill(pid, 0);} catch (error) {
+          if (error.code === 'ESRCH') {break;}
+          throw error;
+        }
+        if (Date.now() >= deadline) {
+          process.kill(pid, 'SIGKILL');
+          throw new Error('owned fixture daemon did not exit');
+        }
+        await new Promise(resolve => setTimeout(resolve, 25));
+      }
+    }
     fs.rmSync(root, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
-  });
+  }, 10000);
   function fixture(body) {
     const executable = path.join(root, 'runtime.js');
     fs.writeFileSync(executable, `const fs=require('fs'),path=require('path');let input='';process.stdin.on('data',c=>input+=c);process.stdin.on('end',()=>{const c=JSON.parse(input);${body}});`);
@@ -41,34 +58,14 @@ describe('background runtime readiness', () => {
     const script = `const {spawn}=require('child_process');const {launchBackgroundRuntime}=require(${JSON.stringify(require.resolve('../lib/agent/stdio'))});launchBackgroundRuntime(${JSON.stringify(f.runtime)},${JSON.stringify(f.config)},{spawn:(file,args,opts)=>spawn(process.execPath,[file,...args],opts)}).then(r=>console.log(r.pid)).catch(()=>process.exitCode=1);`;
     const launcher = spawn(process.execPath, ['-e', script]);
     children.add(launcher); launcher.once('close', () => children.delete(launcher));
-    try {
-      const exitCode = await new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => reject(new Error('launcher retained daemon handles')), 3000);
-        launcher.once('close', code => { clearTimeout(timeout); resolve(code); });
-        launcher.once('error', error => { clearTimeout(timeout); reject(error); });
-      });
-      expect(exitCode).toBe(0);
-      const pid = Number(fs.readFileSync(path.join(root, 'daemon.pid'), 'utf8'));
-      expect(process.kill(pid, 0)).toBe(true);
-    } finally {
-      const pidFile = path.join(root, 'daemon.pid');
-      if (fs.existsSync(pidFile)) {
-        const pid = Number(fs.readFileSync(pidFile, 'utf8'));
-        fs.writeFileSync(path.join(root, 'stop-fixture'), 'stop');
-        const deadline = Date.now() + 5000;
-        for (;;) {
-          try {process.kill(pid, 0);} catch (error) {
-            if (error.code === 'ESRCH') {break;}
-            throw error;
-          }
-          if (Date.now() >= deadline) {
-            process.kill(pid, 'SIGKILL');
-            throw new Error('owned fixture daemon did not exit');
-          }
-          await new Promise(resolve => setTimeout(resolve, 25));
-        }
-      }
-    }
+    const exitCode = await new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => reject(new Error('launcher retained daemon handles')), 3000);
+      launcher.once('close', code => { clearTimeout(timeout); resolve(code); });
+      launcher.once('error', error => { clearTimeout(timeout); reject(error); });
+    });
+    expect(exitCode).toBe(0);
+    const pid = Number(fs.readFileSync(path.join(root, 'daemon.pid'), 'utf8'));
+    expect(process.kill(pid, 0)).toBe(true);
   }, 15000);
   test.each([0, 1])('an immediate exit (%s) is never connected', async (code) => {
     const f = fixture(`process.exit(${code});`);
