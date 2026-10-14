@@ -83,6 +83,7 @@ describe('runtime parent-watch and bounded stop contract', () => {
     const pending = launchRuntime({ executable: '/fake-only' }, { command: 'run', node: { packageRoot: root } }, { spawn: spawnFake, signals });
     const outcome = pending.catch(error => error);
     expect(spawnFake.mock.calls[0][2].stdio).toEqual(process.platform === 'win32' ? ['pipe', 'pipe', 'pipe'] : ['pipe', 'pipe', 'pipe', 'pipe']);
+    expect(spawnFake.mock.calls[0][2].detached).toBe(process.platform === 'win32');
     child.stdout.write('not-json\n');
     if (process.platform === 'win32') {
       expect(JSON.parse(control.stdin.end.mock.calls[0][0])).toMatchObject({ command: 'disconnect', parentPID: 0, parentWatchFD: 0 });
