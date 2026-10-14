@@ -210,8 +210,8 @@ describe('cross-platform provider preflight', () => {
     const cmd = file('中文 folder/qodercli.cmd');
     fs.writeFileSync(cmd, '@echo off\r\nexit /b 99\r\n');
     fs.writeFileSync(cmd.replace(/\.cmd$/, '.ps1'), "Write-Output 'fixture-version'\n");
-    expect(await probe(cmd, ['--version'], null)).toMatchObject({ status: 'passed', output: expect.stringContaining('fixture-version') });
-  });
+    expect(await probe(cmd, ['--version'], null, { timeoutMs: 15000 })).toMatchObject({ status: 'passed', output: expect.stringContaining('fixture-version') });
+  }, 30000);
 
   test('Windows npm shim preserves live stdin for ACP', async () => {
     if (process.platform !== 'win32') { return; }
@@ -230,8 +230,8 @@ describe('cross-platform provider preflight', () => {
     file("中文 folder/quote's/qodercli.ps1");
     const result = probeCommand(cmd, ['login', "literal'value;$x"], 'win32', { SystemRoot: 'C:\\Windows' });
     expect(result.args).toEqual([
-      '-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command',
-      `& '${cmd.replace(/\.cmd$/, '.ps1').replace(/'/g, "''")}' 'login' 'literal''value;$x'`,
+      '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File',
+      cmd.replace(/\.cmd$/, '.ps1'), 'login', "literal'value;$x",
     ]);
     expect(() => probeCommand(file('bare.cmd'), ['--version'], 'win32')).toThrow();
   });

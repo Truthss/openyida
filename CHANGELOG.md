@@ -10,6 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 海外版宜搭暂不适用当前 OAuth token 登录与创建应用链路；如需在海外版宜搭创建应用，请使用 `2026.7.14-2` 以前的版本，例如 `npm install -g openyida@2026.7.13`。
 
+## [Unreleased]
+
+### 修复
+
+- **Windows Local Agent**：统一运行时与执行包路径规范化，预检以 PowerShell 文件模式保留 CLI 标准输入和字面参数；父进程监控按 Windows PID 与 Unix 管道契约验证。
+- **Windows 验证覆盖**：保留 Unicode 排序、签名、原子发布和后台生命周期断言；增加签名 Go runtime 的本地控制面集成验证，覆盖接入、模型刷新、心跳、主动断开及父进程退出，不调用付费模型或真实业务应用。
+
 ## [2026.10.14] - 2026-10-14
 
 正式交付下方 `2026.10.13-2` 中介绍的 Local Agent 能力，继续精确依赖四个平台的签名 Go runtime `0.1.1`；修复此前阻断正式发布的 Linux CI 问题。

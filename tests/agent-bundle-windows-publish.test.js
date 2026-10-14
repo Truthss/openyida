@@ -3,6 +3,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { materializeBundle, verifyBundle } = require('../lib/agent/frozen-bundle');
+const { canonicalPath } = require('../lib/agent/runtime-package');
 const { createBundleFixture, removeFixture } = require('./helpers/agent-bundle-fixture');
 
 const windowsTest = process.platform === 'win32' ? test : test.skip;
@@ -10,7 +11,7 @@ describe('Windows bundle atomic publication', () => {
   let root;
   afterEach(() => {jest.restoreAllMocks(); if (root) {removeFixture(root);}});
   windowsTest.each([1, Infinity])('handles %s transient publication failures without replacing existing bundles', (failures) => {
-    root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-publish-')));
+    root = canonicalPath(fs.mkdtempSync(path.join(os.tmpdir(), 'bundle-publish-')));
     const fixture = createBundleFixture(root);
     const original = fs.renameSync;
     let attempts = 0;

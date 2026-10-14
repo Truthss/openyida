@@ -4,7 +4,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const crypto = require('crypto');
-const { resolveRuntime, digest, platformPackageName } = require('../lib/agent/runtime-package');
+const { resolveRuntime, digest, platformPackageName, canonicalPath } = require('../lib/agent/runtime-package');
 const { decodeManifestV2, parseStrictJson } = require('../lib/agent/runtime-manifest');
 
 describe('production runtime manifest and platform package', () => {
@@ -19,7 +19,7 @@ describe('production runtime manifest and platform package', () => {
   }
   function resolve() {return resolveRuntime({ packageRoot, catalog, platform: fixturePlatform, arch: fixtureArch });}
   beforeEach(() => {
-    root = fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-signed-package-'));
+    root = canonicalPath(fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-signed-package-')));
     packageRoot = path.join(root, 'node_modules', 'openyida');
     const name = platformPackageName(fixturePlatform, fixtureArch);
     // Hoisted sibling: do not assume the package is nested inside openyida.
@@ -41,7 +41,7 @@ describe('production runtime manifest and platform package', () => {
   });
   afterEach(() => fs.rmSync(root, { recursive: true, force: true }));
   test('validates trusted Ed25519 raw bytes, fixed package version, OS and digest without spawning', () => {
-    expect(resolve()).toMatchObject({ executable: fs.realpathSync(binary), development: false, runtimeVersion: '0.1.0', sha256: manifest.binary.sha256 });
+    expect(resolve()).toMatchObject({ executable: canonicalPath(binary), development: false, runtimeVersion: '0.1.0', sha256: manifest.binary.sha256 });
   });
   test.each([
     ['product', 'another-product'], ['runtimeVersion', 'latest'], ['sourceRevision', 'internal-branch'],

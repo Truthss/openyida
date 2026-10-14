@@ -6,13 +6,13 @@ const path = require('path');
 const { execFileSync, spawn } = require('child_process');
 const { materializeBundle, verifyBundle } = require('../lib/agent/frozen-bundle');
 const { run } = require('../lib/agent/cmd');
-const { resolveRuntime } = require('../lib/agent/runtime-package');
+const { resolveRuntime, canonicalPath } = require('../lib/agent/runtime-package');
 const { createBundleFixture, removeFixture } = require('./helpers/agent-bundle-fixture');
 
 describe('content-addressed complete local tool bundle', () => {
   let root, fixture;
   beforeEach(() => {
-    root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-frozen-bundle-')));
+    root = canonicalPath(fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-frozen-bundle-')));
     fixture = createBundleFixture(root);
   });
   afterEach(() => {jest.restoreAllMocks(); removeFixture(root);});
@@ -81,7 +81,7 @@ describe('content-addressed complete local tool bundle', () => {
     const frozen = freeze();
     const manifest = verifyBundle(frozen.config.bundle.root, frozen.config.bundle.id);
     const paths = manifest.files.map((file) => file.path);
-    expect(paths.indexOf('openyida/lib/\uE000.js')).toBeLessThan(paths.indexOf('openyida/lib/\u{10000}.js'));
+    expect(paths.indexOf('openyida/lib/\uE000.js')).toBeLessThan(paths.indexOf('openyida/lib/\u{1F600}.js'));
     expect(paths).toEqual([...paths].sort((a, b) => Buffer.compare(Buffer.from(a), Buffer.from(b))));
   });
   test('rejects existing bundle tampering and never silently repairs or deletes it', () => {

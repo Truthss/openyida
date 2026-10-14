@@ -6,19 +6,20 @@ const { spawn } = require('child_process');
 const { launchBackgroundRuntime } = require('../lib/agent/stdio');
 
 describe('background runtime readiness', () => {
+  jest.setTimeout(process.platform === 'win32' ? 20000 : 5000);
   let root; let children;
   beforeEach(() => { root = fs.mkdtempSync(path.join(os.tmpdir(), 'oya-start-')); children = new Set(); });
   afterEach(async () => {
     await Promise.all([...children].map(child => new Promise(resolve => {
       child.once('close', resolve); child.kill('SIGKILL');
     })));
-    fs.rmSync(root, { recursive: true, force: true });
+    fs.rmSync(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   });
   function fixture(body) {
     const executable = path.join(root, 'runtime.js');
     fs.writeFileSync(executable, `const fs=require('fs'),path=require('path');let input='';process.stdin.on('data',c=>input+=c);process.stdin.on('end',()=>{const c=JSON.parse(input);${body}});`);
     const config = { command: 'run', stateDir: root, node: { packageRoot: root } };
-    const options = { startupTimeoutMs: 1500, stopTimeoutMs: 200,
+    const options = { startupTimeoutMs: process.platform === 'win32' ? 5000 : 1500, stopTimeoutMs: 200,
       spawn: (file, args, opts) => {
         const child = spawn(process.execPath, [file, ...args], opts);
         children.add(child); child.once('close', () => children.delete(child)); return child;
@@ -41,9 +42,10 @@ describe('background runtime readiness', () => {
     const script = `const {spawn}=require('child_process');const {launchBackgroundRuntime}=require(${JSON.stringify(require.resolve('../lib/agent/stdio'))});launchBackgroundRuntime(${JSON.stringify(f.runtime)},${JSON.stringify(f.config)},{spawn:(file,args,opts)=>spawn(process.execPath,[file,...args],opts)}).then(r=>console.log(r.pid)).catch(()=>process.exitCode=1);`;
     const launcher = spawn(process.execPath, ['-e', script]);
     children.add(launcher); launcher.once('close', () => children.delete(launcher));
+    let daemonExited = false;
     try {
       const exitCode = await new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => reject(new Error('launcher retained daemon handles')), 3000);
+        const timeout = setTimeout(() => reject(new Error('launcher retained daemon handles')), process.platform === 'win32' ? 10000 : 3000);
         launcher.once('close', code => { clearTimeout(timeout); resolve(code); });
         launcher.once('error', error => { clearTimeout(timeout); reject(error); });
       });
@@ -51,8 +53,18 @@ describe('background runtime readiness', () => {
       const pid = Number(fs.readFileSync(path.join(root, 'daemon.pid'), 'utf8'));
       expect(process.kill(pid, 0)).toBe(true);
     } finally {
-      try {process.kill(Number(fs.readFileSync(path.join(root, 'daemon.pid'), 'utf8')), 'SIGTERM');} catch { /* child failed before recording its pid */ }
+      const pidFile = path.join(root, 'daemon.pid');
+      if (fs.existsSync(pidFile)) {
+        const pid = Number(fs.readFileSync(pidFile, 'utf8'));
+        try {process.kill(pid, 'SIGTERM');} catch { /* Already exited. */ }
+        const deadline = Date.now() + 5000;
+        while (Date.now() < deadline) {
+          try {process.kill(pid, 0);} catch {daemonExited = true; break;}
+          await new Promise(resolve => setTimeout(resolve, 50));
+        }
+      }
     }
+    expect(daemonExited).toBe(true);
   });
   test.each([0, 1])('an immediate exit (%s) is never connected', async (code) => {
     const f = fixture(`process.exit(${code});`);

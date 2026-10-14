@@ -2,9 +2,10 @@
 
 const fs = require('fs');
 const path = require('path');
-const { digest, resolveRuntime } = require('../../lib/agent/runtime-package');
+const { digest, resolveRuntime, canonicalPath } = require('../../lib/agent/runtime-package');
 
 function createBundleFixture(root) {
+  root = canonicalPath(root);
   function write(relative, content, mode = 0o600) {
     const target = path.join(root, relative);
     fs.mkdirSync(path.dirname(target), { recursive: true, mode: 0o700 });
@@ -14,7 +15,7 @@ function createBundleFixture(root) {
   write('package/bin/yida.js', "const fs=require('fs');const path=require('path');console.log(JSON.stringify({dependency:require('fixture-a'),skill:fs.readFileSync(path.join(__dirname,'../yida-skills/SKILL.md'),'utf8')}));\n", 0o700);
   write('package/lib/fixture.js', "module.exports='only-fixture';\n");
   write('package/lib/\uE000.js', '// UTF-8 order: private-use before astral.\n');
-  write('package/lib/\u{10000}.js', '// UTF-16 would incorrectly sort this first.\n');
+  write('package/lib/\u{1F600}.js', '// UTF-16 would incorrectly sort this first.\n');
   write('package/yida-skills/SKILL.md', 'frozen skill v1\n');
   write('package/node_modules/fixture-a/package.json', JSON.stringify({ name: 'fixture-a', version: '1.0.0', main: 'index.js', dependencies: { 'fixture-b': '1.0.0' } }));
   write('package/node_modules/fixture-a/index.js', "module.exports='a/'+require('fixture-b');\n");
@@ -46,7 +47,7 @@ function removeFixture(root) {
     }
   }
   writable(root);
-  fs.rmSync(root, { recursive: true, force: true });
+  fs.rmSync(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 }
 
 module.exports = { createBundleFixture, removeFixture };
