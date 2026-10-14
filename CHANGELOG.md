@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [2026.10.14-2] - 2026-10-14
+
 ### 修复
 
 - **Windows runtime**：四个平台精确依赖正式版 `0.1.2`，同步验签 catalog；修复提升权限运行时新建私有会话目录的所有者，避免正常接入被拒绝。
