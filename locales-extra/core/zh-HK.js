@@ -18,6 +18,7 @@ module.exports = {
     page_offline: '前台 custom 頁 {0} 尚未上線到獨立訪問地址，請先發布/上線後再登記。',
   },
   design_plan: {
+    confirmation_required: '確認需要目前方案快照和版本，請先生成方案。',
     rebase_required: '首次物化前請修正 business.json/visual.json；主計劃已變更時，保留現有檔案並在原命令加入 --rebase-parts。',
     baseline_missing: '請從原工作區恢復匹配的 .build-plan-base.json；缺少可信基線時保留草稿並報告阻塞。',
     rebase_stage_invalid: '僅首次物化前的草稿可合併基線。已展示或物化的計劃請使用 patch --materialize。',

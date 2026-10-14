@@ -165,7 +165,7 @@ test('initialization derives navigation tone from the selected theme and replace
   expect(fs.readFileSync(result.context, 'utf8')).toContain('tone=light 由已选主题模板派生，不要修改');
 });
 
-test.each([undefined, 'ai_default', 'user_selected'])('visual selection preserves its actual source: %s', source => {
+test.each([undefined, 'ai_default', 'user_selected', 'user_explicit', 'material_extracted'])('visual selection preserves its actual source: %s', source => {
   brief.visualSelection.visualDirection.source = source;
   save();
   const result = init();
@@ -781,6 +781,7 @@ test.each([
   ['soft-outline-rhythm', 'user_explicit'],
   ['free-creative', 'user_selected'],
   ['free-creative', 'user_explicit'],
+  ['free-creative', 'material_extracted'],
 ])('reuses %s (%s) while design details are still incomplete', (themeId, source) => {
   brief.visualSelection = {
     themeId,
@@ -820,4 +821,39 @@ test('unselected catalog still describes initial comparison without reopening a 
   const { getVisualDecisionPolicy } = require('../lib/design-plan/visual-policy');
   expect(getVisualDecisionPolicy().comparison).toMatchObject({ enabled: true, candidateCount: 3, baseline: 'first_instinct' });
   expect(getVisualDecisionPolicy().themeSelection.allowStyleQuestion).toBe(true);
+});
+
+test.each([
+  ['user_explicit', '清爽浅色商务风格，指标与图表有主次，异常标签醒目，明细表紧凑易读。'],
+  ['material_extracted', '参考 https://reference.example.test/workspace 的视觉记录：浅色画布、细线分区、紧凑表格；圆角取 6px 为项目推导值。'],
+  ['material_extracted', '参考用户喜欢的网站设计图「工作台参考.png」：浅色画布、细线分区、紧凑表格；圆角取 6px，未展示的悬停和窄屏布局按业务推导。'],
+])('materialization retains %s intent and generates its CSS without reopening selection', (source, description) => {
+  // References represent already-observed fixture evidence; this test performs no web or image extraction.
+  brief.visualSelection.themeId = 'soft-outline-rhythm';
+  brief.visualSelection.visualDirection = { label: '清爽浅色商务', description, source };
+  brief.visualSelection.colorStrategy.source = 'ai_default';
+  brief.visualSelection.tokens['--pod-card-border-radius'] = '6px';
+  save();
+  const initialized = init();
+  const businessFile = initialized.preparedInputs.business;
+  const business = JSON.parse(fs.readFileSync(businessFile, 'utf8'));
+  const facts = fixture();
+  facts.pages.customPageDetails[0].pageId = 'dashboard';
+  facts.pages.customPageDetails[0].sceneKey = 'dashboard';
+  delete facts.pages.customPageDetails[0].pageSpecHandoff;
+  business.ready = true;
+  business.facts = { overview: facts.overview, dataModels: facts.dataModels, businessFlows: facts.businessFlows, pages: facts.pages };
+  fs.writeFileSync(businessFile, JSON.stringify(business));
+
+  const result = materialize(initialized.output, { businessFile, visualFile: initialized.preparedInputs.visual });
+  const plan = JSON.parse(fs.readFileSync(initialized.output, 'utf8'));
+  expect(plan.visualStyle.forUser.visualDirection).toMatchObject({ description, source });
+  expect(plan.visualStyle.forUser.colorStrategy.source).toBe('ai_default');
+  expect(plan.visualStyle.internal.selectedTheme).toMatchObject({ themeId: 'soft-outline-rhythm', source });
+  expect(initialized.authoring.visualDecision.themeSelection.allowStyleQuestion).toBe(false);
+  expect(initialized.authoring.visualDecision.comparison.enabled).toBe(false);
+  const design = fs.readFileSync(result.outputs.design, 'utf8');
+  expect(design).toContain(description);
+  expect(require('../lib/app/theme-from-design').readDesignTokens(design)['--pod-card-border-radius']).toBe('6px');
+  expect(fs.readFileSync(result.outputs.theme, 'utf8')).toContain('--pod-card-border-radius: 6px;');
 });

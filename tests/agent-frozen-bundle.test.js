@@ -28,6 +28,26 @@ describe('content-addressed complete local tool bundle', () => {
     expect(fs.readdirSync(path.join(fixture.config.stateDir, 'bundles'))).toEqual([result.config.bundle.id]);
     expect(fs.existsSync(path.join(fixture.config.stateDir, 'bundle-references'))).toBe(false); // Go owns references.
   });
+  test('explicit development bundles skip optional runtime packages without the production platform gate', () => {
+    const packageFile = path.join(root, 'package/package.json');
+    const metadata = JSON.parse(fs.readFileSync(packageFile, 'utf8'));
+    const optionalRuntime = `@openyida/local-agent-runtime-${process.platform}-${process.arch}`;
+    metadata.optionalDependencies = { [optionalRuntime]: '0.1.1' };
+    fs.writeFileSync(packageFile, JSON.stringify(metadata));
+    const installedRuntime = path.join(root, 'package/node_modules', optionalRuntime);
+    fs.mkdirSync(installedRuntime, { recursive: true });
+    fs.writeFileSync(path.join(installedRuntime, 'package.json'), 'unverified runtime package must not be read');
+    jest.isolateModules(() => {
+      const runtimePackage = require('../lib/agent/runtime-package');
+      const platformGate = jest.spyOn(runtimePackage, 'platformPackageName').mockImplementation(() => {
+        throw new Error('production platform unavailable');
+      });
+      const { materializeBundle: materializeDevelopment } = require('../lib/agent/frozen-bundle');
+      const frozen = materializeDevelopment(fixture.runtime, fixture.config);
+      expect(verifyBundle(frozen.config.bundle.root, frozen.config.bundle.id).runtime.development).toBe(true);
+      expect(platformGate).not.toHaveBeenCalled();
+    });
+  });
   // Simulated Linux filesystem checks require Unix ownership and mode semantics.
   const unixTest = process.platform === 'win32' ? test.skip : test;
   unixTest('freezes an explicit Linux development runtime without opening production Linux support', () => {
@@ -81,7 +101,8 @@ describe('content-addressed complete local tool bundle', () => {
     const frozen = freeze();
     const manifest = verifyBundle(frozen.config.bundle.root, frozen.config.bundle.id);
     const paths = manifest.files.map((file) => file.path);
-    expect(paths.indexOf('openyida/lib/\uE000.js')).toBeLessThan(paths.indexOf('openyida/lib/\u{10000}.js'));
+    expect(paths).toEqual(expect.arrayContaining([`openyida/lib/order-${String.fromCodePoint(0xE000)}.js`, `openyida/lib/order-${String.fromCodePoint(0x1F680)}.js`]));
+    expect(paths.indexOf(`openyida/lib/order-${String.fromCodePoint(0xE000)}.js`)).toBeLessThan(paths.indexOf(`openyida/lib/order-${String.fromCodePoint(0x1F680)}.js`));
     expect(paths).toEqual([...paths].sort((a, b) => Buffer.compare(Buffer.from(a), Buffer.from(b))));
   });
   test('rejects existing bundle tampering and never silently repairs or deletes it', () => {
@@ -153,7 +174,7 @@ describe('content-addressed complete local tool bundle', () => {
     const children = [];
     await run([command, '--development-runtime', '--runtime-path', fixture.runtimePath, '--runtime-manifest', fixture.manifestPath,
       '--endpoint', 'https://agent.example.test', '--endpoint-id', 'test', '--state-dir', fixture.config.stateDir,
-      '--provider', 'qoder', '--provider-path', fixture.runtimePath], {
+      '--provider', 'qoder', '--provider-path', process.execPath], {
       // This test isolates bundle launching; enrolled multi-organization
       // Connections are exercised by agent-connection-manager.test.js.
       // The fixture is JavaScript, not a Windows PE executable. Launch the same

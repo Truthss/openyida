@@ -18,6 +18,7 @@ module.exports = {
     page_offline: 'The frontend custom page {0} is not yet published to a standalone address; publish it before registering.',
   },
   design_plan: {
+    confirmation_required: 'A confirmação exige uma cópia e revisão do plano atual. Gere o plano primeiro.',
     rebase_required: 'Antes da primeira geração, corrija business.json/visual.json. Se o plano principal mudou, preserve os arquivos e adicione --rebase-parts ao comando original.',
     baseline_missing: 'Restaure o .build-plan-base.json correspondente do espaço original. Sem uma base confiável, preserve os rascunhos e informe o bloqueio.',
     rebase_stage_invalid: 'A reconciliação vale apenas para rascunhos antes da primeira geração. Para planos já exibidos ou gerados, use patch --materialize.',

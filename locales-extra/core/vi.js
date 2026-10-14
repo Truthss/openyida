@@ -18,6 +18,7 @@ module.exports = {
     page_offline: 'The frontend custom page {0} is not yet published to a standalone address; publish it before registering.',
   },
   design_plan: {
+    confirmation_required: 'Xác nhận cần bản chụp và phiên bản của kế hoạch hiện tại. Hãy tạo kế hoạch trước.',
     rebase_required: 'Trước lần tạo đầu tiên, sửa business.json/visual.json. Nếu kế hoạch chính đã thay đổi, giữ các tệp và thêm --rebase-parts vào lệnh ban đầu.',
     baseline_missing: 'Khôi phục .build-plan-base.json tương ứng từ không gian làm việc gốc. Nếu thiếu bản gốc đáng tin cậy, giữ bản nháp và báo nguyên nhân bị chặn.',
     rebase_stage_invalid: 'Chỉ hợp nhất bản nháp trước lần tạo đầu tiên. Với kế hoạch đã hiển thị hoặc tạo, dùng patch --materialize.',

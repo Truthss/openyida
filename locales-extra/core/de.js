@@ -18,6 +18,7 @@ module.exports = {
     page_offline: 'The frontend custom page {0} is not yet published to a standalone address; publish it before registering.',
   },
   design_plan: {
+    confirmation_required: 'Die Bestätigung benötigt den aktuellen Planstand und seine Revision. Erzeugen Sie zuerst den Plan.',
     rebase_required: 'Vor der ersten Ausgabe business.json/visual.json korrigieren. Bei geänderter Hauptplanung Dateien behalten und --rebase-parts zum ursprünglichen Befehl ergänzen.',
     baseline_missing: 'Passende .build-plan-base.json aus dem ursprünglichen Arbeitsbereich wiederherstellen. Ohne verlässliche Basis Entwürfe behalten und die Blockade melden.',
     rebase_stage_invalid: 'Basisabgleich gilt nur vor der ersten Ausgabe. Für bereits angezeigte oder erzeugte Pläne patch --materialize verwenden.',

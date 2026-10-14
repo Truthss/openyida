@@ -18,6 +18,7 @@ module.exports = {
     page_offline: 'The frontend custom page {0} is not yet published to a standalone address; publish it before registering.',
   },
   design_plan: {
+    confirmation_required: '확인하려면 현재 계획 스냅샷과 버전이 필요합니다. 먼저 계획을 생성하세요.',
     rebase_required: '최초 생성 전에는 business.json/visual.json을 수정하세요. 원본 계획이 변경되었다면 파일을 유지하고 기존 명령에 --rebase-parts를 추가하세요.',
     baseline_missing: '원래 작업 공간에서 일치하는 .build-plan-base.json을 복원하세요. 신뢰할 기준이 없으면 초안을 유지하고 차단 사유를 보고하세요.',
     rebase_stage_invalid: '기준 병합은 최초 생성 전 초안에만 적용됩니다. 이미 표시하거나 생성한 계획에는 patch --materialize를 사용하세요.',

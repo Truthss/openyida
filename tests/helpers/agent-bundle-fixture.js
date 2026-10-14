@@ -13,8 +13,8 @@ function createBundleFixture(root) {
   write('package/package.json', JSON.stringify({ name: 'openyida', version: '2026.9.7', dependencies: { 'fixture-a': '1.0.0' }, devDependencies: { 'never-copy-dev': '1.0.0' } }));
   write('package/bin/yida.js', "const fs=require('fs');const path=require('path');console.log(JSON.stringify({dependency:require('fixture-a'),skill:fs.readFileSync(path.join(__dirname,'../yida-skills/SKILL.md'),'utf8')}));\n", 0o700);
   write('package/lib/fixture.js', "module.exports='only-fixture';\n");
-  write('package/lib/\uE000.js', '// UTF-8 order: private-use before astral.\n');
-  write('package/lib/\u{10000}.js', '// UTF-16 would incorrectly sort this first.\n');
+  write(`package/lib/order-${String.fromCodePoint(0xE000)}.js`, '// UTF-8 order: private-use before astral.\n');
+  write(`package/lib/order-${String.fromCodePoint(0x1F680)}.js`, '// UTF-16 would incorrectly sort this first.\n');
   write('package/yida-skills/SKILL.md', 'frozen skill v1\n');
   write('package/node_modules/fixture-a/package.json', JSON.stringify({ name: 'fixture-a', version: '1.0.0', main: 'index.js', dependencies: { 'fixture-b': '1.0.0' } }));
   write('package/node_modules/fixture-a/index.js', "module.exports='a/'+require('fixture-b');\n");

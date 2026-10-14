@@ -33,6 +33,8 @@ test('business module updates draft PRD and existing HTML section before visual 
   expect(update({ businessFlows: source.businessFlows }).updated).toEqual([]);
   expect(JSON.parse(fs.readFileSync(input))).toEqual(source);
   expect(result.draft).toBe(true);
+  expect(result).not.toHaveProperty('confirmation');
+  expect(result).not.toHaveProperty('confirmationPolicy');
 });
 
 test('unsupported and empty facts modules name the offending key next to the allowed list', () => {
@@ -188,6 +190,8 @@ test('finalization promotes the accumulated facts and invalidates confirmation o
   expect(result.revision).toBe('2026-08-31-02');
   expect(Object.keys(result.outputs)).toEqual(['prd', 'design', 'html', 'theme', 'confirmationHtml']);
   expect(result.confirmation.attachments[0].path).toBe(result.outputs.confirmationHtml);
+  expect(result.confirmation.revision).toBe(result.revision);
+  expect(result.confirmationPolicy).toMatchObject({ tool: 'ask_human', requiredBeforeExecution: true, payloadField: 'confirmation' });
   expect(fs.readFileSync(result.outputs.confirmationHtml, 'utf8')).toBe(fs.readFileSync(result.outputs.html, 'utf8'));
   expect(JSON.parse(fs.readFileSync(input)).meta.planState.planConfirmed).toBe(false);
   expect(fs.readFileSync(result.outputs.prd, 'utf8')).toContain('更新后的客户管理目标');

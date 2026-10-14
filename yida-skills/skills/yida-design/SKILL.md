@@ -28,13 +28,13 @@ description: >
 
 **品牌变量必须完整，导航装饰可以省略。** `design.md` 提供 PC 品牌色阶 `--color-brand1-1/2/3/5/6/9/10`，CLI 同时生成移动端 `--color-brand-1`、`--color-brand-2`、`--color-brand-3`、`--color-brand-4`。最终 CSS 必须在全局 `:root` 中提供这 11 个可用颜色；移动端映射不必在 design.md 重复填写。生成和上传都会检查缺失、无效颜色及循环引用。报错时修复设计后重新生成，不能只替换主色后上传模板。
 
-先按[已选风格只确认一次](references/theme-selection.md#已选风格只确认一次)检查并复用选择；用户已选主题或自由创意时，PRD 前后都不再询问风格或重新比较候选；缺少配色细节只补细节。只有用户主动要求换风格才重新选型。
+先按[已选风格只确认一次](references/theme-selection.md#已选风格只确认一次)识别原始需求和最新补充中的视觉意向。用户已描述风格、指定颜色/明暗、提供视觉参考或已选主题时，直接推演并补齐设计细节，不再询问风格或比较候选；不要求提供完整设计系统。参考网站或设计图必须按[视觉 DNA 提取](references/reference-visual-dna.md)实际读取并转成 `design.md` 与主题 CSS，不能只按网站名称匹配模板。只有没有风格意向、视觉参考或可复用选择时，才进入候选流程；用户明确要求比较时遵从。
 
 需要选择风格时，读取 [共享主题选择规则](references/theme-selection.md)，按 [模板来源约束](references/application-style-library.md#模板来源与重复生成) 保留配对 CSS 与所选视觉特征；先按 [主题与导航兼容规则](references/navigation-decision.md#主题与导航兼容规则) 筛选候选；已确定的导航结构不能被不兼容主题覆盖。
 
-风格选择统一通过 `ask_human`，默认提供名称和一句说明。已备好的风格题与当前必要问题同轮提交，按[交互顺序](references/theme-selection.md#交互顺序)执行。
+仅确需用户选择风格时统一通过 `ask_human`，默认提供名称和一句说明。已备好的风格题与当前必要问题同轮提交，按[交互顺序](references/theme-selection.md#交互顺序)执行。
 
-用户明确要求看效果时，才按[预览规则](references/theme-selection.md#选择时展示名称与效果图)展示标题和示例图：宽屏每行 4–6 款，行数不限，窄屏减少列数。预览不提交选择。波普仅在用户明确指定或主要任务偏展示时提供，按[使用条件](references/theme-selection.md#波普风格的使用条件)筛选。
+所有环境的主题风格预览默认关闭，只有用户显式要求才展示。只有用户显式要求看预览、参考图或效果时，才按[预览规则](references/theme-selection.md#选择时展示名称与效果图)展示标题和示例图：宽屏每行 4–6 款，行数不限，窄屏减少列数。预览不提交选择。波普仅在用户明确指定或主要任务偏展示时提供，按[使用条件](references/theme-selection.md#波普风格的使用条件)筛选。
 
 向用户说明设计时，写风格和适用场景：“设计主题风格为轻盈媒体栅格，适合产品展示型品牌官网。”风格名称与场景按当前项目填写；建议阶段使用“建议采用……风格”。
 
@@ -117,6 +117,7 @@ Fast、Plan 和单页设计使用相同的 UI 设计规则、主题变量和质�
 | [page-design 单页设计](sub_skill/page-design/SKILL.md) | 单页主题证据、页面级设计流程、输出补充字段 | 单个自定义页设计 |
 | [ui-improve 页面与应用美化](sub_skill/ui-improve/SKILL.md) | 视觉方案、ask_human 确认、UI-only 实施、备份和不满意恢复 | 已有资源外观调整优先读取 |
 | [design.md 输出格式](workflow/output-design.md) | `design.md` 字段示例 | Fast 写入前；Plan 定制时按需 |
+| [参考网站或设计图视觉 DNA](references/reference-visual-dna.md) | 实际读取参考、提取视觉规则并生成设计与 CSS | 用户提供参考网站、设计图或截图时 |
 | [共享主题选择规则](references/theme-selection.md) | Fast、Plan、单页共用的摘要选型、项目化和读取边界 | 主题选择与生成 |
 | [视觉结构配方库](references/visual-scaffold-recipes.md) | 把真实内容组织为可实现的布局、表面与响应式安排 | UI 视觉设计 |
 | [页面质量门禁](references/page-quality-gates.md) | 区块数量、源码槽位、低密大卡片、主题一致性和 `pageSpecHandoff` 检查 | 页面结构、视觉与交接阶段 |

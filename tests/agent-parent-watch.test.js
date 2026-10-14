@@ -18,7 +18,7 @@ describe('runtime parent-watch and bounded stop contract (fake processes only)',
     if (fakePid) {try {process.kill(fakePid, 'SIGKILL');} catch { /* Owned fake already exited. */ }}
     removeFixture(root);
   });
-  test('config stdin EOF does not stop runtime; Node death closes only the separate watch pipe', async () => {
+  (process.platform === 'win32' ? test.skip : test)('config stdin EOF does not stop runtime; Node death closes only the separate watch pipe', async () => {
     const binary = path.join(root, 'fake-runtime');
     const receipt = path.join(root, 'parent-ended.json');
     const source = `#!${process.execPath}\nconst fs=require('fs');let text='';process.stdin.on('data',c=>text+=c);process.stdin.on('end',()=>{const c=JSON.parse(text);const watch=fs.createReadStream(null,{fd:c.parentWatchFD,autoClose:false});watch.on('end',()=>{fs.writeFileSync(${JSON.stringify(receipt)},JSON.stringify({parentEOF:true,notCompletion:true}));process.exit(0);});watch.resume();console.log(JSON.stringify({type:'ready',pid:process.pid,stdinEnded:true,watchFD:c.parentWatchFD}));});\n`;
@@ -56,13 +56,33 @@ describe('runtime parent-watch and bounded stop contract (fake processes only)',
     child.stdio = [child.stdin, child.stdout, child.stderr, new PassThrough()];
     child.kill = jest.fn();
     const signals = new EventEmitter();
-    const spawnFake = jest.fn(() => child);
+    const control = new EventEmitter();
+    control.stdin = new PassThrough(); control.stdout = new PassThrough(); control.stderr = new PassThrough();
+    control.stdio = [control.stdin, control.stdout, control.stderr];
+    let stopConfig = '';
+    control.stdin.on('data', chunk => {stopConfig += chunk;});
+    const spawnFake = jest.fn().mockReturnValueOnce(child).mockReturnValue(control);
     const pending = launchRuntime({ executable: '/fake-only' }, { command: 'run', node: { packageRoot: root } }, { spawn: spawnFake, signals });
     const outcome = pending.catch((error) => error);
     expect(spawnFake.mock.calls[0][2].stdio).toEqual(['pipe', 'pipe', 'pipe', 'pipe']);
     expect(child.stdio[3].destroyed).toBe(false);
+    const launchConfig = JSON.parse(child.stdin.read().toString());
+    if (process.platform === 'win32') {
+      expect(launchConfig.parentPID).toBe(process.pid);
+      expect(launchConfig).not.toHaveProperty('parentWatchFD');
+    } else {
+      expect(launchConfig.parentWatchFD).toBe(3);
+      expect(launchConfig).not.toHaveProperty('parentPID');
+    }
     child.stdout.write('not-json\n');
-    expect(child.kill).toHaveBeenCalledWith('SIGTERM');
+    if (process.platform === 'win32') {
+      expect(spawnFake).toHaveBeenCalledTimes(2);
+      expect(JSON.parse(stopConfig)).toMatchObject({ command: 'disconnect', parentPID: 0, parentWatchFD: 0 });
+      expect(child.kill).not.toHaveBeenCalled();
+      control.emit('close', 0);
+    } else {
+      expect(child.kill).toHaveBeenCalledWith('SIGTERM');
+    }
     jest.advanceTimersByTime(14999);
     expect(child.kill).not.toHaveBeenCalledWith('SIGKILL');
     jest.advanceTimersByTime(1);

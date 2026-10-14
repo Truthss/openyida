@@ -27,7 +27,7 @@ describe('explicit agent runtime package', () => {
   const resolve = () => resolveRuntime({ developmentRuntime: true, runtimePath: executable, manifestPath });
   test('v1 and environment overrides never silently enable development mode', () => {
     expect(() => resolveRuntime({ runtimePath: executable, manifestPath })).toThrow(expect.objectContaining({ code: 'AGENT_RUNTIME_DEVELOPMENT_REQUIRED' }));
-    expect(() => resolveRuntime({ platform: 'darwin', arch: 'arm64', catalog: { schemaVersion: 1, keys: {}, releases: [] }, env: { OPENYIDA_AGENT_RUNTIME_PATH: executable, OPENYIDA_AGENT_RUNTIME_MANIFEST: manifestPath, OPENYIDA_DEVELOPMENT_RUNTIME: '1' } })).toThrow(expect.objectContaining({ code: 'AGENT_RUNTIME_NOT_CONFIGURED' }));
+    expect(() => resolveRuntime({ platform: 'darwin', arch: 'x64', catalog: { schemaVersion: 1, keys: {}, releases: [] }, env: { OPENYIDA_AGENT_RUNTIME_PATH: executable, OPENYIDA_AGENT_RUNTIME_MANIFEST: manifestPath, OPENYIDA_DEVELOPMENT_RUNTIME: '1' } })).toThrow(expect.objectContaining({ code: 'AGENT_RUNTIME_NOT_CONFIGURED' }));
   });
   test('checks explicit content without executing or PATH lookup', () => {
     expect(resolve()).toMatchObject({ executable: fs.realpathSync(executable), sha256: manifest.binary.sha256 });
@@ -39,8 +39,12 @@ describe('explicit agent runtime package', () => {
     expect(resolveRuntime({ developmentRuntime: true, runtimePath: executable, manifestPath, platform: 'linux', arch: 'x64' }))
       .toMatchObject({ development: true, manifest: { platform: 'linux', arch: 'x64' } });
   });
+  test.each(['x64', 'arm64'])('rejects Linux production runtime on %s even with environment overrides', (arch) => {
+    expect(() => resolveRuntime({ platform: 'linux', arch, catalog: { schemaVersion: 1, keys: {}, releases: [] }, env: { OPENYIDA_AGENT_RUNTIME_PATH: executable, OPENYIDA_AGENT_RUNTIME_MANIFEST: manifestPath, OPENYIDA_DEVELOPMENT_RUNTIME: '1' } }))
+      .toThrow(expect.objectContaining({ code: 'AGENT_RUNTIME_PLATFORM_UNSUPPORTED' }));
+  });
   test('missing platform package does not use ambient PATH', () => {
-    expect(() => resolveRuntime({ platform: 'darwin', arch: 'arm64', catalog: { schemaVersion: 1, keys: {}, releases: [] }, env: { PATH: root } })).toThrow(expect.objectContaining({ code: 'AGENT_RUNTIME_NOT_CONFIGURED' }));
+    expect(() => resolveRuntime({ platform: 'darwin', arch: 'x64', catalog: { schemaVersion: 1, keys: {}, releases: [] }, env: { PATH: root } })).toThrow(expect.objectContaining({ code: 'AGENT_RUNTIME_NOT_CONFIGURED' }));
   });
   test('rejects a relative executable', () => {
     expect(() => resolveRuntime({ developmentRuntime: true, runtimePath: 'runtime', manifestPath })).toThrow(expect.objectContaining({ code: 'AGENT_RUNTIME_INVALID_PATH' }));
