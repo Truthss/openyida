@@ -16,6 +16,14 @@ test.each(presets)('generates scoped $id without changing virtual row geometry',
   expect(css).toContain('[data-formuuid="FORM-TEST"]');
   expect(css).toContain('[data-field-id="textField_actual"]');
   const added = css.slice(base.length);
+  const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)];
+  const paint = selector => rules.filter(([, selectors]) => selectors.includes(selector))
+    .flatMap(([, , body]) => [...body.matchAll(/(?:^|;)\s*background:([^;]+)/g)].map(match => match[1].trim())).pop();
+  // The action pane covers header coordinates: an opaque wrapper hides even a
+  // correctly themed placeholder. Both cases reproduced on the native table.
+  expect(paint('#newDataManageTable .right-fixed-pane')).toBe('transparent !important');
+  expect(paint('#newDataManageTable .leftHeaderPane ~ div')).toBe(paint('#newDataManageTable [data-role="header-cell"][data-column-key]'));
+
   // Every selector starts with the form manager or an explicit selected-nav guard.
   for (const rule of added.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
     const selector = rule[1].replace(/\/\*[\s\S]*?\*\//g, '').trim();
