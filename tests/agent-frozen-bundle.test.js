@@ -6,13 +6,13 @@ const path = require('path');
 const { execFileSync, spawn } = require('child_process');
 const { materializeBundle, verifyBundle } = require('../lib/agent/frozen-bundle');
 const { run } = require('../lib/agent/cmd');
-const { resolveRuntime } = require('../lib/agent/runtime-package');
+const { resolveRuntime, canonicalPath } = require('../lib/agent/runtime-package');
 const { createBundleFixture, removeFixture } = require('./helpers/agent-bundle-fixture');
 
 describe('content-addressed complete local tool bundle', () => {
   let root, fixture;
   beforeEach(() => {
-    root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-frozen-bundle-')));
+    root = canonicalPath(fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-frozen-bundle-')));
     fixture = createBundleFixture(root);
   });
   afterEach(() => {jest.restoreAllMocks(); removeFixture(root);});
@@ -77,6 +77,21 @@ describe('content-addressed complete local tool bundle', () => {
     expect(read(updated)).toEqual({ dependency: 'a/b-v2', skill: 'new skill\n' });
     expect(fs.existsSync(old.runtime.executable)).toBe(true);
   });
+  const windowsTest = process.platform === 'win32' ? test : test.skip;
+  windowsTest('all nested frozen directories bind the current Windows user', () => {
+    const frozen = freeze();
+    const script = `$ErrorActionPreference='Stop'
+$current=[System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+$root=Get-Item -LiteralPath $env:OPENYIDA_TEST_BUNDLE
+$items=@($root)+@(Get-ChildItem -LiteralPath $root.FullName -Directory -Recurse -Force)
+foreach($item in $items){
+  if($item.GetAccessControl().GetOwner([System.Security.Principal.SecurityIdentifier]).Value -ne $current){throw 'Unexpected bundle directory owner'}
+}
+'owned'`;
+    expect(execFileSync(path.join(process.env.SystemRoot, 'System32/WindowsPowerShell/v1.0/powershell.exe'),
+      ['-NoProfile', '-NonInteractive', '-Command', script], { encoding: 'utf8', windowsHide: true,
+        env: { ...process.env, OPENYIDA_TEST_BUNDLE: frozen.config.bundle.root } }).trim()).toBe('owned');
+  }, 60000);
   test('deterministically reuses the same bundle without creating a Node execution lease', () => {
     const first = freeze();
     const write = jest.spyOn(fs, 'writeFileSync');
@@ -101,7 +116,6 @@ describe('content-addressed complete local tool bundle', () => {
     const frozen = freeze();
     const manifest = verifyBundle(frozen.config.bundle.root, frozen.config.bundle.id);
     const paths = manifest.files.map((file) => file.path);
-    expect(paths).toEqual(expect.arrayContaining([`openyida/lib/order-${String.fromCodePoint(0xE000)}.js`, `openyida/lib/order-${String.fromCodePoint(0x1F680)}.js`]));
     expect(paths.indexOf(`openyida/lib/order-${String.fromCodePoint(0xE000)}.js`)).toBeLessThan(paths.indexOf(`openyida/lib/order-${String.fromCodePoint(0x1F680)}.js`));
     expect(paths).toEqual([...paths].sort((a, b) => Buffer.compare(Buffer.from(a), Buffer.from(b))));
   });

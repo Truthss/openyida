@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 海外版宜搭暂不适用当前 OAuth token 登录与创建应用链路；如需在海外版宜搭创建应用，请使用 `2026.7.14-2` 以前的版本，例如 `npm install -g openyida@2026.7.13`。
 
+## [Unreleased]
+
+### 修复
+
+- **Windows runtime**：四个平台精确依赖正式版 `0.1.2`，同步验签 catalog；修复提升权限运行时新建私有会话目录的所有者，避免正常接入被拒绝。
+- **Windows Local Agent**：统一运行时与执行包路径规范化，预检以 PowerShell 文件模式保留 CLI 标准输入和字面参数；父进程监控按 Windows PID 与 Unix 管道契约验证。
+- **Windows 前台收尾**：避免 Node 的 Job Object 在父进程退出时直接杀掉 Go runtime，改由已有父进程句柄监控触发取消和正常收尾；正常前台运行仍等待 runtime 完成。
+- **Windows 执行包目录**：使用与连接凭证相同的私有目录创建机制，显式绑定根目录及所有嵌套目录的当前用户所有者，避免提升权限运行时默认 Administrators 所有者被 Go runtime 拒绝。
+- **Windows 验证覆盖**：保留 Unicode 排序、签名、原子发布和后台生命周期断言；增加签名 Go runtime 的本地控制面集成验证，覆盖接入、模型刷新、心跳、主动断开及父进程退出，不调用付费模型或真实业务应用。
+
 ## [2026.10.14-1] - 2026-10-14
 
 描述你想要的风格，或提供喜欢的网站、设计图，即可继续完成应用设计，减少重复选择。

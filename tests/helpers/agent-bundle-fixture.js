@@ -2,9 +2,10 @@
 
 const fs = require('fs');
 const path = require('path');
-const { digest, resolveRuntime } = require('../../lib/agent/runtime-package');
+const { digest, resolveRuntime, canonicalPath } = require('../../lib/agent/runtime-package');
 
 function createBundleFixture(root) {
+  root = canonicalPath(root);
   function write(relative, content, mode = 0o600) {
     const target = path.join(root, relative);
     fs.mkdirSync(path.dirname(target), { recursive: true, mode: 0o700 });
@@ -46,7 +47,7 @@ function removeFixture(root) {
     }
   }
   writable(root);
-  fs.rmSync(root, { recursive: true, force: true });
+  fs.rmSync(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 }
 
 module.exports = { createBundleFixture, removeFixture };

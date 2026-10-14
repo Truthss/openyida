@@ -3,7 +3,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { execFileSync } = require('child_process');
-const { mkdirPrivate } = require('../lib/agent/private-directory');
+const { mkdirPrivate, mkdirPrivateDirectories } = require('../lib/agent/private-directory');
 const { prepareConnection } = require('../lib/agent/connection-store');
 const { createDiagnosticLog } = require('../lib/agent/diagnostic-log');
 
@@ -12,6 +12,10 @@ windowsTest('new Windows launcher state, credentials and logs have private inher
   const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-private-'));
   try {
     const root = path.join(fixture, '中文 space', 'local-agent');
+    // Exceed Windows' per-variable size limit; batch input must travel on stdin.
+    const nested = Array.from({ length: 300 }, (_, i) => path.join(root, "batch user's 中文", 'directory-' + i + '-'.repeat(40), 'child'));
+    expect(JSON.stringify(nested).length).toBeGreaterThan(32767);
+    mkdirPrivateDirectories(nested);
     const log = createDiagnosticLog(path.join(root, 'logs'));
     log('info', 'fixture_created');
     const connection = prepareConnection(root, 'fixture.' + 'x'.repeat(40));
@@ -23,6 +27,7 @@ $allowed=@($current,'S-1-5-18','S-1-5-32-544')
 $items=@(Get-Item -LiteralPath $env:OPENYIDA_TEST_ROOT)+@(Get-ChildItem -LiteralPath $env:OPENYIDA_TEST_ROOT -Recurse -Force)
 foreach($item in $items){
   $acl=$item.GetAccessControl()
+  if($item.PSIsContainer -and $acl.GetOwner([System.Security.Principal.SecurityIdentifier]).Value -ne $current){throw 'Unexpected directory owner'}
   foreach($rule in $acl.Access){
     $sid=$rule.IdentityReference.Translate([System.Security.Principal.SecurityIdentifier]).Value
     if($sid -notin $allowed){throw 'Unexpected ACL identity'}
@@ -39,4 +44,4 @@ foreach($item in $items){
   } finally {
     fs.rmSync(fixture, { recursive: true, force: true });
   }
-}, 30000);
+}, 60000);

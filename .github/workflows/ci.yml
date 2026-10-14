@@ -73,9 +73,13 @@ jobs:
       run: npm run test:unit -- --runInBand --runTestsByPath tests/provider-preflight.test.js
 
     - name: Run remaining Windows tests
-      if: runner.os == 'Windows'
+      if: (success() || failure()) && runner.os == 'Windows'
       run: npm run test:unit -- --testPathIgnorePatterns=tests/provider-preflight.test.js
 
     - name: Run tests
       if: runner.os != 'Windows'
       run: npm run test:unit
+
+    - name: Verify native Local Agent processes and runtime
+      if: (success() || failure()) && (runner.os == 'Windows' || runner.os == 'macOS')
+      run: node scripts/local-agent-native-smoke.js
