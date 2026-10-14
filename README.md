@@ -72,7 +72,7 @@ For existing-app improvements, review the visual proposal before backups and imp
 
 ## Recent Updates
 
-**2026.10.14** improves appearance customization, with better support for style descriptions, reference websites, and design images. [Read the full changelog](./CHANGELOG.md#20261014---2026-10-14).
+**2026.10.14-1** improves appearance customization, with better support for style descriptions, reference websites, and design images. [Read the full changelog](./CHANGELOG.md#20261014-1---2026-10-14).
 
 ## Quick Start
 
