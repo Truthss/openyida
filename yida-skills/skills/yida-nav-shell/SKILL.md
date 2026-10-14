@@ -36,7 +36,7 @@ description: 为应用或独立前台页面编写自己的顶部、侧边等导�
 
 ### 仅独立前台菜单
 
-需要让应用管理员返回业务管理时，使用 [管理员工作台入口](../yida-canvas-custom-page/references/navigation-and-entry-guide.md#管理员返回业务工作台) 的 `canvas-admin-entry`，放在导航操作区并跟随主题。按当前访问者与当前应用的身份展示，指向真实业务管理页面；这只是访问态入口，不是开发后台按钮，不自动授予或调整管理员权限。
+前后台场景默认考虑在前台导航操作区或头像菜单提供按身份可见的业务后台入口，见 [设计建议](../yida-app/references/entry-navigation.md#前台返回业务后台设计建议)；已有入口复用，不增加按钮存在性检查或发布门禁。需要让应用管理员返回业务管理时，使用 [管理员工作台入口](../yida-canvas-custom-page/references/navigation-and-entry-guide.md#管理员返回业务工作台) 的 `canvas-admin-entry`，放在导航操作区并跟随主题。按当前访问者与当前应用的身份展示，指向真实业务管理页面；这只是访问态入口，不是开发后台按钮，不自动授予或调整管理员权限。
 
 应用为 platform-top/platform-side/platform-l-shape、当前页为 standalone 时，只对该页面执行下面的 `update-form-config` 和回读；不调用 `update-app --hide-app-nav`，不批量隐藏后台表单或其他页面。需要应用级主题更新时继续保留平台导航。发布后分别验证前台页面链接与后台 workbench 链接；前台仍出现平台菜单时，先排查实际访问路径与页面配置，不能通过全局隐藏“修复”。
 

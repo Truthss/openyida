@@ -43,6 +43,8 @@ Plan 在 `design-plan init` 前必须补齐合法的导航结构（见下节）�
 
 先按[已选风格只确认一次](../../yida-design/references/theme-selection.md#已选风格只确认一次)检查原始需求、最新补充、视觉参考和已有选择。保留用户的风格原话与参考 URL 或图片标识 到 `visualSelection.visualDirection.description`；自然语言意向用 `user_explicit`，实际提取的参考视觉事实用 `material_extracted`。没有 themeId 或色值不代表需要用户重新选择；由 AI 映射合法主题，无合适模板时用 `free-creative`。
 
+用户显式要求“预览效果辅助风格选择”时，先匹配 catalog 中的模板原图，以对话内 HTML 卡片与 `ask_human` 同轮展示；该请求优先于 Fast 内部选型，不能只返回链接或替用户选定。仅查看效果不重新提问。
+
 已有风格意向直接推演；视觉参考网站或设计图按[视觉 DNA 提取](../../yida-design/references/reference-visual-dna.md)实际读取后生成设计与 CSS。仅没有风格意向、视觉参考或可复用选择时，按[设计方向比较](../../yida-design/references/theme-selection.md#设计方向比较)生成三套方向；Fast 内部选择，Plan 未获 AI 决策委托时按[宿主展示规则](../../yida-design/references/theme-selection.md#选择时展示名称与效果图)获得选择。AI 建议记录具体依据，不伪造用户选项回答。
 
 `visualSelection.colorStrategy` 使用对象：`primaryColor` 填本项目选定的 6 位 HEX 色值，`primaryColorName` 填对应色名，`usage` 写配色依据及背景、主操作和强调色的关系。只有文字配色要求时也可先保存字符串；CLI 将原文放入 `usage`，并提示补齐 `primaryColor`。

@@ -163,3 +163,25 @@ test.each([undefined, 'management', 'all', 'explicit-request', 'showcase'])('sta
     expect(fs.existsSync(output)).toBe(false);
   }
 });
+
+
+test('preview cards reuse exact catalog images and render without executable scripts', () => {
+  const { createThemePreview } = require('../lib/core/theme-widget');
+  const catalog = require('../lib/design-plan/init').catalog();
+  const ids = ['app-sage', 'app-terminal', 'free-creative'];
+  const output = path.join(temp, 'inline.html');
+  const result = createThemePreview(['--theme-ids', ids.join(','), '--output', output]);
+  const html = fs.readFileSync(output, 'utf8');
+  expect(result.attachment).toEqual({ name: 'inline.html', path: output });
+  expect(result.presentation).toMatchObject({ format: 'html_card', surface: 'conversation', timing: 'same_turn_as_ask_human' });
+  expect(html.match(/<article /g)).toHaveLength(3);
+  expect(html).not.toMatch(/<script>/);
+  expect(html).not.toMatch(/<(?:input|button)\b/);
+  for (const id of ids.slice(0, 2)) {
+    const theme = catalog.themes.find(item => item.themeId === id);
+    expect(html).toContain(`src="${theme.previewImage.url}"`);
+    expect(html).toContain(`>${theme.label}</h2>`);
+  }
+  expect(html.match(/<img /g)).toHaveLength(2);
+  expect(html).not.toContain('class="preview" hidden');
+});

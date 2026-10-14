@@ -172,5 +172,23 @@
     "prompt": "已有 renderJsx 页面需要维护 this.dataSourceMap 搜索参数，设计器左侧数据源保持可见。",
     "expectedSkill": "yida-data-source-connectors",
     "note": "历史平台 JSX 设计器数据源维护"
+  },
+  {
+    "id": "data-manage-ui-style",
+    "prompt": "针对当前数据管理页换一种风格，只保留横线。",
+    "expectedSkill": "yida-data-manage-ui",
+    "note": "已有原生数据管理外观，不修改业务记录"
+  },
+  {
+    "id": "data-manage-ui-actions",
+    "prompt": "数据管理页重在操作，需要更突出新增、筛选和行操作。",
+    "expectedSkill": "yida-data-manage-ui",
+    "note": "操作优先的原生管理页 UI"
+  },
+  {
+    "id": "data-manage-ui-custom",
+    "prompt": "用自定义页面实现简单的数据管理，希望卡片和看板差异大一些。",
+    "expectedSkill": "yida-data-manage-ui",
+    "note": "明确自定义数据管理布局"
   }
 ]

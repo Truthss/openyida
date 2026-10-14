@@ -14,6 +14,8 @@
 - 页面/资源数量完整性风险检查结果。
 - `requirement-brief.json.constraints.prohibitedActions` 与对应跳过证据。
 
+完整应用的业务入口先按下文登记并回读，最终前台和业务后台卡片分别使用 `app-entry` 回读的 `urls.frontend` 和 `urls.management`，不能混用、交换或拿最后发布的页面覆盖两端。开发者入口仍单独使用 `adminUrl`。单页交付不扩大为应用级登记。
+
 主入口与页面入口必须取自本轮 CLI 成功结果返回的 `appUrl`、`workbenchUrl`、`adminUrl`、`standaloneUrl` 或 `url`，并在后续只读回查中保持一致。前台自定义页面优先使用 `publish` 或发布后 `get-form-config` 回读确认的 `standaloneUrl`；这是页面持久化隐藏导航后的无参数地址。不得由模型根据 `appType` 自行拼接或猜测链接；下文 URL 规则仅用于校验服务端/CLI 返回值，不是缺失链接时的生成规则。若成功结果没有权威 URL，必须明确交付失败并执行只读回查，不能交付空卡片或用模板补齐。
 
 入口层级由用户的交付目标决定：应用访问、应用入口或应用工作台使用成功结果的 `appUrl`；具体表单、流程、报表或页面入口使用对应资源结果的 `url` / `workbenchUrl`。同一结果同时提供两种入口时，优先满足用户明确点名的层级。
@@ -46,20 +48,23 @@
 
 ## 登记应用访问入口
 
-前台与业务工作台是两个独立可选的入口，不是完整应用必须填满的字段。完整应用搭建完成后，根据本轮实际业务场景、用户确认的交付范围和入口回读证据决定是否登记，使应用卡片可以直接访问；不能只因为 CLI 返回了 `appUrl` / `workbenchUrl` 就自动登记为业务工作台。
+**完整应用交付前默认必须登记并回读本轮范围内的业务入口。** 这是搭建收尾的一部分，不是输出链接后的可选动作，不需要用户另行要求配置“访问地址设置”。按已确认的业务场景填写：分前后台时两项都填；只有前台只填前台；只有后台或不分前后台填业务后台/系统入口。不能为了填满两个字段新增页面，也不能只因创建结果含 `appUrl` 就用它覆盖已规划的管理任务首页。明确禁止应用设置写入时遵从并标记登记未完成。
 
-有需要登记的入口时，先执行 `openyida app-entry get <appType>` 查看已有配置，再按以下情况调用。命令内部执行版本校验、局部更新和保存后回读，输出 `urls` 供交付使用。
+发布与导航验收后、最终输出前，先执行 `openyida app-entry get <appType>` 查看已有配置，再按以下情况调用。命令内部执行版本校验、局部更新和保存后回读，输出 `urls` 供交付使用。
 
 | 本轮实际场景 | 登记方式 |
 | --- | --- |
 | 只有已验证的前台入口，例如公开展示或用户提交页面 | `openyida app-entry set <appType> --frontend <已验证前台完整URL>` |
 | 只有已验证的业务管理入口，例如内部管理工作区 | `openyida app-entry set <appType> --management <已验证业务管理完整URL>` |
 | 两类入口均在交付范围内，且各自验证通过 | `openyida app-entry set <appType> --frontend <已验证前台完整URL> --management <已验证业务管理完整URL>` |
-| 两类入口均不适用或尚未验证 | 不执行 `app-entry set`；不传空字符串、`null`、占位 URL，不为了补齐配置创建页面或拼接工作台链接 |
+| 入口不在本轮范围 | 保留已有配置，不创建另一端 |
+| 范围内入口尚未验证、登记失败或回读不一致 | 标记该端未完成，修复后再交付；不输出猜测或错位链接，不传空字符串、`null`、占位 URL |
 
+- 按入口规划的 `sceneKey`、`defaultMenuKey`、真实页面 ID 和视图建立前后台映射，不按页面创建/发布顺序或页面标题猜测。业务后台优先使用已验证的具体任务 `/workbench/{formUuid}?viewUuid=...`；只有确认根 `/workbench` 落到正确默认任务时才使用根入口。
+- 已有配置与本轮已验证目标一致时直接复用回读，不重复保存；不同且在本轮完整搭建范围内时局部更新。登记后以 `urls` 为最终卡片事实源，保持完整域名、页面 ID、有效 query/hash 和公开地址。`verification.configurationReadback=true` 只证明配置保存，`runtimeVerified=false` 仍需实际打开验证，不能当访问成功。
 - 前台地址必须来自已发布页面的成功返回及回读；独立前台核验持久化 `renderNav=false`，仅字段缺失时兼容 `isRenderNav`，不通过 URL 参数配置。
 - **登记 URL 必须是发布返回并回读确认的那条完整访问地址，原样传入 `app-entry set`**：直接复用 `publish` 成功返回的完整运行时 URL，并结合 `get-form-config` 核对页面配置和实际访问结果，保留其域名、路径段（如 `/workbench/{formUuid}` 或 `/custom/{formUuid}`）和有效参数。不得手工改写、截断或凭 `appType`/`formUuid` 拼接一条未经发布回读的路径来登记；保存后回读核对同一条完整 URL。完整 URL 参数不会截断工作台页面 ID。
-- 只有已有明确页面 ID 且无需保留公开地址或参数时，才用 `--frontend-page <formUuid>` / `--management-page <formUuid>`。前者检查 display 类型和非空 pathName，生成 `/custom/<formUuid>`；后者检查页面归属，生成 `/workbench/<formUuid>`。生成路径与配置回读不代替实际访问验收；公开入口始终传已验证的完整 URL。
+- 只有已有明确页面 ID 且无需保留公开地址或参数时，才用 `--frontend-page <formUuid>` / `--management-page <formUuid>`。前者检查 display 类型、非空 pathName，并实际读取页面配置确认 `renderNav=false`（仅缺字段时兼容 `isRenderNav`），复用发布流程的 `standaloneUrl` 解析器；配置缺失、开启导航或资源不匹配时拒绝保存，不自动隐藏导航；后者检查页面归属，生成 `/workbench/<formUuid>`。生成路径与配置回读不代替实际访问验收；公开入口始终传已验证的完整 URL。
 - 已验证的公开地址按完整 URL 原样登记，保留所选入口的域名、路径和有效参数；不能替换成需要登录的长链接，也不能为了登记而自动开启公开访问。
 - 业务工作台使用已验证的访问态 URL，不能登记 `/admin` 或设计器地址。
 - 单页、表单、流程等局部修改不自动覆盖应用入口。只搭前台时不传 `--management`；缺省值保留原配置。
@@ -193,6 +198,8 @@
 - 用户要求删除应用时，必须展示应用名称、应用 ID、影响范围，并等待明确“确认删除”后才可执行。
 
 ## Checklist
+
+- [ ] 完整应用范围内的业务前台/后台访问地址已在最终输出前保存并回读；最终卡片与 `urls.frontend/management` 及默认任务逐一对应，失败项明确标记未完成；
 
 - [ ] 唯一一组“应用访问入口”的终态 artifact `description` 已包含业务总结；
 - [ ] `notify_human` 作为最后一个动作调用，用户显式要求的事实清单和资源 ID 已进入可见 `description`；

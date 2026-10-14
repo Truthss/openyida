@@ -7,6 +7,7 @@
 module.exports = {
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
+    frontend_nav_required: 'पेज {0} का नेविगेशन छिपाना सत्यापित नहीं है। स्वतंत्र फ्रंटएंड पता दर्ज करने से पहले renderNav=false सहेजें और सेटिंग फिर पढ़ें।',
     desc_get: 'Read frontend and management runtime entries',
     desc_set: 'Register application entries with partial update and readback',
     usage: 'Usage: openyida app-entry get <appType> [--json]\n       openyida app-entry set <appType> [--frontend <url>] [--management <url>] [--clear-frontend] [--clear-management] [--json]\nRegister only published, verified runtime URLs for this application. Omitted entries remain unchanged.',
@@ -2145,3 +2146,14 @@ module.exports.help.cmd_upgrade_app_theme = require('../../lib/core/locales/en')
 module.exports.app_theme = require('../../lib/core/locales/en').app_theme;
 module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en').help.cmd_app_theme_snapshot;
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
+
+module.exports.data_manage_style = {
+  'usage': 'openyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--follow-shell] [--json]',
+  'data_style_invalid': 'शैली के पैरामीटर अमान्य हैं। वास्तविक ID और सूची की शैली उपयोग करें।',
+  'data_style_base': 'मुख्य ब्रांड रंग सहित मौजूदा ऐप CSS दें, अधिकतम 20 MB।',
+  'data_style_marker': 'शैली चिह्न क्षतिग्रस्त या दोहराए गए हैं। मूल फ़ाइल जाँचें।',
+  'data_style_output': 'आउटपुट नई CSS फ़ाइल होना चाहिए; मौजूदा फ़ाइलें नहीं बदली जाएँगी।',
+  'generated': 'शैली बनी: {0}। प्रकाशित नहीं हुई; बैकअप, प्रकाशन और वास्तविक पृष्ठ जाँच पूरी करें।'
+};
+module.exports.help.cmd_data_manage_style_list = 'डेटा प्रबंधन शैलियाँ और कस्टम लेआउट दिशाएँ दिखाएँ';
+module.exports.help.cmd_data_manage_style_generate = 'चुने डेटा प्रबंधन पृष्ठ के लिए स्थानीय CSS बनाएँ';

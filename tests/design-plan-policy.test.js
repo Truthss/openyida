@@ -69,3 +69,13 @@ test('unmapped style intent and image/site references are resolved before condit
   expect(policy.themeSelection.intent.referenceVisual.policy).toContain('distinguish observations from inferred values');
   expect(policy.themeSelection.intent.referenceVisual.policy).toContain('Data links and bug screenshots alone are not style preferences');
 });
+
+
+test('preview-assisted selection uses catalog images and same-interaction conversation cards', () => {
+  const policy = getVisualDecisionPolicy();
+  expect(policy.presentation).toContain('explicit_preview_to_help_choose_uses_ask_human_in_fast_and_plan');
+  expect(policy.themeSelection.preview.imageSource).toContain('reuse_exact_previewImage_url');
+  expect(policy.themeSelection.preview.presentation).toMatchObject({ format: 'html_card', surface: 'conversation', timing: 'same_turn_as_ask_human', attachmentSource: 'theme-preview result.attachment' });
+  expect(policy.themeSelection.interactionOrder.sequence).toContain('present_requested_html_with_batched_ask_human_if_needed');
+  expect(getVisualDecisionPolicy({ themeId: 'app-sage' }).themeSelection.allowStyleQuestion).toBe(false);
+});

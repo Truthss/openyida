@@ -87,3 +87,8 @@ openyida nav-group auto-order <appType>
 ## 下一步
 
 → [Step 9：输出与收尾](step-9-output-finish.md)
+
+
+## 交付前保存业务访问地址
+
+完成发布和导航验证后，按 [登记应用访问入口](step-9-output-finish.md#登记应用访问入口) 默认执行 `app-entry get/set`，把本轮完整应用实际包含的业务前台和后台写入“访问地址设置”并回读，再生成终态链接卡片。以各入口的 `sceneKey/defaultMenuKey` 对应的真实资源为准，不复用最后一次 publish 的 URL，也不拿开发者 `/admin` 当业务后台。单页局部修改保留原入口；不在范围的另一端不新增。保存失败或回读不一致时标记入口未完成，不能先宣布交付完成再补配置。

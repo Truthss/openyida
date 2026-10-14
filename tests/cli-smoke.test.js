@@ -2725,7 +2725,7 @@ test('plain user-facing guidance is available from manifest and both agent capab
   expect(selection.qwenwork.prepareCommand).toBe('openyida sample yida-design theme-selector --json');
   expect(selection.qwenwork.widgetPathSource).toContain('relative to the host skills root');
   expect(selection.interactionOrder).toMatchObject({
-    sequence: ['prepare_known_candidates', 'optional_requested_preview', 'batched_ask_human_if_needed', 'confirm_plan_if_required'],
+    sequence: ['prepare_known_candidates_and_requested_html', 'present_requested_html_with_batched_ask_human_if_needed', 'confirm_plan_if_required'],
     maxPendingInteractions: 1,
     batchStyleWithOtherQuestions: true,
   });
