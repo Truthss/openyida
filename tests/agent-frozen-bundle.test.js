@@ -6,6 +6,7 @@ const path = require('path');
 const { execFileSync, spawn } = require('child_process');
 const { materializeBundle, verifyBundle } = require('../lib/agent/frozen-bundle');
 const { run } = require('../lib/agent/cmd');
+const { resolveRuntime } = require('../lib/agent/runtime-package');
 const { createBundleFixture, removeFixture } = require('./helpers/agent-bundle-fixture');
 
 describe('content-addressed complete local tool bundle', () => {
@@ -46,6 +47,22 @@ describe('content-addressed complete local tool bundle', () => {
       expect(verifyBundle(frozen.config.bundle.root, frozen.config.bundle.id).runtime.development).toBe(true);
       expect(platformGate).not.toHaveBeenCalled();
     });
+  });
+  // Simulated Linux filesystem checks require Unix ownership and mode semantics.
+  const unixTest = process.platform === 'win32' ? test.skip : test;
+  unixTest('freezes an explicit Linux development runtime without opening production Linux support', () => {
+    const platform = Object.getOwnPropertyDescriptor(process, 'platform');
+    try {
+      Object.defineProperty(process, 'platform', { value: 'linux' });
+      fixture = createBundleFixture(root);
+      const frozen = freeze();
+      expect(verifyBundle(frozen.config.bundle.root, frozen.config.bundle.id).runtime)
+        .toMatchObject({ development: true, signature: null });
+      expect(() => resolveRuntime({ platform: 'linux', arch: 'x64' }))
+        .toThrow(expect.objectContaining({ code: 'AGENT_RUNTIME_PLATFORM_UNSUPPORTED' }));
+    } finally {
+      Object.defineProperty(process, 'platform', platform);
+    }
   });
   test('old bundle survives npm-like upgrade, uninstall and a new bundle publication', () => {
     const old = freeze();
