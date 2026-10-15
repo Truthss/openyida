@@ -7,7 +7,7 @@
   "templates": [
     {
       "themeId": "dark-rail-fine-lines",
-      "sourceHash": "86106d716cad6c1807a3fa072830a28f8c2198dd357ac1a9e28cbffb14821d4c",
+      "sourceHash": "d7dd7773e19bf4f98306325abd831ecd99c3f55e9abbabf4dd296a7721c7c771",
       "issues": [
         {
           "role": "nav.item",
