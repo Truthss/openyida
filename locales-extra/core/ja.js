@@ -912,6 +912,8 @@ module.exports = {
     data_check_failed: '  ⚠️  データ確認に失敗しました。変更を続行します'
   },
   common: {
+    auth_profile_required: '複数の組織の認証情報が保存されています。openyida auth profiles を実行し、openyida auth profile switch <auth_profile> でこのプロジェクトの組織を選択してください。',
+    auth_profile_not_found: '指定した組織の認証情報が見つかりません。openyida auth profiles で保存済みの組織を確認し、正しいプロファイルを選択してください。',
     auth_identity_changed: 'Authentication identity changed during preflight; no write was issued.',
     http_status: '  HTTP ステータス: {0}',
     http_response: '  HTTP レスポンス: {0}',

@@ -954,6 +954,8 @@ module.exports = {
     failed: '  ❌ 폼 페이지 생성 실패: {0}'
   },
   common: {
+    auth_profile_required: '여러 조직의 인증 정보가 저장되어 있습니다. openyida auth profiles 실행 후 openyida auth profile switch <auth_profile> 명령으로 이 프로젝트의 조직을 선택하세요.',
+    auth_profile_not_found: '지정한 조직의 인증 정보를 찾을 수 없습니다. openyida auth profiles 명령으로 저장된 조직을 확인하고 올바른 프로필을 선택하세요.',
     auth_identity_changed: 'Authentication identity changed during preflight; no write was issued.',
     http_status: '  HTTP status: {0}',
     http_response: '  HTTP response: {0}',

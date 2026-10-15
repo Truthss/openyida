@@ -905,6 +905,8 @@ module.exports = {
     data_check_failed: '  ⚠️  資料量檢查失敗，繼續執行修改'
   },
   common: {
+    auth_profile_required: '已有多個組織的登入憑證，請執行 openyida auth profiles，並用 openyida auth profile switch <auth_profile> 選擇本專案的組織。',
+    auth_profile_not_found: '找不到指定組織的登入憑證，請執行 openyida auth profiles 核對已有組織，再選擇正確的登入憑證。',
     auth_identity_changed: 'Authentication identity changed during preflight; no write was issued.',
     http_status: '  HTTP 狀態碼：{0}',
     http_response: '  HTTP 回應：{0}',

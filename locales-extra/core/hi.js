@@ -953,6 +953,8 @@ module.exports = {
     failed: '  ❌ निर्माण विफल: {0}'
   },
   common: {
+    auth_profile_required: 'कई संगठनों के क्रेडेंशियल सहेजे गए हैं। openyida auth profiles चलाएँ, फिर openyida auth profile switch <auth_profile> से इस प्रोजेक्ट का संगठन चुनें।',
+    auth_profile_not_found: 'अनुरोधित संगठन के क्रेडेंशियल नहीं मिले। सहेजे गए संगठन जाँचने और सही प्रोफ़ाइल चुनने के लिए openyida auth profiles चलाएँ।',
     auth_identity_changed: 'Authentication identity changed during preflight; no write was issued.',
     http_status: '  HTTP status: {0}',
     http_response: '  HTTP response: {0}',

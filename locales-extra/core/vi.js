@@ -953,6 +953,8 @@ module.exports = {
     failed: '  ❌ Tạo thất bại: {0}'
   },
   common: {
+    auth_profile_required: 'Có thông tin xác thực đã lưu cho nhiều tổ chức. Chạy openyida auth profiles, rồi openyida auth profile switch <auth_profile> để chọn tổ chức cho dự án này.',
+    auth_profile_not_found: 'Không tìm thấy thông tin xác thực của tổ chức được yêu cầu. Chạy openyida auth profiles để kiểm tra các tổ chức đã lưu và chọn hồ sơ phù hợp.',
     auth_identity_changed: 'Authentication identity changed during preflight; no write was issued.',
     http_status: '  HTTP status: {0}',
     http_response: '  HTTP response: {0}',
