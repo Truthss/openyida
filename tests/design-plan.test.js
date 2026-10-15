@@ -1568,17 +1568,17 @@ describe('Plan contract and file consistency', () => {
 
 
 test('patch file preserves Chinese, quotes and arrays and rejects protected paths atomically',()=>{
- const dir=fs.mkdtempSync(path.join(os.tmpdir(),'plan-file-'));
- try {
-  const input=path.join(dir,'build-plan.json'), changes=path.join(dir,'changes.json');
-  fs.copyFileSync(FIXTURE,input);
-  const fields=[{name:'物品"名称',type:'TextField',required:true}];
-  fs.writeFileSync(changes,JSON.stringify({'dataModels[0].fields':fields}));
-  patchPlan(input,[],{setFile:changes});
-  expect(JSON.parse(fs.readFileSync(input)).dataModels[0].fields).toEqual(fields);
-  const before=fs.readFileSync(input,'utf8');
-  fs.writeFileSync(changes,JSON.stringify({'meta.revision':'forbidden'}));
-  expect(()=>patchPlan(input,[],{setFile:changes})).toThrow();
-  expect(fs.readFileSync(input,'utf8')).toBe(before);
- } finally {fs.rmSync(dir,{recursive:true,force:true});}
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'plan-file-'));
+  try {
+    const input=path.join(dir,'build-plan.json'), changes=path.join(dir,'changes.json');
+    fs.copyFileSync(FIXTURE,input);
+    const fields=[{name:'物品"名称',type:'TextField',required:true}];
+    fs.writeFileSync(changes,JSON.stringify({'dataModels[0].fields':fields}));
+    patchPlan(input,[],{setFile:changes});
+    expect(JSON.parse(fs.readFileSync(input)).dataModels[0].fields).toEqual(fields);
+    const before=fs.readFileSync(input,'utf8');
+    fs.writeFileSync(changes,JSON.stringify({'meta.revision':'forbidden'}));
+    expect(()=>patchPlan(input,[],{setFile:changes})).toThrow();
+    expect(fs.readFileSync(input,'utf8')).toBe(before);
+  } finally {fs.rmSync(dir,{recursive:true,force:true});}
 });

@@ -268,22 +268,22 @@ describe('cross-platform provider preflight', () => {
 
 
 test('connect inventories every CLI without duplicating runtime auth/model probes',async()=>{
- const root=fs.mkdtempSync(path.join(os.tmpdir(),'all-providers-'));
- try {
-  fs.mkdirSync(path.join(root,'.local/bin'),{recursive:true});
-  for(const name of ['codex','qodercli']) fs.writeFileSync(path.join(root,'.local/bin',name),'fixture',{mode:0o700});
-  const execute=jest.fn(async()=>({status:'passed'}));
-  const result=await preflight({command:'connect'},{platform:'linux',homedir:root,env:{PATH:''},probe:execute});
-  expect(result.providers.filter(p=>p.registrable).map(p=>p.provider).sort()).toEqual(['codex','qoder']);
-  expect(result.providers.every(p=>p.authKnown===false && p.protocolProbe==='not_run')).toBe(true);
-  expect(execute.mock.calls.map(call=>call[1])).toEqual([['--version'],['--version']]);
-  execute.mockClear();
-  await preflight({command:'doctor'},{platform:'linux',homedir:root,env:{PATH:''},probe:execute});
-  expect(execute).toHaveBeenCalledTimes(6);
- } finally {fs.rmSync(root,{recursive:true,force:true});}
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'all-providers-'));
+  try {
+    fs.mkdirSync(path.join(root,'.local/bin'),{recursive:true});
+    for(const name of ['codex','qodercli']) {fs.writeFileSync(path.join(root,'.local/bin',name),'fixture',{mode:0o700});}
+    const execute=jest.fn(async()=>({status:'passed'}));
+    const result=await preflight({command:'connect'},{platform:'linux',homedir:root,env:{PATH:''},probe:execute});
+    expect(result.providers.filter(p=>p.registrable).map(p=>p.provider).sort()).toEqual(['codex','qoder']);
+    expect(result.providers.every(p=>p.authKnown===false && p.protocolProbe==='not_run')).toBe(true);
+    expect(execute.mock.calls.map(call=>call[1])).toEqual([['--version'],['--version']]);
+    execute.mockClear();
+    await preflight({command:'doctor'},{platform:'linux',homedir:root,env:{PATH:''},probe:execute});
+    expect(execute).toHaveBeenCalledTimes(6);
+  } finally {fs.rmSync(root,{recursive:true,force:true});}
 });
 
 test.each([['Qoder CLI 1.1.60','Qoder CLI 1.1.60'],['codex-cli 0.114.0','codex-cli 0.114.0'],['secret banner',undefined]])('only recognized version output is reused: %s',async(output,version)=>{
- const result=await preflight({command:'connect',provider:'codex',providerPath:process.execPath},{probe:async()=>({status:'passed',output})});
- expect(result.providers[0].version).toBe(version);
+  const result=await preflight({command:'connect',provider:'codex',providerPath:process.execPath},{probe:async()=>({status:'passed',output})});
+  expect(result.providers[0].version).toBe(version);
 });
