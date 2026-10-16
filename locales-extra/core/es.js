@@ -955,6 +955,8 @@ module.exports = {
     failed: '  ❌ Error al crear: {0}'
   },
   common: {
+    auth_profile_required: 'Hay credenciales guardadas para varias organizaciones. Ejecute openyida auth profiles y después openyida auth profile switch <auth_profile> para seleccionar la organización de este proyecto.',
+    auth_profile_not_found: 'No se encontraron las credenciales de la organización solicitada. Ejecute openyida auth profiles para revisar las organizaciones guardadas y seleccionar el perfil correcto.',
     auth_identity_changed: 'Authentication identity changed during preflight; no write was issued.',
     http_status: '  HTTP status: {0}',
     http_response: '  HTTP response: {0}',

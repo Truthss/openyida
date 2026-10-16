@@ -955,6 +955,8 @@ module.exports = {
     failed: '  ❌ Échec de la création : {0}'
   },
   common: {
+    auth_profile_required: 'Plusieurs organisations ont des identifiants enregistrés. Exécutez openyida auth profiles, puis openyida auth profile switch <auth_profile> pour sélectionner l’organisation de ce projet.',
+    auth_profile_not_found: 'Les identifiants de l’organisation demandée sont introuvables. Exécutez openyida auth profiles pour vérifier les organisations enregistrées et sélectionner le bon profil.',
     auth_identity_changed: 'Authentication identity changed during preflight; no write was issued.',
     http_status: '  HTTP status: {0}',
     http_response: '  HTTP response: {0}',

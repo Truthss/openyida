@@ -953,6 +953,8 @@ module.exports = {
     failed: '  ❌ فشل الإنشاء: {0}'
   },
   common: {
+    auth_profile_required: 'توجد بيانات اعتماد محفوظة لعدة مؤسسات. شغّل openyida auth profiles ثم openyida auth profile switch <auth_profile> لاختيار مؤسسة هذا المشروع.',
+    auth_profile_not_found: 'لم يتم العثور على بيانات اعتماد المؤسسة المطلوبة. شغّل openyida auth profiles للتحقق من المؤسسات المحفوظة واختيار الملف الصحيح.',
     auth_identity_changed: 'Authentication identity changed during preflight; no write was issued.',
     http_status: '  HTTP status: {0}',
     http_response: '  HTTP response: {0}',
