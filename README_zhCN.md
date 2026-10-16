@@ -254,9 +254,12 @@ openyida process preview APP_XXX PROC_INST_XXX --output .cache/openyida/process/
 
 ```bash
 openyida data query form APP_XXX FORM_XXX --page 1 --size 20
+openyida data query process APP_XXX FORM_XXX --current-approver USER_ID --count
 openyida data create form APP_XXX FORM_XXX --data-file .cache/openyida/data-import/record.json
 openyida data query subform APP_XXX FORM_XXX --inst-id FORM_INST_XXX --table-field-id tableField_xxx
 ```
+
+`--current-approver` 传真实 userId，不按显示名匹配。命令完整分页查询运行中的实例及当前 TODO 记录，每条流程只计数一次；去掉 `--count` 可返回匹配实例数据。查询沿用当前登录人的平台数据权限，不额外要求管理员角色；结果仅代表当前账号可见范围。分页不完整或权限失败会报错，不能当作 0 条或全应用统计。
 
 录入或更新数据前先用 `openyida get-schema` 获取真实 fieldId。`DateField` / `CascadeDateField` 使用 13 位毫秒时间戳，例如 `1719705600000`。
 
@@ -354,7 +357,7 @@ openyida integration enable APP_XXX FORM_XXX PROC_CODE
 | `openyida list-forms <appType> [--keyword <text>]` | 列出应用下的表单/页面 |
 | `openyida aggregate-table <list\|create-empty\|inspect\|preview\|save\|publish\|status> <appType> ...` | 管理聚合表（virtualView） |
 | `openyida get-schema <appType> <formUuid\|--all> [--summary-json\|--field-map-json\|--analysis-json]` | 获取单个或全部表单 Schema |
-| `openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]` | 检查 PRD 页面/资源数量风险 |
+| `openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]` | 检查资源数量、前台菜单隐藏及应用主题同步 |
 | `openyida check-design <design.md> [--prd <prd.md>] [--base-dir <dir>] [--json]` | 检查设计文档、主题变量与 PRD 交接 |
 | `openyida er <appType> [--format mermaid\|json] [--output file] [--include-system] [--include-pages]` | 导出应用实体关系图 |
 | `openyida create-page <appType> "<name>" [--mode dashboard] [--hide-nav] [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | 创建自定义展示页面 |

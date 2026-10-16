@@ -1494,6 +1494,10 @@ module.exports = {
     stdin_closed: 'Eingabestream geschlossen, Organisation kann nicht ausgewählt werden'
   },
   check_prd_completeness: {
+    application_theme_mismatch: 'Das Anwendungsthema stimmt nicht mit dem gewählten Projektthema überein.',
+    application_theme_not_checked: 'Die Themeneinstellungen der Anwendung konnten nicht geprüft werden.',
+    frontend_navigation_not_checked: 'Das Ausblenden im Verwaltungsmenü wurde noch nicht geprüft: {0}',
+    frontend_navigation_visible: 'Die Frontend-Seite ist im Desktop- oder mobilen Verwaltungsmenü sichtbar: {0}',
     usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
     prd_not_found: 'PRD file not found: {0}',
@@ -2045,6 +2049,11 @@ Object.assign(module.exports.publish || (module.exports.publish = {}), {
 });
 
 Object.assign(module.exports.query_data || (module.exports.query_data = {}), {
+  approver_query_help: 'Aktuelle genehmigende Person: --current-approver <userId> [--count]. Alle sichtbaren Seiten werden durchsucht und Instanzen einmal gezählt. Unvollständige Abfragen und fehlende Rechte führen zu Fehlern.',
+  approver_option_invalid: 'Ungültige Option für die aktuelle genehmigende Person: {0}. Verwenden Sie die genaue userId und lesen Sie RUNNING-Instanzen ab Seite 1.',
+  approver_incomplete: 'Die Zählung nach aktueller genehmigender Person ist unvollständig. Prüfen Sie Fehlerdetails, Berechtigungen und Seitengrenzen; eine vollständige Anzahl wird nicht ausgegeben.',
+  approver_response_invalid: 'Die Antwortstruktur der Prozess-API kann nicht bestätigt werden; die Anzahl kann daher nicht ermittelt werden.',
+  approver_scope_note: 'Gezählt werden nur Instanzen, die der Server für die aktuelle Anmeldung freigibt; dies bestätigt keinen Zugriff auf alle App-Daten.',
   command_unsupported: 'Nicht unterstützter Datenbefehl: {0} {1}. Mit openyida commands --json können Sie die tatsächlichen Funktionen prüfen.',
   delete_confirmation_required: 'Vor dem Löschen eines Formulareintrags muss das Ziel abgefragt und dem Benutzer zusammengefasst werden. --confirm darf erst nach ausdrücklicher Bestätigung gesetzt werden. Es wurde nichts gelöscht.',
   delete_preflight_failed: 'Der Formulareintrag {0} konnte für die Löschprüfung nicht gelesen werden. Es wurde nichts gelöscht.',

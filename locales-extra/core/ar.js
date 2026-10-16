@@ -1494,6 +1494,10 @@ module.exports = {
     stdin_closed: 'تم إغلاق تدفق الإدخال، لا يمكن اختيار مؤسسة'
   },
   check_prd_completeness: {
+    application_theme_mismatch: 'سمة التطبيق لا تتطابق مع السمة المحددة للمشروع.',
+    application_theme_not_checked: 'تعذر التحقق من إعدادات سمة التطبيق؛ لم يتم تأكيد تطبيق السمة.',
+    frontend_navigation_not_checked: 'لم يتم التحقق من إخفاء صفحة الواجهة في قائمة الإدارة: {0}',
+    frontend_navigation_visible: 'ما زالت صفحة الواجهة ظاهرة في قائمة الإدارة على الكمبيوتر أو الهاتف: {0}',
     usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
     prd_not_found: 'PRD file not found: {0}',
@@ -2045,6 +2049,11 @@ Object.assign(module.exports.publish || (module.exports.publish = {}), {
 });
 
 Object.assign(module.exports.query_data || (module.exports.query_data = {}), {
+  approver_query_help: 'المعتمد الحالي: --current-approver <userId> [--count]. يقرأ جميع الصفحات المسموح بها ويعد كل مثيل مرة واحدة. يؤدي عدم اكتمال القراءة أو رفض الصلاحية إلى خطأ.',
+  approver_option_invalid: 'خيار الاستعلام عن المعتمد الحالي غير صالح: {0}. استخدم userId الصحيح واقرأ مثيلات RUNNING بدءًا من الصفحة 1.',
+  approver_incomplete: 'لم يكتمل العد حسب المعتمد الحالي. لم يتم إرجاع عدد كامل؛ تحقق من تفاصيل الخطأ والصلاحيات وحدود الصفحات.',
+  approver_response_invalid: 'تعذر التحقق من بنية استجابة واجهة العمليات، لذا لا يمكن تحديد العدد حسب المعتمد الحالي.',
+  approver_scope_note: 'يتم عد المثيلات التي يجيز الخادم للمستخدم الحالي الاطلاع عليها فقط؛ ولا يعني ذلك امتلاك صلاحية الوصول إلى جميع بيانات التطبيق.',
   command_unsupported: 'أمر بيانات غير مدعوم: {0} {1}. شغّل openyida commands --json لعرض الإمكانات الفعلية.',
   delete_confirmation_required: 'قبل حذف سجل نموذج، اعرض ملخص الهدف للمستخدم وأضف --confirm فقط بعد الموافقة الصريحة. لم يتم تنفيذ الحذف.',
   delete_preflight_failed: 'تعذرت قراءة سجل النموذج {0} للتحقق قبل الحذف. لم يتم تنفيذ الحذف.',

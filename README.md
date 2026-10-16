@@ -245,9 +245,12 @@ openyida configure-process APP_XXX FORM_XXX .cache/openyida/process/process.json
 openyida process preview APP_XXX PROC_INST_XXX --output .cache/openyida/process/process.html
 openyida data query form APP_XXX FORM_XXX --page 1 --size 20
 openyida data query form APP_XXX FORM_XXX --dynamic-order '{"dateField_xxx":"-"}'
+openyida data query process APP_XXX FORM_XXX --current-approver USER_ID --count
 openyida data create form APP_XXX FORM_XXX --expect-form-name 客户 --expect-form-type receipt --data-file .cache/openyida/data-import/record.json
 openyida get-permission APP_XXX FORM_XXX
 ```
+
+`--current-approver` takes an exact userId, not a display name. It scans running instances and their current TODO records, counts each matching instance once, and respects the current login's server-authorized data scope. Omit `--count` to include matching instance data. An incomplete scan or permission failure is reported as an error; the result does not claim application-wide visibility.
 
 Append and forward permissions are configured in the process definition through `nodes[].actions.normalActions/appendActions`. Both `create-process` and `configure-process` compile these settings into matching designer and runtime properties. See [approval action configuration](yida-skills/skills/yida-process-rule/references/approval-actions.md) for the JSON example, defaults, and verification limits.
 
@@ -476,7 +479,7 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 | `openyida list-forms <appType> [--keyword <text>]` | List forms/pages in an app |
 | `openyida aggregate-table <list\|create-empty\|inspect\|preview\|save\|publish\|status> <appType> ...` | Manage aggregate tables (virtualView) |
 | `openyida get-schema <appType> <formUuid\|--all> [--summary-json\|--field-map-json\|--analysis-json]` | Get one form Schema or all form Schemas |
-| `openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]` | Check PRD page/resource count risk |
+| `openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]` | Check resources, frontend menu hiding and application theme delivery |
 | `openyida check-design <design.md> [--prd <prd.md>] [--base-dir <dir>] [--json]` | Validate design documents, theme tokens and PRD handoff |
 | `openyida er <appType> [--format mermaid\|json] [--output file] [--include-system] [--include-pages]` | Export app entity relationship diagram |
 | `openyida create-page <appType> "<name>" [--mode dashboard] [--hide-nav] [--locale zh_CN\|en_US\|ja_JP] [--open\|--no-open]` | Create a custom display page |

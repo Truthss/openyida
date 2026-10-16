@@ -1495,6 +1495,10 @@ module.exports = {
     stdin_closed: '입력 스트림이 닫혔습니다. 조직을 선택할 수 없습니다'
   },
   check_prd_completeness: {
+    application_theme_mismatch: '앱 테마가 선택한 프로젝트 테마와 일치하지 않습니다.',
+    application_theme_not_checked: '앱 테마 설정을 확인할 수 없어 테마 적용이 검증되지 않았습니다.',
+    frontend_navigation_not_checked: '프런트 페이지의 관리 메뉴 숨김이 확인되지 않았습니다: {0}',
+    frontend_navigation_visible: '프런트 페이지가 PC 또는 모바일 관리 메뉴에 표시됩니다: {0}',
     usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
     prd_not_found: 'PRD file not found: {0}',
@@ -2046,6 +2050,11 @@ Object.assign(module.exports.publish || (module.exports.publish = {}), {
 });
 
 Object.assign(module.exports.query_data || (module.exports.query_data = {}), {
+  approver_query_help: '현재 승인자: --current-approver <userId> [--count]. 조회 가능한 모든 페이지에서 중복 인스턴스를 제외하여 집계합니다. 조회 미완료 또는 권한 오류 시 건수를 반환하지 않습니다.',
+  approver_option_invalid: '현재 승인자 조회 옵션이 잘못되었습니다: {0}. 실제 userId를 사용하고 1페이지부터 RUNNING 인스턴스를 조회하세요.',
+  approver_incomplete: '현재 승인자 집계를 완료하지 못했습니다. 전체 건수는 반환되지 않았습니다. 오류 내용, 권한 및 페이지 범위를 확인하세요.',
+  approver_response_invalid: '프로세스 API 응답 구조를 확인할 수 없어 현재 승인자 건수를 확정할 수 없습니다.',
+  approver_scope_note: '서버가 현재 로그인 사용자에게 조회를 허용한 인스턴스만 집계하며, 전체 앱 데이터 권한을 의미하지 않습니다.',
   command_unsupported: '지원하지 않는 데이터 명령입니다: {0} {1}. 실제 기능은 openyida commands --json으로 확인하세요.',
   delete_confirmation_required: '폼 레코드를 삭제하기 전에 대상을 조회하고 요약을 사용자에게 보여 준 뒤 명시적 승인 후에만 --confirm을 추가하세요. 삭제는 실행되지 않았습니다.',
   delete_preflight_failed: '삭제 전 확인을 위해 폼 레코드 {0}을(를) 읽을 수 없습니다. 삭제는 실행되지 않았습니다.',

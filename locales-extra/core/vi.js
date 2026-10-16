@@ -1494,6 +1494,10 @@ module.exports = {
     stdin_closed: 'Luồng đầu vào đã đóng, không thể chọn tổ chức'
   },
   check_prd_completeness: {
+    application_theme_mismatch: 'Chủ đề ứng dụng không khớp với chủ đề đã chọn cho dự án.',
+    application_theme_not_checked: 'Không thể xác minh cấu hình chủ đề ứng dụng; chưa xác nhận chủ đề đã được áp dụng.',
+    frontend_navigation_not_checked: 'Chưa xác minh việc ẩn trang giao diện trong menu quản trị: {0}',
+    frontend_navigation_visible: 'Trang giao diện vẫn xuất hiện trong menu quản trị trên máy tính hoặc di động: {0}',
     usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
     prd_not_found: 'PRD file not found: {0}',
@@ -2045,6 +2049,11 @@ Object.assign(module.exports.publish || (module.exports.publish = {}), {
 });
 
 Object.assign(module.exports.query_data || (module.exports.query_data = {}), {
+  approver_query_help: 'Người phê duyệt hiện tại: --current-approver <userId> [--count]. Đọc mọi trang có quyền xem và đếm các phiên bản không trùng lặp. Truy vấn chưa hoàn tất hoặc thiếu quyền sẽ báo lỗi.',
+  approver_option_invalid: 'Tùy chọn truy vấn người phê duyệt hiện tại không hợp lệ: {0}. Dùng userId chính xác và đọc các phiên bản RUNNING từ trang 1.',
+  approver_incomplete: 'Không thể hoàn tất thống kê theo người phê duyệt hiện tại. Chưa trả về tổng đầy đủ; hãy kiểm tra lỗi, quyền và phạm vi phân trang.',
+  approver_response_invalid: 'Không xác minh được cấu trúc phản hồi API quy trình nên không thể xác định số lượng theo người phê duyệt hiện tại.',
+  approver_scope_note: 'Chỉ đếm các phiên bản mà máy chủ cho phép người đang đăng nhập xem; điều này không có nghĩa là có quyền xem toàn bộ dữ liệu ứng dụng.',
   command_unsupported: 'Lệnh dữ liệu không được hỗ trợ: {0} {1}. Chạy openyida commands --json để xem năng lực thực tế.',
   delete_confirmation_required: 'Trước khi xóa bản ghi biểu mẫu, hãy đọc mục tiêu, hiển thị tóm tắt cho người dùng và chỉ thêm --confirm sau khi được xác nhận rõ ràng. Chưa thực hiện xóa.',
   delete_preflight_failed: 'Không thể đọc bản ghi biểu mẫu {0} để kiểm tra trước khi xóa. Chưa thực hiện xóa.',
