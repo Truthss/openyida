@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 海外版宜搭暂不适用当前 OAuth token 登录与创建应用链路；如需在海外版宜搭创建应用，请使用 `2026.7.14-2` 以前的版本，例如 `npm install -g openyida@2026.7.13`。
 
+## [Unreleased]
+
+### 修复
+
+- **Local Agent 问卷暂停**：升级四个平台的闭源 runtime 至 `0.1.4`，避免问卷暂停终态因执行上下文取消而延迟至后台重放；保留停止和断线恢复校验。
+
 ## [2026.10.16] - 2026-10-16
 
 在 2026.10.15-2 基础上，改善同一工作区的登录复用，减少重复授权。
