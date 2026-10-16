@@ -1744,7 +1744,7 @@ describe('OpenYida skill contracts', () => {
     expect(chartSpec).toContain('大屏不等于暗色');
   });
 
-  test('custom pages do not build page-level navigation by default', () => {
+  test('backend pages preserve platform navigation while standalone frontends own their menus', () => {
     const pageUiux = readSkill('yida-skills/skills/yida-design/SKILL.md');
     const navStep = readSkill('yida-skills/skills/yida-prd/workflow/step-2-information-architecture.md');
     const navigationDesign = readSkill('yida-skills/skills/yida-design/references/navigation-decision.md');
@@ -1754,8 +1754,10 @@ describe('OpenYida skill contracts', () => {
     const createPage = readSkill('yida-skills/skills/yida-create-page/SKILL.md');
     const navShell = readSkill('yida-skills/skills/yida-nav-shell/SKILL.md');
 
-    expect(pageUiux).toContain('默认保留平台应用导航');
-    expect(pageUiux).toContain('普通自定义页、页面内 tab、分段、筛选和快捷入口都不触发 `yida-nav-shell`');
+    expect(pageUiux).toContain('后台工作区默认保留平台导航');
+    expect(pageUiux).toContain('普通后台自定义页、页面内 tab、分段、筛选和快捷入口都不触发 `yida-nav-shell`');
+    expect(pageUiux).toContain('独立前台默认在自定义页内实现自己的菜单');
+    expect(pageUiux).toContain('只隐藏该页的平台导航，保留后台应用导航');
     expect(pageUiux).toContain("写 `appBlueprint.hideAppNav: 'y'` 并交给 `yida-nav-shell`");
     expect(pageUiux).toContain('同应用页面优先放入平台导航或导航分组');
     expect(navStep).toContain('沿用 brief 的导航决策');

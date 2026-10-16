@@ -1433,6 +1433,10 @@ module.exports = {
     stdin_closed: '輸入串流已關閉，無法選擇組織'
   },
   check_prd_completeness: {
+    application_theme_mismatch: '應用主題與已選項目主題不一致，尚未完成統一換膚。',
+    application_theme_not_checked: '應用主題配置未能核驗，不能確認已完成統一換膚。',
+    frontend_navigation_not_checked: '前台頁面的後台選單隱藏尚未核驗：{0}',
+    frontend_navigation_visible: '前台頁面仍出現在後台電腦或流動端選單：{0}',
     usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
     prd_not_found: 'PRD file not found: {0}',
@@ -1921,6 +1925,11 @@ Object.assign(module.exports.publish || (module.exports.publish = {}), {
 });
 
 Object.assign(module.exports.query_data || (module.exports.query_data = {}), {
+  approver_query_help: '流程目前審批人：--current-approver <userId> [--count]，完整分頁並按實例去重；結果僅限目前登入者可見範圍，不完整或無權限會報錯。',
+  approver_option_invalid: '目前審批人查詢參數無效：{0}。請使用真實 userId，並從第1頁查詢執行中的實例。',
+  approver_incomplete: '無法完成目前審批人統計，未返回完整數量。請檢查錯誤詳情、權限及分頁範圍。',
+  approver_response_invalid: '無法確認流程介面返回結構，不能據此統計目前審批人數量。',
+  approver_scope_note: '僅統計目前登入者經平台服務端授權可見的實例，不代表擁有全應用資料權限。',
   command_unsupported: '不支援的資料命令：{0} {1}。請執行 openyida commands --json 查詢實際能力。',
   delete_confirmation_required: '刪除表單實例前，必須先查詢並向使用者展示目標摘要；只有取得明確確認後才可加入 --confirm。未執行刪除。',
   delete_preflight_failed: '無法讀取表單實例 {0} 完成刪除前檢查，未執行刪除。',

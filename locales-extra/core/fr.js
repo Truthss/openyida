@@ -1496,6 +1496,10 @@ module.exports = {
     stdin_closed: "Flux d'entrée fermé, impossible de sélectionner une organisation"
   },
   check_prd_completeness: {
+    application_theme_mismatch: 'Le thème de l’application ne correspond pas au thème choisi pour le projet.',
+    application_theme_not_checked: 'Les paramètres du thème de l’application n’ont pas pu être vérifiés.',
+    frontend_navigation_not_checked: 'Le masquage du menu de gestion reste à vérifier : {0}',
+    frontend_navigation_visible: 'La page publique reste visible dans le menu de gestion sur ordinateur ou mobile : {0}',
     usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
     prd_not_found: 'PRD file not found: {0}',
@@ -2047,6 +2051,11 @@ Object.assign(module.exports.publish || (module.exports.publish = {}), {
 });
 
 Object.assign(module.exports.query_data || (module.exports.query_data = {}), {
+  approver_query_help: 'Approbateur actuel : --current-approver <userId> [--count]. Parcourt toutes les pages visibles et compte les instances distinctes. Un parcours incomplet ou un refus d’accès provoque une erreur.',
+  approver_option_invalid: 'Option de recherche par approbateur actuel invalide : {0}. Utilisez le userId exact et parcourez les instances RUNNING dès la page 1.',
+  approver_incomplete: 'Le comptage par approbateur actuel est incomplet. Aucun total complet ne sera fourni ; vérifiez les erreurs, les droits et la pagination.',
+  approver_response_invalid: 'La structure de la réponse de processus ne peut pas être vérifiée ; le nombre par approbateur actuel est indéterminé.',
+  approver_scope_note: 'Seules les instances autorisées par le serveur pour la session actuelle sont comptées ; cela ne garantit pas un accès à toutes les données de l’application.',
   command_unsupported: 'Commande de données non prise en charge : {0} {1}. Exécutez openyida commands --json pour consulter les capacités réelles.',
   delete_confirmation_required: 'Avant de supprimer une fiche, lisez la cible, présentez son résumé à l’utilisateur et ajoutez --confirm uniquement après son accord explicite. Aucune suppression n’a été effectuée.',
   delete_preflight_failed: 'Impossible de lire la fiche {0} pour la vérification préalable. Aucune suppression n’a été effectuée.',

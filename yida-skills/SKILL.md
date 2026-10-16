@@ -10,6 +10,10 @@ description: >
 
 在执行宜搭应用/页面/审批流等任务前先确认环境与登录态，再根据用户需求和已解析的 app/page/form/process 等上下文资源，分析任务属于完整搭建、已有资源补齐还是单点任务，并加载对应子技能执行。
 
+完整系统不能只读本入口、查看 CLI 帮助后直接拼装命令：必须加载 `yida-app`，进入实施与收尾时继续读取对应 workflow。前后台场景默认是两个业务入口：前台页面自绘导航并持久化隐藏平台导航，后台使用原生导航，前台专用页面从后台 PC/移动端菜单隐藏；页面隐藏、菜单隐藏、权限和公开访问分别处理。两个入口均须实际打开验收，发布回读不代表交付完成。
+
+Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、自定义页共用项目 design.md 与同一份应用主题 CSS。不能只把自定义页写成品牌色、让应用继续默认蓝色；发布不会自动保存应用主题。完整搭建交付前按 yida-app 回读应用主题设置并实测各类页面，未同步或未验证不得宣称主题统一。
+
 ## 本地 Agent 故障分流
 
 当用户描述“网页找不到本地 CLI / 电脑离线 / 本地 Agent 忙碌或不执行”，或提供
@@ -160,6 +164,7 @@ description: >
 | 修改已有流程节点/分支/字段权限，配置加签/转交操作权限 | `yida-process-rule`；加签/转交先读其 `references/approval-actions.md` |
 | 查字段 ID / 保存 Schema 证据 | `yida-get-schema`；凡涉及 fieldId 的数据、流程、公式、页面代码先取证 |
 | 改表单数据记录 | `yida-data-management`，不是 `yida-create-form-page` |
+| 查询指定应用/流程表单中当前审批人为某人的实例或条数 | `yida-data-management`；`data query process --current-approver <userId> [--count]`，仅统计当前登录人经服务端授权可见的实例 |
 | 配字段默认值、计算、校验 | `yida-formula`；静态检查用 `yida-formula-evaluate` |
 | 提交后跨表写入/更新/删除 | 默认 `yida-integration`；用户明确要业务关联规则/高级函数时用 `yida-business-rule` |
 | 集成自动化从上游节点子表取数或新增一行 | `yida-integration` 的 `--spec` 新建路径；不要用 `integration update` 或现网 `--replace` |

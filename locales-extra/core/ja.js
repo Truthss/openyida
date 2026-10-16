@@ -1445,6 +1445,10 @@ module.exports = {
     stdin_closed: '入力ストリームが閉じられました。組織を選択できません'
   },
   check_prd_completeness: {
+    application_theme_mismatch: 'アプリのテーマが選択したプロジェクトテーマと一致しません。',
+    application_theme_not_checked: 'アプリのテーマ設定を確認できません。テーマの適用は未確認です。',
+    frontend_navigation_not_checked: 'フロントページの管理メニュー非表示は未確認です：{0}',
+    frontend_navigation_visible: 'フロントページが PC またはモバイルの管理メニューに表示されています：{0}',
     usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
     prd_not_found: 'PRD file not found: {0}',
@@ -1972,6 +1976,11 @@ Object.assign(module.exports.publish || (module.exports.publish = {}), {
 });
 
 Object.assign(module.exports.query_data || (module.exports.query_data = {}), {
+  approver_query_help: '現在の承認者：--current-approver <userId> [--count]。閲覧可能な全ページを走査し、インスタンスを重複排除して集計します。不完全な取得や権限エラーでは件数を返しません。',
+  approver_option_invalid: '現在の承認者の検索オプションが無効です：{0}。実際の userId を使い、RUNNING のインスタンスを1ページ目から取得してください。',
+  approver_incomplete: '現在の承認者の集計を完了できませんでした。完全な件数は返されていません。エラー詳細、権限、ページ範囲を確認してください。',
+  approver_response_invalid: 'プロセスAPIの応答構造を確認できないため、現在の承認者の件数を確定できません。',
+  approver_scope_note: 'サーバーが現在のログインユーザーに閲覧を許可したインスタンスのみを集計します。アプリ全体の閲覧権限を意味しません。',
   command_unsupported: '未対応のデータコマンドです: {0} {1}。実際の機能は openyida commands --json で確認してください。',
   delete_confirmation_required: 'フォームレコードを削除する前に対象を読み取り、概要をユーザーに提示し、明示的な承認後にのみ --confirm を追加してください。削除は実行されていません。',
   delete_preflight_failed: '削除前確認のためフォームレコード {0} を読み取れませんでした。削除は実行されていません。',

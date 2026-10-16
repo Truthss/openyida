@@ -42,6 +42,11 @@ describe('entry planning and platform navigation', () => {
     expect(result.pages[0].pageSpecHandoff.entryMode).toBe('standalone');
     expect(result.pageNavigation).toEqual([{ name: '采购工作台', type: 'display-page', isRenderNav: false }]);
     expect(result.appConfig.hideAppNav).toBe('n');
+    expect(result.applicationTheme).toMatchObject({ themeColor: '#6F4E37', navTheme: 'light' });
+    expect(result.pages[0].navigationPolicy.applicationMenuOwner).toBe('page');
+    expect(result.pages[0].pageSpecHandoff.navigation.type).toBe('custom');
+    expect(result.navigationVisibility).toEqual(mode === 'service-management'
+      ? [{ name: '采购工作台', type: 'display-page', hidden: true, mobileHidden: true }] : []);
     expect(renderPrd(plan)).toContain('独立页面入口');
     expect(plan.pages.customPageDetails[0].pageSpecHandoff).toBeUndefined();
   });
@@ -70,6 +75,37 @@ describe('entry planning and platform navigation', () => {
     const plan = planFixture();
     delete plan.execution.entryRecommendation.entries[0].sceneKey;
     expect(() => handoff(plan)).toThrow(/访客入口.*必须关联页面/);
+  });
+
+  test('single-task and explicit no-menu frontends keep their navigation choice', () => {
+    const plan = planFixture();
+    delete plan.pages.customPageDetails[0].pageSpecHandoff;
+    plan.execution.entryRecommendation.entries[0].menu.pop();
+    expect(handoff(plan).pages[0].navigationPolicy.applicationMenuOwner).toBe('none');
+    plan.pages.customPageDetails[0].pageSpecHandoff = { navigation: { type: 'none', reason: '单步任务' } };
+    expect(handoff(plan).pages[0].pageSpecHandoff.navigation.type).toBe('none');
+  });
+
+  test('hides all frontend-only standalone pages but preserves shared forms and explicit management links', () => {
+    const plan = planFixture();
+    const front = plan.pages.customPageDetails[0];
+    const second = JSON.parse(JSON.stringify(front));
+    second.name = '文化专栏'; second.pageId = 'culture'; second.sceneKey = 'culture';
+    plan.pages.customPageDetails.push(second);
+    const item = { key: 'culture', label: '文化专栏', resource: second.name, targetType: 'custom',
+      access: [{ resource: second.name, operation: 'OPERATE_VIEW', dataScope: '已授权' }] };
+    plan.execution.entryRecommendation.entries[0].menu.push(item);
+    expect(handoff(plan).navigationVisibility.map(value => value.name)).toEqual([front.name, second.name]);
+    plan.execution.entryRecommendation.entries[1].menu.push(item);
+    expect(handoff(plan).navigationVisibility.map(value => value.name)).toEqual([front.name]);
+    expect(handoff(plan).navigationVisibility.some(value => value.name === '采购订单')).toBe(false);
+  });
+
+  test('resource-only changes never schedule application menu hiding', () => {
+    const plan = planFixture();
+    plan.execution.explicitScope = { allowInferredResources: false };
+    expect(handoff(plan).navigationVisibility).toEqual([]);
+    expect(handoff(plan)).not.toHaveProperty('applicationTheme');
   });
 
   test('derives management order without a management homepage and preserves frontend menu order', () => {

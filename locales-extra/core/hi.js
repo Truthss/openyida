@@ -1494,6 +1494,10 @@ module.exports = {
     stdin_closed: 'इनपुट स्ट्रीम बंद है, संगठन चुनना संभव नहीं'
   },
   check_prd_completeness: {
+    application_theme_mismatch: 'ऐप की थीम चुनी गई परियोजना थीम से मेल नहीं खाती।',
+    application_theme_not_checked: 'ऐप की थीम सेटिंग सत्यापित नहीं हो सकीं; थीम लागू होने की पुष्टि नहीं हुई है।',
+    frontend_navigation_not_checked: 'प्रबंधन मेनू में फ्रंटएंड पृष्ठ छिपाने का सत्यापन नहीं हुआ है: {0}',
+    frontend_navigation_visible: 'फ्रंटएंड पृष्ठ अभी भी डेस्कटॉप या मोबाइल प्रबंधन मेनू में दिखता है: {0}',
     usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
     prd_not_found: 'PRD file not found: {0}',
@@ -2045,6 +2049,11 @@ Object.assign(module.exports.publish || (module.exports.publish = {}), {
 });
 
 Object.assign(module.exports.query_data || (module.exports.query_data = {}), {
+  approver_query_help: 'वर्तमान अनुमोदक: --current-approver <userId> [--count]। सभी दृश्यमान पृष्ठ पढ़कर प्रत्येक इंस्टेंस एक बार गिना जाता है। अधूरी क्वेरी या अनुमति की विफलता पर त्रुटि दी जाती है।',
+  approver_option_invalid: 'वर्तमान अनुमोदक की क्वेरी का विकल्प अमान्य है: {0}। सही userId का उपयोग करें और पृष्ठ 1 से RUNNING इंस्टेंस पढ़ें।',
+  approver_incomplete: 'वर्तमान अनुमोदक की गणना पूरी नहीं हुई। पूर्ण संख्या नहीं दी गई; त्रुटि विवरण, अनुमतियाँ और पृष्ठ सीमा जाँचें।',
+  approver_response_invalid: 'प्रक्रिया API की प्रतिक्रिया संरचना सत्यापित नहीं हो सकी; वर्तमान अनुमोदक की संख्या निर्धारित नहीं की जा सकती।',
+  approver_scope_note: 'केवल वर्तमान लॉगिन को सर्वर द्वारा देखने की अनुमति वाले इंस्टेंस गिने जाते हैं; इससे पूरे ऐप के डेटा का अधिकार सिद्ध नहीं होता।',
   command_unsupported: 'असमर्थित डेटा कमांड: {0} {1}। वास्तविक क्षमता देखने के लिए openyida commands --json चलाएँ।',
   delete_confirmation_required: 'फ़ॉर्म रिकॉर्ड हटाने से पहले लक्ष्य पढ़ें, उसका सारांश उपयोगकर्ता को दिखाएँ और स्पष्ट स्वीकृति के बाद ही --confirm जोड़ें। कोई रिकॉर्ड नहीं हटाया गया।',
   delete_preflight_failed: 'हटाने से पहले जाँच के लिए फ़ॉर्म रिकॉर्ड {0} पढ़ा नहीं जा सका। कोई रिकॉर्ड नहीं हटाया गया।',

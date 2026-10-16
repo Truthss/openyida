@@ -1496,6 +1496,10 @@ module.exports = {
     stdin_closed: 'Flujo de entrada cerrado, no se puede seleccionar organización'
   },
   check_prd_completeness: {
+    application_theme_mismatch: 'El tema de la aplicación no coincide con el tema seleccionado para el proyecto.',
+    application_theme_not_checked: 'No se pudo verificar la configuración del tema de la aplicación.',
+    frontend_navigation_not_checked: 'No se ha verificado la ocultación en el menú de gestión: {0}',
+    frontend_navigation_visible: 'La página pública sigue visible en el menú de gestión de escritorio o móvil: {0}',
     usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
     prd_not_found: 'PRD file not found: {0}',
@@ -2047,6 +2051,11 @@ Object.assign(module.exports.publish || (module.exports.publish = {}), {
 });
 
 Object.assign(module.exports.query_data || (module.exports.query_data = {}), {
+  approver_query_help: 'Aprobador actual: --current-approver <userId> [--count]. Recorre todas las páginas visibles y cuenta instancias distintas. Un recorrido incompleto o un fallo de permisos produce un error.',
+  approver_option_invalid: 'Opción de consulta del aprobador actual no válida: {0}. Use el userId exacto y consulte instancias RUNNING desde la página 1.',
+  approver_incomplete: 'El recuento por aprobador actual no se completó. No se devuelve un total completo; revise errores, permisos y paginación.',
+  approver_response_invalid: 'No se pudo verificar la respuesta de la API de procesos; no se puede determinar el recuento por aprobador actual.',
+  approver_scope_note: 'Solo se cuentan las instancias que el servidor permite ver al usuario conectado; esto no implica acceso a todos los datos de la aplicación.',
   command_unsupported: 'Comando de datos no compatible: {0} {1}. Ejecuta openyida commands --json para consultar la capacidad real.',
   delete_confirmation_required: 'Antes de eliminar un registro de formulario, consulta el objetivo, muestra el resumen al usuario y añade --confirm solo tras su aprobación explícita. No se realizó ninguna eliminación.',
   delete_preflight_failed: 'No se pudo leer el registro de formulario {0} para la comprobación previa. No se realizó ninguna eliminación.',

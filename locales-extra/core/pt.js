@@ -1496,6 +1496,10 @@ module.exports = {
     stdin_closed: 'Fluxo de entrada fechado, não é possível selecionar organização'
   },
   check_prd_completeness: {
+    application_theme_mismatch: 'O tema da aplicação não corresponde ao tema selecionado para o projeto.',
+    application_theme_not_checked: 'Não foi possível verificar as configurações do tema da aplicação.',
+    frontend_navigation_not_checked: 'A ocultação no menu de gestão ainda não foi verificada: {0}',
+    frontend_navigation_visible: 'A página pública continua visível no menu de gestão para computador ou celular: {0}',
     usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
     prd_not_found: 'PRD file not found: {0}',
@@ -2047,6 +2051,11 @@ Object.assign(module.exports.publish || (module.exports.publish = {}), {
 });
 
 Object.assign(module.exports.query_data || (module.exports.query_data = {}), {
+  approver_query_help: 'Aprovador atual: --current-approver <userId> [--count]. Percorre todas as páginas visíveis e conta instâncias distintas. Consultas incompletas ou falhas de permissão geram erro.',
+  approver_option_invalid: 'Opção de consulta do aprovador atual inválida: {0}. Use o userId exato e consulte instâncias RUNNING desde a página 1.',
+  approver_incomplete: 'A contagem por aprovador atual não foi concluída. Nenhum total completo foi retornado; verifique erros, permissões e paginação.',
+  approver_response_invalid: 'Não foi possível verificar a resposta da API de processos; a contagem por aprovador atual não pode ser determinada.',
+  approver_scope_note: 'São contadas apenas as instâncias cuja leitura o servidor autoriza para o usuário conectado; isso não implica acesso a todos os dados do aplicativo.',
   command_unsupported: 'Comando de dados não suportado: {0} {1}. Execute openyida commands --json para consultar a capacidade real.',
   delete_confirmation_required: 'Antes de excluir um registro de formulário, consulte o alvo, mostre o resumo ao usuário e adicione --confirm somente após aprovação explícita. Nenhuma exclusão foi realizada.',
   delete_preflight_failed: 'Não foi possível ler o registro de formulário {0} para a verificação prévia. Nenhuma exclusão foi realizada.',

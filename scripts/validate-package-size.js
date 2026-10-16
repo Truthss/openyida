@@ -30,7 +30,7 @@ const path = require('path');
 // Data-management UI measures 2,296,797 tarball bytes on Node 20;
 // retain under 16 KiB headroom across supported compression runtimes.
 // Composable UI authoring guide: 2,314,474 compressed bytes on Node 20.
-const MAX_TARBALL_BYTES = 2272 * 1024;
+const MAX_TARBALL_BYTES = 2288 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.
@@ -38,7 +38,11 @@ const MAX_TARBALL_BYTES = 2272 * 1024;
 // 8,704,842 bytes / 655 entries on Node 20; next 16 KiB boundary.
 // Token/CSS reference and guide: 8,722,920 unpacked bytes / 656 entries;
 // retain less than 16 KiB headroom, without changing per-file or entry limits.
-const MAX_UNPACKED_BYTES = 8528 * 1024;
+// Current-approver queries add one runtime module and localized query guidance.
+// The isolated main-based package measures about 8.34 MiB / 657 files on Node 20.
+// Front/backend navigation handoff, readback audit and 12 localized diagnostics:
+// Node 20 measures 2,325,817 compressed / 8,754,863 unpacked bytes, still 657 files.
+const MAX_UNPACKED_BYTES = 8560 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -46,7 +50,7 @@ const MAX_UNPACKED_BYTES = 8528 * 1024;
 // removing the application-styles/navigation-styles catalogs offsets two files.
 // App theme upgrades add two CLI modules and an independent skill with its migration guide.
 // Retain two entries of headroom; per-file limits remain unchanged.
-const MAX_ENTRY_COUNT = 656;
+const MAX_ENTRY_COUNT = 657;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -95,6 +99,7 @@ const REQUIRED_PACKAGE_FILES = [
   'yida-skills/skills/yida-app/workflow/incremental-preview.md',
   'yida-skills/skills/yida-create-form-page/references/batch-forms.md',
   'lib/core/utils.js',
+  'lib/core/process-approver-query.js',
   'lib/core/source-repair.js',
   'lib/app/theme-scope.js',
   'lib/core/theme-brand-scale.js',
