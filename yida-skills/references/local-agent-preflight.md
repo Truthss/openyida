@@ -29,7 +29,9 @@ openyida agent doctor --provider codex --json
 
 桌面版是否存在与 CLI 是否可用是两个独立事实。Qoder 桌面程序不会作为 CLI 启动；Codex 内置程序被发现后仍需通过检查。
 
-Qoder 检查版本、ACP 初始化和 CLI 模型列表；Codex 检查版本、app-server 初始化和登录状态。不发送模型 prompt、不创建业务对象、不自动安装程序、不发起登录、不复制其他应用的凭据。Windows 单次子进程检查超时为 45 秒，每个 Provider 总预算为 135 秒；其他平台分别为 15 秒与 30 秒。总预算耗尽即停止探测，不把超时当作未安装。
+连接和重连先检查所有已安装 CLI 的版本，全部可上报 CLI 都会交给 Runtime，不会因第一个 CLI 可用而跳过其他 CLI。登录、协议和模型状态由 Runtime 检测并持续上报；预检成功仅表示已安装，不表示已登录。版本输出符合严格格式时，通过已有 version 字段复用，避免 Runtime 再次启动同一版本查询。
+
+完整 `doctor` 诊断仍检查：Qoder 版本、ACP 初始化和 CLI 模型列表；Codex 版本、app-server 初始化和登录状态。不发送模型 prompt、不创建业务对象、不自动安装程序、不发起登录、不复制其他应用的凭据。Windows 单次子进程检查超时为 45 秒，每个 Provider 总预算为 135 秒；其他平台分别为 15 秒与 30 秒。总预算耗尽即停止探测，不把超时当作未安装。
 
 当前接入范围为 Qoder 和 Codex。
 
@@ -37,6 +39,7 @@ Qoder 检查版本、ACP 初始化和 CLI 模型列表；Codex 检查版本、ap
 
 | status | 含义 | 下一步 |
 | --- | --- | --- |
+| cli_detected | 连接预检已确认 CLI 可执行，登录/协议尚未检查 | 继续注册，等待 Runtime 上报实际状态；不要重复连接 |
 | ready | CLI 登录和协议检查通过 | 继续连接 |
 | available | 可启动，但有能力尚未验证 | 继续现有接入流程，保留未验证标记 |
 | cli_not_found | 未找到 CLI | 仅报告缺失；用户明确要求后才协助安装或指定路径 |
@@ -47,7 +50,7 @@ Qoder 检查版本、ACP 初始化和 CLI 模型列表；Codex 检查版本、ap
 | probe_cancelled | 用户中止预检 | 清理本轮检查进程，停止连接 |
 | probe_failed | 命令检查失败，原因不能可靠归类 | 直接运行 CLI 检查配置、账号或网络 |
 
-`--json` 返回 `schemaVersion=1`、逐 provider 状态、`desktopDetected`、`cliDetected`、`usable`、`registrable` 和 `remediation`。诊断信息标记 INFORMATION_ONLY、requiresExplicitUserRequest=true 和 automaticActionAllowed=false，提供文档、路径选项及复查命令，不输出安装或登录命令；不包含原始 Provider 输出、用户标识或凭据。
+`--json` 返回 `schemaVersion=1`、逐 provider 状态、`desktopDetected`、`cliDetected`、`usable`、`registrable` 和按需提供的 `remediation`；识别到严格格式版本时附带 `version`。诊断信息标记 INFORMATION_ONLY、requiresExplicitUserRequest=true 和 automaticActionAllowed=false，提供文档、路径选项及复查命令，不输出安装或登录命令；不包含原始 Provider 输出、用户标识或凭据。
 
 `doctor.providerReady` 表示本地 CLI 检查结果，`runtime.installed` 表示 Runtime 制品校验结果。两者通过仍不等于宜搭连接已授权或真实业务 E2E 通过，因此 doctor 的 `ready` 不表示连接在线。`cliDetected` 表示 CLI 版本探测成功，`registrable` 表示已发现且可上报，登录或协议检查失败不会删除安装清单（用户取消除外）；`usable` 表示执行就绪。`readyForEnrollment` 只要求至少一个可上报 CLI 且用户未取消。`connect` 和 `run` 将这些 CLI 交给 Runtime，未登录状态由 Runtime 上报，前端显示“未登录”，服务端拒绝任务执行。即使全部已发现 CLI 都未登录，也允许连接电脑并展示状态。
 

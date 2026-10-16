@@ -73,3 +73,13 @@ build-plan.json（业务和视觉的源事实）
 如果已经改动主计划并出现 DESIGN_PLAN_STALE_PART，在原 materialize 命令增加 --rebase-parts。CLI 使用 init 保存的 .build-plan-base.json 做三方核对，保留已完成 facts；冲突按 details.conflicts 明确选择后重试。基线缺失或无法核实时告知阻塞并恢复可信文件，不手填 digest、不删除重建、不重新 init。方案确认后调整一律走 patch --materialize；确认前重复物化仍可用 --rebase-parts 与基线核对，但改动内容以当前 build-plan.json 为准。
 
 本地校验失败统一按[本地校验修复](../../../../references/source-repair.md)处理：先修正并回读源文件，未变化不重跑，连续两次修复无进展时保留产物并报告阻塞。
+
+
+### Windows 参数传递
+
+修改方案中的数组、对象或包含双引号的文本时，先用文件写入工具保存 UTF-8 JSON 文件，再执行
+
+`openyida design-plan patch prd/build-plan.json --set-file prd/changes.json --materialize --json`
+
+changes.json 是字段路径到值的映射，例如 {"dataModels[0].fields":[{"name":"物品名称","type":"TextField","required":true}]}。
+不要把整个 JSON 内联到 PowerShell 或 cmd 参数中；文件输入仍经过相同字段保护、方案校验和确认失效处理。

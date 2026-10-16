@@ -472,12 +472,17 @@ describe('CLI offline smoke', () => {
       expect(entry).toBeDefined();
       const documented = [...new Set(entry.usage.match(/--[a-z][a-z-]*/g))].sort();
       const registered = entry.args.filter(arg => arg.source === 'option').flatMap(arg => arg.builder_options).sort();
-      expect({ id, options: registered }).toEqual({ id, options: documented });
+      // The README keeps the legacy inline summary; typed file input is documented in argument metadata.
+      const expected = id === 'design-plan.patch' ? [...documented, '--set-file'].sort() : documented;
+      expect({ id, options: registered }).toEqual({ id, options: expected });
       expect(entry.permission).toMatchObject({ mode: 'allow', effect: 'write' });
       expect(entry.side_effect.kind).toBe(id === 'create-form.batch' ? 'remote_write' : 'local_write');
     }
     expect(entries['create-form.batch'].side_effect.mutates_local).toBe(true);
-    expect(entries['design-plan.patch'].args.find(arg => arg.name === 'set')).toMatchObject({ required: true, repeatable: true });
+    const setArgument = entries['design-plan.patch'].args.find(arg => arg.name === 'set');
+    expect(setArgument).toMatchObject({ repeatable: true });
+    expect(Boolean(setArgument.required)).toBe(false);
+    expect(entries['design-plan.patch'].args.find(arg => arg.name === 'setFile')).toMatchObject({ type: 'file', source: 'option', builder_options: ['--set-file'] });
     expect(entries.sample.args.find(arg => arg.name === 'var')).toMatchObject({ repeatable: true });
     expect(entries['create-form.batch'].args.find(arg => arg.name === 'concurrency')).toMatchObject({ type: 'integer', default: 3 });
   });
