@@ -244,7 +244,7 @@ openyida configure-process APP_XXX FORM_XXX .cache/openyida/process/process.json
 openyida process preview APP_XXX PROC_INST_XXX --output .cache/openyida/process/process.html
 ```
 
-加签、转交通过流程定义的 `nodes[].actions.normalActions/appendActions` 配置，`create-process` 和 `configure-process` 共用编译器，生成一致的设计器和运行配置。完整 JSON 示例、默认值及验收边界见 [操作权限配置](yida-skills/skills/yida-process-rule/references/approval-actions.md)。
+加签、转交通过流程定义的 `nodes[].actions.normalActions/appendActions` 配置，`create-process` 和 `configure-process` 共用编译器，生成一致的设计器和运行配置。完整 JSON 示例、默认值及验收边界见 [操作权限配置](yida-skills/skills/yida-flow-node-config/references/actions.md)。
 
 `configure-process` 在发现已有已发布流程或已保存草稿时要求显式传入 `--replace`；如果无法证明目标流程属于指定表单，则不会执行任何写入。草稿创建、保存和发布均按 one-shot 执行，认证或网络异常导致结果未知时不会自动重试。
 
@@ -285,6 +285,8 @@ openyida integration enable APP_XXX FORM_XXX PROC_CODE
 ```
 
 连接器鉴权信息通过宜搭连接器配置管理，不写入页面源码。`--operations`、`--action`、`--spec` 等 JSON 文件放到 `.cache/openyida/<项目名或任务名>/` 下。
+
+自动化 spec 的 `sendMessage` 节点支持 `toRoles: [{"roleCode":"真实角色ID","roleName":"财务"}]`，可与成员、成员字段共同接收 NORMAL 消息。流程的审批、办理、抄送也可指定角色；“指定角色”与“按条件选择不同审批人”分别配置，后者当前尚无完整的 CLI 简化配置。共用配置说明见 `yida-flow-node-config` 技能。
 
 已有动作的 Query 默认值必须通过窄命令安全更新：`openyida connector update-action --connector-id <id> --action <operationId> --query-json '{"currentPage":"1"}' --confirm`。命令先完整回读连接器和全部动作，只修改 `inputs` / `parameters` 中唯一且已声明的同名 Query 默认值，再一次性提交完整动作集合；回读必须证明连接器 fingerprint、动作数量、非目标动作和稳定 ID 均未变化。参数缺失、空值、未知参数、重复 ID、平台详情不完整或写入结果未知都会 fail-closed，且不会自动重试。`add-action` 不再覆盖既有动作 ID。
 
@@ -377,8 +379,8 @@ openyida integration enable APP_XXX FORM_XXX PROC_CODE
 | `openyida basic-info <overview\|commodity\|grant\|capacity\|quota\|abs-path\|dataflow\|i18n\|domain>` | 查询组织基本信息、容量、额度和域名设置 |
 | `openyida read-dingtalk-doc <docUrl> [--output <file>] [--json]` | 获取钉钉文档的 Markdown 内容 |
 | `openyida read-dingtalk-tingji <taskUuid> [--json]` | 按任务 UUID 获取钉钉听记详情 |
-| `openyida get-permission <appType> <formUuid> [--package-uuid <packageUuid>] [--json]` | 查询表单权限配置 |
-| `openyida save-permission <appType> <formUuid> --package-uuid <packageUuid> [--data-permission <json>\|--action-permission <json>\|--field-permission <json>]` | 保存表单权限配置 |
+| `openyida get-permission <appType> <formUuid> [--package-uuid <packageUuid>] [--package-type <FORM_PACKAGE_VIEW\|FORM_PACKAGE_START>] [--check-matrix] [--json]` | 查询表单权限配置 |
+| `openyida save-permission <appType> <formUuid> [--package-type <FORM_PACKAGE_VIEW\|FORM_PACKAGE_START>] [--package-uuid <packageUuid>\|--create --name <name>] [--data-permission <json>] [--action-permission <json>] [--field-permission <json>] [--members <userIds>\|--roles <roleIds>\|--all-members\|--matrix <json>] [--confirm-member-replace] [--owner-field <fieldId>] [--field-access <fieldId:view\|edit\|hidden\|encrypt>] [--field-default <access>] [--dry-run]` | 保存表单权限配置 |
 | `openyida corp-manager <search-user\|list\|add\|remove\|address-book> ...` | 管理平台管理员与通讯录权限 |
 | `openyida agent-center <list\|create\|update\|cancel\|range\|search-user> ...` | 管理流程代理和离职代理 |
 
@@ -390,6 +392,7 @@ openyida integration enable APP_XXX FORM_XXX PROC_CODE
 | `openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace] \| create-process <appType> --formUuid <formUuid> <processDefinitionFile> [--replace]` | 创建流程表单（一体化）; 支持加签/转交，配置位于 JSON nodes[].actions.normalActions/appendActions |
 | `openyida ai-form-setting <get\|fields\|models\|enable\|disable\|save> <appType> ...` | 管理流程表单 AI 审批提示 |
 | `openyida process preview <appType> ...` | 预览流程实例（可视化流程图） |
+| `openyida process fields <appType> <formUuid> [--json]` | 检查流程设计器字段加载和子表字段路径 |
 
 ### 页面配置 & 分享
 
@@ -431,7 +434,7 @@ openyida integration enable APP_XXX FORM_XXX PROC_CODE
 
 | 命令 | 说明 |
 |------|------|
-| `openyida integration create <appType> ... [--spec file.json] [--connector-system-token-app <appType>]` | 创建集成自动化逻辑流 |
+| `openyida integration create <appType> <formUuid> <flowName> [--spec file.json] [--publish] [--connector-system-token-app <appType>]` | 创建集成自动化逻辑流 |
 | `openyida integration update <appType> <formUuid> <processCode> --spec <desired-spec.json> [--publish]` | 检测集成自动化安全更新能力（完整 readback 未证明，当前阻断） |
 | `openyida integration list <appType> [--flow-types 1,2,3,5,6] [--form-uuid <uuid>] [--status y\|n] [--json]` | 列出集成自动化逻辑流 |
 | `openyida integration enable <appType> <formUuid> <processCode>` | 启用集成自动化逻辑流 |

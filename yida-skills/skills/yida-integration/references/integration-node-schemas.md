@@ -9,7 +9,7 @@
 | --- | --- | --- |
 | 触发节点 | `trigger` | `StartNode` |
 | 消息通知节点 | `sendMessage` | `SendMessageNode` |
-| 新增数据节点 | `dataCreate` | `AddDataNode` |
+| 新增数据节点（单条或批量） | `dataCreate` | `AddDataNode` |
 | 获取单条数据节点 | `dataRetrieve` | `GetSingleDataNode` |
 | 更新数据节点 | `dataUpdate` | `UpdateDataNode` |
 | 调用连接器节点 | `innerConnector` / `httpConnector` | `ConnectorNode` |
@@ -101,6 +101,7 @@ trigger
 ```
 
 - `toUsers`：指定接收人（userId + userName），可为空数组
+- `toRoles`：指定角色（`roleCode` + `roleName`）；NORMAL 消息可与成员、成员字段同时使用。自动化 spec 直接在节点上配置，完整格式加载 `use_skill("yida-flow-node-config", "消息通知指定角色")`。
 - `userFields`：引用触发表单中的成员字段 ID，该字段的值也会收到通知
 - 标题/内容中引用字段变量格式：`#{fieldId-ComponentType}#`（注意带组件类型后缀）
 - 按钮 URL 中用 `${formInstId}` 引用当前触发的表单实例 ID
@@ -449,3 +450,5 @@ trigger
 | `endTime` | Number | 否 | 时间范围终点，毫秒时间戳 |
 | `pageIndex` | Number | 是 | 页码，从 1 开始 |
 | `pageSize` | Number | 是 | 每页条数 |
+
+批量查询和新增的 spec 参数、来源行绑定及子表复制示例见 [批量数据配置](batch-data.md)。

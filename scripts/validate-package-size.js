@@ -30,7 +30,11 @@ const path = require('path');
 // Data-management UI measures 2,296,797 tarball bytes on Node 20;
 // retain under 16 KiB headroom across supported compression runtimes.
 // Composable UI authoring guide: 2,314,474 compressed bytes on Node 20.
-const MAX_TARBALL_BYTES = 2288 * 1024;
+// Batch runtime/schema support measures 2,329,197 compressed bytes on Node 24;
+// retain less than 16 KiB of cross-runtime gzip headroom.
+// Combined main and process/integration content measures 2,364,935 bytes on
+// Node 24; retain under 16 KiB of compression headroom across supported Nodes.
+const MAX_TARBALL_BYTES = 2320 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.
@@ -42,7 +46,21 @@ const MAX_TARBALL_BYTES = 2288 * 1024;
 // The isolated main-based package measures about 8.34 MiB / 657 files on Node 20.
 // Front/backend navigation handoff, readback audit and 12 localized diagnostics:
 // Node 20 measures 2,325,817 compressed / 8,754,863 unpacked bytes, still 657 files.
-const MAX_UNPACKED_BYTES = 8560 * 1024;
+// Process field diagnostics, permission compilation and START package support add
+// four runtime files plus one skill reference (about 31 KiB including locale/docs updates).
+// Batch data support adds two runtime modules and a skill reference. Measured
+// 8,771,375 unpacked bytes / 664 files; round to the next 16 KiB boundary.
+// Current-approver scans add one runtime module and multilingual query guidance.
+// Measured 8,784,392 bytes / 665 files on Node 20; next 16 KiB boundary.
+// Shared node skills and role compilation/readback add four packaged files.
+// Measured 8,798,736 bytes / 669 entries; next 16 KiB boundary.
+// Owner/role/field permission helpers, matrix availability and their shared guide:
+// measured 8,817,431 unpacked bytes / 681 entries; next 16 KiB boundary.
+// Restore original resource gates, strict rules, examples and pass-through
+// contracts across the shared references; retain the next 16 KiB boundary.
+// Main's front/backend handoff and runtime 0.1.4 metadata plus the restored
+// process/integration contracts measure 8,867,368 unpacked bytes / 681 files.
+const MAX_UNPACKED_BYTES = 8672 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -50,10 +68,25 @@ const MAX_UNPACKED_BYTES = 8560 * 1024;
 // removing the application-styles/navigation-styles catalogs offsets two files.
 // App theme upgrades add two CLI modules and an independent skill with its migration guide.
 // Retain two entries of headroom; per-file limits remain unchanged.
-const MAX_ENTRY_COUNT = 657;
+// Shared node references split six node categories and four common settings;
+// automation command/spec details move out of entry skills (+11 files).
+// Content shrinks overall (8,794,095 unpacked bytes); byte budgets stay fixed.
+// Remove the two obsolete process reference redirects after updating consumers.
+const MAX_ENTRY_COUNT = 681;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
+  'lib/permission/permission-scope.js',
+  'lib/permission/matrix-availability.js',
+  'yida-skills/skills/yida-form-permission/references/row-field-access.md',
+  'lib/integration/integration-message-roles.js',
+  'lib/process/services/process-actor-config.js',
+  'yida-skills/skills/yida-flow-node-config/SKILL.md',
+  'yida-skills/skills/yida-flow-node-config/references/actors.md',
+  ...['actions', 'fields', 'start', 'human', 'control', 'data', 'notifications', 'extensions', 'conditions-variables']
+    .map(name => `yida-skills/skills/yida-flow-node-config/references/${name}.md`),
+  'yida-skills/skills/yida-integration/references/cli-options.md',
+  'yida-skills/skills/yida-integration/references/spec-authoring.md',
   'lib/style/data-manage-style.js',
   'lib/style/native-data-manage.js',
   'lib/style/data-manage-presets.json',
@@ -108,6 +141,13 @@ const REQUIRED_PACKAGE_FILES = [
   'lib/asset/asset-plan.js',
   'lib/asset/attachment-upload.js',
   'lib/process/services/process-actions.js',
+  'lib/process/services/process-field-permissions.js',
+  'lib/process/services/process-form-fields.js',
+  'lib/process/process-fields.js',
+  'lib/permission/package-type.js',
+  'lib/integration/integration-batch-data.js',
+  'lib/integration/integration-data-retrieve.js',
+  'yida-skills/skills/yida-integration/references/batch-data.md',
   'project/config.json',
   'scripts/postinstall.js',
   'yida-skills/SKILL.md',
@@ -129,7 +169,6 @@ const REQUIRED_PACKAGE_FILES = [
   'lib/samples/openyida-scaffold/canvas-dialog.canvas.jsx',
   ...['shared', 'sidebar', 'side', 'top', 'mixed', 'dock', 'tabs', 'data', 'content'].map(name => `lib/samples/openyida-scaffold/canvas-nav/${name}.jsx`),
   'yida-skills/skills/yida-canvas-custom-page/references/dialog-guide.md',
-  'yida-skills/skills/yida-process-rule/references/approval-actions.md',
 ];
 
 const FORBIDDEN_PACKAGE_PREFIXES = [

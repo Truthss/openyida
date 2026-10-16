@@ -105,7 +105,9 @@
 |---|---|
 | 创建流程表单并配置流程 | `openyida create-process <appType> ...` |
 | 配置并发布流程规则 | `openyida configure-process <appType> ...` |
-| 配置审批节点的加签、转交 | 在流程定义的 `nodes[].actions.normalActions/appendActions` 中声明，由上述创建/配置命令编译；见 [操作权限配置](../yida-skills/skills/yida-process-rule/references/approval-actions.md) |
+| 检查流程设计器字段来源和子表路径 | `openyida process fields <appType> <formUuid> --json` |
+| 配置发起、审批和办理节点字段权限 | 发起页用顶层 `startFormConfig`，人工节点用 `formConfig`；见 [字段权限](../yida-skills/skills/yida-flow-node-config/references/fields.md) |
+| 配置审批节点的加签、转交 | 在流程定义的 `nodes[].actions.normalActions/appendActions` 中声明，由上述创建/配置命令编译；见 [操作权限配置](../yida-skills/skills/yida-flow-node-config/references/actions.md) |
 | 预览流程实例 | `openyida process preview <appType> <processInstanceId> [--output <path>]` |
 | 查询 AI 审批提示配置 | `openyida ai-form-setting get <appType> <formUuid>` |
 | 查询 AI 审批可用字段 | `openyida ai-form-setting fields <appType> <formUuid>` |
@@ -125,6 +127,9 @@
 | 查询流程/任务/子表数据 | `openyida data <action> <resource> [args]` |
 | 查询表单权限 | `openyida get-permission <appType> <formUuid>` |
 | 保存表单权限 | `openyida save-permission <appType> <formUuid> ...` |
+| 权限组成员、数据范围和字段权限 | 完整配置用 `--data-permission`、`--field-permission`；角色和字段简写用 `--roles`、`--field-access`，先用 `--dry-run` 看差异；见 [配置说明](../yida-skills/skills/yida-form-permission/references/row-field-access.md) |
+| 提前查询 OA 矩阵可用性 | `get-permission <appType> <formUuid> --check-matrix --json`；结果不证明已购买 |
+| 查询、配置谁能发起流程 | 查询和保存权限命令均加 `--package-type FORM_PACKAGE_START`；见 [发起权限](../yida-skills/skills/yida-form-permission/SKILL.md#发起权限-start) |
 | 验证短链接 | `openyida verify-short-url <appType> ...` |
 | 保存公开访问/分享配置 | `openyida save-share-config <appType> ...` |
 | 查询页面分享配置 | `openyida get-page-config <appType> <formUuid>` |
@@ -158,6 +163,9 @@
 | 解析 API 文档/接口信息 | `openyida connector parse-api [options]` |
 | 生成 API 文档模板 | `openyida connector gen-template [output]` |
 | 创建集成自动化 | `openyida integration create <appType> ... [--spec file.json]` |
+| 批量取数、新增和复制子表明细 | `integration create --spec`；见 [批量数据配置](../yida-skills/skills/yida-integration/references/batch-data.md) |
+| 自动化字段与字段比较（待完成） | 已有本地编译入口，尚未通过平台保存及运行验收；见 [条件与变量](../yida-skills/skills/yida-flow-node-config/references/conditions-variables.md) |
+| 按角色发送自动化消息 | spec 的 `sendMessage.toRoles`；见 [通知节点](../yida-skills/skills/yida-flow-node-config/references/notifications.md) |
 | 查询集成自动化 | `openyida integration list <appType> [--form-uuid <uuid>]` |
 | 启用集成自动化 | `openyida integration enable <appType> <formUuid> <processCode>` |
 | 停用集成自动化 | `openyida integration disable <appType> <formUuid> <processCode>` |

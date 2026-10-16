@@ -1,89 +1,53 @@
 ---
 name: yida-integration
-description: 创建/管理宜搭集成自动化。
+description: 创建和管理宜搭集成自动化，负责触发、保存发布、查询启停及日志；通知、数据、分支、连接器参数按需加载通用节点技能。
 ---
 
-# yida-integration — 宜搭集成&自动化（逻辑流）技能
+# 集成自动化
+
+本技能负责逻辑流的触发、完整 spec、保存发布和结果核对。节点参数统一由 `use_skill("yida-flow-node-config", "集成自动化；所需节点类别或配置项")` 提供，按需读取。
+
+## 使用范围与限制
+
+表单或流程事件后的自动通知、跨表新增／更新、创建待办、调用连接器等动作，默认使用本技能。不要把提交后的自动动作塞进表单字段 JS 或自定义页面按钮；只有用户明确要求一次性人工触发工具页时才采用该方式。
+
+审批、办理等人工流程配置使用 `yida-process-rule`。先解析目标应用、表单和已有逻辑流；目标或资源归属不明确时保持零写入。当前入口未封装的触发或节点必须报告具体缺口，不能改变用户要求的触发语义。
+
+## 严格禁止 (NEVER DO)
+
+- 不要在未加载本技能内容的情况下编写逻辑流定义，节点格式复杂且易出错。
+- 不要编造 `formUuid` 或 `fieldId`，必须从已有记录或 `yida-get-schema` 获取。
+- 不要用此技能配置审批流程，应使用 `yida-process-rule`。
+- 不得把 `integration update` 的 fail-closed 结果降级为 `integration create --process-code --replace`。
+
+## 严格要求 (MUST DO)
+
+- **创建/发布前必须确认**：执行集成自动化创建或发布操作前，必须向用户展示逻辑流配置摘要（触发条件、节点列表、通知对象），获得用户明确同意后再执行。
+- 创建前先确认触发表单的 `formUuid` 和相关字段 ID。
+- 创建成功后记录逻辑流 ID 到 `<projectRoot>/.cache/<项目名>-schema.json`。
+- `--spec` JSON 文件必须先用结构化文件写入工具创建到 `<projectRoot>/.cache/openyida/<项目名或任务名>/integration/`；不要用 shell heredoc、`cat`/`echo`/`printf`/`tee` 或重定向写文件，也不要写仓库根目录或系统临时目录。
+- 连接器 action schema 只能来自 CLI 的平台只读发现或固定已证 preset；不得使用 `--connector-inputs` 自行声明未知字段类型，未知连接器、动作或输入字段必须停止且保持零写入。
+- 连接器嵌套输入使用完整路径赋值，如 `Body.userid`、`Path.unionId`；只有 schema 中唯一的叶子名可以使用短名称。
+- 需要宜搭 `systemToken` 的连接器动作使用 `--connector-system-token-app <appType>`，或在 spec 中声明 `secretBindings`；凭据只能由 CLI 校验官方目标后安全绑定，不能写入普通 assignment、页面源码或命令文本。
+- `integration create --publish` 的成功只证明控制面保存、启用和配置回读；`runtimeVerified=false` 时不得宣称连接器已执行或通知已送达。需要运行验收时，必须按授权范围真实触发并独立读回业务结果。
+- 参考官方示例时不要只看默认页面 schema；逻辑流本体必须通过集成自动化接口或命令查询、创建。
+- 分析已有应用时，先执行不带筛选的 `integration list --json` 获取全部已知触发类型；不得只看表单事件就声称已完成自动化盘点。
+- 新建逻辑流必须先由 CLI 创建绑定，再保存内容；禁止绕过 `createLogicflow.json` 直接用 `saveProcess` 冒充新建。首个写入前完成完整运行与设计配置的本地构建。
+- 本技能不读写 memory；真实逻辑流 ID 从命令结果取得并按上方要求记录，不依赖跨会话记忆判断平台状态。
 
 ## 命令选择
 
 | 用户目标 | 执行动作 |
 | --- | --- |
 | 创建新自动化 | 使用 `integration create`，由 CLI 生成 `processCode` |
-| 整图替换已有自动化 | 校验 `appType`、`formUuid`、`processCode`，明确告知“CLI 无法读取原有节点定义；本次将整体覆盖，原节点不保留”，获得确认后使用 `integration create ... --process-code <code> --replace` |
+| 字段与字段比较，如当前库存低于库存下限 | 尚未通过平台保存及运行验收，不能作为已支持能力交付；输入格式与限制见 [条件与变量](../yida-flow-node-config/references/conditions-variables.md) |
+| 批量取数、新增或复制子表多行 | 使用 `integration create --spec`，读取通用技能的数据操作说明 |
+| 整图替换已有自动化 | 校验 `appType/formUuid/processCode`，明确告知“CLI 无法读取原有节点定义；本次将整体覆盖，原节点不保留”，获得确认后使用 `integration create ... --process-code <code> --replace` |
 | 更新已有自动化 | 使用 `integration update` 获取 capability 结果，并按结果报告当前状态 |
-| 目标或资源归属不明确 | 保持零远端写，并请求用户明确目标资源和操作类型 |
+| 查询、启停或检查日志 | `integration list/enable/disable/check/diagnose` |
+| 目标或归属不明确 | 先只读确认，不写入 |
 
-## 严格禁止 (NEVER DO)
-
-- 不要在未加载本技能内容的情况下编写逻辑流定义，节点格式复杂且易出错
-- 不要编造 formUuid 或 fieldId，必须从已有记录或 `yida-get-schema` 获取
-- 不要用此技能配置审批流程，应使用 `yida-process-rule`
-- 不得把 `integration update` 的 fail-closed 结果降级为 `integration create --process-code --replace`
-
-## 严格要求 (MUST DO)
-
-- **创建/发布前必须确认**：执行集成自动化创建或发布操作前，必须向用户展示逻辑流配置摘要（触发条件、节点列表、通知对象），获得用户明确同意后再执行
-- 创建前先确认触发表单的 formUuid 和相关字段 ID
-- 创建成功后记录逻辑流 ID 到 `.cache/<项目名>-schema.json`
-- `--spec` JSON 文件必须先用结构化文件写入工具创建到 `<projectRoot>/.cache/openyida/<项目名或任务名>/integration/`；不要用 shell heredoc、`cat`/`echo`/`printf`/`tee` 或重定向写文件，也不要写仓库根目录或系统临时目录
-- 连接器 action schema 只能来自 CLI 的平台只读发现或固定已证 preset；不得使用 `--connector-inputs` 自行声明未知字段类型，未知连接器、动作或输入字段必须停止且保持零写入
-- 连接器嵌套输入使用完整路径赋值，如 `Body.userid`、`Path.unionId`；只有 schema 中唯一的叶子名可以使用短名称
-- 需要宜搭 `systemToken` 的连接器动作使用 `--connector-system-token-app <appType>`，或在 spec 中声明 `secretBindings`。CLI 校验官方目标后从当前登录态读取凭据并只注入服务端流程 payload；普通 assignment 不接收该值
-- `integration create --publish` 的成功只证明控制面保存、启用和配置回读；输出 `runtimeVerified=false` 时必须真实触发并独立读回业务结果，不能宣称连接器动作已经执行成功
-- 参考官方示例时不要只看默认页面 schema：集成自动化示例的默认页通常只是触发表单或说明页，逻辑流本体需要通过集成自动化接口/命令查询或创建
-- 分析已有应用时先执行不带筛选的 `integration list --json` 获取全部已知触发类型；不得只看表单事件就声称已完成自动化盘点
-
-## 适用场景
-
-| 用户意图 | 触发条件 |
-|---------|---------|
-| 表单提交后自动通知 | "自动通知"、"数据变更触发"、"集成&自动化" |
-| 数据操作自动化 | "自动新增"、"自动更新"、"逻辑流" |
-
-## 异常处理
-
-| 异常场景 | 处理方式 |
-|---------|----------|
-| formUuid 不存在 | 不得编造，必须从已有记录或 `yida-get-schema` 获取 |
-| 逻辑流创建失败 | 检查节点配置格式，确认触发表单和目标表单存在 |
-| 通知接收人为空 | 必须指定至少一个 userId，不得留空 |
-| 变量引用格式错误 | 确认使用 `#{fieldId-ComponentType}#` 格式 |
-| 发布失败 | 检查逻辑流配置完整性，确认登录态有效 |
-
-## Agent 错误处理策略
-
-当 Agent 执行本技能遇到错误时，必须遵循以下默认行为：
-
-| 错误类型 | 默认处理策略 |
-|---------|-------------|
-| `INTEGRATION_FULL_REPLACEMENT_REQUIRES_REPLACE` | 已获得整图替换确认时，补 `--replace` 重试一次；未获得确认时，展示替换摘要并请求确认 |
-| `INTEGRATION_CONNECTOR_SCHEMA_UNVERIFIED` / `INTEGRATION_CONNECTOR_ACTION_NOT_FOUND` | 停止创建；确认连接器与 action 可由平台只读详情精确发现，不得用 `TextField` 或自写 schema 猜测 |
-| `INTEGRATION_PUBLISH_READBACK_UNVERIFIED` / `INTEGRATION_READBACK_*` | 写响应不作为完成证据；报告状态未验证，不得宣称已发布或已启停 |
-| `INTEGRATION_CONNECTOR_REQUIRED_INPUT_MISSING` / `INTEGRATION_CONNECTOR_ASSIGNMENT_*` | 在零写入状态修正完整字段路径和值；不得绕过校验或改用短名称猜测 |
-| 命令执行失败 | 停止执行，向用户展示错误信息，询问是否重试或调整参数 |
-| 参数缺失（appType/formUuid/userId 等） | 主动询问用户补充，不得猜测或编造 |
-| 权限不足 / 登录态失效 | 停止执行，提示用户执行 `openyida auth status` 检查登录态 |
-| 节点配置格式错误 | 停止执行，展示错误详情，引导用户参照文档修正配置 |
-| 网络超时 | 重试 1 次，仍失败则停止并提示用户检查网络 |
-| 未知错误 | 停止执行，完整展示错误信息，建议用户反馈问题 |
-
----
-
-
-本技能用于在宜搭平台创建「集成&自动化」（逻辑流），支持场景：**表单事件触发 → 多节点组合处理 → 钉钉工作通知 / 数据操作**。
-
-官方示例中心体现的集成范式是“表单收集数据，逻辑流处理副作用”。因此，跨表新增/更新、通知、创建待办、调用钉钉能力等提交后动作，默认用本技能；不要把这些副作用塞进表单字段 JS 或自定义页面按钮，除非用户明确要求一次性人工触发工具页。
-
-## 功能概述
-
-- 监听指定表单的新增 / 更新 / 删除 / 评论事件
-- 可选：从另一张表单获取单条数据，支持按触发表单字段值过滤
-- 可选：向指定表单新增数据，支持字段赋值（含公式）
-- 可选：更新指定表单数据（按节点查询结果或条件过滤）
-- 可选：条件分支，根据上游节点数据有无 / 字段值走不同分支
-- 通知内容和标题支持引用表单字段变量（`#{fieldId-ComponentType}#` 格式）
-- 支持保存为草稿（未开启状态）或直接发布（开启状态）
+`PLATFORM_PROBE_REQUIRED` 表示当前安全更新能力尚未证明，保持 `remoteWrites=0`。
 
 ## 命令格式
 
@@ -94,412 +58,111 @@ openyida integration list <appType> [--flow-types 1,2,3,5,6] [--form-uuid <uuid>
 openyida integration enable <appType> <formUuid> <processCode>
 openyida integration disable <appType> <formUuid> <processCode>
 openyida integration check <appType...> [--json] [--output result.xlsx] [--no-progress]
+openyida integration diagnose --text "<异常信息>" [--json]
+openyida integration diagnose --file <异常文件> [--json]
 ```
 
-### 参数说明
+| 参数 | 含义 |
+| --- | --- |
+| `appType` | 目标应用 ID |
+| `formUuid` | 自动化绑定的真实表单 ID |
+| `flowName` | 新建自动化名称 |
+| `processCode` | 已有逻辑流 ID，从查询结果取得 |
 
-| 参数 | 必填 | 说明 |
+`update` 当前仍受安全更新检查限制，见上方命令选择。创建选项、参数默认值及完整示例见 [CLI 选项与示例](references/cli-options.md)；多节点 JSON 见 [spec 编排示例](references/spec-authoring.md)；批量节点见 [批量数据示例](references/batch-data.md)。
+
+## 节点选择
+
+| 类别 | 自动化当前可直接配置 | 差异或限制 |
 | --- | --- | --- |
-| `appType` | 是 | 应用 ID，如 `APP_XXXX` |
-| `formUuid` | 是 | 触发表单 UUID，如 `FORM-XXXX` |
-| `flowName` | 是 | 逻辑流名称 |
+| 发起/触发 | 表单事件、流程完成或节点事件 | 不设置发起页字段权限；当前 create 不创建定时、应用或卡片触发 |
+| 人工处理 | 无审批、办理、抄送人工节点 | 需要审批时用 `initiateApproval` 发起目标流程，在目标流程中配置审批人 |
+| 流转控制 | `route` | 当前 spec 不支持并行、循环 |
+| 数据操作 | `getSelf/dataRetrieve/dataCreate/dataUpdate`，含批量取数/新增 | 当前 spec 不支持删除；流程表单新增用发起审批 |
+| 通知 | `sendMessage`，成员/角色/成员字段 | 当前 spec 不支持邮件或卡片 |
+| 扩展执行 | `connector/initiateApproval` | 连接器需发现真实 action schema；当前 spec 不支持代码或 AI |
 
-### 选项说明
+平台设计器有该节点，不代表当前 CLI 的 spec 支持。不要把流程的原生 props 放入自动化 spec，也不要把尚未封装的节点当作可任意透传。
 
-| 选项 | 默认值 | 说明 |
-| --- | --- | --- |
-| `--process-code <code>` | 自动生成 | 已有逻辑流的 processCode（`LPROC-xxx` 格式）；与 `--replace` 同时使用，执行整图替换 |
-| `--replace` | 关闭 | 显式确认 `--process-code` 执行整图替换 |
-| `--receivers <userId,...>` | 空（无接收人） | 接收钉钉工作通知的用户 ID，多个用逗号分隔 |
-| `--title <title>` | 同 flowName | 通知标题，支持 `#{fieldId-ComponentType}#` 引用表单字段 |
-| `--content <content>` | `"表单有新记录提交，请及时查看。"` | 通知内容，支持 `#{fieldId-ComponentType}#` 引用表单字段 |
-| `--events <insert,update>` | `insert` | 触发事件，可选值：`insert`/`update`/`delete`/`comment`/`processFinish`/`activityTask`（也支持别名 `create`/`approval`/`approvalNode`），多个用逗号分隔 |
-| `--approval-actions <agree,...>` | 空 | 当 `--events processFinish` 或 `--events activityTask` 时必填；可选值：`agree`/`disagree`/`terminated`，多个用逗号分隔 |
-| `--approval-node-ids <nodeId,...>` | 空 | 当 `--events activityTask` 时必填；审批节点 ID，多个用逗号分隔 |
-| `--trigger-condition <fieldId:fieldName:opCode:value[:componentType[:valueType]]>` | 空 | 触发器过滤条件，可多次传入；示例：`radioField_xxx:采购类型:Equal:材料采购:RadioField:literal` |
-| `--trigger-recursively` | 关闭 | 允许自动触发，对应设计器里的“允许自动触发” |
-| `--spec <file.json>` | 不启用 | 使用结构化编排文件创建复杂自动化，支持 `getSelf`、`dataRetrieve`、`dataCreate`、`dataUpdate`、`route`、`sendMessage`、`connector`、`initiateApproval` |
-| `--get-self` | 关闭 | 自动插入“获取自身”节点：流程表单运行态查询字段为 `pid`、设计器字段为 `proc_inst_id`；普通表单两侧使用 `form_inst_id`，均等于触发事件字段 `__masterdata_form_inst_id` |
-| `--get-self-field <field>` | `__masterdata_form_inst_id` | 覆盖右侧触发事件系统字段；仅在确认环境变量名不同后使用 |
-| `--get-self-query-field <field>` | 自动按来源表单类型选择 | 覆盖左侧查询系统字段；流程表单运行态使用 `pid` / `流程实例ID`、设计器使用 `proc_inst_id`，普通表单两侧使用 `form_inst_id` / `表单实例ID`；仅在确认平台字段名不同后使用 |
-| `--data-form-uuid <formUuid>` | 不启用 | 获取单条数据节点的目标表单 UUID（B 表单），传入后在触发节点和通知节点之间插入 GetSingleDataNode |
-| `--data-condition <bFieldId:bFieldName:aFieldId[:componentType[:opCode[:valueType]]]>` | 无 | 获取单条数据的过滤条件，可多次传入；格式：`B表单字段ID:B表单字段名:A表单字段ID[:组件类型[:操作符[:值类型]]]`，组件类型默认 `TextField`，操作符默认 `Contain` |
-| `--add-data-form-uuid <formUuid>` | 不启用 | 新增数据节点的目标表单 UUID，传入后在通知节点之后插入 AddDataNode；目标必须是普通表单（如 `formType=receipt`），不能是流程表单（`formType=process`） |
-| `--add-data-assignment <targetFieldId:valueType:value>` | 无 | 新增数据的字段赋值，可多次传入；格式：`目标字段ID:valueType:value`，valueType 可选 `processVar`（引用触发表单字段）/ `literal`（固定值）/ `column`（公式） |
-| `--initiate-approval-form-uuid <formUuid>` | 不启用 | 发起审批节点的目标流程表单 UUID；当 B 是流程表单（`formType=process`）时必须使用它，不要用 `--add-data-form-uuid` |
-| `--initiate-approval-initiator-user <userId[:name]>` | 无 | 发起审批的发起人，推荐格式 `01376266634908:张三`；只传 userId 时设计器中会显示原始 ID。使用发起审批节点时必填 |
-| `--initiate-approval-assignment <targetFieldId:valueType:value>` | 无 | 发起审批时写入目标流程表单字段的赋值规则，可多次传入；格式同 `--add-data-assignment` |
-| `--connector-mode <mode>` | 自动推断 | 连接器类型；HTTP 自定义连接器使用 `5`，`connectorId` 以 `Http_` 开头时会自动按 `5` 处理 |
-| `--connection-id <id>` | 空 | HTTP 连接器鉴权连接 ID；HTTP 连接器建议传入，否则设计器右侧配置面板可能无法加载连接实例详情 |
-| `--connector-display-name <name>` | `--connector-name` | 连接器展示名称，用于设计器画布和右侧配置面板 |
-| `--connector-inputs <file>` | 禁止 | 调用方文件不是平台证据；CLI 会拒绝并要求只读发现或固定已证 preset |
-| `--connector-system-token-app <appType>` | 空 | 为宜搭官方 OpenAPI 安全绑定目标应用 `systemToken`；只适用于 HTTPS 官方域名且 Action 唯一声明 `body.systemToken` |
-| `--publish` | 不发布 | 加此标志则保存后立即发布（开启状态），否则仅保存为草稿 |
-| `--flow-types <types>` | `1,2,3,5,6` | 仅用于 `integration list`，按逗号过滤触发类型；默认枚举全部已知类型，每条结果返回 `flowType` |
+## 基本步骤
 
-### 示例
+1. 确认目标应用、触发表单、真实字段与触发时机；已有资源复用，不编造 `formUuid/fieldId`。
+2. 从通用节点 Skill 选取所需配置。简单通知可用命令选项，多节点、角色通知和批量数据优先使用 `--spec`。
+3. 用结构化文件写入工具创建 `<projectRoot>/.cache/openyida/<任务名>/integration/spec.json`，不要用 shell heredoc、重定向或写到仓库根目录。
+4. 展示触发条件、节点、通知对象和目标写入范围，按上方严格要求获得用户明确同意后创建或发布。默认保存草稿，`--publish` 才启用。
+5. CLI 在首个远端写入前验证 spec、连接器 schema 和字段，然后创建绑定、保存双 JSON，并按需要发布和回读。
+6. 将返回的 `processCode` 等真实 ID 记入 `<projectRoot>/.cache/<项目名>-schema.json`；按 CLI 返回的验证等级报告结果。
 
 ```bash
-# 整图替换已有自动化
-openyida integration create APP_XXX FORM-XXX "替换已有自动化" \
-  --process-code LPROC-XXX \
-  --replace \
-  --spec .cache/openyida/<项目名或任务名>/integration/desired-spec.json
-
-# 最简用法：表单新增时通知指定用户，仅保存草稿
-openyida integration create APP_XXX FORM-XXX "新增记录通知" \
-  --receivers user123 \
-  --title "有新记录提交" \
-  --content "表单有新记录提交，请及时处理。"
-
-# 引用表单字段变量，保存并发布
-openyida integration create APP_XXX FORM-XXX "记录变更通知" \
-  --receivers user123,user456 \
-  --title "记录变更：#{textField_abc-TextField}#" \
-  --content "内容：#{textField_abc-TextField}#" \
-  --events insert,update,delete,comment \
-  --publish
-
-# 带获取单条数据节点：触发时从 B 表单获取匹配记录，再发送通知
-# --data-condition 格式：B表单字段ID:B表单字段名:A表单字段ID[:组件类型[:opCode[:valueType]]]
-# 可多次传入 --data-condition 添加多个过滤条件
-openyida integration create APP_XXX FORM-A-XXX "跨表通知" \
-  --receivers user123 \
-  --title "关联记录变更：#{textField_a1-TextField}#" \
-  --content "B表单数据已更新，请查看。" \
-  --events insert,update \
-  --data-form-uuid FORM-B-XXX \
-  --data-condition "textField_b1:B表单姓名字段:textField_a1:TextField" \
-  --publish
-
-# 获取自身：触发后重新读取当前记录，避免流水号、定时值或触发 payload 不是最新值
-openyida integration create APP_XXX FORM-A-XXX "获取自身后通知" \
-  --title "记录已提交" \
-  --content "已按表单实例ID重新读取当前记录。" \
-  --events insert,update \
-  --get-self \
-  --publish
-
-# 带新增数据节点：触发时将 A 表单数据同步到 B 表单，并发送通知
-# --add-data-assignment 格式：目标字段ID:valueType:value
-# valueType 可选：processVar（引用触发表单字段）、literal（固定值）、column（公式）
-# 可多次传入 --add-data-assignment 添加多个字段赋值
-openyida integration create APP_XXX FORM-A-XXX "表单A新增后同步到表单B并通知" \
-  --receivers user123 \
-  --title "数据已同步" \
-  --content "表单A新增了一条记录，已自动同步到表单B。" \
-  --add-data-form-uuid FORM-B-XXX \
-  --add-data-assignment "textField_b1:processVar:textField_a1" \
-  --add-data-assignment "numberField_b2:literal:0" \
-  --add-data-assignment "textareaField_b3:column:CONCATENATE(#{textField_a1},#{textField_a2})" \
-  --publish
-
-# A 流程审批完成后，发起 B 流程审批（B 是流程表单时使用）
-openyida integration create APP_XXX FORM-A-XXX "A审批完成后发起B流程" \
-  --events processFinish \
-  --approval-actions agree \
-  --get-self \
-  --initiate-approval-form-uuid FORM-PROCESS-B-XXX \
-  --initiate-approval-initiator-user "01376266634908:张三" \
-  --initiate-approval-assignment "textField_b1:processVar:textField_a1" \
-  --initiate-approval-assignment "textareaField_b2:literal:自动发起" \
-  --publish
-
-# 调用 HTTP 自定义连接器动作，并保留设计器右侧面板所需的连接器元信息
-openyida integration create APP_XXX FORM-A-XXX "调用 HTTP 连接器" \
-  --connector-id Http_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx \
-  --action-id publish_month_qs \
-  --connection-id 28336 \
-  --connector-display-name "BI 后端" \
-  --connector-assignment "month:processVar:textField_month" \
-  --publish
-
-# 调用需要 systemToken 的宜搭 OpenAPI；凭据由 CLI 内部读取，不写入命令参数
-openyida integration create APP_XXX FORM-A-XXX "服务端调用宜搭 OpenAPI" \
-  --connector-id Http_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx \
-  --action-id query_yida_data \
-  --connector-system-token-app APP_TARGET \
-  --connector-assignment "formUuid:literal:FORM_TARGET" \
-  --publish
+openyida integration create <appType> <formUuid> <flowName> --spec <specFile> [--publish]
+# 整图替换仅在已明确授权时使用
+openyida integration create APP_XXX FORM_XXX "替换已有自动化" --process-code LPROC-XXX --replace --spec <specFile>
 ```
 
-### 结构化编排 `--spec`
+需要 spec 外层、公式展示字段或安全凭据绑定时，按上方链接读取 spec 编排示例。
 
-复杂自动化优先使用 `--spec`，不要手写 `saveProcess` payload。spec 的节点可以用 `id` 作为别名，后续用 `${别名}.fieldId` 引用上游节点输出，OpenYida 会在保存前替换成真实 `node_xxx`。
+## 最小 spec 与触发设置
 
 ```json
 {
   "events": ["insert"],
   "nodes": [
-    { "id": "self", "type": "getSelf", "formType": "receipt" },
     {
-      "id": "branch",
-      "type": "route",
-      "branches": [
-        {
-          "id": "hasSelf",
-          "name": "已获取自身",
-          "conditions": [
-            {
-              "fieldId": "${self}.form_inst_id",
-              "fieldName": "表单实例ID",
-              "opCode": "ExistValue",
-              "componentType": "TextField"
-            }
-          ],
-          "nodes": [
-            {
-              "id": "updateSelf",
-              "type": "dataUpdate",
-              "source": "self",
-              "assignments": [
-                {
-                  "column": "textareaField_result",
-                  "valueType": "literal",
-                  "value": "已处理"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "fallback",
-          "name": "其他情况",
-          "default": true,
-          "nodes": [
-            {
-              "id": "notice",
-              "type": "sendMessage",
-              "title": "未获取到记录",
-              "content": "获取自身节点无匹配结果，请检查过滤条件。"
-            }
-          ]
-        }
-      ]
+      "type":"sendMessage",
+      "title":"新的申请",
+      "content":"请查看申请详情",
+      "toRoles":[{"roleCode":"<真实角色ID>","roleName":"财务"}]
     }
   ]
 }
 ```
 
-```bash
-openyida integration create APP_XXX FORM-XXX "获取自身后分支更新" \
-  --spec .cache/openyida/<项目名或任务名>/integration/get-self-update.json \
-  --publish
-```
+事件支持 `insert/update/delete/comment`、`processFinish/activityTask`。spec 使用流程事件时同时设置 `approvalActions`（`agree/disagree/terminated` 中的实际操作），节点事件另有 `approvalNodeIds`。只用命令选项创建时使用 `--events/--approval-actions/--approval-node-ids`；这些选项不会自动补入 spec。自动化“发起审批”的发起人，与目标流程审批角色是两项配置。
 
-> `--spec` 文件先用 create_file / Write / file edit tool 创建。上方路径默认从 OpenYida project 工作目录执行；从 workspace 根执行命令时路径加 `project/` 前缀。
-
-`initiateApproval` 必须把目标流程表单、发起人和至少一个字段赋值完整写进 spec；不要再混传同名 CLI 结构参数。`select_user.value` 是员工身份 JSON 字符串，必须含非空 `id` 和固定 `type: "employee"`；使用当前登录用户时写 `current_user`，CLI 会在远端写入前解析为员工身份。
-
-需要 `systemToken` 的 connector 节点用安全绑定声明目标应用。`assignments` 不写 `systemToken`：
+需要 `systemToken` 的连接器节点使用安全绑定片段，实际凭据由 CLI 读取，不能放进 `assignments`、命令文本或页面源码：
 
 ```json
 {
-  "type": "connector",
-  "connectorId": "Http_xxx",
-  "actionId": "query_yida_data",
   "secretBindings": [
-    { "target": "body.systemToken", "provider": "yidaSystemToken", "appType": "APP_TARGET" }
-  ],
-  "assignments": [
-    { "column": "formUuid", "valueType": "literal", "value": "FORM_TARGET" }
+    { "target": "body.systemToken", "provider": "yidaSystemToken", "appType": "<真实目标appType>" }
   ]
 }
 ```
 
-```json
-{
-  "type": "initiateApproval",
-  "formUuid": "FORM-PROCESS-XXX",
-  "initiator": { "type": "current_user" },
-  "assignments": [
-    { "column": "textField_title", "valueType": "literal", "value": "自动发起审批" }
-  ]
-}
-```
+将片段放在 connector 节点内；完整连接器及安全绑定示例见上方 spec 编排说明。
 
-从上游节点的子表取一行或新增一行，只用于 `--spec` 新建草稿，不要用来改现网自动化，也不要调用 `integration update`。
-
-- `dataRetrieve`：`originalType: "sub_table"`，`source` 必须是拓扑上游的 `getSelf` 或 `dataRetrieve` 别名，`subSourceId` 为子表 fieldId；不要再填目标表 `formUuid`
-- `dataCreate`：`insertType: "sub_table"`，`source` 为同一类上游节点，`subFormUuid` 为子表 fieldId；赋值字段必须落在该子表下。`parentFormUuid` 可选；来源是 `getSelf` 时回退到触发表单 UUID，否则从上游节点的 `formUuid` 推断
-
-```json
-{
-  "id": "lookupRow",
-  "type": "dataRetrieve",
-  "originalType": "sub_table",
-  "source": "school",
-  "subSourceId": "tableField_history",
-  "subSourceLabel": "经销商履历",
-  "conditions": [
-    {
-      "bFieldId": "textField_dealer_code",
-      "bFieldName": "经销商编号",
-      "aFieldId": "textField_selected_dealer_code",
-      "componentType": "TextField",
-      "opCode": "Equal",
-      "valueType": "processVar"
-    }
-  ]
-}
-```
-
-```json
-{
-  "id": "appendRow",
-  "type": "dataCreate",
-  "insertType": "sub_table",
-  "source": "school",
-  "subFormUuid": "tableField_history",
-  "assignments": [
-    { "column": "textField_dealer_code", "valueType": "processVar", "value": "textField_selected_dealer_code" }
-  ]
-}
-```
-
-## 字段变量引用格式
-
-在通知标题和内容中，可以使用 `#{fieldId-ComponentType}#` 格式引用触发表单的字段值：
-
-```
-#{textField_mmq4ldti-TextField}#
-#{numberField_abc123-NumberField}#
-#{selectField_xyz-SelectField}#
-```
-
-- `fieldId`：字段 ID（可通过 `yida-get-schema` 技能查询）
-- `ComponentType`：字段组件类型（如 `TextField`、`NumberField`、`SelectField` 等）
-
-在结构化 spec 的公式赋值中，`valueType: "column"` 的 `value` 使用 `${alias}.fieldId` 引用上游节点；如果同时提供设计器展示用的 `__source`，使用 `#{alias//fieldId}`。CLI 会把这两种别名引用都替换成真实节点 ID；不要只写 `value` 后假设设计器一定能恢复“值设置”展示。
-
-## 输出结果
-
-命令执行成功后，向 stdout 输出 JSON：
-
-```json
-{
-  "success": true,
-  "published": false,
-  "processCode": "LPROC-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-  "flowName": "新增记录通知",
-  "appType": "APP_XXX",
-  "formUuid": "FORM-XXX",
-  "formEventTypes": ["insert"]
-}
-```
-
-加 `--publish` 后，只有按 `formUuid + processCode` 精确完成全量列表与状态回读、并确认 `getProcess` 返回非空详情时，`published` 才为 `true`；输出包含诚实口径 `verificationLevel=PLATFORM_LIST_EXACT_DETAIL_PRESENT` 和回读摘要。详情未携带已证 identity 字段时只证明存在，不能宣称 detail exact；写响应成功但回读无法证明时命令失败，`published=null`、`verificationLevel=UNVERIFIED`。
-
-## 控制面查询与启停
-
-- `integration list` 默认枚举 `1/2/3/5/6` 五类触发类型，并为结果附带 `flowType`；会复用 `integration check` 的安全 paginator，拉完应用分组分页，并在分组 `hasMore=true` 时继续拉取表单下剩余逻辑流，不把单页或单一触发类型冒充完整列表。
-- 当前 create 写入仍只支持表单事件触发。读到定时、应用事件或手动/卡片触发时，必须保留原 `flowType` 和事件语义并报告精确 capability gap；不得退化为表单新增通知后声称等价创建。
-- `integration enable/disable` 写入后必须按 `formUuid + processCode` 精确匹配唯一列表项、校验期望 `status=y/n`，并完成 `getProcess` 详情存在性回读。
-- 回读成功返回 `verificationLevel=PLATFORM_LIST_EXACT_DETAIL_PRESENT`；精确匹配为 0/多条、状态不一致、详情为空、详情请求失败，或详情顶层 `processCode/formUuid` 与目标冲突，都必须非零失败。
-- 详情回读当前只证明目标设计定义存在，不证明完整 runtime graph；不得据此解锁 `integration update`。
-
-## 异常日志检查
+## 查询、启停与日志
 
 ```bash
-openyida integration check APP_XXX --json
-openyida integration check APP_XXX APP_YYY --output project/output/自动化异常.xlsx
-openyida integration diagnose --text "连接器异常：接口参数异常"
-openyida integration diagnose --file project/tickets/automation-error.txt --json
+openyida integration list <appType> --json
+openyida integration enable <appType> <formUuid> <processCode>
+openyida integration disable <appType> <formUuid> <processCode>
+openyida integration check <appType...> --json
+openyida integration diagnose --text "<异常信息>" --json
 ```
 
-- 会分页查询指定应用下的全部集成自动化，默认覆盖 `1/2/3/5/6` 五类触发类型。
-- 对每条自动化调用运行日志接口，并按 `status=2` 筛选“执行异常”。
-- `integration check` 会在 JSON/Excel/文本输出中附带诊断建议；注意“未发现异常日志”不等于业务一定正确，获取数据无匹配或条件未命中可能仍显示成功。
-- `integration diagnose` 可离线诊断工单文本、OCR 后的截图文本或日志片段，不需要登录态。
-- 批量查询时只显示单行进度，不逐条输出 HTTP 200。
-- JSON 结果包含 `totalFlows`、`abnormalFlows[].processCode`、自动化名称、触发表单和异常日志列表。
-- 传入 `--output <file.xlsx>` 时导出 Excel，一个应用一个 sheet；无异常的应用会写入“未发现执行异常日志”，检查失败的应用会写入失败原因。
+盘点应用时，先执行未筛选的 `integration list`；默认分页覆盖触发类型 `1/2/3/5/6`。读到定时、应用事件、手动/卡片触发要保留其语义，不能改成表单事件后声称等价。启停后回读精确匹配的目标和状态。
 
-## 集成自动化闭坑规则
+`check` 分页读取异常日志，可加 `--output result.xlsx`；`diagnose` 可离线分析文本。无异常日志不代表业务条件命中或目标数据写入正确。
 
-- 获取自身：优先使用 `--get-self`；流程表单运行态使用查询侧 `pid（流程实例ID）`、设计器使用 `proc_inst_id`，普通表单两侧使用 `form_inst_id（表单实例ID）`，均等于触发事件字段 `__masterdata_form_inst_id`。不要用 `formInstId = formInstId`、不要用“包含”或非唯一字段做自身匹配。
-- 流水号：新增/编辑触发时，触发 payload 中的流水号可能为空或不是最新值；需要先获取自身，再引用获取节点里的流水号。
-- 定时自动化：定时触发值可能是历史数据；需要最新值时先获取自身或获取目标数据。
-- 直接更新：匹配字段只能消费当前触发表字段，不能随意匹配前置节点字段；文本字段不要匹配单选/多选字段。直接更新不会触发被更新表单上的集成自动化。
-- 跨应用写入不级联触发（阻塞项）：A 应用表单的集成自动化通过内置新增/编辑/删除数据节点写 B 应用表单（跨应用）时，B 表单上已配置的新增/编辑/删除自动触发集成业务流不会生效。涉及跨应用链式联动时这是阻塞项，不得假设 B 表自动化会被接力触发。
-- 条件分支：空值判断优先用公式 `ISEMPTY()`，不要只依赖“没有值”选项。
-- 异常重试：重试通常会从头执行，已执行过的新增/更新节点可能再次写入或覆盖数据；重试前先确认幂等性。
+节点完整结构和接口参数见 [节点结构参考](references/integration-node-schemas.md)，常见应用示例见 [创建示例](references/examples.md)。只使用标准 CLI 选项时不必加载底层 JSON；编排多节点读取 spec 说明，排查 payload 时再读对应节点结构。
 
-## 调用流程
+## 验证与异常
 
-1. 读取 token session 获取登录态（不存在则提示执行 `openyida login`）
-2. 有连接器节点时，先通过平台只读详情精确发现 action 的 inputs/outputs，或命中固定已证 preset；无法证明时零写入失败
-3. 生成各节点 ID（`node_xxx` 格式，随机生成），并在首个写入前完成双 JSON 构建
-4. 创建新自动化时调用 `createLogicflow.json` 获取真实 `processCode`；整图替换时使用已校验的 `processCode` 和 `--replace`
-5. 调用 `saveProcess` 接口（`isOnline=false`）保存为草稿
-6. 若指定 `--publish`，再次调用 `saveProcess` 接口（`isOnline=true`）
-7. 按 `formUuid + processCode` 执行全量列表与最终状态精确回读，并校验详情存在性及可用的 identity 投影；无法证明则失败
+发布成功要求列表中 `formUuid + processCode` 唯一匹配、状态为 `y`，且详情非空；返回 `verificationLevel=PLATFORM_LIST_EXACT_DETAIL_PRESENT`。角色、批量节点、赋值等已启用的投影校验也必须通过。此等级不证明完整运行图已回读，不能据此解锁 `integration update`。
 
-> ⚠️ **必须先调用 `createLogicflow.json` 新建绑定关系**，再调用 `saveProcess` 写入内容。直接调用 `saveProcess` 无法创建新逻辑流，只能覆盖更新已有逻辑流。
+| 结果 | 处理 |
+| --- | --- |
+| `INTEGRATION_FULL_REPLACEMENT_REQUIRES_REPLACE` | 已获得整图替换确认时，补 `--replace` 重试一次；未授权先展示替换摘要 |
+| `INTEGRATION_CONNECTOR_SCHEMA_UNVERIFIED` / `INTEGRATION_CONNECTOR_ACTION_NOT_FOUND` | 停止；需要平台只读发现或固定已证 preset，不能用 `--connector-inputs` 自行声明参数 |
+| `INTEGRATION_CONNECTOR_REQUIRED_INPUT_MISSING` / `INTEGRATION_CONNECTOR_ASSIGNMENT_*` | 按真实 schema 修正参数，不绕过校验 |
+| `INTEGRATION_PUBLISH_READBACK_UNVERIFIED` / `INTEGRATION_READBACK_*` | 报告未验证，保留资源，不将写响应当作成功 |
+| 写入超时或结果未知 | 先只读核对状态，不能直接重试新增/更新 |
+| 参数缺失、节点结构错误 | 停止，展示错误详情；从已有查询补齐真实参数，无法确定时询问用户，不猜测 |
+| 登录态失效或权限不足 | 停止，运行 `openyida auth status` 核对；刷新失败时按 CLI 提示重新登录 |
+| 未知错误 | 保留完整错误与资源 ID，停止；先只读核对是否已写入，再决定后续处理 |
+| 权益不足 | 保留服务端错误；有明确依据才说明所需版本、权益包或官方购买入口 |
 
-## 安全二次编辑
+安全更新、保存顺序、输出口径和运行验收限制见 [spec 编排的保存与验证规则](references/spec-authoring.md#保存与验证规则)。`PLATFORM_PROBE_REQUIRED` 时必须保持 `remoteWrites=0`，保留 probe artifact 和 blocker；仅有列表或详情存在性不足以解锁更新，也不得降级为通用 JSON Patch。
 
-使用 `integration update` 获取 capability 结果。结果为 `PLATFORM_PROBE_REQUIRED` 时，保持 `remoteWrites=0`，输出本地 probe artifact 和 blocker，并向用户报告当前状态。只有只读探针同时证明完整 runtime graph、完整 view graph、资源 ownership 与 before fingerprint 后，才允许另行评审 update；列表/详情存在性回读不足以解锁更新，不得降级为整图替换或通用 JSON Patch。
-
-## Runtime E2E 证据边界
-
-域内 runner 为 `scripts/e2e-real/integration/runtime-runner.js`，已为 `dataCreate`、`dataRetrieve`、`dataUpdate`、`route`、`sendMessage`、`connector`、`initiateApproval` 固定独立读回合同和 mutation 失败条件。真实平台 adapter 必须实现 owned fixture `prepare`、`trigger`、独立 `readback`、`cleanup` 四步；`prepare` 是只读 preflight，必须声明 `remoteWrites=0` 并提供结构化 `ownershipEvidence`、资源 fingerprint 与 correlation proof。只有 ownership 通过后才允许 trigger/cleanup；主流程与 cleanup 双失败时必须同时报告机器错误与 residual。compiler、builder 单测或写响应不能代替 runtime 证据。
-
-## 逻辑流节点结构
-
-复杂节点 JSON 不再内联在主技能中，避免每次触发都占用大量上下文。需要手写或排查节点结构时，只读取对应参考文档：
-
-- 节点类型速查、trigger / sendMessage / dataCreate / dataRetrieve / dataUpdate / route + condition 完整结构： [references/integration-node-schemas.md](references/integration-node-schemas.md)
-- 常见创建示例： [references/examples.md](references/examples.md)
-
-快速链路：
-
-```text
-trigger -> sendMessage -> finish
-trigger -> dataRetrieve -> sendMessage -> finish
-trigger -> sendMessage -> dataCreate -> finish
-trigger -> dataRetrieve -> route -> condition -> dataUpdate/dataCreate -> finish
-```
-
-读取规则：
-
-- 仅使用 CLI 选项创建标准通知、查询、新增数据链路时，不需要展开节点 JSON 参考。
-- 需要自定义复杂分支、更新数据、排查 saveProcess payload 时，再读取 `integration-node-schemas.md`。
-- 需要给用户展示示例命令时，优先读取 `examples.md`。
-
-## 变量引用与字段赋值
-
-> 📖 字段赋值 valueType 规律和变量引用格式对照详见 [references/integration-node-schemas.md](references/integration-node-schemas.md)。
-
-## 接口说明
-
-> 📖 saveProcess、listLogicflows、switchLogicflow 接口的完整参数和返回值结构详见 [references/integration-node-schemas.md](references/integration-node-schemas.md)。
-
-## 前置依赖
-
-- Node.js
-- 项目根目录存在有效 token session（通过 `openyida login` 获取）
-
-## 文件结构
-
-```
-lib/
-└── integration/
-    └── integration-create.js    # integration create 子命令实现
-```
-
-## 触发条件
-
-**正向触发**：
-- "配置集成自动化"、"数据联动"、"自动触发"
-- "表单提交后自动发消息"、"自动新增数据"
-- "配置逻辑流"、"自动化规则"
-
-## 注意事项
-
-- `--receivers` 填写的是宜搭/钉钉用户 ID（`userId`），不是姓名
-- 触发事件使用 API 内部名称：`insert`（新增）、`update`（更新）、`delete`（删除）、`comment`（评论），也支持别名 `create`
-- `processCode` 格式为 `LPROC-` 加 38 位大写字母数字，不传则自动随机生成
-- 保存（草稿）和发布使用**同一个接口** `saveProcess`，通过 `isOnline` 参数区分
-- 错误码处理：接口返回 token 过期或登录失效时，CLI 会优先使用 `refresh_token` 刷新后重试；refresh 失败时提示重新执行 `openyida login`
-- **本技能不读写 memory**：集成逻辑流配置通过 CLI 命令写入宜搭平台，processCode 等信息输出到 stdout，不依赖跨会话的 memory 状态
+连接器凭据只由 CLI 安全绑定，不写入页面、普通赋值或命令文本。保存或启用成功只证明控制面配置；`runtimeVerified=false` 时不能宣称连接器已执行或通知已送达。需要运行验收时再按授权范围触发并独立读回，不把本地测试当作运行证据。

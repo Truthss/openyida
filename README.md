@@ -252,7 +252,7 @@ openyida get-permission APP_XXX FORM_XXX
 
 `--current-approver` takes an exact userId, not a display name. It scans running instances and their current TODO records, counts each matching instance once, and respects the current login's server-authorized data scope. Omit `--count` to include matching instance data. An incomplete scan or permission failure is reported as an error; the result does not claim application-wide visibility.
 
-Append and forward permissions are configured in the process definition through `nodes[].actions.normalActions/appendActions`. Both `create-process` and `configure-process` compile these settings into matching designer and runtime properties. See [approval action configuration](yida-skills/skills/yida-process-rule/references/approval-actions.md) for the JSON example, defaults, and verification limits.
+Append and forward permissions are configured in the process definition through `nodes[].actions.normalActions/appendActions`. Both `create-process` and `configure-process` compile these settings into matching designer and runtime properties. See [approval action configuration](yida-skills/skills/yida-flow-node-config/references/actions.md) for the JSON example, defaults, and verification limits.
 
 `configure-process` 的流程 JSON 中，审批人可配置为发起人、指定成员、指定角色、部门主管或直属主管，例如：
 
@@ -390,6 +390,8 @@ A zero-dependency local dashboard (`npm run eval:dashboard`, then open `http://1
 
 ### Connectors, Integrations, and Reports
 
+Automation spec `sendMessage` nodes accept `toRoles: [{"roleCode":"REAL_ROLE_ID","roleName":"Finance"}]` for NORMAL messages, alongside users and member fields. Process approval, operator, and CC nodes can also select roles. Role selection differs from conditional actor selection, which does not yet have a complete CLI shorthand. See the `yida-flow-node-config` skill for shared node guidance.
+
 ```bash
 openyida connector smart-create --curl "curl https://api.example.com/users"
 openyida connector list
@@ -499,8 +501,8 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 | `openyida basic-info <overview\|commodity\|grant\|capacity\|quota\|abs-path\|dataflow\|i18n\|domain>` | Query organization basic info, capacity, quotas, and domain settings |
 | `openyida read-dingtalk-doc <docUrl> [--output <file>] [--json]` | Fetch Markdown content from a DingTalk document |
 | `openyida read-dingtalk-tingji <taskUuid> [--json]` | Fetch DingTalk Tingji details by task UUID |
-| `openyida get-permission <appType> <formUuid> [--package-uuid <packageUuid>] [--json]` | Query form permission config |
-| `openyida save-permission <appType> <formUuid> --package-uuid <packageUuid> [--data-permission <json>\|--action-permission <json>\|--field-permission <json>]` | Save form permission config |
+| `openyida get-permission <appType> <formUuid> [--package-uuid <packageUuid>] [--package-type <FORM_PACKAGE_VIEW\|FORM_PACKAGE_START>] [--check-matrix] [--json]` | Query form permission config |
+| `openyida save-permission <appType> <formUuid> [--package-type <FORM_PACKAGE_VIEW\|FORM_PACKAGE_START>] [--package-uuid <packageUuid>\|--create --name <name>] [--data-permission <json>] [--action-permission <json>] [--field-permission <json>] [--members <userIds>\|--roles <roleIds>\|--all-members\|--matrix <json>] [--confirm-member-replace] [--owner-field <fieldId>] [--field-access <fieldId:view\|edit\|hidden\|encrypt>] [--field-default <access>] [--dry-run]` | Save form permission config |
 | `openyida corp-manager <search-user\|list\|add\|remove\|address-book> ...` | Manage platform admins and address book permissions |
 | `openyida agent-center <list\|create\|update\|cancel\|range\|search-user> ...` | Manage process and departure delegation |
 
@@ -512,6 +514,7 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 | `openyida create-process <appType> <formTitle> <fieldsJsonFile> <processDefinitionFile> [--replace] \| create-process <appType> --formUuid <formUuid> <processDefinitionFile> [--replace]` | Create process form (all-in-one); Supports append/forward via JSON nodes[].actions.normalActions/appendActions |
 | `openyida ai-form-setting <get\|fields\|models\|enable\|disable\|save> <appType> ...` | Manage process form AI approval prompts |
 | `openyida process preview <appType> ...` | Preview process instance (visual flowchart) |
+| `openyida process fields <appType> <formUuid> [--json]` | Check process designer field loading and subtable field paths |
 
 ### Page Config & Sharing
 
@@ -553,7 +556,7 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 
 | Command | Description |
 |---------|-------------|
-| `openyida integration create <appType> ... [--spec file.json] [--connector-system-token-app <appType>]` | Create integration automation flow |
+| `openyida integration create <appType> <formUuid> <flowName> [--spec file.json] [--publish] [--connector-system-token-app <appType>]` | Create integration automation flow |
 | `openyida integration update <appType> <formUuid> <processCode> --spec <desired-spec.json> [--publish]` | Probe integration update capability (currently blocked without full readback) |
 | `openyida integration list <appType> [--flow-types 1,2,3,5,6] [--form-uuid <uuid>] [--status y\|n] [--json]` | List integration automation flows |
 | `openyida integration enable <appType> <formUuid> <processCode>` | Enable integration automation flow |

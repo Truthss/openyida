@@ -363,9 +363,9 @@ module.exports = {
     process_usage: '用法：openyida process <子指令>\n\n子指令：\n  preview <appType> <processInstanceId> [--output <path>]  預覽流程實例（產生視覺化流程圖）',
     process_preview_usage: '用法：openyida process preview <appType> <processInstanceId> [--output <path>]',
     process_preview_example: '範例：openyida process preview APP_XXX proc-inst-id-xxx',
-    get_permission_usage: '用法：openyida get-permission <appType> <formUuid> [--package-uuid <packageUuid>]',
+    get_permission_usage: '用法：openyida get-permission <appType> <formUuid> [--package-uuid <packageUuid>] [--package-type <FORM_PACKAGE_VIEW|FORM_PACKAGE_START>]',
     get_permission_example: '範例：openyida get-permission APP_XXX FORM-XXX',
-    save_permission_usage: '用法：openyida save-permission <appType> <formUuid> [--package-uuid <packageUuid>] [--data-permission <json>] [--action-permission <json>]',
+    save_permission_usage: '用法：openyida save-permission <appType> <formUuid> [--package-uuid <packageUuid>] [--data-permission <json>] [--action-permission <json>] [--package-type <FORM_PACKAGE_VIEW|FORM_PACKAGE_START>]',
     save_permission_example: `範例：openyida save-permission APP_XXX FORM-XXX --data-permission '{"role":"DEFAULT","dataRange":"SELF"}'`,
     exec_failed: '\n❌ 執行失敗：{0}',
     login_usage: '用法：openyida login [entryUrl|--public|--alibaba|--intl] [--no-browser] [--check-only] [--json] [--client-id <clientId>]',
@@ -462,6 +462,7 @@ module.exports = {
     create_opt_spec: '  --spec <file.json>            使用结构化编排文件创建复杂自动化（dataUpdate/route 等）',
     create_opt_data_form_uuid: '  --data-form-uuid <uuid>     插入获取单条数据节点的目标表单 UUID',
     create_opt_data_condition: '  --data-condition <rule>     获取数据过滤条件：目标字段:字段名:触发字段[:组件[:操作符[:值类型]]]',
+    create_opt_trigger_condition: '  --trigger-condition <rule>    觸發條件：欄位:名稱:運算子:值[:元件[:值類型]]；右側欄位用 processVar，固定值用 literal',
     create_opt_get_self: '  --get-self                    自動插入取得自身節點（流程表單運行態使用 pid、設計器使用 proc_inst_id；普通表單兩側使用 form_inst_id）',
     create_opt_get_self_field: '  --get-self-field <field>     覆盖右侧触发事件系统字段，默认 __masterdata_form_inst_id',
     create_opt_get_self_query_field: '  --get-self-query-field <f>  覆蓋左側查詢系統欄位（流程表單預設 pid，普通表單預設 form_inst_id）',
@@ -1860,6 +1861,19 @@ Object.assign(module.exports.app_permission || (module.exports.app_permission = 
   verify_failed: '應用管理員保存後驗證失敗',
 });
 
+module.exports.permission_scope = {
+  roles_summary: '角色: {0}',
+  options_help: '--owner-field 將資料範圍限制為主表成員欄位包含目前登入者的記錄；--roles 指定普通宜搭角色；--field-access 可重複。首次自訂欄位權限必須明確指定 --field-default，使用簡寫更新必須指定 --package-uuid；--dry-run 只預覽，不寫入。',
+  invalid: '权限配置参数不正确：{0}。更新简写配置必须指定 --package-uuid；成员范围和字段默认权限请勿混用。',
+  owner_invalid: '--owner-field 必须是目标表单主表中的真实成员字段，不能使用创建人简写、文本或子表字段。',
+  field_default_required: '首次使用 --field-access 时必须提供 --field-default view|edit|hidden|encrypt，明确其他字段的权限；不能自动替代“跟随表单”。',
+  overlap_notice: '权限组可能叠加放大权限。请检查其他权限组及角色重叠；本次保存不证明所有账号的数据隔离或字段隐藏已生效。',
+  matrix_notice: '原生权限矩阵涉及 OA 增强权益包。available 只表示当前查询允许使用，不证明已购买；unavailable 时请管理员确认或开通对应权益。最终仍以业务接口校验为准。',
+  matrix_unavailable: '当前应用的权限矩阵能力不可用，请管理员确认或开通 OA 增强权益包后重试；未写入配置。',
+  matrix_unknown: '无法确认当前应用的权限矩阵可用性；请先排查查询返回的账号权限或接口错误，未写入配置。',
+};
+
+
 Object.assign(module.exports.corp_manager || (module.exports.corp_manager = {}), {
   address_book_verify_failed: '保存通訊錄權限後驗證失敗：expected={0}, actual={1}',
   admin_verify_failed: '管理員保存後驗證失敗：{0} 未出現在 {1} 列表中',
@@ -2122,3 +2136,31 @@ module.exports.help.cmd_data_manage_style_list = '列出可選的資料管理樣
 module.exports.help.cmd_data_manage_style_generate = '按可選配方產生資料管理 CSS（僅本機）';
 
 module.exports.help.cmd_data_manage_style_guide = '查詢資料管理 UI 改造方向、token 與 CSS 定位方法';
+
+// Process fields and submission permission packages.
+Object.assign(module.exports.permission_common || (module.exports.permission_common = {}), {
+  "package_type_invalid": "Use FORM_PACKAGE_VIEW or FORM_PACKAGE_START for --package-type.",
+  "start_scope_invalid": "START supports submission members, fields and OPERATE_CREATE only; configure record data ranges and matrices separately."
+});
+Object.assign(module.exports.process_errors || (module.exports.process_errors = {}), {
+  "field_permissions_invalid": "Field permissions contain invalid or duplicate field IDs or behaviors.",
+  "field_source_failed": "Could not read the form fields. Check the process binding and schema response.",
+  "fields_empty": "The bound form has no readable fields. Check its saved schema.",
+  "designer_fields_missing": "The process designer cannot load all bound form fields. Check its schema and process binding before publishing.",
+  "field_not_found": "A process permission references a field missing from the bound form.",
+  "fields_verified": "Field IDs were checked; browser behavior and runtime permissions remain unverified."
+});
+Object.assign(module.exports.help || (module.exports.help = {}), {
+  "cmd_process_fields": "Check process designer field loading and subtable field paths"
+});
+module.exports.cli.process_usage += '\n  fields <appType> <formUuid> [--json]  Inspect process designer field loading';
+
+// Batch data nodes.
+Object.assign(module.exports.integration, {
+  batch_invalid: 'Invalid batch configuration. Check source, quantity and fields using details.reason.',
+  message_roles_invalid: 'Message roles require a non-empty role ID and NORMAL message type.',
+  message_roles_readback_mismatch: 'Persisted message roles differ from the submitted recipients.',
+  batch_retrieve_name: 'Get multiple records',
+  batch_readback_mismatch: 'Persisted batch node type, source or quantity differs from the submitted configuration.',
+  create_opt_spec: '  --spec <file.json>            Configure batch retrieve/create, updates and branches with a structured spec',
+});

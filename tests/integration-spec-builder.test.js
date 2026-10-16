@@ -26,6 +26,65 @@ const {
 } = require('../lib/integration/integration-spec-builder');
 
 describe('integration spec builder', () => {
+  test('compiles field-to-field trigger, route and query conditions in both JSON formats', () => {
+    const fieldComparison = {
+      fieldId: 'numberField_stock', fieldName: '当前库存', componentType: 'NumberField',
+      opCode: 'LessThan', value: 'numberField_minStock', valueType: 'processVar',
+    };
+    const built = buildSpecProcessAndViewJson({
+      spec: {
+        events: ['insert', 'update'],
+        triggerConditions: [fieldComparison],
+        nodes: [
+          { id: 'self', type: 'getSelf' },
+          {
+            id: 'lookup', type: 'dataRetrieve', formUuid: 'FORM-B',
+            conditions: [{
+              bFieldId: 'numberField_stock', bFieldName: '目标表库存',
+              componentType: 'NumberField', opCode: 'LessThan',
+              aFieldId: '${self}.numberField_minStock', valueType: 'processVar',
+            }],
+          },
+          {
+            type: 'route',
+            branches: [{
+              id: 'lowStock', name: '库存不足',
+              conditions: [{
+                ...fieldComparison,
+                fieldId: '${self}.numberField_stock', value: '${self}.numberField_minStock',
+              }],
+              nodes: [{ type: 'sendMessage', receivers: ['user-1'], content: '请补货' }],
+            }],
+          },
+        ],
+      },
+      processCode: 'LPROC-SPEC', appType: 'APP-SPEC', formUuid: 'FORM-A', flowName: '字段比较',
+    });
+    const processNodes = built.processJson.nodes;
+    const viewNodes = built.viewJson.schema.children;
+    const trigger = processNodes.find(node => node.type === 'trigger').props.inputs.conditions;
+    const triggerView = viewNodes.find(node => node.componentName === 'StartNode').props.start;
+    const route = processNodes.find(node => node.type === 'route').childNodes[0].props.conditions;
+    const routeView = viewNodes.find(node => node.componentName === 'ConditionContainer').children[0].props.conditions.conditions;
+    const query = processNodes.find(node => node.nodeId === built.nodeIdMap.lookup).props.condition;
+    const queryView = viewNodes.find(node => node.id === built.nodeIdMap.lookup).props.getData.condition;
+    const upstreamValue = `\${${built.nodeIdMap.self}}.numberField_minStock`;
+
+    for (const [runtime, designer, fieldId, value] of [
+      [trigger, triggerView.conditions, 'numberField_stock', 'numberField_minStock'],
+      [route, routeView, `\${${built.nodeIdMap.self}}.numberField_stock`, upstreamValue],
+      [query, queryView, 'numberField_stock', upstreamValue],
+    ]) {
+      const expected = {
+        id: fieldId, value, ruleValue: value, opCode: 'LessThan',
+        componentType: 'NumberField', valueType: 'processVar', extValue: 'processVar',
+      };
+      expect(runtime.rules).toEqual([expect.objectContaining(expected)]);
+      expect(designer.rules).toEqual([expect.objectContaining(expected)]);
+    }
+    expect(triggerView.dataFilterType).toBe('byRule');
+  });
+
   test('builds dataRetrieve -> route -> dataUpdate/dataCreate flow from spec', () => {
     const spec = {
       events: ['insert'],

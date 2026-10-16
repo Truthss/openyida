@@ -1082,7 +1082,9 @@ async function main() {
       const subCommand = args[0];
       const subArgs = args.slice(1);
 
-      if (subCommand === 'preview') {
+      if (subCommand === 'fields') {
+        await require('../lib/process/process-fields').run(subArgs);
+      } else if (subCommand === 'preview') {
         if (subArgs.length < 2) {
           throwCliUsage(t('cli.process_preview_usage'), t('cli.process_preview_example'));
         }
