@@ -109,6 +109,55 @@ describe('integration create command', () => {
     tempDirs.forEach((dir) => fs.rmSync(dir, { recursive: true, force: true }));
   });
 
+  test.each([
+    [':processVar', 'numberField_minStock', 'processVar', 'processVar', 'numberField_minStock'],
+    ['', 'numberField_minStock', 'literal', 'value', 'numberField_minStock'],
+    [':literal', '0', 'literal', 'value', 0],
+  ])('saves trigger RHS %s %s with matching runtime and designer semantics', async (suffix, rhs, valueType, extValue, expectedValue) => {
+    integrationApi.createLogicflow.mockResolvedValue('LPROC-TEST');
+    integrationApi.saveProcess.mockResolvedValue({ success: true });
+
+    await run([
+      'APP_TEST', 'FORM-A', '库存不足通知', '--receivers', 'user-1',
+      '--events', 'insert,update',
+      '--trigger-condition', `numberField_stock:当前库存:LessThan:${rhs}:NumberField${suffix}`,
+    ]);
+
+    expect(integrationApi.saveProcess).toHaveBeenCalledTimes(1);
+    const saved = integrationApi.saveProcess.mock.calls[0][1];
+    const runtime = saved.processJson.nodes.find(node => node.type === 'trigger').props.inputs;
+    const designer = saved.viewJson.schema.children.find(node => node.componentName === 'StartNode').props.start;
+    const expectedRule = {
+      id: 'numberField_stock', componentType: 'NumberField', opCode: 'LessThan',
+      value: expectedValue, ruleValue: expectedValue, valueType, extValue,
+    };
+    expect(runtime.conditions.rules).toEqual([expect.objectContaining(expectedRule)]);
+    expect(designer.conditions.rules).toEqual([expect.objectContaining(expectedRule)]);
+    expect(designer.dataFilterType).toBe('byRule');
+  });
+
+  test('rejects malformed message roles before authentication or remote writes', async () => {
+    const specPath = writeTempSpec({ nodes: [{ type: 'sendMessage', content: 'test', toRoles: [{}] }] });
+    await expect(run(['APP_TEST', 'FORM-A', 'invalid role', '--spec', specPath]))
+      .rejects.toMatchObject({ code: 'INTEGRATION_SPEC_INVALID' });
+    expect(require('../lib/core/utils').loadAuthData).not.toHaveBeenCalled();
+    expect(integrationApi.createLogicflow).not.toHaveBeenCalled();
+    expect(integrationApi.saveProcess).not.toHaveBeenCalled();
+  });
+
+  test('publishes role-only notifications with exact role readback requested', async () => {
+    const roles = [{ roleCode: 'ROLE-FINANCE', roleName: '财务' }];
+    const specPath = writeTempSpec({ nodes: [{ type: 'sendMessage', content: 'test', toRoles: roles }] });
+    integrationApi.createLogicflow.mockResolvedValue('LPROC-TEST');
+    integrationApi.saveProcess.mockResolvedValue({ success: true });
+    await run(['APP_TEST', 'FORM-A', 'role notice', '--spec', specPath, '--publish']);
+    expect(integrationApi.saveProcess).toHaveBeenCalledTimes(2);
+    const saved = integrationApi.saveProcess.mock.calls[0][1];
+    expect(saved.processJson.nodes.find(node => node.type === 'sendMessage').props.toRoles).toEqual(roles);
+    expect(integrationReadback.verifyLogicflowFinalState).toHaveBeenCalledWith(expect.any(Object),
+      expect.objectContaining({ expectedMessageRoles: [{ nodeId: expect.any(String), roles }] }));
+  });
+
   test('preflights the complete spec before creating a remote logic-flow binding', async () => {
     const specPath = writeTempSpec({
       events: ['insert'],

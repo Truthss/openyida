@@ -115,7 +115,7 @@ openyida nav-group list <appType> --flat
 3. 按权限技能要求完成授权、保存，再重新查询确认；保留本次未涉及的权限。
 4. 使用实际访客和管理者账号检查结果。业务管理者需要的是业务权限，不要自动给他应用管理员身份。
 
-`yida-form-permission` 当前只管理 `FORM_PACKAGE_VIEW`。提交权限包 `FORM_PACKAGE_START`、视图权限绑定和页面人员白名单尚不属于该技能已支持的能力。遇到这些需求，记录具体任务、缺少的权限和平台处理入口，不能靠放宽其他权限完成。
+`yida-form-permission` 支持 VIEW 和 START 权限组：查看、管理已有数据用 `FORM_PACKAGE_VIEW`；谁能发起用 `FORM_PACKAGE_START`，查询和保存都传 `--package-type FORM_PACKAGE_START`。视图权限绑定和页面人员白名单仍未支持，需记录具体任务和平台处理入口，不能靠放宽其他权限完成。
 
 菜单隐藏、方案里的权限说明和页面上的筛选，都不能作为权限配置成功的证据。单条记录的操作权限也不能用来判断整个菜单或管理视图是否允许访问。
 

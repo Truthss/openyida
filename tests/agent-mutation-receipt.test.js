@@ -34,6 +34,7 @@ describe('managed mutation receipt', () => {
     ['nav-group', ['move', 'APP_X', 'FORM_X', '--to', 'NAV_X'], 'update_nav'],
     ['app-permission', ['add', 'APP_X', 'dev'], 'update_app_permission'],
     ['save-permission', ['APP_X', 'FORM_X'], 'update_form_permission'],
+    ['save-permission', ['APP_X', 'FORM_X', '--owner-field', 'employeeField_owner', '--dry-run'], null],
     ['save-share-config', ['APP_X', 'FORM_X'], 'update_share_config'],
     ['nav-group', ['list', 'APP_X'], null],
     ['get-page-config', ['APP_X', 'FORM_X'], null],

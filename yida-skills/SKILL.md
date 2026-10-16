@@ -135,10 +135,10 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 | `yida-skills/app` | 从零搭应用、完整系统、应用启停、应用导航、多语言、AI 老应用主题升级 | `yida-app`、`yida-create-app`、`yida-app-lifecycle`、`yida-nav-group`、`yida-i18n`、`yida-upgrade-app-theme`（仅明确升级要求并 ask_human 确认） |
 | `yida-skills/design` | 完整应用需求分析、PRD、视觉设计、单页 UI 改造、应用主题色、全局换肤、图片素材 | `yida-requirement-analysis`、`yida-prd`、`yida-design`、`yida-data-manage-ui`、`yida-image-assets` |
 | `yida-skills/form` | 表单字段、公式、校验、业务关联规则、批量录入、数据记录 | `yida-create-form-page`、`yida-formula`、`yida-formula-evaluate`、`yida-business-rule`、`yida-canvas-table-form`、`yida-table-form`、`yida-data-management` |
-| `yida-skills/process` | 审批、流程表单、流程规则、节点/分支/字段权限、流程代理 | `yida-create-process`、`yida-process-rule`、`yida-agent-center` |
+| `yida-skills/process` | 审批、流程表单、流程规则、节点/分支/字段权限、流程代理 | `yida-create-process`、`yida-process-rule`、`yida-flow-node-config`、`yida-agent-center` |
 | `yida-skills/page` | 工作台、办事门户、任务看板、自定义展示页、页面源码开发、平台 JSX 组件页面维护、页面发布、页面内导航、PPT 页面 | `yida-create-page`、`yida-canvas-custom-page`、`yida-custom-page`、`yida-canvas-data-binding`、`yida-canvas-upgrade`、`yida-publish-page`、`yida-openyida-publish-guard`、`yida-density`、`yida-nav-shell`、`yida-ppt-slider` |
 | `yida-skills/analytics` | 聚合表、虚拟视图、报表、统计、图表、Recharts、ECharts、经营分析看板、驾驶舱、大屏 | `yida-aggregate-table`、`yida-report`、`yida-rechart`、`yida-chart`、`yida-dashboard` |
-| `yida-skills/integration` | 连接器、钉钉开放平台、外部 API、执行动作、设计器数据源、集成自动化、逻辑流 | `yida-integration`、`yida-dingtalk-openapi`、`yida-connector`、`yida-connector-safe-actions`、`yida-data-source-connectors` |
+| `yida-skills/integration` | 连接器、钉钉开放平台、外部 API、执行动作、设计器数据源、集成自动化、逻辑流 | `yida-integration`、`yida-flow-node-config`、`yida-dingtalk-openapi`、`yida-connector`、`yida-connector-safe-actions`、`yida-data-source-connectors` |
 | `yida-skills/access` | 平台/应用/表单/页面权限、公开访问、分享 | `yida-corp-manager`、`yida-app-permission`、`yida-form-permission`、`yida-page-config` |
 | `yida-skills/ops` | Sequence、主键冲突、VOC 反馈 | `yida-db-seq-fix`、`yida-voc` |
 | `yida-skills/agent` | 导出对话、读取钉钉文档/听记、会议纪要/闪记转 PRD | `yida-export-conversation`、`yida-document-markdown`、`yida-tingji`、`yida-flash-note-to-prd` |
@@ -161,13 +161,18 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 | 创建自定义展示页资源 | `yida-create-page`，之后交给 `yida-canvas-custom-page` 编写页面源码，再交给 `yida-publish-page` 发布 |
 | 开发表单字段结构 / 增删改字段 | 使用 `yida-create-form-page` 落地字段结构 |
 | 创建带审批的流程表单 | `yida-create-process` |
-| 修改已有流程节点/分支/字段权限，配置加签/转交操作权限 | `yida-process-rule`；加签/转交先读其 `references/approval-actions.md` |
+| 修改已有流程节点/分支/字段权限，配置加签/转交操作权限 | `yida-process-rule` 保存；人员、字段权限及按钮按需加载 `yida-flow-node-config` |
+| 流程或自动化的节点、人员、字段权限、按钮、条件变量配置 | `yida-flow-node-config` 按六类节点与共用配置项读取；保存交回 `yida-process-rule` 或 `yida-integration` |
+| 设置发起节点能填写、只读或隐藏哪些字段 | `yida-process-rule` 入口，通用节点技能的字段权限说明；使用顶层 `startFormConfig` |
+| 设置谁能发起或提交 | `yida-form-permission`，查询和保存都指定 `FORM_PACKAGE_START` |
+| 权限组成员、记录访问范围、操作权限、字段权限、已有矩阵引用 | `yida-form-permission`，组合配置时按需读取成员、数据范围与字段权限说明 |
+| 流程设计器字段列表空白 | `yida-process-rule`，先用 `process fields` 检查字段来源 |
 | 查字段 ID / 保存 Schema 证据 | `yida-get-schema`；凡涉及 fieldId 的数据、流程、公式、页面代码先取证 |
 | 改表单数据记录 | `yida-data-management`，不是 `yida-create-form-page` |
 | 查询指定应用/流程表单中当前审批人为某人的实例或条数 | `yida-data-management`；`data query process --current-approver <userId> [--count]`，仅统计当前登录人经服务端授权可见的实例 |
 | 配字段默认值、计算、校验 | `yida-formula`；静态检查用 `yida-formula-evaluate` |
 | 提交后跨表写入/更新/删除 | 默认 `yida-integration`；用户明确要业务关联规则/高级函数时用 `yida-business-rule` |
-| 集成自动化从上游节点子表取数或新增一行 | `yida-integration` 的 `--spec` 新建路径；不要用 `integration update` 或现网 `--replace` |
+| 集成自动化批量取数、新增或复制子表多行 | `yida-integration` 的 `--spec` 路径，读取 `references/batch-data.md`；已有自动化按其更新能力处理 |
 | 自定义页面开发 | `yida-canvas-custom-page`，新建和默认页面源码开发入口，源码使用 `.canvas.jsx`；Canvas 发布层会自动注入 `window.__OPENYIDA_YIDA_API__` 和 `window.__OPENYIDA_UTILS__` |
 | JSX 自定义页面开发 | `yida-custom-page`，仅用于已检测到的 `.oyd.jsx` / `.oyb.jsx` / `renderJsx` / 平台 `Jsx` 组件页面维护 |
 | `.canvas.jsx` 页面使用成员/部门/上传等宜搭运行态组件 | `yida-canvas-custom-page`，读取 `native-components-bridge.md` |

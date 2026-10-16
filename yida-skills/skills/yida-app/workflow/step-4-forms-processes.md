@@ -73,7 +73,7 @@
 
 ## 业务权限配置
 
-资源 ID 就绪后，按 [访问态入口契约](../references/entry-navigation.md#权限实施) 将菜单 access 和业务角色映射到真实权限。执行 yida-form-permission 的查询、差异、保存与回读流程，保留非目标配置。FORM_PACKAGE_START、视图绑定和页面白名单等未支持项单独记录能力缺口；不得用 app-permission 管理员授权或导航隐藏替代。权限未核验的入口不能宣称业务可用。
+资源 ID 就绪后，按 [访问态入口契约](../references/entry-navigation.md#权限实施) 配置真实业务权限。加载 `use_skill("yida-form-permission", "配置表单权限")`：谁能发起用 START，谁能查看和管理已有数据用 VIEW；查询、修改后回读，保留其他配置。视图绑定和页面白名单等未支持项单独记录；不能用管理员授权或导航隐藏代替业务权限。未验证的权限不能宣称可用。
 
 ## 页面导航配置
 

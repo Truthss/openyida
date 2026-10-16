@@ -16,8 +16,22 @@ const {
   verifyLogicflowFinalState,
 } = require('../lib/integration/integration-readback');
 const { setLanguage } = require('../lib/core/i18n');
+const { buildSpecProcessAndViewJson } = require('../lib/integration/integration-spec-builder');
+const { projectBatchData } = require('../lib/integration/integration-batch-data');
+const { batchFixture } = require('./helpers/integration-batch-fixture');
 
 describe('integration control-plane readback', () => {
+  test('verifies persisted batch controls and rejects a silent batch-to-single downgrade', async () => {
+    const built = buildSpecProcessAndViewJson({ ...batchFixture(), appType: 'APP-TEST', formUuid: 'FORM-QUOTE' });
+    const detail = JSON.parse(JSON.stringify(built.viewJson));
+    const input = { appType: 'APP-TEST', formUuid: 'FORM-QUOTE', processCode: 'LPROC-BATCH', expectedBatchData: projectBatchData(built.viewJson) };
+    const dependencies = { listAllLogicflows: async () => [{ formUuid: 'FORM-QUOTE', processCode: 'LPROC-BATCH', status: 'y' }],
+      getLogicflowDetail: async () => ({ success: true, content: detail }) };
+    expect(await verifyLogicflowFinalState({}, input, dependencies)).toMatchObject({ batchDataProjection: 'EXACT' });
+    detail.schema.children.find(node => node.componentName === 'GetBatchDataNode').props.type = 'single';
+    await expect(verifyLogicflowFinalState({}, input, dependencies)).rejects.toMatchObject({ code: 'INTEGRATION_READBACK_BATCH_MISMATCH' });
+  });
+
   beforeEach(() => {
     setLanguage('zh');
     jest.clearAllMocks();
