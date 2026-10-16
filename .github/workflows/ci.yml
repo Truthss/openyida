@@ -75,7 +75,7 @@ jobs:
 
     - name: Run remaining Windows tests
       if: (success() || failure()) && runner.os == 'Windows'
-      run: npm run test:unit -- --testPathIgnorePatterns="tests/(provider-preflight|agent-background-startup)\\.test\\.js"
+      run: npm run test:unit -- --testPathIgnorePatterns tests/provider-preflight.test.js tests/agent-background-startup.test.js
 
     - name: Run tests
       if: runner.os != 'Windows'
