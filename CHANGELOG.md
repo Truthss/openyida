@@ -29,6 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 修复
 
 - 修正全局任务中心查询的分页参数，统一使用 `page/limit` 协议。
+- 兼容任务总数为零且省略列表字段的返回，避免将正常空态误判为查询异常。
 
 ## [2026.10.18-2] - 2026-10-18
 

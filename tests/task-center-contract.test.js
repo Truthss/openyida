@@ -88,6 +88,33 @@ test('missing total stays unknown, rather than using page length', () => {
   expect(contract.normalize({ success: true, content: null }, context)).toMatchObject({ items: [], total: 0 });
 });
 
+describe.each(['todo', 'created', 'done', 'cc'])('%s empty PageDto', kind => {
+  test.each([undefined, null])('accepts omitted or null data only with an explicit zero total (%j)', data => {
+    const page = { idCursor: 0, currentPage: 1, totalCount: 0, ...(data === undefined ? {} : { data }) };
+    const expected = { items: [], total: 0, page: 1, pageSize: 10 };
+    const taskContext = { ...context, kind };
+    expect(contract.normalize(page, taskContext)).toEqual(expected);
+    expect(contract.normalize({ success: true, content: page, errorCode: '', errorMsg: '' }, taskContext)).toEqual(expected);
+  });
+
+  test.each([
+    {}, { totalCount: 1 }, { totalCount: 1, data: null },
+    { totalCount: '0' }, { totalCount: null, data: null },
+    { totalCount: 0, data: {} }, { totalCount: 0, data: false },
+  ])('rejects an unproven empty result or malformed data (%j)', page => {
+    expect(() => contract.normalize(page, { ...context, kind })).toThrow('TASK_RESPONSE_INVALID');
+    expect(() => contract.normalize({ success: true, content: page }, { ...context, kind })).toThrow('TASK_RESPONSE_INVALID');
+  });
+});
+
+test.each([
+  { success: false, content: { totalCount: 0 } },
+  { errorCode: '403', content: { totalCount: 0, data: null } },
+  { success: true, content: { success: false, totalCount: 0 } },
+])('an empty PageDto never hides request failure (%j)', payload => {
+  expect(() => contract.normalize(payload, context)).toThrow('TASK_REQUEST_FAILED');
+});
+
 test.each([
   null, {}, { content: null }, { success: true }, { data: {} }, { data: [], totalCount: -1 },
   { data: [], totalCount: 'unknown' }, { success: false, content: { data: [] } },
