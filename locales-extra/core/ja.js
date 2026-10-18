@@ -5,6 +5,15 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  integration_manage: {"failed": "Automation operation failed: {0}", "usage": "integration <monitor|copy|rename|delete> <appType> ...", "desc_monitor": "Read or save automation error monitors", "desc_copy": "Copy an automation as disabled", "desc_rename": "Rename an automation", "desc_delete": "Delete a disabled automation"},
+  permission_manage: {"failed": "Permission group operation failed: {0}", "usage": "permission-manage <copy|rename|delete> <appType> <formUuid> <packageUuid> [--name name] [--dry-run] [--confirm]", "description": "Copy, rename or delete a permission group"},
+  matrix_manage: {"failed": "Matrix operation failed: {0}", "usage": "matrix <list|detail|references|rows|create|update|delete|upsert-rows|delete-rows> [matrixId] [--file config.json] [--dry-run] [--confirm]", "description": "Manage permission matrix definitions, references and rows"},
+  integration_baseline: {"failed": "Automation update stopped: {0}"},
+  integration_update_v2: {"usage": "integration update <appType> <formUuid> <processCode> --patch patch.json [--dry-run] [--expect fingerprint] [--publish]"},
+
+  conditional_actors: { unavailable: 'Conditional actors are unavailable or could not be verified.', invalid: 'Invalid conditional actors: {0}' },
+  integration_triggers: { invalid: 'Invalid automation trigger: {0}' },
+  permission_conditions: { invalid: 'Invalid permission conditions: {0}' },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
     frontend_nav_required: 'ページ {0} のナビゲーション非表示設定が未確認です。renderNav=false を保存して再取得してから、独立したフロント画面を登録してください。',
@@ -144,7 +153,7 @@ module.exports = {
     cmd_connector_more: 'その他のサブコマンドを表示',
     group_integration: '統合 & DingTalk',
     cmd_integration: '統合自動化フローを作成',
-    cmd_integration_update: 'Probe integration update capability (currently blocked without full readback)',
+    cmd_integration_update: 'Patch automation using a verified local dual-definition baseline',
     cmd_integration_list: '統合自動化フローを一覧表示',
     cmd_integration_enable: '統合自動化フローを有効化',
     cmd_integration_disable: '統合自動化フローを無効化',
@@ -317,7 +326,7 @@ module.exports = {
     forbidden_alias_get_schema_form_uuid_option: '`{0}` は formUuid を 2 番目の位置引数として受け取ります。`{1}` は使用しません。',
     nearest_command_suggestion: '不明な OpenYida コマンドルート「{0}」。もしかして「{1}」ですか？',
     run_help: 'openyida --help を実行してヘルプを確認してください',
-    integration_help: 'Usage: openyida integration <create|update|list|enable|disable|check|detail-log|diagnose> ...',
+    integration_help: 'Usage: openyida integration <create|update|list|enable|disable|check|detail-log|diagnose|monitor|copy|rename|delete> ...',
     integration_unknown: '不明な integration サブコマンド: {0}',
     integration_help_hint: '利用可能なサブコマンドは openyida integration --help で確認してください',
     integration_list_usage: '使用方法: openyida integration list <appType> [--form-uuid <uuid>] [--status y|n] [--key <kw>] [--size <n>] [--json]',
