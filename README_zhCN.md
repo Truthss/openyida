@@ -298,6 +298,16 @@ openyida integration enable APP_XXX FORM_XXX PROC_CODE
 
 运行 `openyida --help` 或 `openyida <command> --help` 查看详细用法。
 
+### 遇到问题与贡献修复
+
+直接告诉 AI：“OpenYida 反复报错，帮我分析原因并整理反馈”。无需 GitHub 账号或本地源码，即可生成脱敏报告和复现步骤；生成材料不代表已提交。
+
+```bash
+openyida feedback report --input summary.json --output-dir feedback-draft-001
+```
+
+报告摘要由 AI 根据当前证据整理，也可加入用户明确选择的复现截图；PR 附修复前后测试对比。提交前会展示最终正文和图片，确认有无敏感信息或不想公开的内容，允许删改后再提交。输入格式见 [反馈报告说明](yida-skills/skills/yida-feedback/references/report-input.md)。分享前请检查业务信息。有 GitHub 账号时，可授权 AI 帮助提交 Issue；修复公开 OpenYida 代码或技能时，通过你自己的 Fork 提交 PR。无账号时先引导创建 GitHub 账号；实在不行，反馈到AI开发者群。
+
 <!-- OPENYIDA_COMMANDS_START -->
 <!-- 本节由 `npm run docs:commands` 自动生成，请勿手动编辑命令行。 -->
 
@@ -473,7 +483,7 @@ openyida integration enable APP_XXX FORM_XXX PROC_CODE
 | `openyida formula test <appType> <formUuid> <formula\|file> --data-file file [--context form\|validation] [--binding platform\|numeric-literals] [--expect JSON] [--json]` | 调用表达式接口核对样例结果；不模拟页面和节点运行 |
 | `openyida update` | 检查并更新到最新版本 |
 | `openyida export-conversation [options]` | 导出 AI 对话记录 |
-| `openyida feedback <setup\|url\|dismiss\|status> [options]` | 配置体验反馈表单和本地提醒状态 |
+| `openyida feedback <report\|setup\|url\|dismiss\|status> [options]` | 整理本地问题报告、配置反馈表单与提醒 |
 | `openyida batch <file>\|--commands "cmd1 ; cmd2" [--stop-on-error] [--json]` | 批量执行 OpenYida 命令 |
 | `openyida flash-to-prd --file <path> --name "<project>"` | 闪记 / 会议纪要转 PRD prompt |
 | `openyida ai <text\|image> [options]` | 调用 AI 文生文和识图能力 |

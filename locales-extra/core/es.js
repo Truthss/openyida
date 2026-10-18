@@ -175,7 +175,7 @@ module.exports = {
     cmd_formula_evaluate: 'Static-check Yida formula syntax and field refs',
     cmd_update: 'Verificar y actualizar a la última versión',
     cmd_export_conversation: 'Exportar registros de conversación IA',
-    cmd_feedback: 'Configurar formulario de feedback y recordatorios locales',
+    cmd_feedback: 'Preparar informes locales, formularios de comentarios y recordatorios',
     cmd_batch: 'Ejecutar comandos OpenYida en lote',
     cmd_flash_to_prd: 'Convertir notas rápidas o de reunión a prompt PRD',
     cmd_ai: 'Call Yida AI text and image recognition APIs',
@@ -2283,3 +2283,22 @@ Object.assign(module.exports.formula_v2, {
 Object.assign(module.exports.help, {"cmd_formula_contracts": "Mostrar formatos de fórmula y alcance de comprobación"});
 
 Object.assign(module.exports.formula_v2, {"parallel_formula": "Use conditions/rules o all:true para ramas paralelas; expression actualmente solo se admite en ramas route."});
+
+module.exports.feedback_report = {
+  comparison: 'Test pass/fail requires a command, actual result and evidence.',
+  screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
+  text: 'Feedback text fields must be strings of at most 12000 characters.',
+  list: 'Feedback lists must contain at most 40 text items.',
+  object: 'Feedback input must be a JSON object.',
+  required: 'Feedback input requires title and actual.',
+  count: 'occurrenceCount must be a positive integer when known.',
+  cause: 'cause must be an object.',
+  confirmed: 'A confirmed cause requires a summary and evidence.',
+  usage: 'Usage: openyida feedback report --input <summary.json> --output-dir <new-directory>',
+  duplicate: 'Duplicate feedback report option.',
+  options: 'Both --input and --output-dir are required.',
+  file: 'Feedback input must be a JSON file of at most 1 MiB.',
+  json: 'Feedback input is not valid JSON.',
+  help: 'report prepares local review drafts without login, a source checkout or network submission.',
+  login_hint: 'Ask your AI to prepare local feedback with yida-feedback; no GitHub account or source checkout is required.',
+};

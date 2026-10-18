@@ -176,7 +176,7 @@ module.exports = {
     cmd_formula_evaluate: '静态检查宜搭公式语法和字段引用',
     cmd_update: '檢查並更新到最新版本',
     cmd_export_conversation: '匯出 AI 對話記錄',
-    cmd_feedback: '設定體驗回饋表單和本地提醒狀態',
+    cmd_feedback: '整理本機問題報告、設定回饋表單與提醒',
     cmd_batch: '批量執行 OpenYida 命令',
     cmd_flash_to_prd: '閃記 / 會議紀要轉 PRD prompt',
     cmd_ai: '調用宜搭 AI 文生文和識圖能力',
@@ -2233,3 +2233,22 @@ Object.assign(module.exports.formula_v2, {
 Object.assign(module.exports.help, {"cmd_formula_contracts": "查看公式儲存方式和檢查範圍"});
 
 Object.assign(module.exports.formula_v2, {"parallel_formula": "並行分支使用 conditions/rules 或 all:true；expression 目前只適用於 route 分支。"});
+
+module.exports.feedback_report = {
+  comparison: 'Test pass/fail requires a command, actual result and evidence.',
+  screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
+  text: 'Feedback text fields must be strings of at most 12000 characters.',
+  list: 'Feedback lists must contain at most 40 text items.',
+  object: 'Feedback input must be a JSON object.',
+  required: 'Feedback input requires title and actual.',
+  count: 'occurrenceCount must be a positive integer when known.',
+  cause: 'cause must be an object.',
+  confirmed: 'A confirmed cause requires a summary and evidence.',
+  usage: 'Usage: openyida feedback report --input <summary.json> --output-dir <new-directory>',
+  duplicate: 'Duplicate feedback report option.',
+  options: 'Both --input and --output-dir are required.',
+  file: 'Feedback input must be a JSON file of at most 1 MiB.',
+  json: 'Feedback input is not valid JSON.',
+  help: 'report prepares local review drafts without login, a source checkout or network submission.',
+  login_hint: 'Ask your AI to prepare local feedback with yida-feedback; no GitHub account or source checkout is required.',
+};

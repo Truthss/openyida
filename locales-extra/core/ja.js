@@ -175,7 +175,7 @@ module.exports = {
     cmd_formula_evaluate: 'Static-check Yida formula syntax and field refs',
     cmd_update: '最新バージョンに更新',
     cmd_export_conversation: 'AI 会話記録をエクスポート',
-    cmd_feedback: '体験フィードバックフォームとローカル通知状態を設定',
+    cmd_feedback: 'ローカル問題レポート、フィードバックフォームと通知を設定',
     cmd_batch: 'OpenYida コマンドを一括実行',
     cmd_flash_to_prd: 'フラッシュノート/議事録を PRD prompt に変換',
     cmd_ai: 'Yida AI text and image recognition APIs',
@@ -2208,3 +2208,22 @@ Object.assign(module.exports.formula_v2, {
 Object.assign(module.exports.help, {"cmd_formula_contracts": "数式の保存形式とチェック範囲を表示"});
 
 Object.assign(module.exports.formula_v2, {"parallel_formula": "並列分岐には conditions/rules または all:true を使用してください。expression は現在 route 分岐のみ対応しています。"});
+
+module.exports.feedback_report = {
+  comparison: 'Test pass/fail requires a command, actual result and evidence.',
+  screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
+  text: 'Feedback text fields must be strings of at most 12000 characters.',
+  list: 'Feedback lists must contain at most 40 text items.',
+  object: 'Feedback input must be a JSON object.',
+  required: 'Feedback input requires title and actual.',
+  count: 'occurrenceCount must be a positive integer when known.',
+  cause: 'cause must be an object.',
+  confirmed: 'A confirmed cause requires a summary and evidence.',
+  usage: 'Usage: openyida feedback report --input <summary.json> --output-dir <new-directory>',
+  duplicate: 'Duplicate feedback report option.',
+  options: 'Both --input and --output-dir are required.',
+  file: 'Feedback input must be a JSON file of at most 1 MiB.',
+  json: 'Feedback input is not valid JSON.',
+  help: 'report prepares local review drafts without login, a source checkout or network submission.',
+  login_hint: 'Ask your AI to prepare local feedback with yida-feedback; no GitHub account or source checkout is required.',
+};

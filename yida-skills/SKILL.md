@@ -14,6 +14,12 @@ description: >
 
 Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、自定义页共用项目 design.md 与同一份应用主题 CSS。不能只把自定义页写成品牌色、让应用继续默认蓝色；发布不会自动保存应用主题。完整搭建交付前按 yida-app 回读应用主题设置并实测各类页面，未同步或未验证不得宣称主题统一。
 
+## 本地使用问题与贡献反馈
+
+用户遇到反复报错、不会提 Issue/PR、没有 GitHub 账号或没有 OpenYida 源码，先加载 `yida-feedback`。
+它负责基于当前证据分析根因、生成脱敏本地材料，并按用户授权提交 Issue 或个人 Fork PR。无账号先引导注册，实在不行提示“反馈到AI开发者群”。
+自动发现重复失败只建议并整理本地草稿，不自动公开提交。网页关联本地 Agent 异常先按下节诊断，需要反馈时再进入此技能。普通宜搭产品 VOC 清单仍用 `yida-voc`。
+
 ## 本地 Agent 故障分流
 
 当用户描述“网页找不到本地 CLI / 电脑离线 / 本地 Agent 忙碌或不执行”，或提供
@@ -140,7 +146,7 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 | `yida-skills/analytics` | 聚合表、虚拟视图、报表、统计、图表、Recharts、ECharts、经营分析看板、驾驶舱、大屏 | `yida-aggregate-table`、`yida-report`、`yida-rechart`、`yida-chart`、`yida-dashboard` |
 | `yida-skills/integration` | 连接器、钉钉开放平台、外部 API、执行动作、设计器数据源、集成自动化、逻辑流 | `yida-integration`、`yida-flow-node-config`、`yida-dingtalk-openapi`、`yida-connector`、`yida-connector-safe-actions`、`yida-data-source-connectors` |
 | `yida-skills/access` | 平台/应用/表单/页面权限、公开访问、分享 | `yida-corp-manager`、`yida-app-permission`、`yida-form-permission`、`yida-page-config` |
-| `yida-skills/ops` | Sequence、主键冲突、VOC 反馈 | `yida-db-seq-fix`、`yida-voc` |
+| `yida-skills/ops` | Sequence、主键冲突、VOC、OpenYida 本地故障、Issue/Fork PR | `yida-db-seq-fix`、`yida-voc`、`yida-feedback` |
 | `yida-skills/agent` | 导出对话、读取钉钉文档/听记、会议纪要/闪记转 PRD | `yida-export-conversation`、`yida-document-markdown`、`yida-tingji`、`yida-flash-note-to-prd` |
 
 ### 高频分歧
@@ -149,6 +155,7 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 | --- | --- |
 | 从零搭一个完整应用/系统 | `yida-app`；先分析需求并完成首次搭建确认，再规划与搭建 |
 | 已有 app 但没有任何页面，需要补成完整系统 | `yida-app`；属于首次搭建，同样先询问搭建方式，复用已有 `appType` 补齐资源 |
+| OpenYida 反复报错、不会提 Issue/PR、没有账号或源码 | `yida-feedback`；先脱敏本地报告，个人 Fork 仅贡献公开 OpenYida 修复 |
 | 读取钉钉在线文档正文 | `yida-document-markdown`，使用登录态接口获取 Markdown |
 | 按 taskUuid 读取钉钉听记 | `yida-tingji`，将听记任务 ID 原样传入命令 |
 | 将钉钉开放平台官方 API 接入宜搭或 Canvas | `yida-dingtalk-openapi`；密钥不进聊天，账号由用户在宜搭或本机 TTY 配置 |
