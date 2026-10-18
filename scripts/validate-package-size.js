@@ -34,7 +34,10 @@ const path = require('path');
 // retain less than 16 KiB of cross-runtime gzip headroom.
 // Combined main and process/integration content measures 2,364,935 bytes on
 // Node 24; retain under 16 KiB of compression headroom across supported Nodes.
-const MAX_TARBALL_BYTES = 2320 * 1024;
+// Automation triggers, guarded updates, lifecycle operations and conditional actors
+// bring the package to 2,390,301 compressed bytes on Node 24 (692 files).
+// Round to the next 16 KiB boundary with cross-runtime compression headroom.
+const MAX_TARBALL_BYTES = 2352 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.
@@ -60,9 +63,12 @@ const MAX_TARBALL_BYTES = 2320 * 1024;
 // contracts across the shared references; retain the next 16 KiB boundary.
 // Main's front/backend handoff and runtime 0.1.4 metadata plus the restored
 // process/integration contracts measure 8,867,368 unpacked bytes / 681 files.
-// Integration detail logs and locale help measure 8,881,939 unpacked bytes on Node 20;
-// retain the next 16 KiB boundary without raising compressed or per-file limits.
-const MAX_UNPACKED_BYTES = 8688 * 1024;
+// Automation/permission runtime features add eight modules. Three task guides
+// cover triggers, maintenance and management; related node/condition topics stay
+// in their existing guides. Merging main also adds its detail-log module and
+// localized help. Node 24 measures 8,968,987 unpacked bytes / 693 files.
+// Retain the next 16 KiB boundary for the combined package.
+const MAX_UNPACKED_BYTES = 8768 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -74,8 +80,8 @@ const MAX_UNPACKED_BYTES = 8688 * 1024;
 // automation command/spec details move out of entry skills (+11 files).
 // Content shrinks overall (8,794,095 unpacked bytes); byte budgets stay fixed.
 // Remove the two obsolete process reference redirects after updating consumers.
-// Integration detail logs add one packaged runtime module.
-const MAX_ENTRY_COUNT = 682;
+// Main adds the shared integration detail-log module.
+const MAX_ENTRY_COUNT = 693;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [

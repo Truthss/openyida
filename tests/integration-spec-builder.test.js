@@ -76,7 +76,7 @@ describe('integration spec builder', () => {
       [query, queryView, 'numberField_stock', upstreamValue],
     ]) {
       const expected = {
-        id: fieldId, value, ruleValue: value, opCode: 'LessThan',
+        id: fieldId, value, ruleValue: value, opCode: runtime === query ? 'Lesser' : 'LessThan',
         componentType: 'NumberField', valueType: 'processVar', extValue: 'processVar',
       };
       expect(runtime.rules).toEqual([expect.objectContaining(expected)]);

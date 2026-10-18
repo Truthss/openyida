@@ -75,6 +75,19 @@ describe('integration process builder', () => {
     });
   });
 
+  test.each([
+    ['GreaterThan', 'Bigger', '大于'], ['GreaterThanOrEqual', 'BiggerOrEqual', '大于等于'],
+    ['LessThan', 'Lesser', '小于'], ['LessThanOrEqual', 'LesserOrEqual', '小于等于'],
+    ['Bigger', 'Bigger', '大于'], ['Lesser', 'Lesser', '小于'],
+  ])('compiles query comparison %s to native %s without changing the field reference', (input, opCode, op) => {
+    const rules = buildDataRetrieveCondition([{
+      bFieldId: 'numberField_target', aFieldId: '${node_source}.numberField_limit',
+      componentType: 'NumberField', valueType: 'processVar', opCode: input,
+    }]).rules;
+    expect(rules[0]).toMatchObject({ opCode, op, valueType: 'processVar', extValue: 'processVar',
+      value: '${node_source}.numberField_limit', ruleValue: '${node_source}.numberField_limit' });
+  });
+
   test('buildDataRetrieveCondition preserves explicit primitive literal values', () => {
     const condition = buildDataRetrieveCondition([
       {
