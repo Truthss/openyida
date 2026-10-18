@@ -89,6 +89,18 @@ describe('auto update environment guards', () => {
 });
 
 describe('auto update policy', () => {
+  test('offline feedback report bypasses update checks before npm or registry access', async () => {
+    const execFileSyncFn = jest.fn(() => { throw new Error('Must not invoke npm'); });
+    const fetchLatestVersionFn = jest.fn(() => { throw new Error('Must not use network'); });
+    const result = await maybeAutoUpdate({
+      command: 'feedback', args: ['report'], currentVersion: '1.0.0', env: {},
+      execFileSyncFn, fetchLatestVersionFn,
+    });
+    expect(result).toMatchObject({ status: 'skipped', reason: 'command' });
+    expect(execFileSyncFn).not.toHaveBeenCalled();
+    expect(fetchLatestVersionFn).not.toHaveBeenCalled();
+  });
+
   const fixtures = [];
 
   afterEach(() => {
@@ -113,6 +125,7 @@ describe('auto update policy', () => {
     ['a2a', []],
     ['bridge', []],
     ['update', []],
+    ['feedback', ['report', '--input', 'summary.json', '--output-dir', 'draft']],
     ['login', ['--check-only']],
   ])('元命令/长驻命令/机器输出跳过：%s %p', (command, args) => {
     expect(shouldSkipAutoUpdateCommand(command, args)).toBe(true);

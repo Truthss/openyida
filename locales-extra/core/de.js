@@ -175,7 +175,7 @@ module.exports = {
     cmd_formula_evaluate: 'Static-check Yida formula syntax and field refs',
     cmd_update: 'Auf neueste Version aktualisieren',
     cmd_export_conversation: 'KI-Gesprächsaufzeichnungen exportieren',
-    cmd_feedback: 'Feedback-Formular und lokalen Erinnerungsstatus konfigurieren',
+    cmd_feedback: 'Lokale Problemberichte, Feedbackformulare und Erinnerungen verwalten',
     cmd_batch: 'OpenYida-Befehle im Batch ausführen',
     cmd_flash_to_prd: 'Flash Notes oder Meeting Notes in PRD-Prompt umwandeln',
     cmd_ai: 'Call Yida AI text and image recognition APIs',
@@ -2234,3 +2234,22 @@ Object.assign(module.exports.integration, {
   batch_readback_mismatch: 'Persisted batch node type, source or quantity differs from the submitted configuration.',
   create_opt_spec: '  --spec <file.json>            Configure batch retrieve/create, updates and branches with a structured spec',
 });
+
+module.exports.feedback_report = {
+  comparison: 'Test pass/fail requires a command, actual result and evidence.',
+  screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
+  text: 'Feedback text fields must be strings of at most 12000 characters.',
+  list: 'Feedback lists must contain at most 40 text items.',
+  object: 'Feedback input must be a JSON object.',
+  required: 'Feedback input requires title and actual.',
+  count: 'occurrenceCount must be a positive integer when known.',
+  cause: 'cause must be an object.',
+  confirmed: 'A confirmed cause requires a summary and evidence.',
+  usage: 'Usage: openyida feedback report --input <summary.json> --output-dir <new-directory>',
+  duplicate: 'Duplicate feedback report option.',
+  options: 'Both --input and --output-dir are required.',
+  file: 'Feedback input must be a JSON file of at most 1 MiB.',
+  json: 'Feedback input is not valid JSON.',
+  help: 'report prepares local review drafts without login, a source checkout or network submission.',
+  login_hint: 'Ask your AI to prepare local feedback with yida-feedback; no GitHub account or source checkout is required.',
+};

@@ -320,8 +320,12 @@ openyida copy
 | \`yida-skills/analytics\` | 报表、统计、图表、Recharts、ECharts、看板、驾驶舱 | \`yida-report\`, \`yida-rechart\`, \`yida-chart\`, \`yida-dashboard\` |
 | \`yida-skills/integration\` | 连接器、钉钉开放平台、外部 API、数据源、集成自动化 | \`yida-integration\`, \`yida-dingtalk-openapi\`, \`yida-connector\`, \`yida-connector-safe-actions\`, \`yida-data-source-connectors\` |
 | \`yida-skills/access\` | 平台/应用/表单/页面权限、公开访问、分享 | \`yida-corp-manager\`, \`yida-app-permission\`, \`yida-form-permission\`, \`yida-page-config\` |
-| \`yida-skills/ops\` | Sequence、VOC | \`yida-db-seq-fix\`, \`yida-voc\` |
+| \`yida-skills/ops\` | Sequence、VOC、OpenYida 故障、Issue/Fork PR | \`yida-db-seq-fix\`, \`yida-voc\`, \`yida-feedback\` |
 | \`yida-skills/agent\` | 导出对话、读取钉钉文档/听记、会议纪要/闪记转 PRD | \`yida-export-conversation\`, \`yida-document-markdown\`, \`yida-tingji\`, \`yida-flash-note-to-prd\` |
+
+## 本地使用问题反馈
+
+OpenYida 反复报错、不会提 Issue/PR、没有 GitHub 账号或源码时加载 \`yida-feedback\`，先整理脱敏本地报告；外部提交按用户授权执行，修复贡献通过个人 Fork。普通宜搭 VOC 清单用 \`yida-voc\`。
 
 ## 执行规则
 

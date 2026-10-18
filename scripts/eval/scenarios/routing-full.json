@@ -783,5 +783,26 @@
     "expectedSkill": "yida-voc",
     "type": "positive",
     "note": "VOC 数据分析"
-  }
+  },
+{
+  "id": "feedback-no-account",
+  "prompt": "OpenYida 发布一直报错，我没有 GitHub 账号也没有源码，帮我分析原因并整理反馈。",
+  "expectedSkill": "yida-feedback",
+  "type": "positive"
+},
+{
+  "id": "feedback-fork-pr",
+  "prompt": "我不是 OpenYida 创建者，本地只有 npm 安装，帮我通过自己的 fork 提交技能修复 PR。",
+  "expectedSkill": "yida-feedback",
+  "type": "positive"
+},
+{
+  "id": "feedback-voc-boundary",
+  "prompt": "帮我整理宜搭产品最近的用户 VOC 需求清单",
+  "expectedSkill": "yida-voc",
+  "mustNotTrigger": [
+    "yida-feedback"
+  ],
+  "type": "negative"
+}
 ]
