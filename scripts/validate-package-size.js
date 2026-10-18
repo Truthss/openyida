@@ -37,10 +37,11 @@ const path = require('path');
 // Automation triggers, guarded updates, lifecycle operations and conditional actors
 // bring the package to 2,390,301 compressed bytes on Node 24 (692 files).
 // Round to the next 16 KiB boundary with cross-runtime compression headroom.
-// Combined formula configuration/examples and offline feedback reports, npm dry-run (Node 26.4.0):
-// 2,416,924 compressed / 9,111,262 unpacked bytes / 709 files.
+// Combined formula configuration/examples and offline feedback reports, npm dry-run:
+// Node 24.19.0: 2,442,200 compressed; Node 26.4.0: 2,417,070 compressed.
+// Both: 9,111,642 unpacked bytes / 709 files. Keep cross-runtime gzip headroom.
 // Keep byte budgets on 16 KiB boundaries; per-file limits are unchanged.
-const MAX_TARBALL_BYTES = 2368 * 1024;
+const MAX_TARBALL_BYTES = 2400 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.

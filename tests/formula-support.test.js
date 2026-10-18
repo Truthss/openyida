@@ -84,6 +84,12 @@ describe('field formula persistence', () => {
   test.each([{ formula: '' }, { formula: '1', complexValue: { formula: '2' } }, { formula: '1', valueType: 'custom' }])('rejects inconsistent or empty formula configuration %j', input => {
     expect(() => applyFieldFormula({}, input, 'NumberField')).toThrow();
   });
+  test('rejects conflicting formulas when restoring manual input without mutating existing props', () => {
+    const props = { valueType: 'formula', formula: '1', complexValue: { complexType: 'formula', formula: '1' } };
+    const before = JSON.parse(JSON.stringify(props));
+    expect(() => applyFieldFormula(props, { valueType: 'custom', formula: '', complexValue: { formula: '2' } }, 'NumberField')).toThrow();
+    expect(props).toEqual(before);
+  });
   test('keeps incomplete static knowledge separate from persistence and checks cycles', () => {
     const formulaField = (id, formula) => field(id, 'NumberField', { valueType: 'formula', formula });
     expect(() => validateSchemaFormulas([formulaField('numberField_a', '#{customField_unknown.amount}+1')])).not.toThrow();

@@ -10,11 +10,13 @@
 | --- | --- | --- |
 | 数字 | `NumberField` | 金额、数量、平均值 |
 | 文本 | `TextField`、`TextareaField` | 拼接编号、状态说明 |
-| 日期 | `DateField` | 今天、到期日期 |
+| 日期 | `DateField` | `TIMESTAMP(TODAY())` 填今天；到期日计算后也转换为时间戳 |
 | 人员 | `EmployeeField` | 当前登录人、主管 |
 | 多个选项或人员 | 接受数组的对应组件 | 多选集合、成员列表 |
 
 人员、日期、选项等值保留组件要求的数据结构。显示名称相同不代表原始值类型相同；先读取字段配置和样例值。函数与组件是否兼容，可以用 `formula check --target-type` 辅助检查。
+
+日期计算与日期字段赋值分两步：`TODAY()` 返回日期对象，填入日期字段时用 `TIMESTAMP(TODAY())`。本地类型检查通过后，也要核对页面是否显示日期，以及提交后的值是否为毫秒时间戳。
 
 ## 读取已有配置
 
@@ -47,7 +49,8 @@ openyida formula inspect APP_XXX FORM_XXX --field numberField_total --json
 ```json
 [
   {"type":"NumberField","label":"计算金额","behavior":"READONLY","precision":2,"formula":"ROUND(12.345, 2)"},
-  {"type":"EmployeeField","label":"填报人","formula":"USER()"}
+  {"type":"EmployeeField","label":"填报人","formula":"USER()"},
+  {"type":"DateField","label":"填报日期","formula":"TIMESTAMP(TODAY())"}
 ]
 ```
 
