@@ -5,6 +5,15 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  form_view: {
+    usage: "उपयोग: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
+    invalid_config: "मूल दृश्य का कॉन्फ़िगरेशन या आर्ग्युमेंट अमान्य है: %s",
+    target_mismatch: "दृश्य लक्षित फ़ॉर्म से संबंधित नहीं है: %s",
+    api_error: "मूल दृश्य API विफल: %s। अनुमतियाँ और योजना जाँचें; बिना जाँच लिखने की क्रिया न दोहराएँ।",
+    unsupported: "प्लेटफ़ॉर्म ने मूल दृश्यों की सूची नहीं लौटाई। फ़ॉर्म का प्रकार और समर्थन जाँचें।",
+    conflict: "पढ़ने के बाद दृश्य बदल गया है। सहेजने से पहले फिर जाँचें।",
+    readback_mismatch: "सहेजा गया कॉन्फ़िगरेशन दोबारा पढ़े गए परिणाम से अलग है। बैकअप रखें और दूरस्थ दृश्य जाँचें।",
+  },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
     frontend_nav_required: 'पेज {0} का नेविगेशन छिपाना सत्यापित नहीं है। स्वतंत्र फ्रंटएंड पता दर्ज करने से पहले renderNav=false सहेजें और सेटिंग फिर पढ़ें।',
@@ -89,6 +98,7 @@ module.exports = {
     cmd_validate_form: 'Validate form field JSON locally',
     cmd_update_form: 'फॉर्म पेज अपडेट करें',
     cmd_list_forms: 'List forms/pages in an app',
+    cmd_form_view: "मूल फ़ॉर्म दृश्य: कॉलम, चौड़ाई, स्थिर कॉलम और फ़िल्टर",
     cmd_aggregate_table: 'Manage aggregate tables (virtualView)',
     cmd_get_schema: 'फॉर्म Schema प्राप्त करें',
     cmd_check_prd_completeness: 'Check PRD page/resource count risk',

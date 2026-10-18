@@ -5,6 +5,15 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  form_view: {
+    usage: "Verwendung: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
+    invalid_config: "Ungültige native Ansichtskonfiguration oder ungültiges Argument: %s",
+    target_mismatch: "Die Ansicht gehört nicht zum Zielformular: %s",
+    api_error: "Native Ansichts-API fehlgeschlagen: %s. Berechtigungen und Tarif prüfen; Schreibvorgänge nicht ungeprüft wiederholen.",
+    unsupported: "Die Plattform hat keine native Ansichtsliste geliefert. Formulartyp und Unterstützung prüfen.",
+    conflict: "Die Ansicht wurde seit dem Lesen geändert. Vor dem Speichern erneut prüfen.",
+    readback_mismatch: "Gespeicherte Konfiguration und Rückleseergebnis unterscheiden sich. Sicherung behalten und entfernte Ansicht prüfen.",
+  },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
     frontend_nav_required: 'Die ausgeblendete Navigation der Seite {0} ist nicht bestätigt. Speichern und prüfen Sie renderNav=false, bevor Sie den eigenständigen Frontend-Zugang registrieren.',
@@ -89,6 +98,7 @@ module.exports = {
     cmd_validate_form: 'Validate form field JSON locally',
     cmd_update_form: 'Formularseite aktualisieren',
     cmd_list_forms: 'Formulare/Seiten einer App auflisten',
+    cmd_form_view: "Native Formularansichten: Spalten, Breiten, fixierte Spalten und Filter",
     cmd_aggregate_table: 'Manage aggregate tables (virtualView)',
     cmd_get_schema: 'Formular-Schema abrufen',
     cmd_check_prd_completeness: 'Check PRD page/resource count risk',

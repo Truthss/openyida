@@ -5,6 +5,15 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  form_view: {
+    usage: "الاستخدام: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
+    invalid_config: "إعداد العرض الأصلي أو الوسيط غير صالح: %s",
+    target_mismatch: "العرض لا ينتمي إلى النموذج المستهدف: %s",
+    api_error: "فشل API العرض الأصلي: %s. تحقق من الأذونات والخطة؛ لا تكرر الكتابة دون تحقق.",
+    unsupported: "لم تُرجع المنصة قائمة العروض الأصلية. تحقق من نوع النموذج والدعم.",
+    conflict: "تغير العرض منذ قراءته. افحصه مجددًا قبل الحفظ.",
+    readback_mismatch: "تختلف الإعدادات المحفوظة عن نتيجة إعادة القراءة. احتفظ بالنسخة الاحتياطية وافحص العرض البعيد.",
+  },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
     frontend_nav_required: 'لم يتم التحقق من إخفاء التنقل للصفحة {0}. احفظ renderNav=false ثم أعد قراءة الإعدادات قبل تسجيل عنوان الواجهة المستقلة.',
@@ -89,6 +98,7 @@ module.exports = {
     cmd_validate_form: 'Validate form field JSON locally',
     cmd_update_form: 'تحديث صفحة نموذج',
     cmd_list_forms: 'List forms/pages in an app',
+    cmd_form_view: "إدارة عروض النماذج: الأعمدة والعرض والأعمدة المثبتة وعوامل التصفية",
     cmd_aggregate_table: 'Manage aggregate tables (virtualView)',
     cmd_get_schema: 'الحصول على Schema النموذج',
     cmd_check_prd_completeness: 'Check PRD page/resource count risk',

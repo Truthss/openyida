@@ -4,6 +4,42 @@
   "entry": "openyida",
   "skills": [
     {
+      "name": "yida-form-view",
+      "path": "skills/yida-form-view/SKILL.md",
+      "display_name": "原生数据管理视图配置",
+      "description": "读取原生视图列表、显示列和表格设置，配置字段显隐与顺序、列宽、冻结列、默认筛选，新建表格视图和调整顺序。",
+      "category": "yida-skills/form",
+      "tags": [
+        "原生视图",
+        "显示列",
+        "冻结列",
+        "列宽",
+        "默认筛选"
+      ],
+      "aliases": [
+        "表格设置",
+        "数据管理字段显示配置"
+      ],
+      "positive_signals": [
+        "获取表单全部视图配置",
+        "设置数据管理页显示列",
+        "调整原生表格列宽",
+        "冻结订单名称列",
+        "新建待处理视图",
+        "配置默认筛选条件"
+      ],
+      "negative_signals": [
+        "仅美化颜色边框",
+        "新增业务记录",
+        "修改表单字段结构"
+      ],
+      "command_ids": [
+        "form-view",
+        "get-schema"
+      ],
+      "requires_login": true
+    },
+    {
       "name": "yida-data-manage-ui",
       "path": "skills/yida-data-manage-ui/SKILL.md",
       "display_name": "数据管理页美化",

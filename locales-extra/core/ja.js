@@ -5,6 +5,15 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  form_view: {
+    usage: "使用法: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
+    invalid_config: "ネイティブビューの設定または引数が無効です：%s",
+    target_mismatch: "対象フォームに属さないビューです：%s",
+    api_error: "ネイティブビューAPIが失敗しました：%s。権限とプランを確認し、書き込みを無条件に再試行しないでください。",
+    unsupported: "ネイティブビュー一覧が返されませんでした。フォームの種類と対応状況を確認してください。",
+    conflict: "読み取り後にビューが変更されました。保存前に再確認してください。",
+    readback_mismatch: "保存設定と再取得結果が一致しません。バックアップを保持し、リモート設定を確認してください。",
+  },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
     frontend_nav_required: 'ページ {0} のナビゲーション非表示設定が未確認です。renderNav=false を保存して再取得してから、独立したフロント画面を登録してください。',
@@ -89,6 +98,7 @@ module.exports = {
     cmd_validate_form: 'フォームフィールド JSON をローカル検証',
     cmd_update_form: 'フォームページを更新',
     cmd_list_forms: 'アプリ内のフォーム/ページを一覧表示',
+    cmd_form_view: "フォームビューの列表示・幅・固定列・フィルターを管理",
     cmd_aggregate_table: 'Manage aggregate tables (virtualView)',
     cmd_get_schema: 'フォーム Schema を取得',
     cmd_check_prd_completeness: 'Check PRD page/resource count risk',

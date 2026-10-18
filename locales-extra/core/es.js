@@ -5,6 +5,15 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  form_view: {
+    usage: "Uso: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
+    invalid_config: "Configuración de vista nativa o argumento no válido: %s",
+    target_mismatch: "La vista no pertenece al formulario de destino: %s",
+    api_error: "Error de la API de vistas nativas: %s. Compruebe permisos y plan; no repita escrituras sin verificar.",
+    unsupported: "La plataforma no devolvió la lista de vistas nativas. Compruebe el tipo de formulario y la compatibilidad.",
+    conflict: "La vista cambió desde su lectura. Revísela antes de guardar.",
+    readback_mismatch: "La configuración guardada difiere de la lectura posterior. Conserve la copia y revise la vista remota.",
+  },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
     frontend_nav_required: 'No se ha verificado la navegación oculta de la página {0}. Guarde renderNav=false y vuelva a leer la configuración antes de registrar la entrada independiente.',
@@ -89,6 +98,7 @@ module.exports = {
     cmd_validate_form: 'Validate form field JSON locally',
     cmd_update_form: 'Actualizar página de formulario',
     cmd_list_forms: 'Listar formularios/páginas de una app',
+    cmd_form_view: "Vistas nativas: columnas, anchos, columnas fijas y filtros",
     cmd_aggregate_table: 'Manage aggregate tables (virtualView)',
     cmd_get_schema: 'Obtener Schema del formulario',
     cmd_check_prd_completeness: 'Check PRD page/resource count risk',

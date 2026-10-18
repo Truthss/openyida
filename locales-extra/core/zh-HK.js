@@ -5,6 +5,15 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  form_view: {
+    usage: "用法: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
+    invalid_config: "原生檢視設定或參數無效：%s",
+    target_mismatch: "檢視不屬於目標表單：%s",
+    api_error: "原生檢視介面失敗：%s。請檢查平台權限與版本支援，不要盲目重試寫入。",
+    unsupported: "平台未返回原生多檢視清單，請檢查表單類型及平台支援。",
+    conflict: "檢視在讀取後已變更，請重新檢查再儲存。",
+    readback_mismatch: "儲存設定與回讀結果不一致，請保留備份並核對遠端檢視。",
+  },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
     frontend_nav_required: '頁面 {0} 尚未確認隱藏平台導覽；請先儲存 renderNav=false 並讀回，再登記獨立前台地址。',
@@ -89,6 +98,7 @@ module.exports = {
     cmd_validate_form: '本機校驗表單欄位 JSON',
     cmd_update_form: '更新表單頁面',
     cmd_list_forms: '列出應用程式下的表單/頁面',
+    cmd_form_view: "原生表單檢視：顯示欄、欄寬、凍結欄與篩選設定",
     cmd_aggregate_table: '管理聚合表（virtualView）',
     cmd_get_schema: '取得表單 Schema',
     cmd_check_prd_completeness: 'Check PRD page/resource count risk',

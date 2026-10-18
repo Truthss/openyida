@@ -5,6 +5,15 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  form_view: {
+    usage: "Cách dùng: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
+    invalid_config: "Cấu hình chế độ xem gốc hoặc đối số không hợp lệ: %s",
+    target_mismatch: "Chế độ xem không thuộc biểu mẫu đích: %s",
+    api_error: "API chế độ xem gốc bị lỗi: %s. Kiểm tra quyền và gói dịch vụ; không thử ghi lại khi chưa xác minh.",
+    unsupported: "Nền tảng không trả về danh sách chế độ xem gốc. Kiểm tra loại biểu mẫu và khả năng hỗ trợ.",
+    conflict: "Chế độ xem đã thay đổi sau khi đọc. Kiểm tra lại trước khi lưu.",
+    readback_mismatch: "Cấu hình đã lưu khác kết quả đọc lại. Giữ bản sao lưu và kiểm tra chế độ xem từ xa.",
+  },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
     frontend_nav_required: 'Chưa xác minh việc ẩn điều hướng của trang {0}. Hãy lưu renderNav=false và đọc lại cấu hình trước khi đăng ký địa chỉ giao diện độc lập.',
@@ -89,6 +98,7 @@ module.exports = {
     cmd_validate_form: 'Validate form field JSON locally',
     cmd_update_form: 'Cập nhật trang biểu mẫu',
     cmd_list_forms: 'List forms/pages in an app',
+    cmd_form_view: "Quản lý cột hiển thị, độ rộng, cột cố định và bộ lọc của biểu mẫu",
     cmd_aggregate_table: 'Manage aggregate tables (virtualView)',
     cmd_get_schema: 'Lấy Schema biểu mẫu',
     cmd_check_prd_completeness: 'Check PRD page/resource count risk',

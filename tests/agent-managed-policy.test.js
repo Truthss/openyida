@@ -84,6 +84,17 @@ test('scope and mutation receipts consume the same app policy', () => {
   expect(run('create-form', ['list-icons'])).not.toBeNull();
 });
 
+test('native form views stay in the bound app and classify only actual mutation actions', () => {
+  for (const action of ['list', 'inspect', 'save', 'create', 'order']) {
+    expect(run('form-view', [action, 'APP_BOUND', 'FORM-x', 'VIEW-x'])).toMatchObject({ appType: 'APP_BOUND' });
+    expect(() => run('form-view', [action, 'APP_OTHER', 'FORM-x'])).toThrow(expect.objectContaining({ code: 'MANAGED_APP_MISMATCH' }));
+    expect(classifyManagedMutation('form-view', [action, 'APP_BOUND', 'FORM-x'])).toEqual(
+      ['list', 'inspect'].includes(action) ? null : { operation: 'update_form', formUuid: 'FORM-x' }
+    );
+  }
+  expect(() => run('form-view', ['delete', 'APP_BOUND', 'FORM-x'])).toThrow(expect.objectContaining({ code: 'MANAGED_COMMAND_UNSUPPORTED' }));
+});
+
 test('blocked command diagnostics name its declaration without logging arguments or grants', () => {
   let failure;
   try {run('auth', ['status', 'private-value']);} catch (error) {failure = error;}
