@@ -84,6 +84,7 @@ describe('integration create command', () => {
     exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => { throw new Error('__exit__'); });
     integrationApi.createLogicflow.mockReset();
     integrationApi.getFormSchema.mockReset();
+    integrationApi.getFormSchema.mockResolvedValue([]);
     integrationApi.saveProcess.mockReset();
     fetchFormPageList.mockReset();
     integrationReadback.verifyLogicflowFinalState.mockResolvedValue({
@@ -328,7 +329,7 @@ describe('integration create command', () => {
       specPath,
     ])).rejects.toThrow(/Unknown integration spec node alias: node_typo/);
 
-    expect(integrationApi.getFormSchema).not.toHaveBeenCalled();
+    expect(integrationApi.getFormSchema).toHaveBeenCalledWith(expect.any(Object), { appType: 'APP_TEST', formUuid: 'FORM-B' });
     expect(integrationApi.createLogicflow).not.toHaveBeenCalled();
     expect(integrationApi.saveProcess).not.toHaveBeenCalled();
   });
@@ -1335,7 +1336,7 @@ describe('integration create command', () => {
       specPath,
     ])).rejects.toThrow(/Unknown integration spec node alias: node_typo/);
 
-    expect(integrationApi.getFormSchema).not.toHaveBeenCalled();
+    expect(integrationApi.getFormSchema).toHaveBeenCalledWith(expect.any(Object), { appType: 'APP_TEST', formUuid: 'FORM-B' });
     expect(integrationApi.createLogicflow).not.toHaveBeenCalled();
     expect(integrationApi.saveProcess).not.toHaveBeenCalled();
   });
@@ -1656,6 +1657,9 @@ describe('integration create command', () => {
   });
 
   test('uses source form metadata for structured process getSelf on insert/update events', async () => {
+    integrationApi.getFormSchema.mockResolvedValue([
+      { componentName: 'NumberField', props: { fieldId: 'numberField_amount', label: { zh_CN: '金额' } } },
+    ]);
     const specPath = writeTempSpec({
       events: ['insert', 'update'],
       nodes: [{ id: 'self', type: 'getSelf' }],
@@ -1685,6 +1689,7 @@ describe('integration create command', () => {
       originalType: 'process_form',
       condition: { rules: [{ id: 'proc_inst_id', name: '流程实例ID' }] },
       targetItem: { formItem: { formType: 'process', title: '流程来源表单' } },
+      outputs: [{ value: 'numberField_amount', text: '金额', componentName: 'NumberField' }],
     });
   });
 });

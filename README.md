@@ -582,6 +582,11 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 | `openyida doctor [--fix]` | Environment diagnostics & auto-fix |
 | `openyida db-seq-fix [--fix]` | Detect and repair PostgreSQL sequence drift |
 | `openyida formula evaluate <formula\|file> [--schema file]` | Static-check Yida formula syntax and field refs |
+| `openyida formula contracts [--json]` | Show formula formats and checker coverage |
+| `openyida formula check <formula\|file> [--schema file] [--contract field-value\|validation-rule\|business-action\|node-expression] [--context form\|validation\|automation\|business] [--target-type NumberField] [--metadata file] [--strict] [--json]` | Check formula syntax, fields, arguments and types |
+| `openyida formula functions <appType> [--name IF] [--context form] [--output file] [--json]` | Read Yida formula functions and signatures |
+| `openyida formula inspect <appType> <formUuid> [--field fieldId] [--json]` | Inspect configured form field formulas |
+| `openyida formula test <appType> <formUuid> <formula\|file> --data-file file [--context form\|validation] [--binding platform\|numeric-literals] [--expect JSON] [--json]` | Probe the expression endpoint with sample data; does not simulate consumer runtime |
 | `openyida update` | Check and update to latest version |
 | `openyida export-conversation [options]` | Export AI conversation records |
 | `openyida feedback <setup\|url\|dismiss\|status> [options]` | Configure experience feedback form and local reminder state |

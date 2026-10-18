@@ -352,7 +352,7 @@ module.exports = {
     publish_example: 'Example: openyida publish pages/src/home.canvas.jsx APP_XXX FORM-XXX --health-check --auto-nav-order',
     check_prd_completeness_usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     check_prd_completeness_example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
-    formula_usage: 'Usage: openyida formula evaluate <formula|file> [--schema schema.json] [--json] [--strict]',
+    formula_usage: 'Usage: openyida formula <check|evaluate|contracts|functions|inspect|test> ...',
     formula_example: `Example: openyida formula evaluate 'IF(GT(#{numberField_total}, 100), "high", "low")' --schema .cache/schema.json`,
     verify_usage: 'Usage: openyida verify-short-url <appType> <formUuid> <url>',
     verify_example: 'Example: openyida verify-short-url APP_XXX FORM-XXX /o/myapp',
@@ -2225,3 +2225,48 @@ Object.assign(module.exports.integration, {
   batch_readback_mismatch: 'Persisted batch node type, source or quantity differs from the submitted configuration.',
   create_opt_spec: '  --spec <file.json>            Configure batch retrieve/create, updates and branches with a structured spec',
 });
+
+module.exports.formula_v2 = {
+  trigger_formula: 'Use fixed values or fields in event trigger conditions. Put formula checks in a branch after the trigger.',
+  branch_choose: 'Choose conditions or expression for a branch.',
+  branch_formula: 'Use expression for formula-based branch conditions.',
+  expression_required: 'Enter a non-empty formula expression.',
+  failed: 'Invalid formula configuration: {0}',
+  syntax_invalid: 'Invalid or unsupported formula syntax: {0}',
+  bare_identifier: 'Unbound name {0}. Read the field ID from the form and use #{}.',
+  reference_context: 'Use form field references here; node paths are unsupported: {0}',
+  field_missing: 'Field not found in the form: {0}',
+  argument_type: 'Argument {1} of {0} requires {2}.',
+  function_unknown: 'Function {0} is not in the local catalog. Check platform metadata.',
+  function_case: 'Use the catalog function name: {0}',
+  context_unknown: 'Availability of {0} in this context is unknown.',
+  function_context: '{0} is not in the function list for {1}.',
+  argument_count: '{0} requires {1} to {2} arguments; received {3}.',
+  same_type: 'These arguments of {0} must use the same type.',
+  operator_invalid: 'Operator {0} is unsupported here. Use GT, GE, LT, LE, EQ or NE for comparisons.',
+  target_type: 'Formula result {0} does not match target field {1}.',
+  target_unknown: 'Unknown target field type: {0}',
+  schema_missing: 'Load the form schema to check field existence and types.',
+  local_pass: 'Local checks passed; platform execution is not verified.',
+  test_blocked: 'Formula was not executed: {0}. Testing accepts only known non-writing functions.',
+  expect_failed: 'Actual result differs from the expected result.',
+  usage: 'Usage: formula functions APP [--name IF]; formula inspect APP FORM [--field ID]; formula test APP FORM <formula|file> --data-file file [--expect JSON]. Use formula check for local checks.',
+};
+Object.assign(module.exports.help, {
+  cmd_formula_check: 'Check formula syntax, fields, arguments and types',
+  cmd_formula_functions: 'Read Yida formula functions and signatures',
+  cmd_formula_inspect: 'Inspect configured form field formulas',
+  cmd_formula_test: 'Evaluate a non-writing formula in Yida and compare its result',
+});
+
+Object.assign(module.exports.formula_v2, {
+  "config_text": "खाली न होने वाला फ़ॉर्मूला दें। मैनुअल इनपुट बहाल करने के लिए valueType को custom और formula को खाली स्ट्रिंग पर सेट करें।",
+  "config_conflict": "formula और complexValue.formula अलग हैं। दोनों समान करें या केवल formula दें ताकि CLI उन्हें समन्वित करे।",
+  "config_mode": "फ़ॉर्मूला सेट करते समय valueType: formula का उपयोग करें या valueType छोड़ दें। मैनुअल इनपुट के लिए valueType: custom और formula: \"\" रखें।",
+  "config_cycle": "चक्रीय संदर्भ मिला: {0}। निर्भरताएँ इनपुट से परिणाम की ओर रखें और प्रत्यक्ष या अप्रत्यक्ष स्व-संदर्भ से बचें।",
+  "reference_details_unknown": "फ़ील्ड या उप-फ़ील्ड {0} की पूरी परिभाषा और प्रकार की पुष्टि नहीं हुई है।",
+  "contract_not_supported": "यह जाँचकर्ता {0} के सिंटैक्स और निष्पादन का समर्थन नहीं करता। लक्ष्य कॉन्फ़िगरेशन के सत्यापन का उपयोग करें।",
+  "consumer_required": "{0} के लिए लक्ष्य कॉन्फ़िगरेशन की पूर्व प्रक्रिया और डेटा संदर्भ आवश्यक है। संबंधित प्रवेश से जाँचें।",
+  "contracts_help": "प्रारूप: field-value, validation-rule, business-action और node-expression। dataset-expression और javascript के लिए जाँच एडेप्टर अभी नहीं है। एक प्रारूप कई डिज़ाइनर में उपयोग हो सकता है। विवरण: --json।"
+});
+Object.assign(module.exports.help, {"cmd_formula_contracts": "फ़ॉर्मूला प्रारूप और जाँच का दायरा दिखाएँ"});

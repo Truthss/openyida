@@ -121,6 +121,8 @@ CLI 在同一次 batch 内对已取得真实 `formUuid` 的空壳表单执行一
 
 ## 官方表单示例范式
 
+字段涉及金额计算、默认日期、人员、明细汇总或校验公式时，编写配置前读取 [统一公式入口](../yida-formula/SKILL.md#写配置前先处理这些易错点)。引用新字段时先复用创建结果的字段映射，再配置公式；保留已有公式、校验及其他属性。普通子表字段使用子字段自身 ID，并区分同行计算和整列汇总。
+
 官方示例中心的表单类能力大多用 `FormContainer + 标准字段 + 字段属性/公式/联动` 承载，少量 `RichText` 用于说明。创建或更新表单时优先按这个顺序落地：
 
 1. 字段结构：用 `TextField`、`NumberField`、`DateField`、`EmployeeField`、`SelectField`、`TableField`、`AssociationFormField` 等标准字段表达数据模型。
@@ -241,6 +243,8 @@ openyida create-form rule <appType> <formUuid> <rulesJsonOrFile>
 ```
 
 `validation` / `rule` JSON 可优先写 label，例如 `{ "field": "备注", "type": "required" }`；若位于子表或存在重名，补 `{ "tableLabel": "明细", "field": "备注" }` 或直接使用已知 `fieldId`。成功 JSON 会返回每条规则或事件绑定的 compact `resolved` evidence；失败只返回 compact `diagnostics[].candidates`，不会打印完整字段列表。
+
+常见字段比较、条件必填优先用结构化规则。这里自定义 `expression/formula/source` 接收的是 JavaScript，例如 `Number(value) <= Number(getFieldValue('numberField_stock'))`，自定义校验返回 `true` 表示通过。原生公式校验则读取 [校验保存说明](../yida-formula/references/expression-formats.md#提交校验)，确认公式原文、预处理后的执行内容及阻断含义。
 
 ## 半成功 create 恢复
 

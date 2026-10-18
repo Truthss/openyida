@@ -15,6 +15,10 @@
 
 比较规则和变量来源只读 [条件与变量](conditions-variables.md)。流程分支按数组顺序生成优先级；自动化指定至多一个 `default: true` 兜底分支。不要手写底层连线或 `conditionNode`。
 
+自动化分支需要计算后判断时，使用完整的 `branches[].expression`，与普通 `conditions` 二选一；读取 [分支按公式判断](../../yida-formula/references/automation-formulas.md#分支按公式判断)，保留执行文本、编辑器原文和显示文字。普通流程条件由编译器生成自己的表达式，沿用流程格式；相同计算目的不代表两种 JSON 可以互换。
+
+两层判断直接参照 [包含 events/nodes 的完整嵌套分支](../../yida-formula/references/node-examples.md#嵌套分支先决定是否复核再决定级别)。第二个 route 放在命中分支的 nodes，每层分别配置兜底；公式中的 AND/OR 与流程图的 route 嵌套是两种不同结构。
+
 ## 最小示例
 
 流程：金额超过阈值时进入审批，未命中时 CLI 自动补“其他情况”分支。

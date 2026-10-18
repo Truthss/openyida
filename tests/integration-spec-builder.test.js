@@ -26,6 +26,42 @@ const {
 } = require('../lib/integration/integration-spec-builder');
 
 describe('integration spec builder', () => {
+  test('rejects formulas in event filters and builds native expression branches', () => {
+    expect(() => buildSpecProcessAndViewJson({
+      spec: { events: ['insert'], triggerConditions: [{ fieldId: 'numberField_amount', valueType: 'column', value: 'ROUND(1,2)' }], nodes: [{ type: 'getSelf' }] },
+      processCode: 'LPROC-TEST', appType: 'APP-TEST', formUuid: 'FORM-TEST', flowName: 'trigger',
+    })).toThrow();
+    const built = buildSpecProcessAndViewJson({
+      spec: { events: ['insert'], nodes: [{ id: 'self', type: 'getSelf' }, { type: 'route', branches: [{ expression: { value: 'GT(${self}.numberField_amount,0)', __source: 'GT(#{self//numberField_amount},0)', __display: '金额大于零' }, nodes: [] }] }] },
+      processCode: 'LPROC-TEST', appType: 'APP-TEST', formUuid: 'FORM-TEST', flowName: 'branch',
+    });
+    expect(built.processJson.nodes.find(node => node.type === 'route').childNodes[0].props).toMatchObject({ calculate: 'expression', expression: `GT(\${${built.nodeIdMap.self}}.numberField_amount,0)` });
+    expect(built.viewJson.schema.children.find(node => node.componentName === 'ConditionContainer').children[0].props.conditions).toMatchObject({ calculate: 'expression', __source: `GT(#{${built.nodeIdMap.self}//numberField_amount},0)`, __display: '金额大于零' });
+    expect(() => validateIntegrationSpec({ nodes: [{ type: 'route', branches: [{ conditions: [{ fieldId: 'numberField_amount', valueType: 'column', value: 'ROUND(0,2)' }] }] }] })).toThrow(/expression/);
+    expect(() => validateIntegrationSpec({ nodes: [{ type: 'route', branches: [{ expression: 'GT(1,0)', conditions: [{ fieldId: 'numberField_amount', value: 0 }] }] }] })).toThrow();
+  });
+  test('preserves executable and editable formulas in filters and created values', () => {
+    const formula = { value: 'ROUND(${self}.numberField_amount*2,2)', __source: 'ROUND(#{self//numberField_amount}*2,2)', __display: '金额乘二' };
+    const built = buildSpecProcessAndViewJson({
+      spec: { events: ['insert'], nodes: [
+        { id: 'self', type: 'getSelf' },
+        { id: 'lookup', type: 'dataRetrieve', formUuid: 'FORM-B', conditions: [{ bFieldId: 'numberField_amount', bFieldName: '金额', componentType: 'NumberField', opCode: 'Bigger', valueType: 'column', value: formula }] },
+        { id: 'created', type: 'dataCreate', formUuid: 'FORM-B', assignments: [{ column: 'numberField_amount', valueType: 'column', ...formula }] },
+      ] }, processCode: 'LPROC-TEST', appType: 'APP-TEST', formUuid: 'FORM-A', flowName: '公式',
+      formSchemasByUuid: new Map(['FORM-A', 'FORM-B'].map(id => [id, [{ componentName: 'NumberField', props: { fieldId: 'numberField_amount', label: { zh_CN: '金额' } } }]])),
+    });
+    const value = `ROUND(\${${built.nodeIdMap.self}}.numberField_amount*2,2)`;
+    const source = `ROUND(#{${built.nodeIdMap.self}//numberField_amount}*2,2)`;
+    const filter = built.processJson.nodes.find(node => node.nodeId === built.nodeIdMap.lookup).props.condition.rules[0];
+    expect(filter).toMatchObject({ value, valueType: 'column', ruleValue: { value, __source: source, __display: '金额乘二' } });
+    const designer = built.viewJson.schema.children.find(node => node.id === built.nodeIdMap.lookup).props.getData.condition.rules[0];
+    expect(designer).toEqual(filter);
+    expect(built.viewJson.schema.children.find(node => node.id === built.nodeIdMap.self).props.getData.outputs).toEqual([
+      expect.objectContaining({ value: 'numberField_amount', text: '金额', componentName: 'NumberField' }),
+    ]);
+    const assignment = built.processJson.nodes.find(node => node.nodeId === built.nodeIdMap.created).props.assignments[0];
+    expect(assignment).toMatchObject({ value, __source: source, __display: '金额乘二' });
+  });
   test('compiles field-to-field trigger, route and query conditions in both JSON formats', () => {
     const fieldComparison = {
       fieldId: 'numberField_stock', fieldName: '当前库存', componentType: 'NumberField',
@@ -1418,6 +1454,7 @@ describe('integration spec builder', () => {
     const approvalView = built.viewJson.schema.children.find((node) => node.id === approvalId);
     const detailProcess = built.processJson.nodes.find((node) => node.nodeId === built.nodeIdMap.detail);
     const detailView = built.viewJson.schema.children.find((node) => node.id === built.nodeIdMap.detail);
+    expect(detailView.props.getData.outputs.map(field => field.value)).toEqual(['textField_item']);
     const createProcess = built.processJson.nodes.find((node) => node.nodeId === built.nodeIdMap.appendDetail);
     const createView = built.viewJson.schema.children.find((node) => node.id === built.nodeIdMap.appendDetail);
 

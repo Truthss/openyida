@@ -2,7 +2,7 @@
 
 按 PRD 的依赖创建或复用表单和流程。同一轮需要新建两个及以上普通表单时，把独立表单和关联表单写入同一个 `forms.json`，通过 `dependsOn` / `$form` 表达依赖，并且只调用一次 `openyida create-form batch`；由 CLI 内部完成分组、真实 ID 回读和依赖调度，不逐个 create，也不由模型拆成多次 batch。调用前确认实际项目根，让 Write 的绝对路径与 Bash 从项目根使用的 `.cache/openyida/<项目名>/forms.json` 指向同一个物理文件，并用 Read 确认任务文件存在；不要用 batch 探测路径，收到 background pending 后也不要重试 batch。某页所需表单、流程就绪后即可接入该页；不要因其他页面的资源未完成而阻塞无依赖页面开发。
 
-`explicitScope.allowInferredResources=false` 且本轮只有一个普通表单时走最短路径：以 Write 创建字段文件及其父目录，随后调用一次 `openyida create-form create`。成功结果中的 `url`/`formUrl` 是表单入口，`appUrl` 是应用工作台入口。将该表单标记为已完成并计算 `remainingScope`；为空时按用户要求的入口层级交付并完成本轮范围。普通表单保存成功后进入可用状态，自定义展示页遵循页面发布生命周期；验收证据缺失时执行一次针对性只读回查。
+`explicitScope.allowInferredResources=false` 且本轮只有一个普通表单时走最短路径：以 Write 创建字段文件及其父目录，随后调用一次 `openyida create-form create`。成功结果中的 `url`/`formUrl` 是表单入口，`appUrl` 是应用工作台入口。本轮要求的字段、公式、校验和联动保存并回读后，将该表单标记为已完成并计算 `remainingScope`；为空时按用户要求的入口层级交付并完成本轮范围。公式需要新字段 ID 时，复用创建结果的映射完成后续更新。普通表单保存成功后进入可用状态，自定义展示页遵循页面发布生命周期；验收证据缺失时执行一次针对性只读回查。
 
 拿到真实 `appType` 和已确认的业务契约即可开始本步骤，不等待主题 CSS 上传或应用主题设置回读。主题分支与本步骤并行，按 [主题与业务资源的依赖](parallel-work.md#主题与业务资源的依赖) 汇合。
 
@@ -14,6 +14,8 @@
 - Step 1 解析出的 form/process context。
 
 ## 操作
+
+本轮包含自动计算、默认值、提交校验、节点筛选或报表计算时，在生成对应配置前加载 `yida-formula`，按其 [易错点引导](../../yida-formula/SKILL.md#写配置前先处理这些易错点) 确定输入、结果和保存方式。需要新字段 ID 的计算放在字段创建并取得映射之后；复用已有资源时，保留未修改的公式与规则。只读取当前配置需要的说明。
 
 1. 执行 `use_skill("yida-create-form-page", "创建或更新核心表单字段结构")`，创建或更新普通表单字段结构。
 2. 已有目标表单时，使用 update/patch/rule/bind-datasource。

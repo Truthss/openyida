@@ -22,11 +22,17 @@
 
 流程原生组件中的上游引用采用真实节点 ID；不要套用仅由自动化 spec 解析的别名。消息模板语法也不能直接当作查询条件或赋值表达式。
 
+取数右侧选择“公式”时，使用 `valueType: column`，把执行公式及编辑器内容保存在 `value: {value, __source, __display}`。例如“金额大于上游金额乘以 2”，见 [节点表达式](../../yida-formula/references/automation-formulas.md)。直接比较两个字段仍使用 `processVar`；固定门槛用 `literal`。左侧字段属于目标表，右侧字段属于指定的触发记录或上游节点。
+
+触发、分支和取数分别使用对应位置及字段类型支持的操作符。如下文触发例子的 `LessThan` 与数值取数比较中的 `Lesser` 不可直接互换。某个位置的保存或运行结果，也只作为该位置的证据；分别记录取数匹配结果、分支是否进入及触发是否发生。
+
 ## 最小示例
+
+需要嵌套时先选择正确结构：自动化同层条件使用节点/分支的 AND 或 OR；分支 `A 且（B 或 C）` 使用 [完整公式与嵌套分支示例](../../yida-formula/references/node-examples.md#嵌套分支先决定是否复核再决定级别)。取数节点当前只有平铺条件和一层 logic，见 [多条件取数示例](../../yida-formula/references/node-examples.md#按编号字段嵌套公式和固定状态取数)；不要自行嵌入 conditions/rules 对象改变查询含义。
 
 ### 字段与字段比较：当前库存 < 库存下限
 
-以下字段比较格式当前仅通过本地编译检查，尚未通过平台保存及运行验收，不能作为已可用能力直接交付。固定值比较不受此说明影响。
+本小节讨论表单事件的触发条件。该位置的字段比较格式当前仅通过本地编译检查，尚未通过平台保存及运行验收；引用它时说明验证范围。获取数据节点右侧选择“字段”的用法见下节，独立判断其输入和运行结果。固定值比较不受此说明影响。
 
 先从真实 schema 取得两个数字字段 ID。下面的 `numberField_stock`、`numberField_minStock` 和接收人 ID 都须替换。
 
@@ -62,6 +68,8 @@ openyida integration create APP_XXX FORM_XXX "库存不足通知" \
 
 ### 分支和取数中的字段比较
 
+以下是各位置的配置格式；保存后按具体节点的匹配记录和运行结果说明验证状态。
+
 自动化分支可以比较上游节点的两个字段；例如先配置 `getSelf` 节点 `id: self`，再在 `route` 分支的 `conditions` 中写：
 
 ```json
@@ -71,7 +79,7 @@ openyida integration create APP_XXX FORM_XXX "库存不足通知" \
 取数节点则比较“目标表库存”和“上游记录库存下限”，放到 `dataRetrieve.conditions`：
 
 ```json
-{"bFieldId":"numberField_stock","bFieldName":"当前库存","componentType":"NumberField","opCode":"LessThan","aFieldId":"${self}.numberField_minStock","valueType":"processVar"}
+{"bFieldId":"numberField_stock","bFieldName":"当前库存","componentType":"NumberField","opCode":"Lesser","aFieldId":"${self}.numberField_minStock","valueType":"processVar"}
 ```
 
 `self` 必须是当前节点的上游别名，字段 ID 也须与各自表单一致。取数条件默认 `processVar`，触发和分支条件默认 `literal`；建议显式写出。完整分支结构见 [流转控制](control.md)。
@@ -90,7 +98,7 @@ openyida integration create APP_XXX FORM_XXX "库存不足通知" \
 
 - 流程操作符按下表和字段真实类型选择；`value` 使用对应类型的固定值或选项数组。
 - 自动化存在性判断使用其支持的 `ExistValue/NotExistValue`；不要因为流程有同名含义就直接照搬操作符。复杂空值规则需要时用已验证公式。
-- 自动化分支的复杂空值判断优先使用已验证的 `ISEMPTY()` 公式，不只依赖设计器“没有值”选项；公式写在支持公式的条件位置，不能直接替换操作符。
+- 自动化分支的复杂空值判断使用已验证的 `ISEMPTY()` 公式，配置在分支的 `expression` 中；参照 [分支按公式判断](../../yida-formula/references/automation-formulas.md)。
 - `valueType`、右侧值来源和数据类型一起检查；`0`、`false`、空值不能互相代替。
 - 字段比较属于自动化条件配置，与审批人“条件模式”是两项能力；按 `integration create` 返回处理，明确提示权益不足时再引导开通。执行前仍须按自动化入口确认配置摘要。
 - 人员条件模式当前缺完整简化配置，按 [人员选择](actors.md) 的高级透传要求处理。

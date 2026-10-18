@@ -352,7 +352,7 @@ module.exports = {
     publish_example: 'Example: openyida publish pages/src/home.canvas.jsx APP_XXX FORM-XXX --health-check --auto-nav-order',
     check_prd_completeness_usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     check_prd_completeness_example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
-    formula_usage: 'Usage: openyida formula evaluate <formula|file> [--schema schema.json] [--json] [--strict]',
+    formula_usage: 'Usage: openyida formula <check|evaluate|contracts|functions|inspect|test> ...',
     formula_example: `Example: openyida formula evaluate 'IF(GT(#{numberField_total}, 100), "high", "low")' --schema .cache/schema.json`,
     verify_usage: 'Usage: openyida verify-short-url <appType> <formUuid> <url>',
     verify_example: 'Example: openyida verify-short-url APP_XXX FORM-XXX /o/myapp',
@@ -2227,3 +2227,48 @@ Object.assign(module.exports.integration, {
   batch_readback_mismatch: 'Persisted batch node type, source or quantity differs from the submitted configuration.',
   create_opt_spec: '  --spec <file.json>            Configure batch retrieve/create, updates and branches with a structured spec',
 });
+
+module.exports.formula_v2 = {
+  trigger_formula: 'Use fixed values or fields in event trigger conditions. Put formula checks in a branch after the trigger.',
+  branch_choose: 'Choose conditions or expression for a branch.',
+  branch_formula: 'Use expression for formula-based branch conditions.',
+  expression_required: 'Enter a non-empty formula expression.',
+  failed: 'Invalid formula configuration: {0}',
+  syntax_invalid: 'Invalid or unsupported formula syntax: {0}',
+  bare_identifier: 'Unbound name {0}. Read the field ID from the form and use #{}.',
+  reference_context: 'Use form field references here; node paths are unsupported: {0}',
+  field_missing: 'Field not found in the form: {0}',
+  argument_type: 'Argument {1} of {0} requires {2}.',
+  function_unknown: 'Function {0} is not in the local catalog. Check platform metadata.',
+  function_case: 'Use the catalog function name: {0}',
+  context_unknown: 'Availability of {0} in this context is unknown.',
+  function_context: '{0} is not in the function list for {1}.',
+  argument_count: '{0} requires {1} to {2} arguments; received {3}.',
+  same_type: 'These arguments of {0} must use the same type.',
+  operator_invalid: 'Operator {0} is unsupported here. Use GT, GE, LT, LE, EQ or NE for comparisons.',
+  target_type: 'Formula result {0} does not match target field {1}.',
+  target_unknown: 'Unknown target field type: {0}',
+  schema_missing: 'Load the form schema to check field existence and types.',
+  local_pass: 'Local checks passed; platform execution is not verified.',
+  test_blocked: 'Formula was not executed: {0}. Testing accepts only known non-writing functions.',
+  expect_failed: 'Actual result differs from the expected result.',
+  usage: 'Usage: formula functions APP [--name IF]; formula inspect APP FORM [--field ID]; formula test APP FORM <formula|file> --data-file file [--expect JSON]. Use formula check for local checks.',
+};
+Object.assign(module.exports.help, {
+  cmd_formula_check: 'Check formula syntax, fields, arguments and types',
+  cmd_formula_functions: 'Read Yida formula functions and signatures',
+  cmd_formula_inspect: 'Inspect configured form field formulas',
+  cmd_formula_test: 'Evaluate a non-writing formula in Yida and compare its result',
+});
+
+Object.assign(module.exports.formula_v2, {
+  "config_text": "Fournissez une formule non vide. Pour rétablir la saisie manuelle, définissez valueType sur custom et formula sur une chaîne vide.",
+  "config_conflict": "formula et complexValue.formula diffèrent. Rendez-les identiques ou fournissez uniquement formula pour laisser le CLI les synchroniser.",
+  "config_mode": "Utilisez valueType: formula ou omettez valueType pour une formule. Pour la saisie manuelle, utilisez valueType: custom et formula: \"\".",
+  "config_cycle": "Référence circulaire détectée : {0}. Organisez les dépendances des entrées vers les résultats et évitez toute autoréférence directe ou indirecte.",
+  "reference_details_unknown": "La définition complète et le type du champ ou sous-champ {0} ne sont pas vérifiés.",
+  "contract_not_supported": "Ce vérificateur ne prend pas en charge la syntaxe ni l’exécution de {0} ; utilisez le validateur de la configuration cible.",
+  "consumer_required": "{0} nécessite le prétraitement et le contexte de données de la configuration cible. Vérifiez-le dans son interface.",
+  "contracts_help": "Formats : field-value, validation-rule, business-action et node-expression. Aucun adaptateur de vérification pour dataset-expression et javascript. Un format peut servir à plusieurs éditeurs. Détails : --json."
+});
+Object.assign(module.exports.help, {"cmd_formula_contracts": "Afficher les formats de formule et la portée des vérifications"});

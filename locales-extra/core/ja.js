@@ -338,7 +338,7 @@ module.exports = {
     publish_example: '例: openyida publish pages/src/home.canvas.jsx APP_XXX FORM-XXX --health-check --auto-nav-order',
     check_prd_completeness_usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     check_prd_completeness_example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
-    formula_usage: 'Usage: openyida formula evaluate <formula|file> [--schema schema.json] [--json] [--strict]',
+    formula_usage: 'Usage: openyida formula <check|evaluate|contracts|functions|inspect|test> ...',
     formula_example: `Example: openyida formula evaluate 'IF(GT(#{numberField_total}, 100), "high", "low")' --schema .cache/schema.json`,
     verify_usage: '使用方法: openyida verify-short-url <appType> <formUuid> <url>',
     verify_example: '例: openyida verify-short-url APP_XXX FORM-XXX /o/myapp',
@@ -2152,3 +2152,48 @@ Object.assign(module.exports.integration, {
   batch_readback_mismatch: 'Persisted batch node type, source or quantity differs from the submitted configuration.',
   create_opt_spec: '  --spec <file.json>            Configure batch retrieve/create, updates and branches with a structured spec',
 });
+
+module.exports.formula_v2 = {
+  trigger_formula: 'Use fixed values or fields in event trigger conditions. Put formula checks in a branch after the trigger.',
+  branch_choose: 'Choose conditions or expression for a branch.',
+  branch_formula: 'Use expression for formula-based branch conditions.',
+  expression_required: 'Enter a non-empty formula expression.',
+  failed: 'Invalid formula configuration: {0}',
+  syntax_invalid: 'Invalid or unsupported formula syntax: {0}',
+  bare_identifier: 'Unbound name {0}. Read the field ID from the form and use #{}.',
+  reference_context: 'Use form field references here; node paths are unsupported: {0}',
+  field_missing: 'Field not found in the form: {0}',
+  argument_type: 'Argument {1} of {0} requires {2}.',
+  function_unknown: 'Function {0} is not in the local catalog. Check platform metadata.',
+  function_case: 'Use the catalog function name: {0}',
+  context_unknown: 'Availability of {0} in this context is unknown.',
+  function_context: '{0} is not in the function list for {1}.',
+  argument_count: '{0} requires {1} to {2} arguments; received {3}.',
+  same_type: 'These arguments of {0} must use the same type.',
+  operator_invalid: 'Operator {0} is unsupported here. Use GT, GE, LT, LE, EQ or NE for comparisons.',
+  target_type: 'Formula result {0} does not match target field {1}.',
+  target_unknown: 'Unknown target field type: {0}',
+  schema_missing: 'Load the form schema to check field existence and types.',
+  local_pass: 'Local checks passed; platform execution is not verified.',
+  test_blocked: 'Formula was not executed: {0}. Testing accepts only known non-writing functions.',
+  expect_failed: 'Actual result differs from the expected result.',
+  usage: 'Usage: formula functions APP [--name IF]; formula inspect APP FORM [--field ID]; formula test APP FORM <formula|file> --data-file file [--expect JSON]. Use formula check for local checks.',
+};
+Object.assign(module.exports.help, {
+  cmd_formula_check: 'Check formula syntax, fields, arguments and types',
+  cmd_formula_functions: 'Read Yida formula functions and signatures',
+  cmd_formula_inspect: 'Inspect configured form field formulas',
+  cmd_formula_test: 'Evaluate a non-writing formula in Yida and compare its result',
+});
+
+Object.assign(module.exports.formula_v2, {
+  "config_text": "空でない数式文字列を指定してください。手動入力に戻す場合は valueType を custom、formula を空文字列にします。",
+  "config_conflict": "formula と complexValue.formula が異なります。同じ数式にするか、formula だけを指定して CLI に同期させてください。",
+  "config_mode": "数式を設定する場合は valueType: formula を指定するか省略します。手動入力に戻す場合は valueType: custom と formula: \"\" を使用します。",
+  "config_cycle": "循環参照が見つかりました：{0}。入力から結果の順に依存関係を設定し、直接または間接の自己参照を避けてください。",
+  "reference_details_unknown": "フィールドまたはサブフィールド {0} の完全な定義と型は未確認です。",
+  "contract_not_supported": "このチェッカーは {0} の構文と実行方式に未対応です。対象設定の検証機能を使用してください。",
+  "consumer_required": "{0} には対象設定の前処理とデータコンテキストが必要です。対応する画面で検証してください。",
+  "contracts_help": "形式：field-value、validation-rule、business-action、node-expression。dataset-expression と javascript のチェッカーは未対応です。同じ形式を複数のデザイナーで利用できます。詳細は --json。"
+});
+Object.assign(module.exports.help, {"cmd_formula_contracts": "数式の保存形式とチェック範囲を表示"});

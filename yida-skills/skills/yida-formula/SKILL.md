@@ -1,425 +1,99 @@
 ---
 name: yida-formula
-description: 宜搭表单公式编写规范，包含 60+ 内置函数速查、语法规则和常见场景示例。适用于编写表单字段公式、校验规则和计算逻辑时。
+description: 指导宜搭公式配置，包括金额计算、明细汇总、默认值、提交校验、节点筛选和报表计算。提供嵌套 IF、AND/OR、子表和复杂节点的完整示例，说明字段引用与保存方法。新增、修改或排查公式时使用，各设计器共用此入口。
 ---
 
-# 宜搭表单公式编写规范
+# 配置宜搭公式
 
-## 触发条件
+先说明想得到什么结果，例如“单价乘数量，保留两位小数”“提交时提醒编号重复”“按上一步的金额筛选记录”。再读取已有配置，确定输入数据和结果存放位置。
 
-**正向触发**（以下场景必须使用本技能）：
-- 用户说"配置公式"、"计算字段"、"自动计算"、"字段联动"
-- 用户说"求和"、"平均值"、"条件判断"、"IF 公式"
-- 用户需要在表单字段上配置默认值公式、计算公式
-- 用户需要配置字段的自定义校验规则
-- 用户需要了解宜搭公式函数的用法和语法
+同一种公式用法共用这里的说明。页面名称不同，也可以采用相同配置；真正需要区分的是字段引用、保存内容和执行时的数据。
 
-## 概述
+## 先认清要保存的内容
 
-宜搭公式可以：
-1. **自动计算字段默认值**：在数值、单行文本、日期、成员等字段上配置公式，根据其他字段自动计算出值
-2. **配置校验规则**：在提交时校验数据是否符合规则（在表单属性的「校验」中配置）
-3. **识别字段公式适用范围**：字段公式只处理字段默认值、计算值和自定义校验，不处理提交后跨表写入动作。
+| 想做什么 | 要配置的内容 | 阅读说明 |
+| --- | --- | --- |
+| 自动填金额、日期、人员，汇总明细 | 普通字段的默认值公式 | [字段取值与完整配置](references/field-values.md) |
+| 提交时检查金额、日期、重复值 | 校验公式、提示文字和阻断方式 | [校验、动作及其他表达式](references/expression-formats.md) |
+| 获取数据时按上一步的字段或计算结果过滤，按公式进入分支，计算赋值 | 节点表达式和可供选择的上游字段 | [节点表达式](references/automation-formulas.md) |
+| 用高级函数新增、修改、删除数据 | 业务动作及触发时机 | [表达式保存方式](references/expression-formats.md)，配合 `yida-business-rule` |
+| 给图表或数据集增加计算列 | 数据集表达式、数据类型和汇总方式 | [表达式保存方式](references/expression-formats.md)，配合 `yida-report` |
+| 在页面代码或自定义校验函数中计算 | JavaScript 表达式或回调函数 | [表达式保存方式](references/expression-formats.md)，配合原页面或表单技能 |
 
-> 完整函数列表参见 `../../references/formula-functions.md`
+表单中的普通字段配置也适用于流程表单中的同类字段。节点公式用于哪些设计器，以目标节点实际提供的输入为准。自定义页面上的原生组件若暴露相同公式属性，可以沿用相同方法；页面代码里的计算则按 JavaScript 处理。
 
-官方示例中心的公式类示例基本落在普通表单或流程表单 schema 中，而不是自定义页面。遇到“日期转换、流水号、登录人、主管、相隔时间、求和”等能力时，默认先配置字段公式或字段联动；只有公式无法表达、且需要跨表提交后动作时，再用提交后编排能力实现。
+## 写配置前先处理这些易错点
 
----
+按当前任务读取下表相关项，再写字段、规则或节点配置。相同用法在不同设计器中共用这些步骤。
 
-## ⚠️ 重要：公式配置方式说明
+| 正在做什么 | 先做这一步 |
+| --- | --- |
+| 修改已有公式 | 读取目标位置的完整配置，保留规则 ID、其他公式、提示、触发时机和无关属性；`formula inspect` 只覆盖字段配置 |
+| 引用同表新字段 | 创建基础字段后复用返回的真实字段映射，再添加计算；已有字段直接读取映射，无需重新创建 |
+| 获取数据时设置过滤条件 | 左边选目标表字段；右边明确选“值、字段、公式”：固定门槛用值，上游金额用字段，上游金额乘二用公式 |
+| 引用子表字段 | 使用子字段自身的 ID，并明确取当前行还是整列；主表汇总和子表同行计算分别配置 |
+| 保存节点公式 | 同时保留执行文本、编辑器原文和显示文字；上游节点及输出字段应真实存在，才能再次打开编辑 |
+| 配置校验 | 先确认返回值含义：原生阻断公式为真时阻断；JS 自定义校验返回真时通过。提示文字与判断条件一起保存 |
+| 处理空值、零、日期或成员 | 保留原始类型和结构；分别考虑空值与零、日期单位、单个成员与成员数组，避免用统一转文本或默认值替代 |
+| 选择函数 | 查询参数并核对目标配置提供的菜单；`EXIST` 查已有记录，`COUNT` 统计表单提交数，各按真实用途选择 |
+| 本地通过或保存成功 | 分别记录检查、保存回读和实际运行结果；接口探查未覆盖的页面联动、提交校验、节点上下文及聚合保持待验证 |
 
-**宜搭没有独立的"公式字段"组件**。公式是配置在普通字段（`NumberField`、`TextField`、`DateField`、`EmployeeField` 等）的属性上的：
+用户已要求暂停测试时，完成配置说明和本地修改，并注明实际运行尚未验证；保留后续验收步骤即可。
 
-| 配置位置 | 说明 | 典型场景 |
-|---------|------|---------|
-| 字段的「默认值」→「公式」 | 字段打开时自动计算并填入值 | 总金额 = 单价 × 数量 |
-| 字段的「校验」→「自定义校验」 | 提交时校验字段值是否合法 | 结束日期必须晚于开始日期 |
-| 表单设置 → 表单事件 → 公式执行 → 添加业务关联规则 | 提交后触发跨表数据操作 | 不属于字段公式 |
+## 共用步骤
 
----
+1. 读取已有配置，确认真实字段 ID、输入类型、目标值类型，以及什么时候执行。修改时保留原公式和其他设置。
+2. 选择函数并写公式，先用一句话说明结果。共用例子见 [常用函数](../../references/formula-functions.md)。
+3. 按目标输入的格式保存。字段公式保存字符串；节点公式通常还保存编辑器内容；校验还需要提示和阻断设置。
+4. 回读配置，核对字段、公式和原有属性。用户要求验证时，再用实际入口检查计算、提交或节点执行结果。
 
-## 公式字段的 Schema 结构
-
-通过 `openyida create-form` 的 create 或 update 模式，可以直接在字段上配置公式。
-
-### 字段引用格式
-
-公式中引用其他字段时，使用 **`#{fieldId}`** 格式（不是直接写 fieldId）：
-
-```
-# ✅ 正确：用 #{} 包裹 fieldId
-ROUND(#{numberField_abc} * #{numberField_xyz}, 2)
-
-# ❌ 错误：直接写 fieldId
-ROUND(numberField_abc * numberField_xyz, 2)
-```
-
-### 字段 Schema 中的公式属性
-
-需要同时设置以下三个属性：
-
-| 属性 | 值 | 说明 |
-|------|-----|------|
-| `valueType` | `"formula"` | 声明该字段值由公式计算 |
-| `complexValue` | `{"complexType":"formula","formula":"<公式字符串>"}` | 公式配置对象 |
-| `formula` | `"<公式字符串>"` | 与 complexValue.formula 相同的公式字符串 |
-
-### create 模式：创建带公式的字段
-
-```json
-[
-  {
-    "type": "NumberField",
-    "label": "总金额",
-    "behavior": "READONLY",
-    "valueType": "formula",
-    "complexValue": {
-      "complexType": "formula",
-      "formula": "ROUND(#{numberField_price} * #{numberField_qty}, 2)"
-    },
-    "formula": "ROUND(#{numberField_price} * #{numberField_qty}, 2)"
-  }
-]
+```bash
+openyida get-schema APP_XXX FORM_XXX --field-map-json
+openyida formula inspect APP_XXX FORM_XXX --json
+openyida formula functions APP_XXX --name ROUND --json
+openyida formula contracts --json
 ```
 
-### update 模式：给已有字段配置公式
+`inspect` 查看字段默认值公式和字段校验；完整表单校验、流程全局规则、节点和报表配置从各自的完整设计数据读取。`contracts` 列出 CLI 识别的保存方式与检查范围，不访问应用。
 
-```json
-[
-  {
-    "action": "update",
-    "label": "总金额",
-    "changes": {
-      "valueType": "formula",
-      "complexValue": {
-        "complexType": "formula",
-        "formula": "ROUND(#{numberField_price} * #{numberField_qty}, 2)"
-      },
-      "formula": "ROUND(#{numberField_price} * #{numberField_qty}, 2)"
-    }
-  }
-]
+## 复杂配置先选一个完整示例
+
+需要嵌套时，先选下表对应示例，保留其外层结构，再替换真实字段和业务常量。每例都说明配置位置、替换项和输入对应的预期结果；只读取需要的小节。
+
+| 需要配置什么 | 直接读取 |
+| --- | --- |
+| 三档判断、多个 IF | [嵌套 IF 与完整字段变更](references/nested-examples.md#三档判断嵌套-if) |
+| A 且（B 或 C）、取反 | [AND/OR/NOT 嵌套](references/nested-examples.md#多层条件andornot) |
+| 数量为零时避免除零 | [非零除数与完整字段变更](references/nested-examples.md#数量为零让除数始终非零) |
+| 子表同行计算后主表汇总 | [两个目标字段的完整变更](references/field-values.md#子表同行计算与主表汇总的完整变更) |
+| 同时使用字段、公式、固定值过滤 | [完整取数 spec](references/node-examples.md#按编号字段嵌套公式和固定状态取数) |
+| 分支命中后再分支 | [两层 route 与兜底](references/node-examples.md#嵌套分支先决定是否复核再决定级别) |
+| 复杂提交校验 | [同一规则的原生公式与 JS 配置](references/nested-examples.md#同一提交规则原生阻断公式与-js-通过条件) |
+
+## 常用写法
+
+下面用字段默认值公式举例，字段 ID 换成读取到的真实值：
+
+| 目的 | 公式 |
+| --- | --- |
+| 单价乘数量，保留两位小数 | `ROUND(#{numberField_price} * #{numberField_qty}, 2)` |
+| 金额超过 100 显示“高” | `IF(GT(#{numberField_total}, 100), "高", "低")` |
+| 汇总子表金额列 | `SUM(#{numberField_lineAmount})` |
+| 成员字段填当前登录人 | `USER()` |
+| 拼接姓名和编号 | `CONCATENATE(#{textField_name}, "-", #{textField_code})` |
+
+使用半角括号、逗号和引号。函数名保持查询结果中的大小写，例如 `ROUND`、`UserBuilder`。原生公式常用 `GT/GE/LT/LE/EQ` 比较；JavaScript 和由流程条件生成的表达式使用各自的运算规则。
+
+字段默认值引用写成 `#{字段ID}`。子表普通字段也用子字段自身的 ID；组件开放的子属性可能使用 `#{组件字段ID.属性名}`。节点和数据集引用按各自格式填写，不从显示名称猜 ID。
+
+## 检查结果怎么看
+
+```bash
+openyida formula check formula.txt --contract field-value --schema schema.json --target-type NumberField --json
 ```
 
-### ⚠️ 重要：公式中的 fieldId 必须是真实 ID
+本地检查帮助找出写法、参数和部分类型问题。`formula functions` 查询函数签名；实际可选函数还取决于目标配置传入的函数清单和组织开关。
 
-公式中引用的 `fieldId`（如 `numberField_abc123`）必须是表单中真实存在的字段 ID，不能猜测。**正确工作流程**：
+`formula test` 调用通用表达式接口，不保存配置；它没有重现页面初始化、子表同行取值、校验预处理、节点上下文或图表聚合。交付时分别说明检查、回读和实际执行到了哪一步。详细命令见 `yida-formula-evaluate`。
 
-```
-Step 1: create 模式创建基础字段（不含公式）
-         ↓
-Step 2: openyida get-schema 获取各字段的真实 fieldId
-         ↓
-Step 3: create 或 update 模式添加/更新带公式的字段，引用真实 #{fieldId}
-```
-
----
-
-## 公式语法规则
-
-### 基本规则
-
-1. **函数名必须全大写**：`SUM`、`IF`、`CONCATENATE`，不能写成 `sum`、`if`
-2. **所有符号必须是英文**：括号 `()`、逗号 `,`、引号 `""`，不能用中文符号
-3. **字符串常量用双引号**：`"优秀"`、`"已完成"`
-4. **支持基本算术运算符**：`+`（加）、`-`（减）、`*`（乘）、`/`（除）
-5. **比较运算必须用函数，不能用符号**：禁止使用 `>=`、`<=`、`>`、`<`、`==`、`!=`，必须改用 `GE()`、`LE()`、`GT()`、`LT()`、`EQ()`、`NE()` 函数
-6. **隐藏字段需开启「始终提交」**：否则隐藏字段不参与公式计算
-
-### 字段引用规则
-
-公式中引用表单字段时，使用 **`#{fieldId}`** 格式（必须用 `#{}` 包裹）：
-
-```
-# 引用主表字段（用 #{} 包裹 fieldId）
-#{textField_abc123}
-
-# 引用子表（TableField）内的字段
-#{tableField_xxx.numberField_yyy}
-
-# 引用当前登录用户（无需字段 ID）
-USER()
-
-# 引用当前时间（无需字段 ID）
-NOW()
-TODAY()
-```
-
-> **如何获取 fieldId**：使用 `openyida get-schema <appType> <formUuid>` 获取表单 Schema，其中每个字段的 `fieldId` 属性即为字段 ID。
-
-### 赋值类型限制
-
-公式结果只能赋值给**同类型**的组件：
-
-| 公式/来源类型 | 可赋值的目标组件 |
-|-------------|----------------|
-| 文本函数结果 | 单行文本、多行文本 |
-| 数值计算结果 | 数值、单行文本、多行文本 |
-| 日期函数结果 | 日期 |
-| 人员函数结果 | 成员 |
-| 单选/下拉单选 | 单选、下拉单选 |
-| 复选/下拉复选 | 复选、下拉复选 |
-
----
-
-## 业务关联规则说明
-
-业务关联规则、高级函数、`INSERT`/`UPDATE`/`DELETE`/`UPSERT` 不属于字段公式。本技能只处理普通字段公式、默认值公式和自定义校验公式。
-
----
-
-## 函数分类速查
-
-> 完整函数参数说明见 `../../references/formula-functions.md`
-
-### 文本函数（表单场域）
-
-| 函数 | 用途 | 示例 |
-|------|------|------|
-| `CONCATENATE(text1, text2, ...)` | 拼接多个文本 | `CONCATENATE(#{textField_firstName}, #{textField_lastName})` |
-| `LEFT(text, n)` | 取左侧 n 个字符 | `LEFT(#{textField_code}, 4)` |
-| `RIGHT(text, n)` | 取右侧 n 个字符 | `RIGHT(#{textField_idCard}, 4)` |
-| `MID(text, start, n)` | 取中间字符 | `MID(#{textField_code}, 3, 4)` |
-| `LEN(text)` | 获取字符串长度 | `LEN(#{textField_content})` |
-| `TRIM(text)` | 去除首尾空格 | `TRIM(#{textField_name})` |
-| `UPPER(text)` | 转大写 | `UPPER(#{textField_code})` |
-| `LOWER(text)` | 转小写 | `LOWER(#{textField_email})` |
-| `REPLACE(text, start, n, newText)` | 替换指定位置字符 | `REPLACE(#{textField_phone}, 4, 4, "****")` |
-| `TEXT(value, format)` | 数值格式化为文本 | `TEXT(#{numberField_amount}, "0.00")` |
-| `VALUE(text)` | 文本转数字 | `VALUE(#{textField_numStr})` |
-| `UUID()` | 生成唯一字符串 | `UUID()` |
-| `RMBFORMAT(number)` | 格式化为人民币 | `RMBFORMAT(#{numberField_amount})` |
-| `SPLIT(text, delimiter)` | 按分隔符分割为数组 | `SPLIT(#{textField_tags}, ",")` |
-| `ARRAYGET(array, index)` | 取数组第 n 个元素 | `ARRAYGET(SPLIT(#{textField_tags}, ","), 1)` |
-
-### 时间函数（表单场域）
-
-| 函数 | 用途 | 示例 |
-|------|------|------|
-| `TODAY()` | 今天日期 | `TODAY()` |
-| `NOW()` | 当前时间 | `NOW()` |
-| `YEAR(date)` | 取年份 | `YEAR(#{dateField_birthday})` |
-| `MONTH(date)` | 取月份 | `MONTH(#{dateField_birthday})` |
-| `DAY(date)` | 取天数 | `DAY(#{dateField_birthday})` |
-| `DAYS(date1, date2)` | 两日期相差天数 | `DAYS(#{dateField_end}, #{dateField_start})` |
-| `DATEDELTA(date, n)` | 日期加减 n 天 | `DATEDELTA(#{dateField_start}, 30)` |
-| `NETWORKDAYS(start, end)` | 计算工作日天数 | `NETWORKDAYS(#{dateField_start}, #{dateField_end})` |
-| `TIMESTAMP(dateObj)` | 日期对象转时间戳 | `TIMESTAMP(TODAY())` |
-| `DATE(timestamp)` | 时间戳转日期对象 | `DATE(#{numberField_ts})` |
-| `CASCADEDATEINTERVAL(field)` | 日期区间天数 | `CASCADEDATEINTERVAL(#{cascadeDateField_range})` |
-
-### 逻辑函数（表单场域）
-
-| 函数 | 用途 | 示例 |
-|------|------|------|
-| `IF(cond, trueVal, falseVal)` | 条件判断 | `IF(GE(#{numberField_score}, 90), "优秀", "良好")` |
-| `AND(cond1, cond2, ...)` | 多条件同时成立 | `AND(GE(#{numberField_age}, 18), LE(#{numberField_age}, 60))` |
-| `OR(cond1, cond2, ...)` | 任一条件成立 | `OR(EQ(#{radioField_status}, "完成"), EQ(#{radioField_status}, "关闭"))` |
-| `NOT(cond)` | 条件取反 | `NOT(ISEMPTY(#{textField_name}))` |
-| `EQ(val1, val2)` | 判断相等 | `EQ(#{radioField_type}, "A类")` |
-| `NE(val1, val2)` | 判断不等 | `NE(#{radioField_status}, "已取消")` |
-| `GT(val1, val2)` | 大于 | `GT(#{numberField_amount}, 10000)` |
-| `GE(val1, val2)` | 大于等于 | `GE(#{numberField_score}, 60)` |
-| `LT(val1, val2)` | 小于 | `LT(#{numberField_stock}, 10)` |
-| `LE(val1, val2)` | 小于等于 | `LE(#{numberField_age}, 18)` |
-| `ISEMPTY(field)` | 判断字段是否为空 | `ISEMPTY(#{textField_remark})` |
-| `TIMECOMPARE(date1, date2)` | 比较日期大小 | `TIMECOMPARE(#{dateField_end}, #{dateField_start})` |
-
-### 数学函数（表单场域）
-
-| 函数 | 用途 | 示例 |
-|------|------|------|
-| `SUM(n1, n2, ...)` | 求和 | `SUM(#{tableField_items.numberField_amount})` |
-| `AVERAGE(n1, n2, ...)` | 平均值 | `AVERAGE(#{numberField_q1}, #{numberField_q2}, #{numberField_q3})` |
-| `MAX(n1, n2, ...)` | 最大值 | `MAX(#{numberField_a}, #{numberField_b})` |
-| `MIN(n1, n2, ...)` | 最小值 | `MIN(#{numberField_a}, #{numberField_b})` |
-| `ROUND(n, digits)` | 四舍五入 | `ROUND(#{numberField_price} * #{numberField_qty}, 2)` |
-| `INT(n)` | 向下取整 | `INT(#{numberField_total} / 30)` |
-| `ABS(n)` | 绝对值 | `ABS(#{numberField_diff})` |
-| `MOD(n, divisor)` | 取余 | `MOD(#{numberField_count}, 7)` |
-| `PRODUCT(n1, n2, ...)` | 乘积 | `PRODUCT(#{numberField_price}, #{numberField_qty})` |
-| `SUMPRODUCT(arr1, arr2)` | 数组对应元素相乘后求和 | `SUMPRODUCT(#{tableField_items.numberField_qty}, #{tableField_items.numberField_price})` |
-| `SQRT(n)` | 平方根 | `SQRT(#{numberField_area})` |
-| `POWER(n, p)` | 乘幂 | `POWER(#{numberField_base}, 2)` |
-| `COUNT(field)` | 统计数据总数 | `COUNT(#{tableField_items})` |
-
-### 人员函数（表单场域）
-
-| 函数 | 用途 | 示例 |
-|------|------|------|
-| `USER()` | 当前登录人（赋值给成员字段） | `USER()` |
-| `USER(level)` | 当前登录人的第 level 级主管 | `USER(1)` |
-| `GETUSERNAME()` | 当前登录人昵称（赋值给文本字段） | `GETUSERNAME()` |
-| `LOGINUSERWORKNO()` | 当前登录人员工 ID | `LOGINUSERWORKNO()` |
-| `DEPTNAME(userId)` | 指定用户所在部门名称 | `DEPTNAME(LOGINUSERWORKNO())` |
-| `DIRECTOR()` | 当前登录人的主管名称 | `DIRECTOR()` |
-
-### 集合函数（表单场域）
-
-| 函数 | 用途 | 示例 |
-|------|------|------|
-| `UNIONSET(set1, set2)` | 两集合并集 | `UNIONSET(#{checkboxField_a}, #{checkboxField_b})` |
-| `INTERSECTIONSET(set1, set2)` | 两集合交集 | `INTERSECTIONSET(#{checkboxField_a}, #{checkboxField_b})` |
-| `DIFFERENCESET(set1, set2)` | 两集合差集 | `DIFFERENCESET(#{checkboxField_all}, #{checkboxField_selected})` |
-| `EXIST(val, set)` | 判断值是否在集合中 | `EXIST(#{textField_tag}, #{checkboxField_tags})` |
-
-### 校验函数（表单场域）
-
-| 函数 | 用途 | 示例 |
-|------|------|------|
-| `EXACT(text1, text2)` | 严格比较字符串（区分大小写） | `EXACT(#{textField_password}, #{textField_confirm})` |
-| `ARRAYREPEATED(array)` | 判断数组是否有重复 | `ARRAYREPEATED(#{tableField_items.textField_code})` |
-
----
-
-## 常见场景示例
-
-### 场景 1：子表金额求和
-
-```
-SUM(#{tableField_items.numberField_amount})
-```
-
-### 场景 2：单价 × 数量计算总价（保留2位小数）
-
-```
-ROUND(#{numberField_price} * #{numberField_qty}, 2)
-```
-
-### 场景 3：子表多列乘积求和（SUMPRODUCT）
-
-```
-SUMPRODUCT(#{tableField_items.numberField_qty}, #{tableField_items.numberField_price})
-```
-
-### 场景 4：IF 条件判断等级
-
-```
-IF(GE(#{numberField_score}, 90), "A", IF(GE(#{numberField_score}, 75), "B", IF(GE(#{numberField_score}, 60), "C", "D")))
-```
-
-### 场景 5：多条件 AND 判断
-
-```
-IF(AND(GE(#{numberField_age}, 18), LE(#{numberField_age}, 60)), "适龄员工", "不符合条件")
-```
-
-### 场景 6：计算两个日期相差天数
-
-```
-DAYS(#{dateField_endDate}, #{dateField_startDate})
-```
-
-### 场景 7：在入职日期基础上加 90 天（试用期结束日）
-
-```
-DATEDELTA(#{dateField_joinDate}, 90)
-```
-
-### 场景 8：计算工龄（年，向下取整）
-
-```
-INT(DAYS(TODAY(), #{dateField_joinDate}) / 365)
-```
-
-### 场景 9：自动填充当前登录人（成员字段）
-
-```
-USER()
-```
-
-### 场景 10：自动填充当前登录人昵称（文本字段）
-
-```
-GETUSERNAME()
-```
-
-### 场景 11：自动填充当前登录人部门
-
-```
-DEPTNAME(LOGINUSERWORKNO())
-```
-
-### 场景 12：拼接姓名和工号
-
-```
-CONCATENATE(#{textField_name}, "(", #{textField_workNo}, ")")
-```
-
-### 场景 13：手机号中间4位打码
-
-```
-REPLACE(#{textField_phone}, 4, 4, "****")
-```
-
-### 场景 14：判断字段是否为空，为空时显示默认值
-
-```
-IF(ISEMPTY(#{textField_remark}), "无备注", #{textField_remark})
-```
-
-### 场景 15：生成唯一 ID
-
-```
-UUID()
-```
-
-### 场景 16：计算两个日期区间的工作日天数
-
-```
-NETWORKDAYS(#{dateField_startDate}, #{dateField_endDate})
-```
-
-### 场景 17：格式化金额为人民币大写
-
-```
-RMBFORMAT(#{numberField_amount})
-```
-
-### 场景 18：按逗号分割标签字符串，取第一个标签
-
-```
-ARRAYGET(SPLIT(#{textField_tags}, ","), 1)
-```
-
----
-
-## 注意事项
-
-### ⚠️ 循环依赖
-
-公式中不能引用当前正在配置公式的字段本身，否则会报「表单中的公式存在循环依赖」错误。
-
-**错误示例**：在 `numberField_total` 的公式中引用 `numberField_total` 自身。
-
-### ⚠️ 隐藏字段参与计算
-
-隐藏字段（`behavior: "HIDDEN"`）默认不参与公式计算。若需要隐藏字段参与计算，必须在字段配置中开启「始终提交」选项。
-
-### ⚠️ 日期字段不建议作为判断条件
-
-日期字段的底层值是时间戳，直接用时间戳做判断条件不准确。推荐做法：
-1. 用一个单行文本字段通过公式接收日期值
-2. 用该单行文本字段作为判断条件
-
-### ⚠️ 业务关联规则单独处理
-
-`INSERT`/`UPDATE`/`DELETE`/`UPSERT` 属于表单事件里的业务关联规则高级函数，不属于普通字段公式。遇到这类需求时切换到 `yida-business-rule`。
-
----
-
-## 异常处理
-
-| 异常场景 | 处理方式 |
-|---------|----------|
-| 公式报"函数不存在" | 只能使用 `formula-functions.md` 中列出的函数，检查函数名拼写和大小写 |
-| 公式报"循环依赖" | 公式中不能引用当前字段本身，检查是否存在循环引用 |
-| 字段值未自动计算 | 确认字段已设置 `valueType: "formula"`，隐藏字段需开启「始终提交」 |
-| 比较运算符报错 | 禁止使用 `>=`、`<=` 等符号，必须改用 `GE()`、`LE()` 等函数 |
-| 误把高级函数写到字段公式里 | 切换到 `yida-business-rule`，在表单事件的业务关联规则中配置 |
-| 字段 ID 引用错误 | 先用 `openyida get-schema` 获取真实 fieldId，公式中用 `#{fieldId}` 格式引用 |
-
-## Memory 策略
-
-本技能不读写 memory。公式配置通过 `openyida create-form` 命令写入宜搭平台，fieldId 等技术信息写入 `.cache/` 临时文件，不依赖跨会话的 memory 状态。
+本技能不依赖跨会话 memory。字段映射、原配置和变更文件保存在当前任务目录中。

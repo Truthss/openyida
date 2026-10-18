@@ -34,7 +34,9 @@ const path = require('path');
 // retain less than 16 KiB of cross-runtime gzip headroom.
 // Combined main and process/integration content measures 2,364,935 bytes on
 // Node 24; retain under 16 KiB of compression headroom across supported Nodes.
-const MAX_TARBALL_BYTES = 2320 * 1024;
+// Formula signatures, CLI checks and plain-language skills measure 2,377,477
+// compressed bytes on Node 24; retain the next 16 KiB boundary.
+const MAX_TARBALL_BYTES = 2336 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.
@@ -62,7 +64,10 @@ const MAX_TARBALL_BYTES = 2320 * 1024;
 // process/integration contracts measure 8,867,368 unpacked bytes / 681 files.
 // Integration detail logs and locale help measure 8,881,939 unpacked bytes on Node 20;
 // retain the next 16 KiB boundary without raising compressed or per-file limits.
-const MAX_UNPACKED_BYTES = 8688 * 1024;
+// Formula parsing, platform commands and the function catalog add five runtime
+// files plus one focused skill reference. Node 24 measured 8,919,392 bytes;
+// retain the next 16 KiB boundary; the per-file limit stays unchanged.
+const MAX_UNPACKED_BYTES = 8720 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -75,7 +80,7 @@ const MAX_UNPACKED_BYTES = 8688 * 1024;
 // Content shrinks overall (8,794,095 unpacked bytes); byte budgets stay fixed.
 // Remove the two obsolete process reference redirects after updating consumers.
 // Integration detail logs add one packaged runtime module.
-const MAX_ENTRY_COUNT = 682;
+const MAX_ENTRY_COUNT = 688;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [

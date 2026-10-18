@@ -40,7 +40,8 @@ description: 创建和管理宜搭集成自动化，负责触发、保存发布�
 | 用户目标 | 执行动作 |
 | --- | --- |
 | 创建新自动化 | 使用 `integration create`，由 CLI 生成 `processCode` |
-| 字段与字段比较，如当前库存低于库存下限 | 尚未通过平台保存及运行验收，不能作为已支持能力交付；输入格式与限制见 [条件与变量](../yida-flow-node-config/references/conditions-variables.md) |
+| 获取数据时右侧选字段或公式 | 左侧使用被查询表的字段，右侧区分上游字段与计算结果；读取 [条件与变量](../yida-flow-node-config/references/conditions-variables.md) 和 [节点表达式](../yida-formula/references/automation-formulas.md)，按该取数位置的证据说明验证状态 |
+| 表单事件触发条件中的字段比较 | 该位置尚未通过平台保存及运行验收；按 [条件与变量](../yida-flow-node-config/references/conditions-variables.md) 说明限制，与取数筛选分别判断 |
 | 批量取数、新增或复制子表多行 | 使用 `integration create --spec`，读取通用技能的数据操作说明 |
 | 整图替换已有自动化 | 校验 `appType/formUuid/processCode`，明确告知“CLI 无法读取原有节点定义；本次将整体覆盖，原节点不保留”，获得确认后使用 `integration create ... --process-code <code> --replace` |
 | 更新已有自动化 | 使用 `integration update` 获取 capability 结果，并按结果报告当前状态 |
@@ -88,6 +89,7 @@ openyida integration diagnose --file <异常文件> [--json]
 
 1. 确认目标应用、触发表单、真实字段与触发时机；已有资源复用，不编造 `formUuid/fieldId`。
 2. 从通用节点 Skill 选取所需配置。简单通知可用命令选项，多节点、角色通知和批量数据优先使用 `--spec`。
+   配置公式前读取 [统一公式引导](../yida-formula/SKILL.md#写配置前先处理这些易错点)：取数条件明确左侧目标字段、右侧来源和操作符；节点公式同时保留执行文本、编辑器原文和显示文字，引用仅来自允许的上游节点。
 3. 用结构化文件写入工具创建 `<projectRoot>/.cache/openyida/<任务名>/integration/spec.json`，不要用 shell heredoc、重定向或写到仓库根目录。
 4. 展示触发条件、节点、通知对象和目标写入范围，按上方严格要求获得用户明确同意后创建或发布。默认保存草稿，`--publish` 才启用。
 5. CLI 在首个远端写入前验证 spec、连接器 schema 和字段，然后创建绑定、保存双 JSON，并按需要发布和回读。

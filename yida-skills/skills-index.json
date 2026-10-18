@@ -973,23 +973,33 @@
       "name": "yida-formula",
       "path": "skills/yida-formula/SKILL.md",
       "display_name": "宜搭公式编写",
-      "description": "宜搭表单公式编写规范，包含内置函数速查、语法规则和常见场景示例。",
+      "description": "配置计算、默认值、提交校验、节点筛选和报表表达式；提供嵌套 IF、AND/OR、子表及复杂节点的完整示例，共用函数与引用说明。",
       "category": "yida-skills/form",
       "tags": [
         "公式",
         "字段计算",
         "校验规则",
-        "默认值"
+        "默认值",
+        "节点公式",
+        "报表计算",
+        "嵌套IF",
+        "AND/OR"
       ],
       "aliases": [
         "字段公式"
+      ],
+      "command_ids": [
+        "formula.contracts",
+        "formula.functions",
+        "formula.inspect",
+        "formula.check"
       ]
     },
     {
       "name": "yida-formula-evaluate",
       "path": "skills/yida-formula-evaluate/SKILL.md",
-      "display_name": "公式静态检查",
-      "description": "静态检查宜搭公式语法、字段引用和常见风险。",
+      "display_name": "公式检查与试算",
+      "description": "查看字段公式、查询函数参数并检查写法；带样例调用表达式接口，说明尚未验证的实际执行步骤。",
       "category": "yida-skills/form",
       "tags": [
         "公式检查",
@@ -999,6 +1009,14 @@
       ],
       "aliases": [
         "检查公式"
+      ],
+      "command_ids": [
+        "formula.contracts",
+        "formula.functions",
+        "formula.inspect",
+        "formula.check",
+        "formula.evaluate",
+        "formula.test"
       ]
     },
     {
