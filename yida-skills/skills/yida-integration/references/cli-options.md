@@ -2,6 +2,8 @@
 
 仅在需要查具体命令参数时读取；节点配置的共用规则由 `use_skill("yida-flow-node-config")` 提供。
 
+创建的事件和定时配置见 [触发设置](triggers.md)；更新、日志、监听与复制等命令见 [维护与运行排查](operations.md)。本页集中查创建参数及简短示例。
+
 ### 参数说明
 
 | 参数 | 必填 | 说明 |
@@ -24,12 +26,12 @@
 | `--approval-node-ids <nodeId,...>` | 空 | 当 `--events activityTask` 时必填；审批节点 ID，多个用逗号分隔 |
 | `--trigger-condition <fieldId:fieldName:opCode:value[:componentType[:valueType]]>` | 空 | 触发过滤条件，可多次传入；固定值用 `literal`（默认），右侧为另一个字段时用 `processVar`，见 [字段比较示例](../../yida-flow-node-config/references/conditions-variables.md) |
 | `--trigger-recursively` | 关闭 | 允许自动触发，对应设计器里的“允许自动触发” |
-| `--spec <file.json>` | 不启用 | 使用结构化编排文件创建复杂自动化，支持 `getSelf`、`dataRetrieve`、`dataCreate`、`dataUpdate`、`route`、`sendMessage`、`connector`、`initiateApproval` |
+| `--spec <file.json>` | 不启用 | 使用结构化编排文件创建复杂自动化，支持 `getSelf`、`dataRetrieve`、`dataCreate`、`dataUpdate`、`route`、`parallel`、`cycle`、`sendMessage`、`connector`、`initiateApproval` |
 | `--get-self` | 关闭 | 自动插入“获取自身”节点：流程表单运行态查询字段为 `pid`、设计器字段为 `proc_inst_id`；普通表单两侧使用 `form_inst_id`，均等于触发事件字段 `__masterdata_form_inst_id` |
 | `--get-self-field <field>` | `__masterdata_form_inst_id` | 覆盖右侧触发事件系统字段；仅在确认环境变量名不同后使用 |
 | `--get-self-query-field <field>` | 自动按来源表单类型选择 | 覆盖左侧查询系统字段；流程表单运行态使用 `pid` / `流程实例ID`、设计器使用 `proc_inst_id`，普通表单两侧使用 `form_inst_id` / `表单实例ID`；仅在确认平台字段名不同后使用 |
 | `--data-form-uuid <formUuid>` | 不启用 | 获取单条数据节点的目标表单 UUID（B 表单），传入后在触发节点和通知节点之间插入 GetSingleDataNode |
-| `--data-condition <bFieldId:bFieldName:aFieldId[:componentType[:opCode[:valueType]]]>` | 无 | 获取单条数据的过滤条件，可多次传入；格式：`B表单字段ID:B表单字段名:A表单字段ID[:组件类型[:操作符[:值类型]]]`，组件类型默认 `TextField`，操作符默认 `Contain` |
+| `--data-condition <bFieldId:bFieldName:aFieldId[:componentType[:opCode[:valueType]]]>` | 无 | 获取单条数据节点的“按条件过滤”；左侧目标表字段，右侧触发记录字段，字段用 `processVar`（默认），固定值显式用 `literal`；组件默认 `TextField`，操作符默认 `Contain`。数字比较别名自动转换为原生码；多节点引用用 spec，详见 [取数字段筛选](../../yida-flow-node-config/references/conditions-variables.md#获取数据节点按条件过滤--字段) |
 | `--add-data-form-uuid <formUuid>` | 不启用 | 新增数据节点的目标表单 UUID，传入后在通知节点之后插入 AddDataNode；目标必须是普通表单（如 `formType=receipt`），不能是流程表单（`formType=process`） |
 | `--add-data-assignment <targetFieldId:valueType:value>` | 无 | 新增数据的字段赋值，可多次传入；格式：`目标字段ID:valueType:value`，valueType 可选 `processVar`（引用触发表单字段）/ `literal`（固定值）/ `column`（公式） |
 | `--initiate-approval-form-uuid <formUuid>` | 不启用 | 发起审批节点的目标流程表单 UUID；当 B 是流程表单（`formType=process`）时必须使用它，不要用 `--add-data-form-uuid` |

@@ -24,9 +24,64 @@
 
 ## 最小示例
 
-### 字段与字段比较：当前库存 < 库存下限
+### 获取数据节点：按条件过滤 → 字段
 
-以下字段比较格式当前仅通过本地编译检查，尚未通过平台保存及运行验收，不能作为已可用能力直接交付。固定值比较不受此说明影响。
+适用于 `dataRetrieve` 的获取单条／多条数据节点。左侧是目标表的待筛选字段，右侧可选固定值、触发记录字段或已执行上游单条节点的字段。例如“目标库存 < 上游记录的库存下限”，不是在触发开始节点配置，也不是自动逐行比较目标表自己的两列。
+
+先分别查询来源表和目标表的字段：
+
+```bash
+openyida get-schema APP_XXX FORM_SOURCE --field-map-json
+openyida get-schema APP_XXX FORM_TARGET --field-map-json
+```
+
+```json
+{
+  "events": ["insert"],
+  "nodes": [
+    {"id":"self","type":"getSelf"},
+    {
+      "id":"matched","type":"dataRetrieve","formUuid":"<真实目标formUuid>",
+      "retrieveType":"batch","quantity":20,"filterType":"condition",
+      "conditions":[{
+        "bFieldId":"<目标库存字段ID>","bFieldName":"库存",
+        "componentType":"NumberField","opCode":"LessThan",
+        "aFieldId":"${self}.<上游库存下限字段ID>","valueType":"processVar"
+      }]
+    }
+  ]
+}
+```
+
+字段 ID 必须先查真实 schema；左右字段属于各自表单，数据类型必须兼容。`bFieldId/aFieldId` 也可分别写为 `fieldId/value`。引用触发记录时右侧直接用字段 ID；引用上游单条数据时用 `${别名}.字段ID`，CLI 解析为真实节点引用。图中“字段”的值类型为 `processVar`；“值”为 `literal`。不要把字段 ID 作为 literal 文本提交。
+
+照上面完整 spec 替换其中一条 `conditions`，按右侧来源选择写法：
+
+| 想比较什么 | 右侧怎么填 |
+| --- | --- |
+| 目标库存小于固定数字 10 | `"aFieldId":10,"valueType":"literal"` |
+| 目标库存小于触发记录的库存下限 | `"aFieldId":"<上游库存下限字段ID>","valueType":"processVar"` |
+| 目标库存小于上游 `self` 记录的库存下限 | `"aFieldId":"${self}.<上游库存下限字段ID>","valueType":"processVar"` |
+
+例如库存下限为 10，目标库存有 0、9、10、11，`LessThan` 应取出 0 和 9。要取出等于 10 的记录，将操作符改为 `LessThanOrEqual`。固定数字保留数字类型，字段引用保留字符串类型。
+
+普通 CLI 参数可引用触发记录字段；多节点别名使用 spec：
+
+```bash
+openyida integration create APP_XXX FORM_SOURCE "按字段筛选库存" \
+  --events insert --data-form-uuid FORM_TARGET \
+  --data-condition 'numberField_stock:库存:numberField_minStock:NumberField:LessThan:processVar'
+```
+
+取数节点的数字操作符将 `LessThan/LessThanOrEqual/GreaterThan/GreaterThanOrEqual` 转为平台原生 `Lesser/LesserOrEqual/Bigger/BiggerOrEqual`，也接受这四个原生值。不要把本地输入别名直接当平台保存协议。固定值与字段引用共用此转换。
+
+上游批量查询的整列不是单个右值；需要逐行匹配时在循环体引用当前行，不把未执行节点或整个结果数组作为单值。现有过滤字段、操作符和变量支持以目标组织平台返回为准；分页查询的条数上限不代表全量数据。
+
+取数字段引用的文本相等、数字小于以及零值／相等边界已经过真实运行验证。图中的“公式”是另一种结构（`column`），不能将以下触发／分支公式的未验收结论套用于取数的 processVar 字段引用，也不能由字段测试推断所有公式均可运行。
+
+### 触发过滤：同一触发记录的两个字段
+
+以下触发字段比较格式当前仅通过本地编译检查，尚未通过平台保存及运行验收，不能作为已可用能力直接交付。固定值比较不受此说明影响；它与上面的取数节点筛选是不同消费场域。
 
 先从真实 schema 取得两个数字字段 ID。下面的 `numberField_stock`、`numberField_minStock` 和接收人 ID 都须替换。
 
@@ -60,15 +115,15 @@ openyida integration create APP_XXX FORM_XXX "库存不足通知" \
 
 触发条件只引用触发表单字段，不能引用尚未执行的下游节点。多条 spec 触发条件默认 `AND`，需要任选其一时设置顶层 `triggerConditionLogic: OR`。
 
-### 分支和取数中的字段比较
+### 分支中的字段比较（待验收）
 
-自动化分支可以比较上游节点的两个字段；例如先配置 `getSelf` 节点 `id: self`，再在 `route` 分支的 `conditions` 中写：
+自动化分支的以下字段比较格式仅作待验收输入示例，不能将取数节点的运行结论直接套用。例如先配置 `getSelf` 节点 `id: self`，再在 `route` 分支的 `conditions` 中写：
 
 ```json
 {"fieldId":"${self}.numberField_stock","fieldName":"当前库存","componentType":"NumberField","opCode":"LessThan","value":"${self}.numberField_minStock","valueType":"processVar"}
 ```
 
-取数节点则比较“目标表库存”和“上游记录库存下限”，放到 `dataRetrieve.conditions`：
+取数节点比较“目标表库存”和“上游记录库存下限”时，应放到 `dataRetrieve.conditions`，参见本页首个完整示例；不能放到 `route.conditions` 或顶层 `triggerConditions`。同一筛选条件的简写：
 
 ```json
 {"bFieldId":"numberField_stock","bFieldName":"当前库存","componentType":"NumberField","opCode":"LessThan","aFieldId":"${self}.numberField_minStock","valueType":"processVar"}
@@ -93,7 +148,7 @@ openyida integration create APP_XXX FORM_XXX "库存不足通知" \
 - 自动化分支的复杂空值判断优先使用已验证的 `ISEMPTY()` 公式，不只依赖设计器“没有值”选项；公式写在支持公式的条件位置，不能直接替换操作符。
 - `valueType`、右侧值来源和数据类型一起检查；`0`、`false`、空值不能互相代替。
 - 字段比较属于自动化条件配置，与审批人“条件模式”是两项能力；按 `integration create` 返回处理，明确提示权益不足时再引导开通。执行前仍须按自动化入口确认配置摘要。
-- 人员条件模式当前缺完整简化配置，按 [人员选择](actors.md) 的高级透传要求处理。
+- 人员条件模式使用 [人员选择](actors.md#审批办理抄送的完整配置) 的完整定义；审批、办理、抄送分别使用 `approver/executor/receiver`。
 - 没有真实资源 ID 或参数 schema 时，先补齐证据，不为通过编译随意填字段类型、节点别名或占位条件。
 
 ## 流程操作符速查
