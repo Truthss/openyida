@@ -199,3 +199,12 @@ test('data-management authoring guide is a read-only local managed action', () =
   expect(classifyManagedMutation('data-manage-style', ['guide', '--json'])).toBeNull();
   expect(() => run('data-manage-style', ['guide', '--output', 'out.css'])).toThrow();
 });
+
+
+test('managed feedback permits only offline report preparation, with no cloud mutation receipt', () => {
+  expect(() => run('feedback', ['report', '--input', 'summary.json', '--output-dir', 'draft'])).not.toThrow();
+  expect(classifyManagedMutation('feedback', ['report', '--input', 'summary.json', '--output-dir', 'draft'])).toBeNull();
+  for (const action of ['setup', 'url', 'submit', 'future-action']) {
+    expect(() => run('feedback', [action])).toThrow();
+  }
+});
