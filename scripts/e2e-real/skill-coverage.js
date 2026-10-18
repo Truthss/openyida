@@ -9,6 +9,7 @@ const ROOT = path.resolve(__dirname, '..', '..');
 const SKILLS_DIR = path.join(ROOT, 'yida-skills', 'skills');
 
 const SKILL_COVERAGE = {
+  'yida-task-center': { level: 'offline-unit', tests: ['tests/task-center-contract.test.js', 'tests/task-center-scaffold.test.js'], reason: 'Task query contracts and local page assembly; runtime data, permissions and visual acceptance require an owned application.' },
   'yida-aggregate-table': { level: 'opt-in-real-e2e', stages: ['aggregate'], commands: ['aggregate-table inspect/preview/save/publish/status'], tests: ['tests/aggregate-table.test.js', 'tests/aggregate-table-contract.test.js', 'tests/e2e-real-aggregate-runner.test.js'], reason: 'aggregate writes require an explicitly owned target and fixed designer fixture; runtime query and physical delete remain PLATFORM_PROBE_REQUIRED, so this domain runner is never part of shared full-runner defaults' },
   'yida-app': { level: 'real-e2e', stages: ['app', 'form', 'page', 'data', 'report', 'dashboard'] },
   'yida-upgrade-app-theme': { level: 'offline-unit', tests: ['tests/upgrade-app-theme.test.js', 'tests/prepare-app-theme-upgrade.test.js', 'tests/cli-smoke.test.js'], reason: 'Requires an explicit upgrade request and ask_human confirmation; mock-only tests cover authorization gates, agentAppType-only eligibility, creation-marker/theme-mode writes, partial failure and pair readback. Never upgrade a shared E2E app automatically.' },

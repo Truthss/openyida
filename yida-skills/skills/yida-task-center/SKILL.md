@@ -1,0 +1,17 @@
+---
+name: yida-task-center
+description: 仅在用户明确要求用自定义页面开发待办中心，或在应用搭建中通过 ask_human 明确同意该实现方式后使用。支持待我处理、我创建的、我已处理、抄送我的的自定义展示和原生办理入口。普通待办查询、原生任务中心、业务工单或未指定自定义实现的工作台不触发。
+---
+
+# 自定义待办中心
+
+先核对用户已明确选择自定义实现及目标应用。仅提到待办中心、Fast 模式、已有 Canvas 页面或委托 AI 决定均不算选择；不要自行补确认记录。应用搭建中由 `yida-app` 先 ask_human，明确同意后才交接本技能；用户已显式要求时不重复问。
+
+1. 复用目标 app/page、现有业务要求和 `design.md`。沿用应用主题、导航、密度与控件风格；不重新选风格、不自动升级主题。
+2. 执行 `openyida task-center capabilities --json`，按返回的 specExample 派生配置。`customPage.source` 记录真实选择来源，`confirmed=true` 仅用于明确同意；`designFile` 指向当前应用设计文件。选择整页或嵌入区块及所需栏目。
+3. 用 `openyida data query tasks <appType> --type <todo|created|done|cc> --normalized` 核查数据，再执行 `openyida task-center scaffold --spec <配置.json> --output <新文件.canvas.jsx>`。已有页面先备份，把生成的 `TaskInboxSection` 和依赖合并进原页面，已有主题容器和详情容器各保留一份。
+4. 通过 `yida-canvas-custom-page` 的编译检查，再按 `yida-publish-page` 发布回读。检查四类实际数据、分页、详情办理后返回刷新、移动端及应用各页面主题；没有浏览器证据时说明运行态待验。
+
+接口、字段和详情路由由 CLI 装配，不手写另一套请求。CLI 样本属于本机登录人，发布后的页面通过平台桥读取实际访问者的任务，不能嵌入 CLI 凭证或静态查询结果。办理使用原生流程页，不自行新增页内同意或拒绝按钮。
+
+我创建的包括普通表单和流程；我已处理不代表整个流程完成；抄送不是待审批。业务订单的待处理列表继续走业务数据绑定，不用流程任务接口代替。缺少能力、登录、权限或必要详情字段时展示真实错误或禁用入口，不以演示数据代替。

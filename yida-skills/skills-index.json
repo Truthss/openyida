@@ -4,6 +4,38 @@
   "entry": "openyida",
   "skills": [
     {
+      "name": "yida-task-center",
+      "path": "skills/yida-task-center/SKILL.md",
+      "display_name": "自定义待办中心",
+      "description": "仅用户明确要求用自定义页面开发待办中心，或应用搭建中经 ask_human 明确同意后使用；接口与页面装配由 CLI 提供，沿用应用主题。",
+      "category": "yida-skills/page",
+      "tags": [
+        "自定义待办中心"
+      ],
+      "positive_signals": [
+        "用自定义页面开发待办中心",
+        "通过自定义页面实现审批任务区块",
+        "已通过 ask_human 明确选择自定义待办页面"
+      ],
+      "negative_signals": [
+        "查询我的待办",
+        "增加待办中心但未指定自定义页面",
+        "原生待办中心",
+        "普通审批工作台",
+        "已有 Canvas 但未选择自定义待办",
+        "仅选择 Fast 模式",
+        "业务工单待处理列表",
+        "管理流程代理"
+      ],
+      "command_ids": [
+        "task-center",
+        "data",
+        "compile",
+        "publish"
+      ],
+      "requires_login": true
+    },
+    {
       "name": "yida-data-manage-ui",
       "path": "skills/yida-data-manage-ui/SKILL.md",
       "display_name": "数据管理页美化",

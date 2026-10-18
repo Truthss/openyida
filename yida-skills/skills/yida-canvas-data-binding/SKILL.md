@@ -7,6 +7,8 @@ description: 为 YidaCodeCanvas 自定义页面接入真实表单、流程、连
 
 ## 核心定位
 
+流程待办的四类个人任务使用 CLI 任务契约，不用 `searchFormDatas` 模拟。仅在用户明确选择自定义待办实现后交接 `yida-task-center`；普通任务查询直接使用 CLI，未指定自定义实现不因数据绑定需求自动创建待办页。
+
 本技能只处理使用 `YidaCodeCanvas` 组件实现的页面里的真实数据接入：把页面所需数据先声明成 `dataBinding` 契约，再由页面生成器或业务组件生成统一的 `DataBridge`。读取宜搭表单数据时，默认消费外层普通自定义页面在 `didMount` 中注册到 `window.__OPENYIDA_YIDA_API__` 的 yida JS-API 桥；根级工具消费同层注册的 `window.__OPENYIDA_UTILS__`，其中 `.yida` 指向同一个 yida API 桥；连接器代理或自定义同源接口仍按自身 endpoint 读取。
 
 `YidaCodeCanvas` 组件运行时是标准 React 组件环境，组件没有普通宜搭自定义页实例对象。因此数据接入要显式写清来源、字段映射、刷新策略和异常处理，不能靠隐式页面实例补齐。连接器模式使用发布层注入的 `window.__OPENYIDA_CONNECTOR_API__`。

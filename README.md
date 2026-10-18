@@ -497,7 +497,7 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 | Command | Description |
 |---------|-------------|
 | `openyida data <query\|get\|create\|update> <resource> ... \| delete form <appType> <formUuid> --inst-id <id> --expect-form-name <name> --expect-form-type receipt --confirm [--json]` | Unified data management (form/process/task/subform) |
-| `openyida task-center <type> [options]` | Global task center (todo/processed/cc etc.) |
+| `openyida task-center <todo\|created\|done\|cc\|proxy\|capabilities\|scaffold> [--spec <file.json> --output <file.canvas.jsx>] [options]` | Task queries, capability discovery and custom task page assembly |
 | `openyida basic-info <overview\|commodity\|grant\|capacity\|quota\|abs-path\|dataflow\|i18n\|domain>` | Query organization basic info, capacity, quotas, and domain settings |
 | `openyida read-dingtalk-doc <docUrl> [--output <file>] [--json]` | Fetch Markdown content from a DingTalk document |
 | `openyida read-dingtalk-tingji <taskUuid> [--json]` | Fetch DingTalk Tingji details by task UUID |
@@ -594,6 +594,12 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 | `openyida cdn-refresh [options]` | Refresh CDN cache |
 
 <!-- OPENYIDA_COMMANDS_END -->
+
+### Custom task pages
+
+Query application tasks with `openyida data query tasks <appType> --type todo --normalized`; `created`, `done`, and `cc` select the other personal task lists. Use `openyida task-center capabilities --json` for supported filters and the page configuration example.
+
+After explicitly choosing a custom task page, run `openyida task-center scaffold --spec <file.json> --output <new-file.canvas.jsx>`. The configuration requires the choice record and the application's existing design file. Generated pages follow the application theme, read the current visitor's tasks, and open native pages for processing. `embedded` mode provides the same task section for an existing workbench. Compile and publish the page using the usual commands.
 
 ### CLI Notes
 

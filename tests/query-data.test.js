@@ -1394,6 +1394,26 @@ describe('run() query subform alias resolution', () => {
 // ── query tasks 场景 ──────────────────────────────────────────────────
 
 describe('run() query tasks', () => {
+  test('created 别名读取混合实例并输出统一分页和详情目标', async () => {
+    utils.httpGet.mockResolvedValue({ success: true, content: { totalCount: 21, currentPage: 2, data: [
+      { dataType: 'finst', formInstId: 'FINST_A', formUuid: 'FORM_A', title: '申请' },
+    ] } });
+    utils.requestWithAutoLogin.mockImplementation((request, auth) => request(auth));
+    const log = jest.spyOn(console, 'log').mockImplementation(() => {});
+    await run(['query', 'tasks', 'APP_XXX', '--type', 'created', '--normalized', '--page', '2', '--size', '20']);
+    expect(utils.httpGet.mock.calls[0][1]).toBe('/dingtalk/web/APP_XXX/v1/process/getMySubmitInApp.json');
+    expect(utils.httpGet.mock.calls[0][2]).toMatchObject({ currentPage: 2, pageSize: 20, appType: 'APP_XXX' });
+    expect(getLoggedJson(log).content).toMatchObject({ total: 21, page: 2, pageSize: 20, items: [{ kind: 'created', detailTarget: { type: 'detail', formInstId: 'FINST_A' } }] });
+    log.mockRestore();
+  });
+
+  test.each([
+    ['--process-codes', '["p"]'], ['--instance-status', 'RUNNING'], ['--size', '0'], ['--all'],
+  ])('不支持的筛选或分页不发送请求 %j', async (...flags) => {
+    await expect(run(['query', 'tasks', 'APP_XXX', '--type', 'todo', ...flags])).rejects.toHaveProperty('isCliError', true);
+    expect(utils.requestWithAutoLogin).not.toHaveBeenCalled();
+  });
+
   test('查询待办任务成功时输出结果', async () => {
     utils.requestWithAutoLogin.mockResolvedValue({
       success: true,

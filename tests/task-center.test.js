@@ -25,6 +25,35 @@ beforeEach(() => {
 });
 
 describe('task-center run', () => {
+  test('全局查询第二页使用 page/limit 协议', async () => {
+    const log = jest.spyOn(console, 'log').mockImplementation(() => {});
+    utils.httpGet.mockResolvedValue({ success: true, content: { values: [] } });
+    utils.requestWithAutoLogin.mockImplementation((request, auth) => request(auth));
+    await run(['created', '--page', '2', '--size', '30', '--keyword', '采购', '--no-detail']);
+    const [base, endpoint, params] = utils.httpGet.mock.calls[0];
+    expect(base).toBe('https://www.aliwork.com');
+    expect(endpoint).toBe('/query/task/getMyCreateInCorp.json');
+    expect(JSON.parse(params.query)).toEqual({ page: 2, limit: 30, keyword: '采购', ignoreDetail: 'y' });
+    log.mockRestore();
+  });
+
+  test('能力查询无需登录且不发送请求', async () => {
+    const log = jest.spyOn(console, 'log').mockImplementation(() => {});
+    utils.loadAuthData.mockReturnValue(null);
+    const result = await run(['capabilities', '--json']);
+    expect(result).toMatchObject({ scope: 'app', inlineApproval: false, identity: 'current-visitor' });
+    expect(utils.loadAuthData).not.toHaveBeenCalled();
+    expect(utils.requestWithAutoLogin).not.toHaveBeenCalled();
+    log.mockRestore();
+  });
+
+  test('装配缺参数或未知参数在登录和网络前报错', async () => {
+    await expect(run(['scaffold', '--output', 'task.canvas.jsx'])).rejects.toHaveProperty('isCliError', true);
+    await expect(run(['capabilities', '--app-type', 'APP_OTHER'])).rejects.toHaveProperty('isCliError', true);
+    expect(utils.loadAuthData).not.toHaveBeenCalled();
+    expect(utils.requestWithAutoLogin).not.toHaveBeenCalled();
+  });
+
   test('查询成功时输出 JSON', async () => {
     utils.requestWithAutoLogin.mockResolvedValue({
       success: true,

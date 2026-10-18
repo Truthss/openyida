@@ -375,7 +375,7 @@ openyida integration enable APP_XXX FORM_XXX PROC_CODE
 | 命令 | 说明 |
 |------|------|
 | `openyida data <query\|get\|create\|update> <resource> ... \| delete form <appType> <formUuid> --inst-id <id> --expect-form-name <name> --expect-form-type receipt --confirm [--json]` | 统一数据管理（表单/流程/任务/子表单） |
-| `openyida task-center <type> [options]` | 全局任务中心（待办/已处理/抄送等） |
+| `openyida task-center <todo\|created\|done\|cc\|proxy\|capabilities\|scaffold> [--spec <file.json> --output <file.canvas.jsx>] [options]` | 任务查询、能力查询与自定义待办页面装配 |
 | `openyida basic-info <overview\|commodity\|grant\|capacity\|quota\|abs-path\|dataflow\|i18n\|domain>` | 查询组织基本信息、容量、额度和域名设置 |
 | `openyida read-dingtalk-doc <docUrl> [--output <file>] [--json]` | 获取钉钉文档的 Markdown 内容 |
 | `openyida read-dingtalk-tingji <taskUuid> [--json]` | 按任务 UUID 获取钉钉听记详情 |
@@ -472,6 +472,12 @@ openyida integration enable APP_XXX FORM_XXX PROC_CODE
 | `openyida cdn-refresh [options]` | 刷新 CDN 缓存 |
 
 <!-- OPENYIDA_COMMANDS_END -->
+
+### 自定义待办页面
+
+通过 `openyida data query tasks <appType> --type todo --normalized` 查询应用内个人待办；`created`、`done`、`cc` 分别查询我创建的、我已处理和抄送我的。执行 `openyida task-center capabilities --json` 查看支持的筛选和页面配置示例。
+
+明确选择自定义待办页面后，执行 `openyida task-center scaffold --spec <配置.json> --output <新文件.canvas.jsx>`。配置需要记录该选择并引用应用现有设计文件。生成页面沿用应用主题，读取当前访问者的任务，办理时打开原生页面；`embedded` 模式可作为既有工作台中的任务区块。生成后按常规流程编译和发布。
 
 ### 连接本地 Agent
 

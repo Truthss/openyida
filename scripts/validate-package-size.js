@@ -62,7 +62,8 @@ const MAX_TARBALL_BYTES = 2320 * 1024;
 // process/integration contracts measure 8,867,368 unpacked bytes / 681 files.
 // Integration detail logs and locale help measure 8,881,939 unpacked bytes on Node 20;
 // retain the next 16 KiB boundary without raising compressed or per-file limits.
-const MAX_UNPACKED_BYTES = 8688 * 1024;
+// Task contracts, page assembly, template and skill: 8,916,723 bytes / 687 files.
+const MAX_UNPACKED_BYTES = 8720 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -75,10 +76,15 @@ const MAX_UNPACKED_BYTES = 8688 * 1024;
 // Content shrinks overall (8,794,095 unpacked bytes); byte budgets stay fixed.
 // Remove the two obsolete process reference redirects after updating consumers.
 // Integration detail logs add one packaged runtime module.
-const MAX_ENTRY_COUNT = 682;
+const MAX_ENTRY_COUNT = 687;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
+  'lib/task-center/contract.js',
+  'lib/task-center/loader.js',
+  'lib/task-center/scaffold.js',
+  'lib/samples/yida-task-center/center.canvas.jsx',
+  'yida-skills/skills/yida-task-center/SKILL.md',
   'lib/permission/permission-scope.js',
   'lib/permission/matrix-availability.js',
   'yida-skills/skills/yida-form-permission/references/row-field-access.md',
