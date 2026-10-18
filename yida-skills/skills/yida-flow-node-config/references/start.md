@@ -12,7 +12,8 @@
 | 哪些人能发起流程 | 表单 START 权限组 | 通过 `yida-form-permission` 维护，非节点 props |
 | 自动化表单事件 | spec 顶层 `events`；默认 `insert` | 可直接生成配置 |
 | 自动化流程完成或节点事件 | spec 的 `events/approvalActions`，节点事件另有 `approvalNodeIds` | 可直接生成配置 |
-| 自动化定时、应用事件、手动/卡片触发 | 各自的触发定义 | 当前 create 未封装，不能用表单事件冒充 |
+| 自动化定时、指定字段变化 | `schedule` 或 `events/changedFields` | 可直接生成，读 [自动化触发设置](../../yida-integration/references/triggers.md) |
+| 自动化应用事件、手动/卡片触发 | 各自的触发定义 | 当前可查询，尚未封装创建 |
 
 流程的发起与结束由 CLI 自动生成，不手写到 `nodes`。自动化也由 CLI 生成触发与结束，不接收流程的 `startFormConfig`。
 
@@ -34,13 +35,7 @@
 openyida get-permission <appType> <formUuid> --package-type FORM_PACKAGE_START
 ```
 
-自动化流程完成事件：
-
-```json
-{"events":["processFinish"],"approvalActions":["agree"],"nodes":[{"id":"self","type":"getSelf"}]}
-```
-
-节点事件使用 `activityTask`，spec 还需 `approvalNodeIds: ["<真实节点ID>"]`。只用命令选项创建时，分别使用 `--events`、`--approval-actions` 和 `--approval-node-ids`；不要假设这些选项会补入 spec。这里只示范触发，后续动作按实际需求补充。
+自动化的事件、监听字段和定时参数统一见 [自动化触发设置](../../yida-integration/references/triggers.md)。这里仅说明流程发起设置与自动化触发的区别。
 
 ## 特有限制
 

@@ -119,7 +119,7 @@ function runAnyWithEnv(args, extraEnv, cwd = ROOT, options = {}) {
 test('integration help includes detail-log in an extra locale', () => {
   const result = runAnyWithEnv(['integration', '--help'], { OPENYIDA_LANG: 'ja' });
   expect(result.status).toBe(0);
-  expect(result.output).toContain('integration <create|update|list|enable|disable|check|detail-log|diagnose>');
+  expect(result.output).toContain('integration <create|update|list|enable|disable|check|detail-log|diagnose|monitor|copy|rename|delete>');
 });
 
 function createCodexWorkspace() {
@@ -634,6 +634,7 @@ describe('CLI offline smoke', () => {
       'app-offline',
       'connector.delete',
       'connector.delete-action',
+      'integration.delete',
     ]);
     expect(parsed.summary.core_workflows.full_app_build).toMatchObject({
       mode: 'unified_build',
@@ -766,11 +767,11 @@ describe('CLI offline smoke', () => {
     });
     expect(parsed.commands.find(entry => entry.id === 'integration.create').usage).toContain('--spec file.json');
     expect(parsed.commands.find(entry => entry.id === 'integration.update')).toMatchObject({
-      usage: 'openyida integration update <appType> <formUuid> <processCode> --spec <desired-spec.json> [--publish]',
+      usage: 'openyida integration update <appType> <formUuid> <processCode> --patch <patch.json> [--dry-run] [--expect <fingerprint>] [--publish]',
       output: 'json',
-      requires_login: false,
-      side_effect: { kind: 'local_write', mutates_yida: false, mutates_local: true },
-      permission: { mode: 'allow', effect: 'write' },
+      requires_login: true,
+      side_effect: { kind: 'mixed', mutates_yida: true, mutates_local: true },
+      permission: { mode: 'allow', effect: 'unknown' },
     });
     expect(parsed.commands.find(entry => entry.id === 'externalize-form')).toMatchObject({
       usage: 'openyida externalize-form <appType> <formUuid> [--schema-file file]',
@@ -1741,6 +1742,7 @@ describe('CLI offline smoke', () => {
       'app-offline',
       'connector.delete',
       'connector.delete-action',
+      'integration.delete',
     ]);
     expect(parsed.commands.read_only_command_ids).toContain('agent-capabilities');
     expect(parsed.commands.core_workflows.full_app_build).toMatchObject({
