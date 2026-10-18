@@ -18,7 +18,16 @@ description: 查询、新增和修改宜搭表单权限组，配置成员范围�
 | VIEW | 查看和管理已有数据 | 默认 `FORM_PACKAGE_VIEW` |
 | START | 发起和提交 | 查询、保存、复核都传 `--package-type FORM_PACKAGE_START` |
 
-组合配置成员、数据范围和字段权限，或引用已有矩阵时，读取 [成员、数据范围与字段权限](references/row-field-access.md)。各维度按用户要求独立配置。
+## 按任务选择
+
+| 要做什么 | 读取说明 |
+| --- | --- |
+| 配成员、角色、可访问的数据和字段 | [成员、数据范围与字段权限](references/row-field-access.md) |
+| 按字段、当前登录人、部门组合筛选数据 | [按字段组合数据范围](references/row-field-access.md#按字段组合数据范围) |
+| 复制、重命名或删除权限组 | [权限组管理](references/management.md#权限组管理) |
+| 查询或维护组织矩阵 | [组织矩阵管理](references/management.md#组织矩阵管理)，先核对组织管理权限 |
+
+各维度按用户要求独立配置。普通数据条件不要求配置矩阵。
 
 ## 铁律
 
@@ -58,6 +67,7 @@ openyida save-permission <appType> <formUuid> --package-uuid <packageUuid> [选�
 |------|------|
 | `--package-uuid <packageUuid>` | 精确选择已有权限组；不能与 `--create` 同时使用 |
 | `--package-type <FORM_PACKAGE_VIEW\|FORM_PACKAGE_START>` | 指定查看或发起权限组；默认 VIEW，查询与保存必须一致 |
+| `--conditions-file <file>` | 组合字段、当前用户、部门与 AND/OR 数据条件；VIEW 使用 |
 | `--data-permission <json>` | 修改 dataPermit；顶层可带 `role` 选择目标组 |
 | `--action-permission <json>` | 整块替换 operatePermit；顶层可带 `role` |
 | `--field-permission <json>` | 修改真实 fieldPermit；顶层可带 `role` |
@@ -205,4 +215,4 @@ ID、名称及条件按实际查询结果替换；示例的成员字段条件只
 
 ## 明确不支持
 
-新操作键、部门/参数成员创建、权限组删除/复制/重命名、矩阵本体 CRUD 和 permission-v2。已有矩阵引用已支持可用性预查询；START 的支持范围见上文。
+新操作键、部门/参数成员创建和 permission-v2。权限组的复制、重命名、删除以及组织矩阵操作按上方管理说明执行；START 的支持范围见上文。

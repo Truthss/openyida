@@ -954,7 +954,7 @@
       "name": "yida-form-permission",
       "path": "skills/yida-form-permission/SKILL.md",
       "display_name": "表单权限组管理",
-      "command_ids": ["get-permission", "save-permission"],
+      "command_ids": ["get-permission", "save-permission", "permission-manage", "matrix"],
       "description": "管理表单权限组的成员范围、数据范围、操作权限和字段权限；支持差异预览和已有矩阵引用。",
       "category": "yida-skills/access",
       "tags": [
@@ -1055,7 +1055,7 @@
       "name": "yida-integration",
       "path": "skills/yida-integration/SKILL.md",
       "display_name": "集成自动化配置",
-      "description": "管理集成自动化的触发、完整 spec、保存发布、查询启停和日志；通知、数据、条件及连接器参数按需加载 yida-flow-node-config。",
+      "description": "配置自动化何时执行、依次做哪些处理，修改已有自动化，查看日志、设置异常提醒和管理名称或副本。节点参数按需读取通用节点说明。",
       "category": "yida-skills/integration",
       "tags": [
         "集成自动化",
@@ -1087,15 +1087,7 @@
         "只创建 HTTP 连接器动作",
         "页面 dataSourceMap 数据源"
       ],
-      "command_ids": [
-        "integration.create",
-        "integration.update",
-        "integration.list",
-        "integration.enable",
-        "integration.disable",
-        "integration.check",
-        "integration.diagnose"
-      ],
+      "command_ids": ["integration.create", "integration.update", "integration.list", "integration.enable", "integration.disable", "integration.check", "integration.diagnose", "integration.log-detail", "integration.monitor", "integration.copy", "integration.rename", "integration.delete"],
       "done_when": "集成自动化创建/启停/诊断完成，并返回 processCode 或检查结果。"
     },
     {
@@ -1236,7 +1228,7 @@
       "name": "yida-flow-node-config",
       "path": "skills/yida-flow-node-config/SKILL.md",
       "display_name": "流程与自动化通用节点配置",
-      "description": "流程与集成自动化的通用节点配置入口；按六类节点和人员、字段权限、按钮、条件变量按需读取，区分直接生成、真实配置透传及未封装能力。",
+      "description": "配置审批、办理、分支、并行、循环、数据和通知节点；人员、角色、条件选人、字段权限及变量各在一处说明。",
       "category": "yida-skills/process",
       "tags": ["通用节点", "指定角色", "字段权限", "操作按钮", "条件变量", "字段比较", "数据节点", "通知节点", "扩展执行"],
       "positive_signals": ["节点指定角色", "审批人条件模式", "流程自动化共用节点配置", "通知财务角色", "审批人允许编辑单价", "配置加签和转交", "数据节点字段赋值", "字段与字段比较", "当前库存低于库存下限"],
@@ -1247,7 +1239,7 @@
       "path": "skills/yida-process-rule/SKILL.md",
       "display_name": "流程规则配置",
       "command_ids": ["configure-process", "process.fields", "process.preview"],
-      "description": "管理已有流程的完整定义、保存发布和配置回读，支持节点、人员、字段权限、跳转规则、操作按钮及官方组件高级透传；共用参数按需加载 yida-flow-node-config。",
+      "description": "配置已有流程的审批、办理、抄送、条件分支和字段权限，保存发布后核对配置。人员、按条件选人和节点参数按需读取通用节点说明。",
       "category": "yida-skills/process",
       "tags": [
         "流程规则",

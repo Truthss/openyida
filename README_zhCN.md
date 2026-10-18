@@ -380,7 +380,9 @@ openyida integration enable APP_XXX FORM_XXX PROC_CODE
 | `openyida read-dingtalk-doc <docUrl> [--output <file>] [--json]` | 获取钉钉文档的 Markdown 内容 |
 | `openyida read-dingtalk-tingji <taskUuid> [--json]` | 按任务 UUID 获取钉钉听记详情 |
 | `openyida get-permission <appType> <formUuid> [--package-uuid <packageUuid>] [--package-type <FORM_PACKAGE_VIEW\|FORM_PACKAGE_START>] [--check-matrix] [--json]` | 查询表单权限配置 |
-| `openyida save-permission <appType> <formUuid> [--package-type <FORM_PACKAGE_VIEW\|FORM_PACKAGE_START>] [--package-uuid <packageUuid>\|--create --name <name>] [--data-permission <json>] [--action-permission <json>] [--field-permission <json>] [--members <userIds>\|--roles <roleIds>\|--all-members\|--matrix <json>] [--confirm-member-replace] [--owner-field <fieldId>] [--field-access <fieldId:view\|edit\|hidden\|encrypt>] [--field-default <access>] [--dry-run]` | 保存表单权限配置 |
+| `openyida save-permission <appType> <formUuid> [--package-type <FORM_PACKAGE_VIEW\|FORM_PACKAGE_START>] [--package-uuid <packageUuid>\|--create --name <name>] [--data-permission <json>] [--action-permission <json>] [--field-permission <json>] [--members <userIds>\|--roles <roleIds>\|--all-members\|--matrix <json>] [--confirm-member-replace] [--conditions-file <conditions.json>] [--owner-field <fieldId>] [--field-access <fieldId:view\|edit\|hidden\|encrypt>] [--field-default <access>] [--dry-run]` | 保存表单权限配置 |
+| `openyida permission-manage <copy\|rename\|delete> <appType> <formUuid> <packageUuid> [--name <name>] [--package-type <type>] [--dry-run] [--confirm]` | 复制、重命名或删除权限组 |
+| `openyida matrix <list\|detail\|references\|rows\|create\|update\|delete\|upsert-rows\|delete-rows> [matrixId] [--file config.json] [--page 1] [--limit 20] [--expect hash] [--dry-run] [--confirm]` | 管理权限矩阵定义、引用及数据行 |
 | `openyida corp-manager <search-user\|list\|add\|remove\|address-book> ...` | 管理平台管理员与通讯录权限 |
 | `openyida agent-center <list\|create\|update\|cancel\|range\|search-user> ...` | 管理流程代理和离职代理 |
 
@@ -435,7 +437,11 @@ openyida integration enable APP_XXX FORM_XXX PROC_CODE
 | 命令 | 说明 |
 |------|------|
 | `openyida integration create <appType> <formUuid> <flowName> [--spec file.json] [--publish] [--connector-system-token-app <appType>]` | 创建集成自动化逻辑流 |
-| `openyida integration update <appType> <formUuid> <processCode> --spec <desired-spec.json> [--publish]` | 检测集成自动化安全更新能力（完整 readback 未证明，当前阻断） |
+| `openyida integration update <appType> <formUuid> <processCode> --patch <patch.json> [--dry-run] [--expect <fingerprint>] [--publish]` | 基于已核对双定义基线增量修改自动化 |
+| `openyida integration copy <appType> <formUuid> <processCode> --name <name> [--dry-run]` | 复制自动化，默认停用 |
+| `openyida integration rename <appType> <formUuid> <processCode> --name <name> [--dry-run]` | 重命名自动化 |
+| `openyida integration delete <appType> <formUuid> <processCode> --confirm [--dry-run]` | 删除已停用的自动化 |
+| `openyida integration monitor <appType> [--file monitor.json] [--dry-run] [--json]` | 查询或保存自动化异常监听 |
 | `openyida integration list <appType> [--flow-types 1,2,3,5,6] [--form-uuid <uuid>] [--status y\|n] [--json]` | 列出集成自动化逻辑流 |
 | `openyida integration enable <appType> <formUuid> <processCode>` | 启用集成自动化逻辑流 |
 | `openyida integration disable <appType> <formUuid> <processCode>` | 停用集成自动化逻辑流 |

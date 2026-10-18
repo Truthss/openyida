@@ -1224,6 +1224,14 @@ async function main() {
       break;
     }
 
+    case 'permission-manage': {
+      await require('../lib/permission/permission-manage').run(args);
+      break;
+    }
+    case 'matrix': {
+      await require('../lib/permission/matrix-manage').run(args);
+      break;
+    }
     case 'integration': {
       const subCommand = args[0];
       const subArgs = args.slice(1);  // 路由层消费 subCommand，传递剩余参数
@@ -1239,6 +1247,8 @@ async function main() {
       } else if (subCommand === 'update') {
         const { run: runIntegrationUpdate } = require('../lib/integration/integration-update');
         await runIntegrationUpdate(subArgs);
+      } else if (['monitor', 'copy', 'rename', 'delete'].includes(subCommand)) {
+        await require('../lib/integration/integration-manage').run(subCommand, subArgs);
       } else if (subCommand === 'list') {
         const { runList } = require('../lib/integration/integration-list');
         await runList(subArgs);

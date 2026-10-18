@@ -5,6 +5,15 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  integration_manage: {"failed": "Automation operation failed: {0}", "usage": "integration <monitor|copy|rename|delete> <appType> ...", "desc_monitor": "Read or save automation error monitors", "desc_copy": "Copy an automation as disabled", "desc_rename": "Rename an automation", "desc_delete": "Delete a disabled automation"},
+  permission_manage: {"failed": "Permission group operation failed: {0}", "usage": "permission-manage <copy|rename|delete> <appType> <formUuid> <packageUuid> [--name name] [--dry-run] [--confirm]", "description": "Copy, rename or delete a permission group"},
+  matrix_manage: {"failed": "Matrix operation failed: {0}", "usage": "matrix <list|detail|references|rows|create|update|delete|upsert-rows|delete-rows> [matrixId] [--file config.json] [--dry-run] [--confirm]", "description": "Manage permission matrix definitions, references and rows"},
+  integration_baseline: {"failed": "Automation update stopped: {0}"},
+  integration_update_v2: {"usage": "integration update <appType> <formUuid> <processCode> --patch patch.json [--dry-run] [--expect fingerprint] [--publish]"},
+
+  conditional_actors: { unavailable: 'Conditional actors are unavailable or could not be verified.', invalid: 'Invalid conditional actors: {0}' },
+  integration_triggers: { invalid: 'Invalid automation trigger: {0}' },
+  permission_conditions: { invalid: 'Invalid permission conditions: {0}' },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
     frontend_nav_required: '頁面 {0} 尚未確認隱藏平台導覽；請先儲存 renderNav=false 並讀回，再登記獨立前台地址。',
@@ -145,7 +154,7 @@ module.exports = {
     cmd_connector_more: '查看更多子命令',
     group_integration: '整合 & 釘釘',
     cmd_integration: '建立整合自動化邏輯流',
-    cmd_integration_update: 'Probe integration update capability (currently blocked without full readback)',
+    cmd_integration_update: 'Patch automation using a verified local dual-definition baseline',
     cmd_integration_list: '列出整合自動化邏輯流',
     cmd_integration_enable: '啟用整合自動化邏輯流',
     cmd_integration_disable: '停用整合自動化邏輯流',
@@ -317,7 +326,7 @@ module.exports = {
     forbidden_alias_get_schema_form_uuid_option: '`{0}` 使用第二個位置參數傳入 formUuid，不使用 `{1}`。',
     nearest_command_suggestion: '未知 OpenYida 指令根「{0}」。你是不是想用「{1}」？',
     run_help: '執行 openyida --help 查看說明',
-    integration_help: 'Usage: openyida integration <create|update|list|enable|disable|check|detail-log|diagnose> ...',
+    integration_help: 'Usage: openyida integration <create|update|list|enable|disable|check|detail-log|diagnose|monitor|copy|rename|delete> ...',
     integration_unknown: '未知的 integration 子指令：{0}',
     integration_help_hint: '執行 openyida integration --help 查看可用子指令',
     integration_list_usage: '用法：openyida integration list <appType> [--form-uuid <uuid>] [--status y|n] [--key <kw>] [--size <n>] [--json]',
@@ -2222,3 +2231,5 @@ Object.assign(module.exports.formula_v2, {
   "contracts_help": "設定方式：field-value 欄位取值；validation-rule 原生驗證；business-action 業務動作；node-expression 節點運算式。dataset-expression 和 javascript 尚未接入檢查器。相同方式可用於不同設計器；詳情加 --json。"
 });
 Object.assign(module.exports.help, {"cmd_formula_contracts": "查看公式儲存方式和檢查範圍"});
+
+Object.assign(module.exports.formula_v2, {"parallel_formula": "並行分支使用 conditions/rules 或 all:true；expression 目前只適用於 route 分支。"});

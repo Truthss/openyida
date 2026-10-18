@@ -165,14 +165,14 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 | 流程或自动化的节点、人员、字段权限、按钮、条件变量配置 | `yida-flow-node-config` 按六类节点与共用配置项读取；保存交回 `yida-process-rule` 或 `yida-integration` |
 | 设置发起节点能填写、只读或隐藏哪些字段 | `yida-process-rule` 入口，通用节点技能的字段权限说明；使用顶层 `startFormConfig` |
 | 设置谁能发起或提交 | `yida-form-permission`，查询和保存都指定 `FORM_PACKAGE_START` |
-| 权限组成员、记录访问范围、操作权限、字段权限、已有矩阵引用 | `yida-form-permission`，组合配置时按需读取成员、数据范围与字段权限说明 |
+| 权限组成员、通用 AND／OR 条件、操作权限、字段权限、权限组及矩阵本体管理 | `yida-form-permission`，组合配置时按需读取成员、数据范围与字段权限说明 |
 | 流程设计器字段列表空白 | `yida-process-rule`，先用 `process fields` 检查字段来源 |
 | 查字段 ID / 保存 Schema 证据 | `yida-get-schema`；凡涉及 fieldId 的数据、流程、公式、页面代码先取证 |
 | 改表单数据记录 | `yida-data-management`，不是 `yida-create-form-page` |
 | 查询指定应用/流程表单中当前审批人为某人的实例或条数 | `yida-data-management`；`data query process --current-approver <userId> [--count]`，仅统计当前登录人经服务端授权可见的实例 |
 | 配置或修改公式、字段计算、提交校验、节点筛选、报表计算 | 共用 `yida-formula`，按实际保存内容读取说明；查看字段公式、查参数和检查用 `yida-formula-evaluate` |
 | 提交后跨表写入/更新/删除 | 默认 `yida-integration`；用户明确要业务关联规则/高级函数时用 `yida-business-rule` |
-| 集成自动化批量取数、新增或复制子表多行 | `yida-integration` 的 `--spec` 路径，读取 `references/batch-data.md`；已有自动化按其更新能力处理 |
+| 集成自动化定时、字段变化触发、并行循环、批量取数及生命周期管理 | `yida-integration` 的 `--spec` 路径，读取 `references/batch-data.md`；已有自动化按其更新能力处理 |
 | 自定义页面开发 | `yida-canvas-custom-page`，新建和默认页面源码开发入口，源码使用 `.canvas.jsx`；Canvas 发布层会自动注入 `window.__OPENYIDA_YIDA_API__` 和 `window.__OPENYIDA_UTILS__` |
 | JSX 自定义页面开发 | `yida-custom-page`，仅用于已检测到的 `.oyd.jsx` / `.oyb.jsx` / `renderJsx` / 平台 `Jsx` 组件页面维护 |
 | `.canvas.jsx` 页面使用成员/部门/上传等宜搭运行态组件 | `yida-canvas-custom-page`，读取 `native-components-bridge.md` |

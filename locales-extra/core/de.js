@@ -5,6 +5,15 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  integration_manage: {"failed": "Automation operation failed: {0}", "usage": "integration <monitor|copy|rename|delete> <appType> ...", "desc_monitor": "Read or save automation error monitors", "desc_copy": "Copy an automation as disabled", "desc_rename": "Rename an automation", "desc_delete": "Delete a disabled automation"},
+  permission_manage: {"failed": "Permission group operation failed: {0}", "usage": "permission-manage <copy|rename|delete> <appType> <formUuid> <packageUuid> [--name name] [--dry-run] [--confirm]", "description": "Copy, rename or delete a permission group"},
+  matrix_manage: {"failed": "Matrix operation failed: {0}", "usage": "matrix <list|detail|references|rows|create|update|delete|upsert-rows|delete-rows> [matrixId] [--file config.json] [--dry-run] [--confirm]", "description": "Manage permission matrix definitions, references and rows"},
+  integration_baseline: {"failed": "Automation update stopped: {0}"},
+  integration_update_v2: {"usage": "integration update <appType> <formUuid> <processCode> --patch patch.json [--dry-run] [--expect fingerprint] [--publish]"},
+
+  conditional_actors: { unavailable: 'Conditional actors are unavailable or could not be verified.', invalid: 'Invalid conditional actors: {0}' },
+  integration_triggers: { invalid: 'Invalid automation trigger: {0}' },
+  permission_conditions: { invalid: 'Invalid permission conditions: {0}' },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
     frontend_nav_required: 'Die ausgeblendete Navigation der Seite {0} ist nicht bestätigt. Speichern und prüfen Sie renderNav=false, bevor Sie den eigenständigen Frontend-Zugang registrieren.',
@@ -144,7 +153,7 @@ module.exports = {
     cmd_connector_more: 'Weitere Unterbefehle anzeigen',
     group_integration: 'Integration & DingTalk',
     cmd_integration: 'Integrations-Automatisierungsflow erstellen',
-    cmd_integration_update: 'Probe integration update capability (currently blocked without full readback)',
+    cmd_integration_update: 'Patch automation using a verified local dual-definition baseline',
     cmd_integration_list: 'Integrations-Automatisierungsflows auflisten',
     cmd_integration_enable: 'Integrations-Automatisierungsflow aktivieren',
     cmd_integration_disable: 'Integrations-Automatisierungsflow deaktivieren',
@@ -331,7 +340,7 @@ module.exports = {
     forbidden_alias_get_schema_form_uuid_option: '`{0}` takes formUuid as the second positional argument, not `{1}`.',
     nearest_command_suggestion: 'Unknown OpenYida command root "{0}". Did you mean "{1}"?',
     run_help: 'Run openyida --help for usage',
-    integration_help: 'Usage: openyida integration <create|update|list|enable|disable|check|detail-log|diagnose> ...',
+    integration_help: 'Usage: openyida integration <create|update|list|enable|disable|check|detail-log|diagnose|monitor|copy|rename|delete> ...',
     integration_unknown: 'Unbekannter integration-Unterbefehl: {0}',
     integration_help_hint: 'Führen Sie openyida integration --help aus, um verfügbare Unterbefehle anzuzeigen',
     integration_list_usage: 'Verwendung: openyida integration list <appType> [--form-uuid <uuid>] [--status y|n] [--key <kw>] [--size <n>] [--json]',
@@ -2270,3 +2279,5 @@ Object.assign(module.exports.formula_v2, {
   "contracts_help": "Formate: field-value, validation-rule, business-action und node-expression. Für dataset-expression und javascript gibt es noch keinen Prüfadapter. Ein Format kann mehreren Designern dienen. Details: --json."
 });
 Object.assign(module.exports.help, {"cmd_formula_contracts": "Formelformate und Prüfumfang anzeigen"});
+
+Object.assign(module.exports.formula_v2, {"parallel_formula": "Verwenden Sie conditions/rules oder all:true für parallele Zweige; expression wird derzeit nur für route-Zweige unterstützt."});

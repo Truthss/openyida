@@ -1,6 +1,6 @@
 ---
 name: yida-integration
-description: 创建和管理宜搭集成自动化，负责触发、保存发布、查询启停及日志；通知、数据、分支、连接器参数按需加载通用节点技能。
+description: 配置宜搭自动化的执行时机和处理步骤，修改已有自动化，查看运行日志和设置异常提醒，也可复制、重命名或删除。节点参数按需读取通用节点说明。
 ---
 
 # 集成自动化
@@ -37,24 +37,30 @@ description: 创建和管理宜搭集成自动化，负责触发、保存发布�
 
 ## 命令选择
 
+从要完成的任务选择说明。入口负责目标确认、执行顺序和验收；节点参数只在通用节点技能中维护。
+
 | 用户目标 | 执行动作 |
 | --- | --- |
 | 创建新自动化 | 使用 `integration create`，由 CLI 生成 `processCode` |
-| 获取数据时右侧选字段或公式 | 左侧使用被查询表的字段，右侧区分上游字段与计算结果；读取 [条件与变量](../yida-flow-node-config/references/conditions-variables.md) 和 [节点表达式](../yida-formula/references/automation-formulas.md)，按该取数位置的证据说明验证状态 |
-| 表单事件触发条件中的字段比较 | 该位置尚未通过平台保存及运行验收；按 [条件与变量](../yida-flow-node-config/references/conditions-variables.md) 说明限制，与取数筛选分别判断 |
+| 选择表单事件、流程事件、定时或字段变化触发 | 读 [触发设置](references/triggers.md)，先确定何时执行 |
+| 选择数据、通知、条件分支、并行或循环 | 调用 `use_skill("yida-flow-node-config", "所需节点类别")`，按类别读取配置 |
+| 获取数据节点按条件过滤，右值选择字段 | 使用 `dataRetrieve.conditions` 或 `--data-condition`，右值类型 `processVar`；触发字段与上游单条节点字段格式见 [条件与变量](../yida-flow-node-config/references/conditions-variables.md#获取数据节点按条件过滤--字段) |
+| 获取数据时右值需要计算，或 route 分支按整段公式判断 | 读取 [统一公式引导](../yida-formula/SKILL.md#写配置前先处理这些易错点) 与 [完整节点示例](../yida-formula/references/node-examples.md)，保留执行文本和编辑器内容 |
+| 开始节点触发过滤或分支的字段与字段比较 | 与取数筛选分别验收；尚未通过平台运行验收，不能由取数字段引用推断已可用，见 [条件与变量](../yida-flow-node-config/references/conditions-variables.md) |
 | 批量取数、新增或复制子表多行 | 使用 `integration create --spec`，读取通用技能的数据操作说明 |
 | 整图替换已有自动化 | 校验 `appType/formUuid/processCode`，明确告知“CLI 无法读取原有节点定义；本次将整体覆盖，原节点不保留”，获得确认后使用 `integration create ... --process-code <code> --replace` |
-| 更新已有自动化 | 使用 `integration update` 获取 capability 结果，并按结果报告当前状态 |
-| 查询、启停或检查日志 | `integration list/enable/disable/check/diagnose` |
+| 更新已有自动化 | 读取 [修改已有自动化](references/operations.md#修改已有自动化)，先预览，核对创建时的完整记录后，只修改指定内容 |
+| 查询、启停、查日志或设置异常提醒 | 读 [维护与运行排查](references/operations.md) |
+| 复制、重命名或删除 | 读 [日常管理](references/operations.md#日常管理)，先核对目标和影响 |
 | 目标或归属不明确 | 先只读确认，不写入 |
 
-`PLATFORM_PROBE_REQUIRED` 表示当前安全更新能力尚未证明，保持 `remoteWrites=0`。
+对目标返回 `PLATFORM_PROBE_REQUIRED` 时，表示该目标的安全更新条件未通过，保持 `remoteWrites=0`；按返回原因核对可信基线和远端状态。
 
 ## 命令格式
 
 ```bash
 openyida integration create <appType> <formUuid> <flowName> [选项]
-openyida integration update <appType> <formUuid> <processCode> --spec <desired-spec.json> [--publish]
+openyida integration update <appType> <formUuid> <processCode> --patch <patch.json> [--dry-run] [--expect <fingerprint>]
 openyida integration list <appType> [--flow-types 1,2,3,5,6] [--form-uuid <uuid>] [--status y|n] [--json]
 openyida integration enable <appType> <formUuid> <processCode>
 openyida integration disable <appType> <formUuid> <processCode>
@@ -70,15 +76,15 @@ openyida integration diagnose --file <异常文件> [--json]
 | `flowName` | 新建自动化名称 |
 | `processCode` | 已有逻辑流 ID，从查询结果取得 |
 
-`update` 当前仍受安全更新检查限制，见上方命令选择。创建选项、参数默认值及完整示例见 [CLI 选项与示例](references/cli-options.md)；多节点 JSON 见 [spec 编排示例](references/spec-authoring.md)；批量节点见 [批量数据示例](references/batch-data.md)。
+`update` 用创建时保存的完整记录核对原配置，再修改指定内容；原记录缺失或远端已变更时停止写入，详见 [修改已有自动化](references/operations.md#修改已有自动化)。创建选项、参数默认值及完整示例见 [CLI 选项与示例](references/cli-options.md)；多节点 JSON 见 [spec 编排示例](references/spec-authoring.md)；批量节点见 [批量数据示例](references/batch-data.md)。
 
 ## 节点选择
 
 | 类别 | 自动化当前可直接配置 | 差异或限制 |
 | --- | --- | --- |
-| 发起/触发 | 表单事件、流程完成或节点事件 | 不设置发起页字段权限；当前 create 不创建定时、应用或卡片触发 |
+| 发起/触发 | 表单事件、流程完成或节点事件、定时 | 定时使用 spec schedule；不设置发起页字段权限；当前不创建应用或卡片触发 |
 | 人工处理 | 无审批、办理、抄送人工节点 | 需要审批时用 `initiateApproval` 发起目标流程，在目标流程中配置审批人 |
-| 流转控制 | `route` | 当前 spec 不支持并行、循环 |
+| 流转控制 | `route/parallel/cycle` | 循环目前为单层，格式见 [流转控制](../yida-flow-node-config/references/control.md) |
 | 数据操作 | `getSelf/dataRetrieve/dataCreate/dataUpdate`，含批量取数/新增 | 当前 spec 不支持删除；流程表单新增用发起审批 |
 | 通知 | `sendMessage`，成员/角色/成员字段 | 当前 spec 不支持邮件或卡片 |
 | 扩展执行 | `connector/initiateApproval` | 连接器需发现真实 action schema；当前 spec 不支持代码或 AI |
@@ -119,7 +125,7 @@ openyida integration create APP_XXX FORM_XXX "替换已有自动化" --process-c
 }
 ```
 
-事件支持 `insert/update/delete/comment`、`processFinish/activityTask`。spec 使用流程事件时同时设置 `approvalActions`（`agree/disagree/terminated` 中的实际操作），节点事件另有 `approvalNodeIds`。只用命令选项创建时使用 `--events/--approval-actions/--approval-node-ids`；这些选项不会自动补入 spec。自动化“发起审批”的发起人，与目标流程审批角色是两项配置。
+表单事件、流程事件、指定字段变化与定时的完整配置统一见 [触发设置](references/triggers.md)。自动化“发起审批”的发起人，与目标流程审批角色分别配置。
 
 需要 `systemToken` 的连接器节点使用安全绑定片段，实际凭据由 CLI 读取，不能放进 `assignments`、命令文本或页面源码：
 
@@ -133,21 +139,11 @@ openyida integration create APP_XXX FORM_XXX "替换已有自动化" --process-c
 
 将片段放在 connector 节点内；完整连接器及安全绑定示例见上方 spec 编排说明。
 
-## 查询、启停与日志
+## 已有自动化的维护
 
-```bash
-openyida integration list <appType> --json
-openyida integration enable <appType> <formUuid> <processCode>
-openyida integration disable <appType> <formUuid> <processCode>
-openyida integration check <appType...> --json
-openyida integration diagnose --text "<异常信息>" --json
-```
+更新先预览；启停、查日志、异常监听和复制等操作见 [维护与运行排查](references/operations.md)。先查询唯一目标，再按任务操作并回读。
 
-盘点应用时，先执行未筛选的 `integration list`；默认分页覆盖触发类型 `1/2/3/5/6`。读到定时、应用事件、手动/卡片触发要保留其语义，不能改成表单事件后声称等价。启停后回读精确匹配的目标和状态。
-
-`check` 分页读取异常日志，可加 `--output result.xlsx`；`diagnose` 可离线分析文本。无异常日志不代表业务条件命中或目标数据写入正确。
-
-节点完整结构和接口参数见 [节点结构参考](references/integration-node-schemas.md)，常见应用示例见 [创建示例](references/examples.md)。只使用标准 CLI 选项时不必加载底层 JSON；编排多节点读取 spec 说明，排查 payload 时再读对应节点结构。
+[CLI 选项](references/cli-options.md) 用于查参数；[spec 编排](references/spec-authoring.md) 说明文件外层、保存顺序和验证结果；[批量数据示例](references/batch-data.md) 说明多行数据的组合用法。[节点结构参考](references/integration-node-schemas.md) 仅在排查底层参数时读取，完整场景可参考 [创建示例](references/examples.md)。
 
 ## 验证与异常
 

@@ -747,6 +747,7 @@ describe('integration create command', () => {
       appType: 'APP_TEST',
       formUuid: 'FORM-A',
       flowName: 'A完成后创建B',
+      type: '1',
     });
     expect(integrationApi.getFormSchema).toHaveBeenCalledWith(expect.any(Object), {
       appType: 'APP_TEST',

@@ -180,11 +180,11 @@ openyida integration create APP_XXX FORM-XXX "获取自身后分支更新" \
 
 只有精确列表、最终状态与非空详情回读通过，`published` 才为 true，验证等级为 `PLATFORM_LIST_EXACT_DETAIL_PRESENT`。详情缺少可核实的身份字段时，只能报告详情存在，不能宣称 detail exact 或完整 runtime graph 已验证。写成功但回读无法证明时命令失败，`published=null`、`verificationLevel=UNVERIFIED`；不得把写响应当完成证据。
 
-### 安全二次编辑
+### 修改已有自动化
 
-`integration update` 返回 `PLATFORM_PROBE_REQUIRED` 时，必须保持 `remoteWrites=0`，保留本地 probe artifact 与 blocker。只有只读探针同时证明完整 runtime graph、完整 view graph、资源 ownership 与 before fingerprint 后，才可另行评审更新能力。
+已有节点的增量修改、基线检查、预览和并发限制统一见 [修改已有自动化](operations.md#修改已有自动化)。`PLATFORM_PROBE_REQUIRED` 时保持 `remoteWrites=0`，保留 probe artifact 与 blocker；列表或详情存在性不足以证明完整运行定义，不能据此解锁修改。
 
-列表或详情存在性不足以解锁更新；禁止把阻断结果降级为整图替换、通用 JSON Patch 或重建同名逻辑流。
+已有可靠双定义基线时按支持的补丁范围更新。缺少基线或远端已改变时先停止；不将阻断结果降级为整图替换、通用 JSON Patch 或重建同名逻辑流。
 
 ### 运行验收
 

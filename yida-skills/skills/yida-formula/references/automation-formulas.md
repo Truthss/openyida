@@ -18,7 +18,7 @@
 
 ## 分支按公式判断
 
-分支选择“按公式定义进入”，使用 `expression`。例如单价大于零时进入此分支：
+自动化 `route` 分支选择“按公式定义进入”，使用 `expression`。例如单价大于零时进入此分支：
 
 ```json
 {
@@ -38,6 +38,8 @@
 一个分支选择 `expression` 或普通 `conditions` 中的一种。普通分支条件右侧需要计算时，改用上述完整公式；`valueType: column` 用在支持公式的获取数据、赋值等位置。
 
 需要 `A 且（B 或 C）` 或“先判断是否复核，再判断级别”时，直接读取 [完整嵌套分支 spec](node-examples.md#嵌套分支先决定是否复核再决定级别)。示例包含外层 events/nodes、两层 route、每层兜底、完整公式和结果赋值。
+
+CLI 并行分支当前使用 `conditions/rules` 或 `all: true`，不接收这里的 `expression`；按流转控制说明配置。
 
 ## 获取数据时按公式筛选
 
@@ -66,7 +68,7 @@
 
 CLI 分别替换执行公式和编辑器内容中的节点别名，并保留两份内容。平台条件规则中，`value` 保存执行公式，`ruleValue` 保存上述三项。
 
-数字比较使用该自动化接口的名称，例如 `Bigger`、`Lesser`、`BiggerOrEqual`、`LesserOrEqual`。使用前核对目标节点操作符；它们与流程分支名称不同。
+数字比较使用该自动化接口的名称，例如 `Bigger`、`Lesser`、`BiggerOrEqual`、`LesserOrEqual`。CLI 也接受 `GreaterThan/LessThan/GreaterThanOrEqual/LessThanOrEqual` 并转换为这些原生值；查看平台保存内容时按原生编码核对。
 
 需要多条条件时，读取 [字段、嵌套公式与固定值一起过滤的完整 spec](node-examples.md#按编号字段嵌套公式和固定状态取数)。当前取数 `conditions` 为平铺条件，节点级 `logic` 选择 AND 或 OR；一条右侧公式可以嵌套 IF，但不等于目标表多字段条件已支持任意嵌套分组。
 
