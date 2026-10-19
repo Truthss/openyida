@@ -37,6 +37,7 @@ describe('npm package smoke', () => {
     ['original PR 638', { size: 2444722, unpackedSize: 9113751, entryCount: 707 }],
     ['PR 638 merged with main', { size: 2496932, unpackedSize: 9278325, entryCount: 721 }],
     ['native cards combined with personal workflow', { size: 2528519, unpackedSize: 9387803, entryCount: 733 }],
+    ['data and cool cards combined with personal workflow', { size: 2552878, unpackedSize: 9493590, entryCount: 738 }],
   ])('package budget covers the native data-card Node 20 artifact: %s', (_name, artifact) => {
     expect(getPackageBudgetErrors(artifact)).toEqual([]);
   });

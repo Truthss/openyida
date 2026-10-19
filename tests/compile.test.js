@@ -31,6 +31,8 @@ describe('compile command', () => {
       USERPROFILE: tmpHome,
       OPENYIDA_LANG: 'zh',
       CI: '1',
+      // Assert the CLI error envelope independently of Node's experimental diagnostics.
+      NODE_NO_WARNINGS: '1',
     };
 
     for (const key of Object.keys(env)) {

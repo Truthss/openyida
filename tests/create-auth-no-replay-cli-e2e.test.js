@@ -40,6 +40,8 @@ function runCreateCommand(command, language) {
       NO_UPDATE_NOTIFIER: '1',
       NO_COLOR: '1',
       FORCE_COLOR: '0',
+      // Keep Node runtime diagnostics separate from the CLI JSON error contract.
+      NODE_NO_WARNINGS: '1',
       OPENYIDA_CREATE_AUTH_COUNTER_FILE: counterFile,
       NODE_OPTIONS: `${existingNodeOptions} ${preloadOption}`.trim(),
     },

@@ -91,6 +91,22 @@ OpenYida 要求 Node.js 18 或更高版本。安装后会提供 `openyida` 和 `
 
 如果本机已安装 Codex，OpenYida 会在安装后尝试导入本地 Codex 插件。重启 Codex 后，在输入框中输入 `@宜搭` 或 `@openyida` 即可挂载 OpenYida 上下文。
 
+<details>
+<summary>可选：安装钉钉 Workspace CLI（dws）</summary>
+
+需要钉钉侧 A2UI 卡片编写、校验或消息操作时，可独立安装官方 [DingTalk Workspace CLI](https://github.com/DingTalk-Real-AI/dingtalk-workspace-cli#installation)：
+
+```bash
+npm install -g dingtalk-workspace-cli
+dws version
+```
+
+也可运行 `openyida dws install` 查看当前平台的官方安装指引；该命令只显示说明。安装后可使用 `openyida dws <command> [args]` 调用系统中的 dws。
+
+OpenYida 不内置或自动安装 dws，其版本、升级和登录由 dws 独立管理。需要访问钉钉业务时使用 `dws auth login`，并核对目标组织与账号。宜搭原生酷卡片的创建、读取和编辑器链接无需安装 dws；dws 当前的聊天卡片更新能力不等同于宜搭模板保存。其他平台安装方式见上述官方说明，具体卡片命令以已安装版本的 `--help` 为准。
+
+</details>
+
 ### 2. 检查环境
 
 在 AI 编程工作区中运行：
@@ -325,7 +341,8 @@ openyida feedback report --input summary.json --output-dir feedback-draft-001
 
 | 命令 | 说明 |
 |------|------|
-| `openyida app-settings <appType> [--section theme\|basic\|data-card] [--json]` | 获取主题、业务前后台和原生数据卡片管理入口 |
+| `openyida app-settings <appType> [--section theme\|basic\|data-card\|cool-card] [--json]` | 获取主题、业务前后台、原生数据卡片和酷卡片管理入口 |
+| `openyida cool-card <list\|templates\|create\|get> <appType> [cardPageCode] [--type im\|onebox] [--name <title>] [--page <n>] [--size <n>] [--search <text>] [--out <file>] [--json]` | 创建和读取宜搭原生酷卡片（交互卡片与置顶卡片） |
 | `openyida data-card <list\|create\|get\|save\|publish\|probe\|release-get\|release-save\|release-check\|release-test\|refs> <appType> [cardCode] [--name <title>] [--description <text>] [--schema <file>\|--config <file>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--published\|--version <version>] [--page <n>] [--size <n>] [--search <text>] [--allow-send] [--json]` | 创建、配置、发布原生数据卡片并管理投放播报 |
 | `openyida app-entry get <appType> [--json]` | 读取应用前台和业务工作台入口 |
 | `openyida app-entry set <appType> [--frontend <url>\|--frontend-page <formUuid>] [--management <url>\|--management-page <formUuid>] [--clear-frontend] [--clear-management] [--json]` | 登记应用访问入口（局部更新并回读） |
