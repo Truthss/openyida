@@ -4,6 +4,82 @@
   "entry": "openyida",
   "skills": [
     {
+      "name": "yida-cool-card",
+      "path": "skills/yida-cool-card/SKILL.md",
+      "display_name": "宜搭原生酷卡片",
+      "description": "仅在用户明确要求宜搭原生酷卡片（交互卡片、置顶卡片），或继续该上下文时使用。支持创建、读取、查询模板、导出配置和样式设计。样式限于钉钉原生组件，不能运行任意 HTML/CSS/React；超出能力时说明限制并提供替代方案。返回官方编辑器链接，由用户配置保存；CLI 不保存、发布或发送。原生数据卡片、Canvas 展示卡片及泛称卡片不触发。",
+      "category": "yida-skills/integration",
+      "tags": [
+        "宜搭原生酷卡片",
+        "交互卡片",
+        "置顶卡片",
+        "cardPageCode"
+      ],
+      "aliases": [
+        "宜搭酷卡片"
+      ],
+      "positive_signals": [
+        "明确创建宜搭原生交互卡片",
+        "明确读取宜搭原生置顶卡片配置",
+        "明确要求重做宜搭原生酷卡片样式或判断自定义代码限制",
+        "继续已明确的宜搭原生酷卡片操作"
+      ],
+      "negative_signals": [
+        "原生数据卡片CARD资源",
+        "Canvas页面指标卡",
+        "普通卡片或发送消息未明确原生酷卡片",
+        "只修改页面中的卡片外层"
+      ],
+      "command_ids": [
+        "cool-card",
+        "app-settings",
+        "sample",
+        "dws"
+      ],
+      "requires_login": true
+    },
+    {
+      "name": "yida-data-card",
+      "path": "skills/yida-data-card/SKILL.md",
+      "display_name": "宜搭原生数据卡片",
+      "description": "仅在用户明确要求操作宜搭原生数据卡片资源时使用，支持创建、读取、配置保存、发布及投放播报。自定义页面展示卡片、仅修改原生卡片引用外层及泛称卡片、指标卡、看板或播报不触发；已明确的原生卡片操作可继续沿用。",
+      "category": "yida-skills/analytics",
+      "tags": [
+        "宜搭原生数据卡片",
+        "原生数据卡片配置",
+        "cardCode"
+      ],
+      "aliases": [
+        "宜搭原生数据卡片"
+      ],
+      "positive_signals": [
+        "明确要求创建宜搭原生数据卡片",
+        "明确要求读取或修改宜搭原生数据卡片配置",
+        "明确要求发布宜搭原生数据卡片",
+        "在已明确的原生数据卡片上下文中配置投放播报",
+        "用户提供原生卡片链接并明确要求操作该资源"
+      ],
+      "negative_signals": [
+        "数据卡片（未明确原生）",
+        "普通指标卡（未明确原生）",
+        "经营看板（未明确原生）",
+        "自定义页面卡片",
+        "数据播报（未明确原生）",
+        "React指标卡",
+        "钉钉酷卡片",
+        "主题配置入口",
+        "业务前后台配置入口",
+        "明确不使用宜搭原生数据卡片",
+        "仅修改页面中原生卡片引用的外层布局",
+        "自定义页面源码中的指标卡组件"
+      ],
+      "command_ids": [
+        "data-card",
+        "app-settings"
+      ],
+      "requires_login": true
+    },
+    {
       "name": "yida-form-view",
       "path": "skills/yida-form-view/SKILL.md",
       "display_name": "原生数据管理视图配置",
@@ -1633,6 +1709,7 @@
       "display_name": "报表与看板",
       "description": "聚合表/虚拟视图、原生报表、自定义页面 Recharts 默认高级图表、ECharts 兼容场景、经营看板/驾驶舱/数据大屏。",
       "signals": [
+        "用户显式指定宜搭原生数据卡片",
         "聚合表",
         "虚拟视图",
         "virtualView",
@@ -1651,6 +1728,9 @@
       "display_name": "连接器与集成",
       "description": "HTTP 连接器、连接器动作、页面设计器数据源、提交后集成自动化和外部 API 接入。",
       "signals": [
+        "宜搭原生酷卡片",
+        "酷卡片管理",
+        "cardPageCode",
         "连接器",
         "HTTP API",
         "执行动作",

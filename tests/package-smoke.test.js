@@ -21,6 +21,13 @@ describe('npm package smoke', () => {
     expect(getPackageBudgetErrors({ ...budgetLimit, unpackedSize: 8358003 })).toEqual([]);
   });
 
+  test.each([
+    ['original PR 638', { size: 2444722, unpackedSize: 9113751, entryCount: 707 }],
+    ['PR 638 merged with main', { size: 2496932, unpackedSize: 9278325, entryCount: 721 }],
+  ])('package budget covers the native data-card Node 20 artifact: %s', (_name, artifact) => {
+    expect(getPackageBudgetErrors(artifact)).toEqual([]);
+  });
+
   test.each(['size', 'unpackedSize', 'entryCount'])('package budgets reject %s above its boundary', field => {
     expect(getPackageBudgetErrors({ ...budgetLimit, [field]: budgetLimit[field] + 1 })).toHaveLength(1);
   });

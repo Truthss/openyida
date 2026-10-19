@@ -35,6 +35,42 @@ describe('sample templates', () => {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   });
 
+  test('native cool-card sample emits an import payload with typed preview data and linked rich text', async () => {
+    const output = path.join(tmpDir, 'project-brief.json');
+    const appUrl = 'https://example.aliwork.com/APP_EXAMPLE?view=project&source=card';
+    await run(['yida-cool-card', 'project-brief', '--var', `APP_URL=${appUrl}`, '--output', output]);
+    const payload = JSON.parse(fs.readFileSync(output, 'utf8'));
+    expect(Object.keys(payload).sort()).toEqual(['editorData', 'type', 'widgetInfo']);
+    expect(payload.type).toBe('im');
+    expect(payload.widgetInfo).toEqual({}); // The official editor generates compiler products.
+    const editor = JSON.parse(payload.editorData);
+    const data = editor.mockData.cardData;
+    expect(data.appUrl).toBe(appUrl);
+    const variables = new Map(editor.variableList.map(variable => [variable.id, variable]));
+    for (const variable of editor.variableList) {
+      expect(data).toHaveProperty(variable.id);
+      if (variable.type === 'number') { expect(typeof data[variable.id]).toBe('number'); }
+      if (variable.type === 'loopArray') {
+        expect(Array.isArray(data[variable.id])).toBe(true);
+        for (const row of data[variable.id]) {
+          for (const field of variable.schema) { expect(row).toHaveProperty(field.name); }
+        }
+      }
+    }
+    const nodes = [];
+    const visit = node => { nodes.push(node); (node.children || []).forEach(visit); };
+    editor.schema.componentsTree.forEach(visit);
+    for (const node of nodes.filter(node => node.componentName === 'RichText')) {
+      expect(variables.get(node.props.content.variable).type).toBe('markdown');
+      expect(() => JSON.parse(node.props.text.raw)).not.toThrow();
+      expect(data[node.props.content.variable].items.length).toBeGreaterThan(0);
+    }
+    const button = nodes.find(node => node.componentName === 'ButtonBlock').props.buttons[0];
+    expect(button.actionType).toBe('url');
+    expect(data[button.url.variable]).toBe(appUrl);
+    expect(fs.readFileSync(output, 'utf8')).not.toContain('{{APP_URL}}');
+  });
+
   test('applyTemplateVariables replaces {{KEY}} tokens', () => {
     const output = applyTemplateVariables('Hello {{BRAND_NAME}} / {{BRAND_NAME}}', {
       BRAND_NAME: 'OpenKuma',

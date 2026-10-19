@@ -95,6 +95,22 @@ Local terminals and AI tools share the same policy. Managed cloud Agent runtimes
 
 If Codex is already installed, OpenYida also imports a local Codex plugin during postinstall. Restart Codex after installation, then type `@宜搭` or `@openyida` in the composer to attach the OpenYida context.
 
+<details>
+<summary>Optional: install DingTalk Workspace CLI (dws)</summary>
+
+For DingTalk A2UI authoring, validation or messaging, install the official [DingTalk Workspace CLI](https://github.com/DingTalk-Real-AI/dingtalk-workspace-cli#installation) separately:
+
+```bash
+npm install -g dingtalk-workspace-cli
+dws version
+```
+
+Alternatively, `openyida dws install` displays official instructions for your platform without running an installer. Once installed, `openyida dws <command> [args]` forwards arguments to your system's dws.
+
+OpenYida does not bundle or automatically install dws. Dws manages its own version, updates and login. Use `dws auth login` for DingTalk business access and verify the target organization and account. Native YiDA cool-card creation, reads and editor links work without dws; updating a chat card through dws does not save a YiDA template. See the official instructions for other installation methods and check the installed command's `--help` before use.
+
+</details>
+
 ### 2. Check Your Environment
 
 Run this from the AI coding workspace where you want OpenYida to operate:
@@ -447,6 +463,9 @@ Your AI prepares the summary from observed evidence and selected reproduction sc
 
 | Command | Description |
 |---------|-------------|
+| `openyida app-settings <appType> [--section theme\|basic\|data-card\|cool-card] [--json]` | Read theme, frontend/backend, native data card and cool card management links |
+| `openyida cool-card <list\|templates\|create\|get> <appType> [cardPageCode] [--type im\|onebox] [--name <title>] [--page <n>] [--size <n>] [--search <text>] [--out <file>] [--json]` | Create and read native YiDA cool cards (interactive and pinned) |
+| `openyida data-card <list\|create\|get\|save\|publish\|probe\|release-get\|release-save\|release-check\|release-test\|refs> <appType> [cardCode] [--name <title>] [--description <text>] [--schema <file>\|--config <file>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--published\|--version <version>] [--page <n>] [--size <n>] [--search <text>] [--allow-send] [--json]` | Create, configure, publish and distribute native YiDA data cards |
 | `openyida app-entry get <appType> [--json]` | Read frontend and management runtime entries |
 | `openyida app-entry set <appType> [--frontend <url>\|--frontend-page <formUuid>] [--management <url>\|--management-page <formUuid>] [--clear-frontend] [--clear-management] [--json]` | Register application entries with partial update and readback |
 | `openyida app-list [--type managed\|created] [--page N] [--size N]` | Page through apps I manage or created |
