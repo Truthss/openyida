@@ -478,7 +478,13 @@ openyida feedback report --input summary.json --output-dir feedback-draft-001
 | `openyida sample [--list] [<skill> <name>] [--output <file-or-directory>] [--var KEY=VALUE ...] [--design-file <design.md>] [--style-id <themeId\|free-creative>] [--theme-ids <id,...>] [--pop-art-context <explicit-request\|showcase>]` | 输出代码模板 |
 | `openyida doctor [--fix]` | 环境诊断与自动修复 |
 | `openyida db-seq-fix [--fix]` | PostgreSQL Sequence 漂移检测与修复 |
-| `openyida formula evaluate <formula\|file> [--schema file]` | 静态检查宜搭公式语法和字段引用 |
+| `openyida formula evaluate <formula\|file> [--schema file] [--contract field-value\|validation-rule\|business-action\|node-expression] [--context form\|validation\|automation\|business] [--target-type NumberField] [--metadata file] [--strict] [--json]` | 静态检查宜搭公式语法和字段引用 |
+| `openyida formula check <formula\|file> [--schema file] [--contract field-value\|validation-rule\|business-action\|node-expression] [--context form\|validation\|automation\|business] [--target-type NumberField] [--metadata file] [--strict] [--json]` | 检查公式的写法、字段、参数和类型 |
+| `openyida formula contracts [--json]` | 查看公式保存方式和检查范围 |
+| `openyida formula functions <appType> [--name IF] [--context form\|validation\|automation\|business] [--output file] [--json]` | 查询宜搭公式函数及参数说明 |
+| `openyida formula types <appType> [--component NumberField] [--json]` | 查询公式组件支持的值类型 |
+| `openyida formula inspect <appType> <formUuid> [--field fieldId] [--json]` | 查看表单字段已配置的公式 |
+| `openyida formula test <appType> <formUuid> [formula\|file] [--data-file file \| --cases file] [--field fieldId] [--timezone-offset minutes] [--context form\|validation] [--binding platform\|numeric-literals] [--expect JSON] [--json]` | 带入数据在宜搭试算公式并核对结果 |
 | `openyida update` | 检查并更新到最新版本 |
 | `openyida export-conversation [options]` | 导出 AI 对话记录 |
 | `openyida feedback <report\|setup\|url\|dismiss\|status> [options]` | 整理本地问题报告、配置反馈表单与提醒 |

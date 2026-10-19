@@ -195,7 +195,14 @@
 | 检查单个图片槽位 | `openyida asset resolve --slot <slotId>=<路径或URL> [options]` |
 | 生成素材清单 | `openyida asset resolve --input <草稿> --manifest <清单> [options]` |
 | 查看图片来源规则 | `openyida asset sources [--json]` |
-| 检查宜搭公式 | `openyida formula evaluate <formula\|file> [--schema file]` |
+| 查看公式保存方式和检查范围 | `openyida formula contracts [--json]` |
+| 检查公式写法、字段和类型 | `openyida formula check <formula\|file> [--schema file] [--contract field-value\|validation-rule\|business-action\|node-expression] [--context form\|validation\|automation\|business] [--target-type NumberField]`；原 `evaluate` 继续执行本地检查 |
+| 查询当前组织的公式函数和参数 | `openyida formula functions <appType> [--name ROUND] [--output metadata.json] [--json]` |
+| 查询字段组件支持的公式值类型 | `openyida formula types <appType> [--component NumberField] [--json]`；组件名从 Schema 读取，结合函数参数和返回类型检查 |
+| 查看表单字段已保存的公式 | `openyida formula inspect <appType> <formUuid> [--field fieldId] [--json]` |
+| 调用表达式接口核对样例 | `openyida formula test <appType> <formUuid> <formula\|file> --data-file data.json [--binding platform\|numeric-literals] [--expect JSON] [--json]`；只运行已确认不写业务数据的函数 |
+| 按原生字段链路试算 | `openyida formula test <appType> <formUuid> --field <fieldId> --data-file data.json [--expect JSON] [--timezone-offset 480] --json`；读取已存公式，按依赖顺序计算并保留子表行 |
+| 重跑多组公式样例 | `openyida formula test <appType> <formUuid> --field <fieldId> --cases cases.json --json`；每组提供 `name/data/expect`，报告缺失值及类型转换问题 |
 | 读取钉钉文档并转为 Markdown | `openyida read-dingtalk-doc <docUrl> [--output <file>] [--json]` |
 | 按 taskUuid 读取钉钉听记 | `openyida read-dingtalk-tingji <taskUuid> [--json]` |
 | 闪记/会议纪要转 PRD | `openyida flash-to-prd --file <path> --name "<project>"` |

@@ -68,6 +68,10 @@ openyida create-form patch <appType> <formUuid> <patchJsonOrFile>
 
 ## 自定义校验函数（customValidate）
 
+这里保存 JavaScript 函数，使用 `value`、同行数据或页面 API；函数返回 `true` 表示校验通过。`validation` 模式的自定义表达式同样采用 JavaScript，例如 `Number(value) <= Number(getFieldValue('numberField_stock'))`。需要原生 `GT(#{字段ID}, 0)` 或 `EXIST(...)` 公式时，先读 [原生校验的保存方式](../../yida-formula/references/expression-formats.md#提交校验)，沿用其完整规则和预处理，而不是填入 JS 输入。
+
+`validation` 的自定义表达式通过 `getFieldValue(真实ID)` 读取其他字段，`fields` 仅含当前字段。下方 `param.source` 函数则使用自身回调上下文；不要把表达式辅助函数当作所有回调都有的全局函数。多条件校验参照 [带文件和返回值对照的完整示例](../../yida-formula/references/nested-examples.md#同一提交规则原生阻断公式与-js-通过条件)。
+
 通过 patch 模式的 `field-props` 给字段绑定自定义校验函数。推荐把完整逻辑写在字段 `validation` 中，避免不必要的 JS 面板桥接。
 
 ```json
@@ -143,6 +147,8 @@ openyida create-form rule <appType> <formUuid> <rulesJsonOrFile>
 ```
 
 JS 表达式计算目标值，表达式可使用 `value`（触发字段值）和 `fields`（按字段名/fieldId 映射的当前表单值）：
+
+此处按 JavaScript 取值和计算。普通字段默认值公式另按 [字段取值](../../yida-formula/references/field-values.md) 保存；从已有配置迁移时，先确认执行时机和空值处理相同，再决定是否更换方式。
 
 ```json
 [

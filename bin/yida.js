@@ -868,6 +868,8 @@ async function main() {
       if (subCommand === 'evaluate' || subCommand === 'check') {
         const { run } = require('../lib/formula/evaluate');
         await run(subArgs);
+      } else if (['contracts', 'functions', 'types', 'inspect', 'test'].includes(subCommand)) {
+        await require('../lib/formula/commands').run(subCommand, subArgs);
       } else {
         throwCliUsage(t('cli.formula_usage'), t('cli.formula_example'));
       }

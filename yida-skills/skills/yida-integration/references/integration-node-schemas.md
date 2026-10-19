@@ -242,7 +242,7 @@ trigger
 
 - `type: "node"` 表示更新来源是上游节点查询到的那条记录（无需额外过滤条件）
 - `sourceId` 填写上游 `dataRetrieve` 节点的 `nodeId`
-- `__display` 和 `__source` 仅用于前端展示，不影响执行逻辑
+- `value` 用于执行；`__source` 保存公式编辑器内容，`__display` 保存显示文字。新增、更新字段及取数公式的完整格式见 [自动化中的公式](../../yida-formula/references/automation-formulas.md)。
 
 ---
 
@@ -267,6 +267,8 @@ trigger
 ### 条件分支节点（route + condition）
 
 条件分支由一个 `route` 容器节点 + 多个 `condition` 子节点组成：
+
+使用 CLI spec 配置公式分支时，在 `route.branches[]` 中写 `expression: {value, __source, __display}`。CLI 会生成平台的 `calculate: "expression"` 和公式内容；完整示例见 [分支按公式判断](../../yida-formula/references/automation-formulas.md)。普通 `conditions` 与 `expression` 选择一种。
 
 ```json
 {
@@ -338,7 +340,7 @@ trigger
 | --- | --- | --- |
 | `processVar` | 引用触发表单的字段值 | `"textField_mmq4ldti"`（直接写字段 ID） |
 | `literal` | 固定值（字符串/数字） | `"固定文本"` 或 `0` |
-| `column` | 公式计算 | `"CONCATENATE(#{fieldId_a},#{fieldId_b})"` |
+| `column` | 公式计算 | 执行文本及编辑器内容按赋值位置保存，见 [节点表达式](../../yida-formula/references/automation-formulas.md) |
 | `column` | 引用上游节点字段值 | `"${nodeId}.fieldId"` |
 | `column` | 引用上游节点字段并运算 | `"${nodeId}.numberField_xxx+1"` |
 

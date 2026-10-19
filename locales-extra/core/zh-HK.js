@@ -1,5 +1,6 @@
 'use strict';
 
+
 /**
  * Traditional Chinese optional locale pack
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
@@ -359,7 +360,7 @@ module.exports = {
     publish_example: '範例：openyida publish pages/src/home.canvas.jsx APP_XXX FORM-XXX --health-check --auto-nav-order',
     check_prd_completeness_usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     check_prd_completeness_example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
-    formula_usage: '用法: openyida formula evaluate <公式或文件> [--schema schema.json] [--json] [--strict]',
+    formula_usage: 'Usage: openyida formula <check|evaluate|contracts|functions|types|inspect|test> ...',
     formula_example: `示例: openyida formula evaluate 'IF(GT(#{numberField_total}, 100), "高", "低")' --schema .cache/schema.json`,
     verify_usage: '用法：openyida verify-short-url <appType> <formUuid> <url>',
     verify_example: '範例：openyida verify-short-url APP_XXX FORM-XXX /o/myapp',
@@ -2198,6 +2199,56 @@ Object.assign(module.exports.integration, {
   batch_readback_mismatch: 'Persisted batch node type, source or quantity differs from the submitted configuration.',
   create_opt_spec: '  --spec <file.json>            Configure batch retrieve/create, updates and branches with a structured spec',
 });
+
+module.exports.formula_v2 = {
+  trigger_formula: 'Use fixed values or fields in event trigger conditions. Put formula checks in a branch after the trigger.',
+  branch_choose: 'Choose conditions or expression for a branch.',
+  branch_formula: 'Use expression for formula-based branch conditions.',
+  expression_required: 'Enter a non-empty formula expression.',
+  failed: 'Invalid formula configuration: {0}',
+  syntax_invalid: 'Invalid or unsupported formula syntax: {0}',
+  bare_identifier: 'Unbound name {0}. Read the field ID from the form and use #{}.',
+  reference_context: 'Use form field references here; node paths are unsupported: {0}',
+  field_missing: 'Field not found in the form: {0}',
+  argument_type: 'Argument {1} of {0} requires {2}.',
+  function_unknown: 'Formula function {0} is not in the selected list. Query metadata and copy an available formula function name exactly.',
+  function_case: 'Copy the formula function name exactly, including case: {0}',
+  context_unknown: 'Availability of {0} in this context is unknown.',
+  function_context: '{0} is not in the function list for {1}.',
+  argument_count: '{0} requires {1} to {2} arguments; received {3}.',
+  same_type: 'These arguments of {0} must use the same type.',
+  operator_invalid: 'Operator {0} is unsupported here. Use GT, GE, LT, LE, EQ or NE for comparisons.',
+  target_type: 'Formula result {0} does not match target field {1}.',
+  target_unknown: 'Unknown target field type: {0}',
+  schema_missing: 'Load the form schema to check field existence and types.',
+  local_pass: 'Local checks passed; platform execution is not verified.',
+  test_blocked: 'Formula was not executed: {0}. Testing accepts only known non-writing functions.',
+  expect_failed: 'Actual result differs from the expected result.',
+  usage: 'Usage: formula types APP [--component NumberField]; formula functions APP [--name IF]; formula inspect APP FORM [--field ID]; formula test APP FORM <formula|file> --data-file file [--expect JSON]. Use formula check for local checks.',
+};
+Object.assign(module.exports.help, {
+  cmd_formula_check: 'Check formula syntax, fields, arguments and types',
+  cmd_formula_functions: 'Read Yida formula functions and signatures',
+  cmd_formula_types: '查詢公式元件支援的值類型',
+  cmd_formula_inspect: 'Inspect configured form field formulas',
+  cmd_formula_test: 'Evaluate a non-writing formula in Yida and compare its result',
+});
+
+Object.assign(module.exports.formula_v2, {
+  "config_text": "請填寫非空的公式文字。恢復手動輸入時，將 valueType 設為 custom，formula 設為空字串。",
+  "config_conflict": "formula 與 complexValue.formula 內容不同。將兩處改為相同公式，或只提供 formula，由 CLI 同步儲存。",
+  "config_mode": "設定公式時，將 valueType 設為 formula 或省略此項。恢復手動輸入使用 valueType: custom 和 formula: \"\"。",
+  "config_cycle": "發現循環引用：{0}。請讓計算由輸入欄位依序指向結果欄位，避免直接或間接引用自身。",
+  "reference_details_unknown": "尚未確認欄位或子屬性 {0} 的完整定義和類型。",
+  "contract_not_supported": "此檢查器尚未支援 {0} 的語法和執行方式；請使用目標設定的檢查入口。",
+  "consumer_required": "{0} 需要目標設定的預處理和資料上下文，請在對應入口檢查。",
+  "contracts_help": "設定方式：field-value 欄位取值；validation-rule 原生驗證；business-action 業務動作；node-expression 節點運算式。dataset-expression 和 javascript 尚未接入檢查器。相同方式可用於不同設計器；詳情加 --json。"
+});
+Object.assign(module.exports.help, {"cmd_formula_contracts": "查看公式儲存方式和檢查範圍"});
+
+Object.assign(module.exports.formula_v2, {"parallel_formula": "並行分支使用 conditions/rules 或 all:true；expression 目前只適用於 route 分支。"});
+
+Object.assign(module.exports.formula_v2, {"conversion_empty":"公式結果轉成目標欄位後為空。日期請用 TIMESTAMP(日期公式)，並核對原值與欄位類型。","result_missing":"平台完成請求，但沒有返回目標欄位值。日期通常需要 TIMESTAMP(日期公式)。","conversion_partial":"結果只轉出部分數字或不是有限數值。請返回完整數字或毫秒時間戳。","target_branches":"公式可能返回 {0}，部分結果與 {1} 不相容；請逐一試算各分支。","date_timestamp":"日期物件與欄位保存值不同。通常用 TIMESTAMP(日期公式) 返回毫秒時間戳。","numeric_result_text":"公式可能返回文字；請用 --field 試算，核對是否轉成空值或部分數字。"});
 
 module.exports.feedback_report = {
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
