@@ -5,6 +5,15 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  form_view: {
+    usage: "Verwendung: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
+    invalid_config: "Ungültige native Ansichtskonfiguration oder ungültiges Argument: %s",
+    target_mismatch: "Die Ansicht gehört nicht zum Zielformular: %s",
+    api_error: "Native Ansichts-API fehlgeschlagen: %s. Berechtigungen und Tarif prüfen; Schreibvorgänge nicht ungeprüft wiederholen.",
+    unsupported: "Die Plattform hat keine native Ansichtsliste geliefert. Formulartyp und Unterstützung prüfen.",
+    conflict: "Die Ansicht wurde seit dem Lesen geändert. Vor dem Speichern erneut prüfen.",
+    readback_mismatch: "Gespeicherte Konfiguration und Rückleseergebnis unterscheiden sich. Sicherung behalten und entfernte Ansicht prüfen.",
+  },
   integration_manage: {"failed": "Automation operation failed: {0}", "usage": "integration <monitor|copy|rename|delete> <appType> ...", "desc_monitor": "Read or save automation error monitors", "desc_copy": "Copy an automation as disabled", "desc_rename": "Rename an automation", "desc_delete": "Delete a disabled automation"},
   permission_manage: {"failed": "Permission group operation failed: {0}", "usage": "permission-manage <copy|rename|delete> <appType> <formUuid> <packageUuid> [--name name] [--dry-run] [--confirm]", "description": "Copy, rename or delete a permission group"},
   matrix_manage: {"failed": "Matrix operation failed: {0}", "usage": "matrix <list|detail|references|rows|create|update|delete|upsert-rows|delete-rows> [matrixId] [--file config.json] [--dry-run] [--confirm]", "description": "Manage permission matrix definitions, references and rows"},
@@ -98,6 +107,7 @@ module.exports = {
     cmd_validate_form: 'Validate form field JSON locally',
     cmd_update_form: 'Formularseite aktualisieren',
     cmd_list_forms: 'Formulare/Seiten einer App auflisten',
+    cmd_form_view: "Native Formularansichten: Spalten, Breiten, fixierte Spalten und Filter",
     cmd_aggregate_table: 'Manage aggregate tables (virtualView)',
     cmd_get_schema: 'Formular-Schema abrufen',
     cmd_check_prd_completeness: 'Check PRD page/resource count risk',
@@ -175,7 +185,7 @@ module.exports = {
     cmd_formula_evaluate: 'Static-check Yida formula syntax and field refs',
     cmd_update: 'Auf neueste Version aktualisieren',
     cmd_export_conversation: 'KI-Gesprächsaufzeichnungen exportieren',
-    cmd_feedback: 'Feedback-Formular und lokalen Erinnerungsstatus konfigurieren',
+    cmd_feedback: 'Lokale Problemberichte, Feedbackformulare und Erinnerungen verwalten',
     cmd_batch: 'OpenYida-Befehle im Batch ausführen',
     cmd_flash_to_prd: 'Flash Notes oder Meeting Notes in PRD-Prompt umwandeln',
     cmd_ai: 'Call Yida AI text and image recognition APIs',
@@ -2234,6 +2244,25 @@ Object.assign(module.exports.integration, {
   batch_readback_mismatch: 'Persisted batch node type, source or quantity differs from the submitted configuration.',
   create_opt_spec: '  --spec <file.json>            Configure batch retrieve/create, updates and branches with a structured spec',
 });
+
+module.exports.feedback_report = {
+  comparison: 'Test pass/fail requires a command, actual result and evidence.',
+  screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
+  text: 'Feedback text fields must be strings of at most 12000 characters.',
+  list: 'Feedback lists must contain at most 40 text items.',
+  object: 'Feedback input must be a JSON object.',
+  required: 'Feedback input requires title and actual.',
+  count: 'occurrenceCount must be a positive integer when known.',
+  cause: 'cause must be an object.',
+  confirmed: 'A confirmed cause requires a summary and evidence.',
+  usage: 'Usage: openyida feedback report --input <summary.json> --output-dir <new-directory>',
+  duplicate: 'Duplicate feedback report option.',
+  options: 'Both --input and --output-dir are required.',
+  file: 'Feedback input must be a JSON file of at most 1 MiB.',
+  json: 'Feedback input is not valid JSON.',
+  help: 'report prepares local review drafts without login, a source checkout or network submission.',
+  login_hint: 'Ask your AI to prepare local feedback with yida-feedback; no GitHub account or source checkout is required.',
+};
 
 module.exports.task_center = {
   'invalid_spec': 'Invalid task center configuration: {0}',

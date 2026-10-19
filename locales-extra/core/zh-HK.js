@@ -5,6 +5,15 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  form_view: {
+    usage: "用法: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
+    invalid_config: "原生檢視設定或參數無效：%s",
+    target_mismatch: "檢視不屬於目標表單：%s",
+    api_error: "原生檢視介面失敗：%s。請檢查平台權限與版本支援，不要盲目重試寫入。",
+    unsupported: "平台未返回原生多檢視清單，請檢查表單類型及平台支援。",
+    conflict: "檢視在讀取後已變更，請重新檢查再儲存。",
+    readback_mismatch: "儲存設定與回讀結果不一致，請保留備份並核對遠端檢視。",
+  },
   integration_manage: {"failed": "Automation operation failed: {0}", "usage": "integration <monitor|copy|rename|delete> <appType> ...", "desc_monitor": "Read or save automation error monitors", "desc_copy": "Copy an automation as disabled", "desc_rename": "Rename an automation", "desc_delete": "Delete a disabled automation"},
   permission_manage: {"failed": "Permission group operation failed: {0}", "usage": "permission-manage <copy|rename|delete> <appType> <formUuid> <packageUuid> [--name name] [--dry-run] [--confirm]", "description": "Copy, rename or delete a permission group"},
   matrix_manage: {"failed": "Matrix operation failed: {0}", "usage": "matrix <list|detail|references|rows|create|update|delete|upsert-rows|delete-rows> [matrixId] [--file config.json] [--dry-run] [--confirm]", "description": "Manage permission matrix definitions, references and rows"},
@@ -98,6 +107,7 @@ module.exports = {
     cmd_validate_form: '本機校驗表單欄位 JSON',
     cmd_update_form: '更新表單頁面',
     cmd_list_forms: '列出應用程式下的表單/頁面',
+    cmd_form_view: "原生表單檢視：顯示欄、欄寬、凍結欄與篩選設定",
     cmd_aggregate_table: '管理聚合表（virtualView）',
     cmd_get_schema: '取得表單 Schema',
     cmd_check_prd_completeness: 'Check PRD page/resource count risk',
@@ -176,7 +186,7 @@ module.exports = {
     cmd_formula_evaluate: '静态检查宜搭公式语法和字段引用',
     cmd_update: '檢查並更新到最新版本',
     cmd_export_conversation: '匯出 AI 對話記錄',
-    cmd_feedback: '設定體驗回饋表單和本地提醒狀態',
+    cmd_feedback: '整理本機問題報告、設定回饋表單與提醒',
     cmd_batch: '批量執行 OpenYida 命令',
     cmd_flash_to_prd: '閃記 / 會議紀要轉 PRD prompt',
     cmd_ai: '調用宜搭 AI 文生文和識圖能力',
@@ -2186,6 +2196,25 @@ Object.assign(module.exports.integration, {
   batch_readback_mismatch: 'Persisted batch node type, source or quantity differs from the submitted configuration.',
   create_opt_spec: '  --spec <file.json>            Configure batch retrieve/create, updates and branches with a structured spec',
 });
+
+module.exports.feedback_report = {
+  comparison: 'Test pass/fail requires a command, actual result and evidence.',
+  screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
+  text: 'Feedback text fields must be strings of at most 12000 characters.',
+  list: 'Feedback lists must contain at most 40 text items.',
+  object: 'Feedback input must be a JSON object.',
+  required: 'Feedback input requires title and actual.',
+  count: 'occurrenceCount must be a positive integer when known.',
+  cause: 'cause must be an object.',
+  confirmed: 'A confirmed cause requires a summary and evidence.',
+  usage: 'Usage: openyida feedback report --input <summary.json> --output-dir <new-directory>',
+  duplicate: 'Duplicate feedback report option.',
+  options: 'Both --input and --output-dir are required.',
+  file: 'Feedback input must be a JSON file of at most 1 MiB.',
+  json: 'Feedback input is not valid JSON.',
+  help: 'report prepares local review drafts without login, a source checkout or network submission.',
+  login_hint: 'Ask your AI to prepare local feedback with yida-feedback; no GitHub account or source checkout is required.',
+};
 
 module.exports.task_center = {
   'invalid_spec': 'Invalid task center configuration: {0}',

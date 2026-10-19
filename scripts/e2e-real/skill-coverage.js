@@ -10,6 +10,7 @@ const SKILLS_DIR = path.join(ROOT, 'yida-skills', 'skills');
 
 const SKILL_COVERAGE = {
   'yida-task-center': { level: 'offline-unit', tests: ['tests/task-center-contract.test.js', 'tests/task-center-scaffold.test.js'], reason: 'Task query contracts and local page assembly; runtime data, permissions and visual acceptance require an owned application.' },
+  'yida-form-view': { level: 'offline-unit', commands: ['form-view list/inspect/save/create/order'], tests: ['tests/form-view.test.js', 'tests/agent-managed-policy.test.js', 'scripts/e2e-real/fixtures/form-view-fields.json'], reason: 'Unit tests cover native view reads, setting patches, hashes, backups, replacement/readback and managed-app scope. Real writes require a dedicated authorized regression form; shared full-runner defaults never alter existing view settings. Desktop acceptance must verify actual columns, filtering and horizontal scrolling.' },
   'yida-aggregate-table': { level: 'opt-in-real-e2e', stages: ['aggregate'], commands: ['aggregate-table inspect/preview/save/publish/status'], tests: ['tests/aggregate-table.test.js', 'tests/aggregate-table-contract.test.js', 'tests/e2e-real-aggregate-runner.test.js'], reason: 'aggregate writes require an explicitly owned target and fixed designer fixture; runtime query and physical delete remain PLATFORM_PROBE_REQUIRED, so this domain runner is never part of shared full-runner defaults' },
   'yida-app': { level: 'real-e2e', stages: ['app', 'form', 'page', 'data', 'report', 'dashboard'] },
   'yida-upgrade-app-theme': { level: 'offline-unit', tests: ['tests/upgrade-app-theme.test.js', 'tests/prepare-app-theme-upgrade.test.js', 'tests/cli-smoke.test.js'], reason: 'Requires an explicit upgrade request and ask_human confirmation; mock-only tests cover authorization gates, agentAppType-only eligibility, creation-marker/theme-mode writes, partial failure and pair readback. Never upgrade a shared E2E app automatically.' },
@@ -67,6 +68,7 @@ const SKILL_COVERAGE = {
   'yida-table-form': { level: 'offline-unit', reason: 'table-form custom page template should be validated with check-page fixture before real publish stage is added' },
   'yida-tingji': { level: 'offline-unit', tests: ['tests/document-tools.test.js'], reason: 'Tingji content depends on authenticated tenant data; unit coverage validates taskUuid passthrough, response handling, and error behavior' },
   'yida-skill-evaluator': { level: 'offline-unit', tests: ['skill metadata and packaging validation', 'eval test suites'], reason: 'evaluator skill reads and scores other skills; no Yida API mutation' },
+  'yida-feedback': { level: 'offline-unit', reason: 'Local report preparation; GitHub submission requires user authorization' },
   'yida-voc': { level: 'offline-unit', reason: 'VOC formatting skill is local text transformation, not Yida API mutation' },
 };
 

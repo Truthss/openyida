@@ -36,6 +36,42 @@
       "requires_login": true
     },
     {
+      "name": "yida-form-view",
+      "path": "skills/yida-form-view/SKILL.md",
+      "display_name": "原生数据管理视图配置",
+      "description": "读取原生视图列表、显示列和表格设置，配置字段显隐与顺序、列宽、冻结列、默认筛选，新建表格视图和调整顺序。",
+      "category": "yida-skills/form",
+      "tags": [
+        "原生视图",
+        "显示列",
+        "冻结列",
+        "列宽",
+        "默认筛选"
+      ],
+      "aliases": [
+        "表格设置",
+        "数据管理字段显示配置"
+      ],
+      "positive_signals": [
+        "获取表单全部视图配置",
+        "设置数据管理页显示列",
+        "调整原生表格列宽",
+        "冻结订单名称列",
+        "新建待处理视图",
+        "配置默认筛选条件"
+      ],
+      "negative_signals": [
+        "仅美化颜色边框",
+        "新增业务记录",
+        "修改表单字段结构"
+      ],
+      "command_ids": [
+        "form-view",
+        "get-schema"
+      ],
+      "requires_login": true
+    },
+    {
       "name": "yida-data-manage-ui",
       "path": "skills/yida-data-manage-ui/SKILL.md",
       "display_name": "数据管理页美化",
@@ -1447,6 +1483,42 @@
       "aliases": [
         "问题反馈"
       ]
+    },
+    {
+      "name": "yida-feedback",
+      "path": "skills/yida-feedback/SKILL.md",
+      "display_name": "OpenYida 问题反馈与修复贡献",
+      "description": "本地使用故障根因分析和脱敏报告，无 GitHub 账号/源码也可整理；按授权提交 Issue 或从个人 Fork 贡献公开修复。",
+      "category": "yida-skills/ops",
+      "tags": [
+        "OpenYida故障",
+        "根因分析",
+        "Issue",
+        "PR",
+        "Fork",
+        "无账号"
+      ],
+      "aliases": [
+        "本地问题反馈",
+        "提交issue",
+        "贡献修复"
+      ],
+      "positive_signals": [
+        "OpenYida 一直报错帮我反馈",
+        "我没有 GitHub 账号怎么反馈",
+        "本地没有 OpenYida 源码想提 PR",
+        "反复登录失败整理问题",
+        "fork 后贡献技能修复"
+      ],
+      "negative_signals": [
+        "整理宜搭用户反馈清单",
+        "创建业务应用",
+        "发布业务页面"
+      ],
+      "command_ids": [
+        "feedback"
+      ],
+      "requires_login": false
     }
   ],
   "route_groups": [
@@ -1619,12 +1691,20 @@
     {
       "name": "yida-skills/ops",
       "display_name": "排障与支持",
-      "description": "数据库 Sequence 修复、VOC 故障/需求反馈材料整理。",
+      "description": "数据库 Sequence 修复、VOC 整理、OpenYida 本地故障根因分析与 Issue/Fork PR 贡献。",
       "signals": [
         "Sequence",
         "主键冲突",
         "VOC",
-        "反馈"
+        "反馈",
+        "OpenYida故障",
+        "反复报错",
+        "根因分析",
+        "Issue",
+        "PR",
+        "Fork",
+        "没有GitHub账号",
+        "没有源码"
       ]
     },
     {

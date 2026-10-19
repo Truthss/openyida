@@ -5,6 +5,15 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  form_view: {
+    usage: "使用法: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
+    invalid_config: "ネイティブビューの設定または引数が無効です：%s",
+    target_mismatch: "対象フォームに属さないビューです：%s",
+    api_error: "ネイティブビューAPIが失敗しました：%s。権限とプランを確認し、書き込みを無条件に再試行しないでください。",
+    unsupported: "ネイティブビュー一覧が返されませんでした。フォームの種類と対応状況を確認してください。",
+    conflict: "読み取り後にビューが変更されました。保存前に再確認してください。",
+    readback_mismatch: "保存設定と再取得結果が一致しません。バックアップを保持し、リモート設定を確認してください。",
+  },
   integration_manage: {"failed": "Automation operation failed: {0}", "usage": "integration <monitor|copy|rename|delete> <appType> ...", "desc_monitor": "Read or save automation error monitors", "desc_copy": "Copy an automation as disabled", "desc_rename": "Rename an automation", "desc_delete": "Delete a disabled automation"},
   permission_manage: {"failed": "Permission group operation failed: {0}", "usage": "permission-manage <copy|rename|delete> <appType> <formUuid> <packageUuid> [--name name] [--dry-run] [--confirm]", "description": "Copy, rename or delete a permission group"},
   matrix_manage: {"failed": "Matrix operation failed: {0}", "usage": "matrix <list|detail|references|rows|create|update|delete|upsert-rows|delete-rows> [matrixId] [--file config.json] [--dry-run] [--confirm]", "description": "Manage permission matrix definitions, references and rows"},
@@ -98,6 +107,7 @@ module.exports = {
     cmd_validate_form: 'フォームフィールド JSON をローカル検証',
     cmd_update_form: 'フォームページを更新',
     cmd_list_forms: 'アプリ内のフォーム/ページを一覧表示',
+    cmd_form_view: "フォームビューの列表示・幅・固定列・フィルターを管理",
     cmd_aggregate_table: 'Manage aggregate tables (virtualView)',
     cmd_get_schema: 'フォーム Schema を取得',
     cmd_check_prd_completeness: 'Check PRD page/resource count risk',
@@ -175,7 +185,7 @@ module.exports = {
     cmd_formula_evaluate: 'Static-check Yida formula syntax and field refs',
     cmd_update: '最新バージョンに更新',
     cmd_export_conversation: 'AI 会話記録をエクスポート',
-    cmd_feedback: '体験フィードバックフォームとローカル通知状態を設定',
+    cmd_feedback: 'ローカル問題レポート、フィードバックフォームと通知を設定',
     cmd_batch: 'OpenYida コマンドを一括実行',
     cmd_flash_to_prd: 'フラッシュノート/議事録を PRD prompt に変換',
     cmd_ai: 'Yida AI text and image recognition APIs',
@@ -2161,6 +2171,25 @@ Object.assign(module.exports.integration, {
   batch_readback_mismatch: 'Persisted batch node type, source or quantity differs from the submitted configuration.',
   create_opt_spec: '  --spec <file.json>            Configure batch retrieve/create, updates and branches with a structured spec',
 });
+
+module.exports.feedback_report = {
+  comparison: 'Test pass/fail requires a command, actual result and evidence.',
+  screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
+  text: 'Feedback text fields must be strings of at most 12000 characters.',
+  list: 'Feedback lists must contain at most 40 text items.',
+  object: 'Feedback input must be a JSON object.',
+  required: 'Feedback input requires title and actual.',
+  count: 'occurrenceCount must be a positive integer when known.',
+  cause: 'cause must be an object.',
+  confirmed: 'A confirmed cause requires a summary and evidence.',
+  usage: 'Usage: openyida feedback report --input <summary.json> --output-dir <new-directory>',
+  duplicate: 'Duplicate feedback report option.',
+  options: 'Both --input and --output-dir are required.',
+  file: 'Feedback input must be a JSON file of at most 1 MiB.',
+  json: 'Feedback input is not valid JSON.',
+  help: 'report prepares local review drafts without login, a source checkout or network submission.',
+  login_hint: 'Ask your AI to prepare local feedback with yida-feedback; no GitHub account or source checkout is required.',
+};
 
 module.exports.task_center = {
   'invalid_spec': 'Invalid task center configuration: {0}',
