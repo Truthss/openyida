@@ -1009,23 +1009,35 @@
       "name": "yida-formula",
       "path": "skills/yida-formula/SKILL.md",
       "display_name": "宜搭公式编写",
-      "description": "宜搭表单公式编写规范，包含内置函数速查、语法规则和常见场景示例。",
+      "description": "宜搭公式编写与配置指南，包含常用函数速查、语法规则、字段 Schema 配置和完整嵌套示例。适用于自动计算、明细汇总、默认值、提交校验、节点筛选和报表计算；支持检查公式错误、用样例核对计算结果。",
       "category": "yida-skills/form",
       "tags": [
         "公式",
         "字段计算",
         "校验规则",
-        "默认值"
+        "默认值",
+        "节点公式",
+        "报表计算",
+        "嵌套IF",
+        "AND/OR"
       ],
       "aliases": [
         "字段公式"
+      ],
+      "command_ids": [
+        "formula.contracts",
+        "formula.functions",
+        "formula.types",
+        "formula.inspect",
+        "formula.check",
+        "formula.test"
       ]
     },
     {
       "name": "yida-formula-evaluate",
       "path": "skills/yida-formula-evaluate/SKILL.md",
-      "display_name": "公式静态检查",
-      "description": "静态检查宜搭公式语法、字段引用和常见风险。",
+      "display_name": "公式检查与试算",
+      "description": "检查宜搭公式的语法、字段引用和常见错误。适用于用户要求“检查公式”“公式是否能用”“定位公式报错”时；也可读取已有公式、查询函数，并用样例核对计算结果。",
       "category": "yida-skills/form",
       "tags": [
         "公式检查",
@@ -1035,6 +1047,15 @@
       ],
       "aliases": [
         "检查公式"
+      ],
+      "command_ids": [
+        "formula.contracts",
+        "formula.functions",
+        "formula.types",
+        "formula.inspect",
+        "formula.check",
+        "formula.evaluate",
+        "formula.test"
       ]
     },
     {

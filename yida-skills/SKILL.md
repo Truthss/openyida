@@ -177,7 +177,7 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 | 查字段 ID / 保存 Schema 证据 | `yida-get-schema`；凡涉及 fieldId 的数据、流程、公式、页面代码先取证 |
 | 改表单数据记录 | `yida-data-management`，不是 `yida-create-form-page` |
 | 查询指定应用/流程表单中当前审批人为某人的实例或条数 | `yida-data-management`；`data query process --current-approver <userId> [--count]`，仅统计当前登录人经服务端授权可见的实例 |
-| 配字段默认值、计算、校验 | `yida-formula`；静态检查用 `yida-formula-evaluate` |
+| 配置或修改公式、字段计算、提交校验、节点筛选、报表计算 | 共用 `yida-formula`，按实际保存内容读取说明；查看字段公式、查参数和检查用 `yida-formula-evaluate` |
 | 提交后跨表写入/更新/删除 | 默认 `yida-integration`；用户明确要业务关联规则/高级函数时用 `yida-business-rule` |
 | 集成自动化定时、字段变化触发、并行循环、批量取数及生命周期管理 | `yida-integration` 的 `--spec` 路径，读取 `references/batch-data.md`；已有自动化按其更新能力处理 |
 | 自定义页面开发 | `yida-canvas-custom-page`，新建和默认页面源码开发入口，源码使用 `.canvas.jsx`；Canvas 发布层会自动注入 `window.__OPENYIDA_YIDA_API__` 和 `window.__OPENYIDA_UTILS__` |

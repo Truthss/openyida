@@ -26,6 +26,14 @@
 
 赋值的 `column` 使用目标字段 ID，值来源按 [条件与变量](conditions-variables.md) 选择。真实流程表单不能当作普通新增数据的目标；发起流程用 [扩展执行](extensions.md) 中的 `initiateApproval`。
 
+## 获取数据时选择过滤来源
+
+先选目标表和左侧字段，再选择右侧来源：金额大于固定的 `100` 用 `literal`；金额大于上一步的金额用 `processVar`；金额大于上一步金额乘二用 `column`。字段原样比较和计算后比较分别配置，完整格式见 [条件与变量](conditions-variables.md) 及 [节点表达式](../../yida-formula/references/automation-formulas.md)。
+
+右侧字段从已执行的上游节点选取；左侧字段属于被查询的表。操作符按该取数节点和字段类型选择，例如原生数值比较使用 `Bigger`。CLI 也接受并转换 `GreaterThan` 等输入别名；读写平台配置时保留原生编码，具体转换见条件与变量说明。读取单条和多条数据时都应保留可供下游选择的输出字段；编辑已有节点时保留原输出配置。
+
+多条件或嵌套计算使用 [完整取数 spec](../../yida-formula/references/node-examples.md#按编号字段嵌套公式和固定状态取数)，包含字段、IF/ROUND 公式、固定状态和预期匹配记录；目标表任意嵌套 AND/OR 条件树尚不在当前简化输入范围内。
+
 ## 最小示例
 
 自动化中读取当前记录，再将处理状态更新为“待处理”：
