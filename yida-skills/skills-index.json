@@ -469,7 +469,7 @@
       "name": "yida-canvas-data-binding",
       "path": "skills/yida-canvas-data-binding/SKILL.md",
       "display_name": "自定义页面数据绑定",
-      "description": "使用 YidaCodeCanvas 接真实表单、个人流程任务或连接器数据；按用户描述确定任务含义、数据来源和所需能力，复用 CLI 契约及发布层 yida/utils 桥，处理分页、解析和刷新。",
+      "description": "使用 YidaCodeCanvas 接真实表单、个人流程任务或连接器数据；按用户描述确定任务含义、数据来源和所需能力，复用 CLI 契约及发布层 yida/utils window 桥调用表单与流程 API，处理分页、解析和刷新。",
       "category": "yida-skills/page",
       "tags": [
         "YidaCodeCanvas",
