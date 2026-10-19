@@ -5,6 +5,15 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  form_view: {
+    usage: "사용법: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
+    invalid_config: "기본 보기 설정 또는 인수가 잘못되었습니다: %s",
+    target_mismatch: "대상 양식에 속하지 않는 보기입니다: %s",
+    api_error: "기본 보기 API 실패: %s. 권한과 요금제 지원을 확인하고 쓰기를 무조건 재시도하지 마세요.",
+    unsupported: "기본 보기 목록이 반환되지 않았습니다. 양식 유형과 지원 여부를 확인하세요.",
+    conflict: "읽은 후 보기가 변경되었습니다. 저장 전에 다시 확인하세요.",
+    readback_mismatch: "저장 설정이 다시 읽은 결과와 다릅니다. 백업을 보관하고 원격 보기를 확인하세요.",
+  },
   integration_manage: {"failed": "Automation operation failed: {0}", "usage": "integration <monitor|copy|rename|delete> <appType> ...", "desc_monitor": "Read or save automation error monitors", "desc_copy": "Copy an automation as disabled", "desc_rename": "Rename an automation", "desc_delete": "Delete a disabled automation"},
   permission_manage: {"failed": "Permission group operation failed: {0}", "usage": "permission-manage <copy|rename|delete> <appType> <formUuid> <packageUuid> [--name name] [--dry-run] [--confirm]", "description": "Copy, rename or delete a permission group"},
   matrix_manage: {"failed": "Matrix operation failed: {0}", "usage": "matrix <list|detail|references|rows|create|update|delete|upsert-rows|delete-rows> [matrixId] [--file config.json] [--dry-run] [--confirm]", "description": "Manage permission matrix definitions, references and rows"},
@@ -98,6 +107,7 @@ module.exports = {
     cmd_validate_form: 'Validate form field JSON locally',
     cmd_update_form: '양식 페이지 업데이트',
     cmd_list_forms: 'List forms/pages in an app',
+    cmd_form_view: "양식 보기의 표시 열, 너비, 고정 열 및 필터 관리",
     cmd_aggregate_table: 'Manage aggregate tables (virtualView)',
     cmd_get_schema: '양식 Schema 가져오기',
     cmd_check_prd_completeness: 'Check PRD page/resource count risk',

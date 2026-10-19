@@ -73,6 +73,7 @@ const MAX_TARBALL_BYTES = 2416 * 1024;
 // cover triggers, maintenance and management; related node/condition topics stay
 // in their existing guides. Merging main also adds its detail-log module and
 // localized help. Node 24 measures 8,968,987 unpacked bytes / 693 files.
+// Native form views bring the merged package to 8,996,291 bytes on Node 22.
 // Retain the next 16 KiB boundary for the combined package.
 // Offline feedback adds one runtime module and four skill/reference files.
 // Combined formula/feedback content retains the next 16 KiB boundary.
@@ -80,7 +81,11 @@ const MAX_TARBALL_BYTES = 2416 * 1024;
 // Node 24: 9,139,711 unpacked bytes / 711 files (2 new packaged files).
 // Exact formula-name validation, component-type query and required guidance:
 // Node 26: 9,163,220 unpacked bytes / 711 files; next 16 KiB boundary.
-const MAX_UNPACKED_BYTES = 8960 * 1024;
+// Native form views add their runtime, skill and localized documentation to
+// formula support; retain the next 16 KiB boundary for the merged content.
+// Combined Node 22 package: 2,468,324 compressed / 9,194,708 unpacked bytes,
+// 713 files. Keep the compressed and single-file caps unchanged.
+const MAX_UNPACKED_BYTES = 8992 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -94,7 +99,8 @@ const MAX_UNPACKED_BYTES = 8960 * 1024;
 // Remove the two obsolete process reference redirects after updating consumers.
 // Main adds the shared integration detail-log module.
 // Formula support and offline feedback reports bring the total to 709 files.
-const MAX_ENTRY_COUNT = 711;
+// Formula runtime/examples bring it to 711; native form views add two files.
+const MAX_ENTRY_COUNT = 713;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [

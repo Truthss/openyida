@@ -815,6 +815,11 @@ async function main() {
       break;
     }
 
+    case 'form-view': {
+      const { run } = require('../lib/app/form-view');
+      await run(args);
+      break;
+    }
     case 'aggregate-table': {
       const { run } = require('../lib/aggregate-table/aggregate-table');
       await run(args);

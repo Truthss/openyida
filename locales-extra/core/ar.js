@@ -5,6 +5,15 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  form_view: {
+    usage: "الاستخدام: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
+    invalid_config: "إعداد العرض الأصلي أو الوسيط غير صالح: %s",
+    target_mismatch: "العرض لا ينتمي إلى النموذج المستهدف: %s",
+    api_error: "فشل API العرض الأصلي: %s. تحقق من الأذونات والخطة؛ لا تكرر الكتابة دون تحقق.",
+    unsupported: "لم تُرجع المنصة قائمة العروض الأصلية. تحقق من نوع النموذج والدعم.",
+    conflict: "تغير العرض منذ قراءته. افحصه مجددًا قبل الحفظ.",
+    readback_mismatch: "تختلف الإعدادات المحفوظة عن نتيجة إعادة القراءة. احتفظ بالنسخة الاحتياطية وافحص العرض البعيد.",
+  },
   integration_manage: {"failed": "Automation operation failed: {0}", "usage": "integration <monitor|copy|rename|delete> <appType> ...", "desc_monitor": "Read or save automation error monitors", "desc_copy": "Copy an automation as disabled", "desc_rename": "Rename an automation", "desc_delete": "Delete a disabled automation"},
   permission_manage: {"failed": "Permission group operation failed: {0}", "usage": "permission-manage <copy|rename|delete> <appType> <formUuid> <packageUuid> [--name name] [--dry-run] [--confirm]", "description": "Copy, rename or delete a permission group"},
   matrix_manage: {"failed": "Matrix operation failed: {0}", "usage": "matrix <list|detail|references|rows|create|update|delete|upsert-rows|delete-rows> [matrixId] [--file config.json] [--dry-run] [--confirm]", "description": "Manage permission matrix definitions, references and rows"},
@@ -98,6 +107,7 @@ module.exports = {
     cmd_validate_form: 'Validate form field JSON locally',
     cmd_update_form: 'تحديث صفحة نموذج',
     cmd_list_forms: 'List forms/pages in an app',
+    cmd_form_view: "إدارة عروض النماذج: الأعمدة والعرض والأعمدة المثبتة وعوامل التصفية",
     cmd_aggregate_table: 'Manage aggregate tables (virtualView)',
     cmd_get_schema: 'الحصول على Schema النموذج',
     cmd_check_prd_completeness: 'Check PRD page/resource count risk',

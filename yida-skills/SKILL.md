@@ -140,7 +140,7 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 | `yida-skills/context` | 登录、退出、切换组织、组织版本/容量、Schema、fieldId、执行前检查 | `yida-login`、`yida-logout`、`yida-basic-info`、`yida-get-schema`、`yida-corp-efficiency` |
 | `yida-skills/app` | 从零搭应用、完整系统、应用启停、应用导航、多语言、AI 老应用主题升级 | `yida-app`、`yida-create-app`、`yida-app-lifecycle`、`yida-nav-group`、`yida-i18n`、`yida-upgrade-app-theme`（仅明确升级要求并 ask_human 确认） |
 | `yida-skills/design` | 完整应用需求分析、PRD、视觉设计、单页 UI 改造、应用主题色、全局换肤、图片素材 | `yida-requirement-analysis`、`yida-prd`、`yida-design`、`yida-data-manage-ui`、`yida-image-assets` |
-| `yida-skills/form` | 表单字段、公式、校验、业务关联规则、批量录入、数据记录 | `yida-create-form-page`、`yida-formula`、`yida-formula-evaluate`、`yida-business-rule`、`yida-canvas-table-form`、`yida-table-form`、`yida-data-management` |
+| `yida-skills/form` | 表单字段、公式、校验、业务关联规则、批量录入、数据记录 | `yida-create-form-page`、`yida-form-view`、`yida-formula`、`yida-formula-evaluate`、`yida-business-rule`、`yida-canvas-table-form`、`yida-table-form`、`yida-data-management` |
 | `yida-skills/process` | 审批、流程表单、流程规则、节点/分支/字段权限、流程代理 | `yida-create-process`、`yida-process-rule`、`yida-flow-node-config`、`yida-agent-center` |
 | `yida-skills/page` | 工作台、办事门户、任务看板、自定义展示页、页面源码开发、平台 JSX 组件页面维护、页面发布、页面内导航、PPT 页面 | `yida-create-page`、`yida-canvas-custom-page`、`yida-custom-page`、`yida-canvas-data-binding`、`yida-canvas-upgrade`、`yida-publish-page`、`yida-openyida-publish-guard`、`yida-density`、`yida-nav-shell`、`yida-ppt-slider` |
 | `yida-skills/analytics` | 聚合表、虚拟视图、报表、统计、图表、Recharts、ECharts、经营分析看板、驾驶舱、大屏 | `yida-aggregate-table`、`yida-report`、`yida-rechart`、`yida-chart`、`yida-dashboard` |
@@ -190,6 +190,7 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 | 产品化经营分析看板/驾驶舱交付 | `yida-dashboard`，按指标分析任务触发 |
 | 待办、操作队列、业务工作台或办事门户页面 | `yida-canvas-custom-page`；接真实数据时加载 `yida-canvas-data-binding`，不因页面名称或辅助统计转为经营看板 |
 | 批量录入、表格填写、多行编辑 | 默认 `yida-canvas-table-form`；已检测到平台 JSX 组件页面、native 页面或存量源码使用 `this.utils.yida.saveFormData` 时用 `yida-table-form` |
+| 原生数据管理页视图列表、显示列配置、字段显隐与顺序、列宽、冻结列、默认筛选、多视图 | `yida-form-view`；使用原生配置读写，保存前备份并回读，不通过 CSS 隐藏字段或重建自定义列表 |
 | 当前数据管理页换风格、只留横线、突出新增/筛选/行操作、列级强调、状态列标签、数据管理 UI 异常、自定义简单数据管理 | `yida-data-manage-ui`（优先于通用美化）；保留承载类型和业务，从目标推导维度、定位 token/CSS 并按页改写；备份发布并实测，不要求选择配方 |
 | 页面视觉方向、页面美化、去 AI 味、优化应用 UI、不好看、太乱、美化后不满意或恢复 | `yida-design`；已有资源优先走 `sub_skill/ui-improve/SKILL.md`，先展示视觉方案，经 `ask_human` 确认并备份后才交接实施，只改 UI；不满意恢复本轮前状态。新页面设计沿用原设计流程 |
 | 应用级主题、品牌色、全局换肤 | `yida-design`；已有应用按 ui-improve 确认应用级影响范围和恢复方式后执行 |

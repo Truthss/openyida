@@ -5,6 +5,15 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  form_view: {
+    usage: "Utilisation: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
+    invalid_config: "Configuration de vue native ou argument invalide : %s",
+    target_mismatch: "La vue appartient à un autre formulaire : %s",
+    api_error: "Échec de l’API de vue native : %s. Vérifiez les droits et l’offre ; ne relancez pas aveuglément les écritures.",
+    unsupported: "La plateforme n’a pas renvoyé la liste des vues natives. Vérifiez le type de formulaire et sa prise en charge.",
+    conflict: "La vue a changé depuis sa lecture. Vérifiez-la avant de l’enregistrer.",
+    readback_mismatch: "La configuration enregistrée diffère de la relecture. Conservez la sauvegarde et vérifiez la vue distante.",
+  },
   integration_manage: {"failed": "Automation operation failed: {0}", "usage": "integration <monitor|copy|rename|delete> <appType> ...", "desc_monitor": "Read or save automation error monitors", "desc_copy": "Copy an automation as disabled", "desc_rename": "Rename an automation", "desc_delete": "Delete a disabled automation"},
   permission_manage: {"failed": "Permission group operation failed: {0}", "usage": "permission-manage <copy|rename|delete> <appType> <formUuid> <packageUuid> [--name name] [--dry-run] [--confirm]", "description": "Copy, rename or delete a permission group"},
   matrix_manage: {"failed": "Matrix operation failed: {0}", "usage": "matrix <list|detail|references|rows|create|update|delete|upsert-rows|delete-rows> [matrixId] [--file config.json] [--dry-run] [--confirm]", "description": "Manage permission matrix definitions, references and rows"},
@@ -98,6 +107,7 @@ module.exports = {
     cmd_validate_form: 'Validate form field JSON locally',
     cmd_update_form: 'Mettre à jour une page de formulaire',
     cmd_list_forms: "Lister les formulaires/pages d'une app",
+    cmd_form_view: "Gérer les vues natives : colonnes, largeurs, colonnes figées et filtres",
     cmd_aggregate_table: 'Manage aggregate tables (virtualView)',
     cmd_get_schema: 'Obtenir le Schema du formulaire',
     cmd_check_prd_completeness: 'Check PRD page/resource count risk',
