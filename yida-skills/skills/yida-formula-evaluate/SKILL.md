@@ -115,7 +115,7 @@ openyida formula test APP_XXX FORM_XXX --field numberField_total --cases cases.j
 
 字段试算读取已保存公式及其依赖，将组件类型、子表行和计算顺序交给平台原生字段计算接口。也可以在 APP/FORM 后提供候选公式，只用于本次试算。完整样例、保存后重试和日期说明由统一的 `yida-formula` 技能提供，按其“字段绑定与样例验证”参考执行。
 
-`--cases` 文件每项包含唯一 `name`、`data` 和 `expect`，单次 1 至 100 项；与 `--data-file/--expect` 分开使用。字段试算的 `--context` 为默认 `form`，无需 `--binding`；原始数据保持组件格式，子字段放入子表行对象。`--timezone-offset` 单位为分钟、向东为正，默认 480。
+`--cases` 文件每项包含唯一 `name`、`data` 和 `expect`，单次 1 至 100 项；与 `--data-file/--expect` 分开使用。字段试算的 `--context` 为默认 `form`，省略 `--binding`；原始数据保持组件格式，子字段放入子表行对象。`--timezone-offset` 单位为分钟、向东为正，范围 -840 至 840 的整数，默认 480；仅用于带 `--field` 的试算。
 
 `verification: field-runtime` 表示平台字段计算已调用。`rawValue` 是平台组件绑定后的字段值；`value` 是 CLI 按部分原生回填规则转换后的值。没有预期值时 `assertion: not_requested`；结果缺失、转换为空或只解析出部分数字会明确失败。批量结果保留每个样例名称和失败原因。
 

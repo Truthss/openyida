@@ -115,4 +115,68 @@ describe('formula platform commands', () => {
     fs.writeFileSync(dataFile, JSON.stringify([{ name: 'without-expect', data: {} }]));
     await expect(run('test', ['APP_TEST', 'FORM_TEST', '--field', 'numberField_amount', '--cases', dataFile])).rejects.toThrow();
   });
+
+  test.each(['form', 'validation', 'automation', 'business'])('queries exact formula names in context %s and keeps a complete exported snapshot', async selectedContext => {
+    const output = path.join(directory, 'snapshot.json');
+    const result = await run('functions', ['APP_TEST', '--name', 'ROUND', '--context', selectedContext, '--output', output, '--json']);
+    expect(result).toMatchObject({ context: selectedContext, consumerAvailabilityVerified: false, functions: [{ name: 'ROUND' }] });
+    expect(Object.keys(JSON.parse(fs.readFileSync(output, 'utf8')).content.expressionMapping).length).toBeGreaterThan(1);
+    await expect(run('functions', ['APP_TEST', '--name', 'round'])).rejects.toThrow();
+    expect(postFormOnce).not.toHaveBeenCalled();
+  });
+  test('numeric-literals is an explicit endpoint probe and does not change stored formulas or raw data', async () => {
+    const expression = 'ROUND(#{numberField_amount},2)';
+    const result = await run('test', ['APP_TEST', 'FORM_TEST', expression, '--data-file', dataFile, '--binding', 'numeric-literals', '--context', 'validation', '--json']);
+    expect(result).toMatchObject({ verification: 'expression-endpoint', runtimeVerified: false, binding: 'numeric-literals', context: 'validation', expression: 'ROUND((12.345),2)' });
+    expect(postFormOnce.mock.calls[0][1].varMap).toBe('{"numberField_amount":12.345}');
+    expect(await getFormSchema.mock.results[0].value).toMatchObject([{ props: { formula: 'ROUND(1,2)' } }]);
+  });
+  test('candidate field formula, data file and default timezone use the native field endpoint without saving', async () => {
+    postFormOnce.mockResolvedValue({ success: true, content: { calculateComplete: true,
+      data: [{ fieldId: 'numberField_amount', fieldData: { value: '0' } }] } });
+    const result = await run('test', ['APP_TEST', 'FORM_TEST', 'ROUND(0,2)', '--field', 'numberField_amount', '--data-file', dataFile, '--expect', '0', '--json']);
+    expect(result).toMatchObject({ success: true, value: 0, timezoneOffset: 480, saved: false, verification: 'field-runtime' });
+    expect(postFormOnce).toHaveBeenCalledTimes(1);
+    expect(postFormOnce.mock.calls[0][0]).toContain('/query/formFormula/evaluatePlus.json');
+    expect(JSON.parse(postFormOnce.mock.calls[0][1].bindingComponentFormulaList)[0].formRule).toBe('ROUND(0,2)');
+    expect(await getFormSchema.mock.results[0].value).toMatchObject([{ props: { formula: 'ROUND(1,2)' } }]);
+  });
+  test.each([
+    ['--field', 'numberField_amount', '--binding', 'platform'],
+    ['--field', 'numberField_amount', '--context', 'validation'],
+    ['--timezone-offset', '480'], ['--binding', 'unknown'], ['--context', 'automation'],
+    ['--field', 'numberField_amount', '--timezone-offset', '841'],
+    ['--field', 'numberField_amount', '--timezone-offset', '0.5'],
+    ['--field', 'tree-id-instead-of-field-id'], ['--unknown'], ['--json', '--json'],
+  ])('rejects invalid test options before evaluation: %j', async (...flags) => {
+    await expect(run('test', ['APP_TEST', 'FORM_TEST', 'ROUND(1,2)', '--data-file', dataFile, ...flags])).rejects.toThrow();
+    expect(postFormOnce).not.toHaveBeenCalled();
+  });
+  test.each([
+    [], Array.from({ length: 101 }, (_, index) => ({ name: 'case-' + index, data: {}, expect: 0 })),
+    [{ name: 'same', data: {}, expect: 0 }, { name: 'same', data: {}, expect: 0 }],
+    [{ name: ' ', data: {}, expect: 0 }], [{ name: 'extra', data: {}, expect: 0, unknown: true }],
+  ].map(cases => [cases]))('rejects malformed case batches before evaluating any sample: %#', async cases => {
+    fs.writeFileSync(dataFile, JSON.stringify(cases));
+    await expect(run('test', ['APP_TEST', 'FORM_TEST', '--field', 'numberField_amount', '--cases', dataFile])).rejects.toThrow();
+    expect(postFormOnce).not.toHaveBeenCalled();
+  });
+  test.each([
+    [], ['--data-file', 'unused.json'], ['--expect', '0'],
+  ])('enforces case mode requirements and mutually exclusive input options: %j', async (...flags) => {
+    fs.writeFileSync(dataFile, JSON.stringify([{ name: 'one', data: {}, expect: 0 }]));
+    const fieldArgs = flags.length ? ['--field', 'numberField_amount'] : [];
+    await expect(run('test', ['APP_TEST', 'FORM_TEST', 'ROUND(1,2)', '--cases', dataFile, ...fieldArgs, ...flags])).rejects.toThrow();
+    expect(postFormOnce).not.toHaveBeenCalled();
+  });
+  test('accepts 100 field cases, retaining JSON types, names and verification boundaries', async () => {
+    const cases = Array.from({ length: 100 }, (_, index) => ({ name: 'case-' + index, data: {}, expect: 0 }));
+    fs.writeFileSync(dataFile, JSON.stringify(cases));
+    postFormOnce.mockResolvedValue({ success: true, content: { calculateComplete: true,
+      data: [{ fieldId: 'numberField_amount', fieldData: { value: '0' } }] } });
+    const result = await run('test', ['APP_TEST', 'FORM_TEST', '--field', 'numberField_amount', '--cases', dataFile, '--json']);
+    expect(result).toMatchObject({ success: true, verification: 'field-runtime-cases', saved: false, runtimeVerified: false, summary: { total: 100, passed: 100, failed: 0 } });
+    expect(result.results.map(item => item.name)).toEqual(cases.map(item => item.name));
+    expect(postFormOnce).toHaveBeenCalledTimes(100);
+  });
 });

@@ -100,7 +100,9 @@ const MAX_UNPACKED_BYTES = 8992 * 1024;
 // Main adds the shared integration detail-log module.
 // Formula support and offline feedback reports bring the total to 709 files.
 // Formula runtime/examples bring it to 711; native form views add two files.
-const MAX_ENTRY_COUNT = 713;
+// Shared formula CLI/manifest/help parameter definitions add one runtime file.
+// Node 22: 2,469,301 compressed / 9,198,911 unpacked bytes; byte caps unchanged.
+const MAX_ENTRY_COUNT = 714;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [

@@ -1160,7 +1160,7 @@ function recordConfiguredStageResults(registry, registryPath, config, context, w
       resources: [],
     },
     offline: {
-      commands: ['formula-evaluate', 'doctor', 'sample-list', 'cdn-config-show'],
+      commands: ['formula-check', 'formula-evaluate', 'formula-contracts', 'doctor', 'sample-list', 'cdn-config-show'],
       summary: 'Formula, doctor, sample and CDN config offline checks verified',
       resources: [],
     },
@@ -1624,7 +1624,9 @@ async function run(options = {}) {
 
     if (hasStage(config.stages, 'offline')) {
       const formulaSchemaPath = writeJsonFile(path.join(workDir, 'formula-schema.json'), { fields: context.fields });
+      runStep('formula-check', ['formula', 'check', 'ROUND(12.345,2)', '--schema', formulaSchemaPath, '--target-type', 'NumberField', '--strict', '--json']);
       runStep('formula-evaluate', ['formula', 'evaluate', '1+1', '--schema', formulaSchemaPath, '--json']);
+      runStep('formula-contracts', ['formula', 'contracts', '--json']);
       runStep('doctor', ['doctor'], { allowNoJson: true });
       runStep('sample-list', ['sample', '--list'], { allowNoJson: true });
       runStep('cdn-config-show', ['cdn-config', '--show'], { allowNoJson: true });
