@@ -74,7 +74,9 @@ const MAX_TARBALL_BYTES = 2400 * 1024;
 // Retain the next 16 KiB boundary for the combined package.
 // Offline feedback adds one runtime module and four skill/reference files.
 // Combined formula/feedback content retains the next 16 KiB boundary.
-const MAX_UNPACKED_BYTES = 8912 * 1024;
+// Native field-runtime binding and its complete regression examples:
+// Node 24: 9,139,711 unpacked bytes / 711 files (2 new packaged files).
+const MAX_UNPACKED_BYTES = 8944 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -88,7 +90,7 @@ const MAX_UNPACKED_BYTES = 8912 * 1024;
 // Remove the two obsolete process reference redirects after updating consumers.
 // Main adds the shared integration detail-log module.
 // Formula support and offline feedback reports bring the total to 709 files.
-const MAX_ENTRY_COUNT = 709;
+const MAX_ENTRY_COUNT = 711;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [

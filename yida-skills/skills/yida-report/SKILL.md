@@ -48,11 +48,9 @@ description: "创建宜搭原生报表。"
 
 > ⚠️ 严禁在前端直接聚合表单数据，必须通过原生报表 `getDataAsync.json` 或 `getCacheData.json` 获取聚合数据。
 
-## 计算列与统计口径
+## 使用公式
 
-需要金额计算、比率或计算列时，编写配置前通过 `use_skill` 加载 `yida-formula`，查看“写配置前先处理这些易错点” 和 [数据集表达式](../yida-formula/references/expression-formats.md#数据集表达式)。先说清“每行先计算再汇总”还是“汇总后计算”，再从当前数据集读取字段标识、类型和可用函数。
-
-复用已有计算列时，保留表达式、数据类型、聚合方式和日期粒度。底层 Schema 的 `fieldDefinition.expression` 支持保存表达式，不代表 `create-report` 的每个简化参数都能直接接收它；按实际支持的输入或已有完整配置处理。类型检查和查询结果使用数据集自己的入口，表单公式检查结果不作为聚合正确的证据。
+涉及计算表达式时，通过 `use_skill` 加载统一的 `yida-formula`，按其中的公式规则和示例配置。本技能提供当前数据集的真实字段、分组与聚合设置，以及报表配置保存和查询入口；表达式保存细节见 [数据集表达式](../yida-formula/references/expression-formats.md#数据集表达式)。
 
 ## 异常处理
 

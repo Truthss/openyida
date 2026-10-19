@@ -1,4 +1,4 @@
-# 常用公式函数与选择方法
+# 公式函数速查：名称、参数与示例
 
 先看要得到什么结果，再选函数。参数以当前组织查询结果为准：
 
@@ -7,6 +7,56 @@ openyida formula functions APP_XXX --name ROUND --context form --json
 ```
 
 `required` 是必填参数类型，`optional` 是可选参数类型，`variadic` 表示可继续添加参数，`result` 是结果类型。函数清单会随平台更新，本页提供常用例子。
+
+## 完整分类索引
+
+以下列出 CLI 内置参考清单中的 108 个名称，便于按用途查找；它是参考索引，不表示当前组织或每个编辑器都开放全部函数。先找函数，再用上面的命令查询参数和当前配置的可用范围。大小写按表保留。
+
+| 类别 | 函数名 |
+| --- | --- |
+| 数值 | `ABS`、`ADD`、`AVERAGE`、`CEILING`、`FIXED`、`FLOOR`、`INT`、`LARGE`、`LOG`、`MAX`、`MIN`、`MOD`、`POWER`、`PRODUCT`、`ROUND`、`SMALL`、`SQRT`、`SUM`、`SUMPRODUCT` |
+| 文本 | `CONCATENATE`、`LEFT`、`LEN`、`LOWER`、`MID`、`PINYINHEADCHAR`、`REPLACE`、`REPT`、`RIGHT`、`RMBFORMAT`、`SEARCH`、`SPLIT`、`TEXT`、`TRIM`、`UPPER`、`UUID`、`VALUE` |
+| 判断与校验 | `AND`、`ARRAYREPEATED`、`EQ`、`EXACT`、`FALSE`、`GE`、`GT`、`HASEMPTYTEXT`、`IF`、`ISEMPTY`、`ISNULL`、`LE`、`LT`、`NE`、`NOT`、`NUMBERCOMPARE`、`OR`、`TIMECOMPARE`、`TRUE`、`XOR` |
+| 日期与时间 | `CASCADEDATEINTERVAL`、`CASCADEDATEINTERVALV2`、`DATE`、`DATEDELTA`、`DAY`、`DAYBEGIN`、`DAYEND`、`DAYS`、`DAYS360`、`HOUR`、`ISOWEEKNUM`、`MINUTE`、`MONTH`、`NETWORKDAYS`、`NOW`、`SECOND`、`SYSTIME`、`TIME`、`TIMESTAMP`、`TODAY`、`WEEKNUM`、`WORKDAY`、`YEAR`、`YEARBEGIN`、`YEAREND` |
+| 人员与部门 | `DEPTNAME`、`DIRECTOR`、`DeptBuilder`、`DirectorBuilder`、`EMPLOYEE`、`GETUSERNAME`、`LOGINUSER`、`LOGINUSERWORKNO`、`USER`、`USERFIELD`、`UserBuilder` |
+| 集合与取值 | `ARRAYGET`、`DIFFERENCESET`、`GetArrayItem`、`GetObjectField`、`INTERSECTIONSET`、`SUBSET`、`UNIONSET` |
+| 表单查询 | `COUNT`、`EXIST`、`QUERYEQ`；需要目标表单、字段及查询上下文 |
+| 数据动作与专用能力 | `DELETE`、`ESIGNUSER`、`INSERT`、`SETSERIALNO`、`UPDATE`、`UPSERT`；结合业务动作、签章或流水号配置使用 |
+
+查询和写入函数要保留其业务入口的完整配置；字段试算不执行数据写入。`EXIST` 等依赖原生预处理的函数，需要从原生校验入口验证。
+
+## 常用参数写法
+
+下表里的“文本、数字、日期”等是参数说明，实际填写字段引用或常量。方括号表示可选参数，省略号表示可继续添加参数；这些说明符号不写入公式。字段 Schema 的三个属性、字段令牌与 JSON 引号规则见统一 `yida-formula` 入口。
+
+| 函数写法 | 作用与结果 |
+| --- | --- |
+| `ROUND(数字, 小数位数)` | 舍入为数字；`ROUND(12.345, 2)` 得到 12.35 |
+| `SUM(数字, ...)`、`AVERAGE(数字, ...)` | 求和、平均；子表整列输入由字段绑定提供 |
+| `MAX(数字1, 数字2, ...)`、`MIN(数字1, 数字2, ...)` | 最大值、最小值 |
+| `INT(数字)`、`ABS(数字)`、`SQRT(数字)` | 向下取整、绝对值、平方根 |
+| `MOD(数字, 除数)`、`POWER(底数, 指数)` | 取余、乘幂；除数要非零 |
+| `PRODUCT(数字1, 数字2 [, 数字3 ...])`、`SUMPRODUCT(数组1, 数组2)` | 连乘、两列对应相乘再求和；参数上限按查询签名填写 |
+| `IF(条件, 满足时的值, 不满足时的值)` | 返回所选分支；两个分支按目标类型填写 |
+| `AND(条件1, 条件2, ...)`、`OR(条件1, 条件2, ...)`、`NOT(条件)` | 同时满足、任一满足、取反，结果是真或假 |
+| `EQ(a, b)`、`NE(a, b)`、`GT(a, b)`、`GE(a, b)`、`LT(a, b)`、`LE(a, b)` | 相等、不等、大于、大于等于、小于、小于等于；两边使用兼容类型 |
+| `ISEMPTY(值)`、`ISNULL(值)` | 判断空值；字符串、数组及未填字段按实际绑定验证，零值单独考虑 |
+| `CONCATENATE(文本, ...)`、`LEN(文本)` | 拼接文本、文本长度 |
+| `LEFT(文本 [, 个数])`、`RIGHT(文本 [, 个数])`、`MID(文本, 起点, 个数)` | 截取文本；例如 `MID("ABCDE", 2, 2)` 得到 `"BC"` |
+| `TRIM(文本)`、`UPPER(文本)`、`LOWER(文本)` | 清理首尾空格、转大写、转小写 |
+| `REPLACE(文本, 起点, 个数, 新文本)`、`SPLIT(文本, 分隔符)` | 替换字符、拆分为数组 |
+| `TEXT(值 [, 格式])`、`VALUE(数字文本)`、`RMBFORMAT(数字 [, 精度])` | 格式化文本、转数字、人民币文本；结果类型分别保留 |
+| `UUID()` | 生成字符串编号 |
+| `TODAY()`、`NOW()`、`TIMESTAMP(日期对象)`、`DATE(时间戳)` | 今天、现在、日期转时间戳、时间戳转日期；不要照搬其他工具的同名函数参数 |
+| `YEAR(日期)`、`MONTH(日期)`、`DAY(日期)` | 提取年、月、日 |
+| `DAYS(结束日期, 开始日期)`、`DATEDELTA(日期, 增加天数)` | 相隔天数、日期增减；日期对象与组件时间戳按需要转换 |
+| `NETWORKDAYS(开始时间戳, 结束时间戳 [, 假期设置])` | 工作日数量；假期设置格式按目标配置查询 |
+| `CASCADEDATEINTERVAL(日期区间数组)`、`TIMECOMPARE(时间戳a, 时间戳b)` | 区间相隔天数、判断 a 是否晚于 b |
+| `USER([主管层级])`、`GETUSERNAME()`、`LOGINUSERWORKNO()` | 成员数组、当前人昵称、当前人员工 UserID；`USER()` 用于当前人，主管用法先查层级说明 |
+| `DEPTNAME(人员ID或数组)`、`DIRECTOR(主管层级)` | 部门名称、当前人对应层级主管名称；成员对象与名称文本分别使用 |
+| `UserBuilder(人员ID或数组)`、`DirectorBuilder(人员或部门ID, 层级 [, 类型])`、`DeptBuilder([人员ID或数组 [, 类型]])` | 构造人员或部门对象数组；类型枚举按配置查询 |
+| `ARRAYGET(数组, 序号)`、`ARRAYREPEATED(值或数组)`、`EXACT(文本1, 文本2)` | 取指定项、判断重复、区分大小写比较文本；`ARRAYGET` 常用序号从 1 开始 |
+| `UNIONSET(数组1, 数组2 [, 数组3])`、`INTERSECTIONSET(数组1, 数组2)`、`DIFFERENCESET(数组1, 数组2)`、`SUBSET(数组1, 数组2)` | 并集、交集、差集、第二个集合是否为第一个的子集 |
 
 ## 数值和判断
 
@@ -21,6 +71,7 @@ openyida formula functions APP_XXX --name ROUND --context form --json
 | 大于、大于等于 | `GT(#{numberField_total}, 100)`、`GE(#{numberField_total}, 100)` |
 | 小于、小于等于 | `LT(#{numberField_total}, 100)`、`LE(#{numberField_total}, 100)` |
 | 相等 | `EQ(#{textField_status}, "通过")` |
+| 不相等 | `NE(#{textField_status}, "作废")` |
 | 按条件返回不同值 | `IF(GT(#{numberField_total},100), "高", "低")` |
 | 多个条件同时满足 | `AND(GE(#{numberField_age},18), LE(#{numberField_age},60))` |
 | 任一条件满足 | `OR(EQ(#{textField_status},"通过"), EQ(#{textField_status},"免审"))` |
@@ -44,9 +95,11 @@ openyida formula functions APP_XXX --name ROUND --context form --json
 | 目的 | 公式示例或做法 |
 | --- | --- |
 | 今天 | `TODAY()` |
-| 取年份、月份 | `YEAR(#{dateField_start})`、`MONTH(#{dateField_start})` |
+| 取年份、月份、日 | `YEAR(#{dateField_start})`、`MONTH(#{dateField_start})`、`DAY(#{dateField_start})` |
 | 两个日期相隔天数 | `DAYS(#{dateField_end}, #{dateField_start})` |
 | 日期加 90 天 | `DATEDELTA(#{dateField_start}, 90)` |
+| 日期区间的相隔天数 | `CASCADEDATEINTERVAL(#{cascadeDateField_period})` |
+| 结束时间晚于开始时间 | `TIMECOMPARE(#{dateField_end}, #{dateField_start})` |
 | 当前登录人填入成员字段 | `USER()` |
 | 当前登录人昵称填入文本字段 | `GETUSERNAME()` |
 | 当前登录人的第一级主管名称 | `DIRECTOR(1)` |

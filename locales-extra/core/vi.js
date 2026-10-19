@@ -2282,6 +2282,8 @@ Object.assign(module.exports.help, {"cmd_formula_contracts": "Xem định dạng
 
 Object.assign(module.exports.formula_v2, {"parallel_formula": "Dùng conditions/rules hoặc all:true cho nhánh song song; expression hiện chỉ được hỗ trợ cho nhánh route."});
 
+Object.assign(module.exports.formula_v2, {"conversion_empty":"Chuyển đổi sang trường đích tạo ra giá trị rỗng. Với ngày, dùng TIMESTAMP(công thức ngày) và kiểm tra giá trị gốc cùng kiểu dữ liệu.","result_missing":"Yêu cầu đã hoàn tất nhưng thiếu giá trị trường đích. Trường ngày thường cần TIMESTAMP(công thức ngày).","conversion_partial":"Giá trị chỉ được chuyển một phần thành số hoặc không hữu hạn. Hãy trả về số đầy đủ hoặc mili giây.","target_branches":"Một số kiểu kết quả {0} không phù hợp với {1}. Hãy thử từng nhánh.","date_timestamp":"Đối tượng ngày khác với giá trị lưu. Thường dùng TIMESTAMP(công thức ngày) để trả về mili giây.","numeric_result_text":"Kết quả có thể là văn bản. Dùng --field thử từng nhánh để phát hiện chuyển đổi rỗng hoặc chỉ một phần."});
+
 module.exports.feedback_report = {
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',

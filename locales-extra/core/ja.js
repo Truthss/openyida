@@ -2209,6 +2209,8 @@ Object.assign(module.exports.help, {"cmd_formula_contracts": "数式の保存形
 
 Object.assign(module.exports.formula_v2, {"parallel_formula": "並列分岐には conditions/rules または all:true を使用してください。expression は現在 route 分岐のみ対応しています。"});
 
+Object.assign(module.exports.formula_v2, {"conversion_empty":"式の結果が対象フィールドへの変換で空になりました。日付は TIMESTAMP(日付式) を使い、元の値と型を確認してください。","result_missing":"リクエストは完了しましたが、対象フィールドの値がありません。日付には通常 TIMESTAMP(日付式) が必要です。","conversion_partial":"数値の一部だけが解析されたか、有限数ではありません。完全な数値またはミリ秒タイムスタンプを返してください。","target_branches":"結果の型 {0} の一部は {1} に適合しません。各分岐を試算してください。","date_timestamp":"日付オブジェクトと保存値は異なります。通常は TIMESTAMP(日付式) でミリ秒を返します。","numeric_result_text":"結果が文字列になる場合があります。--field で各分岐を試算し、空値や部分的な数値変換を確認してください。"});
+
 module.exports.feedback_report = {
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',

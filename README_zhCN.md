@@ -480,7 +480,7 @@ openyida feedback report --input summary.json --output-dir feedback-draft-001
 | `openyida formula contracts [--json]` | 查看公式保存方式和检查范围 |
 | `openyida formula functions <appType> [--name IF] [--context form] [--output file] [--json]` | 查询宜搭公式函数及参数说明 |
 | `openyida formula inspect <appType> <formUuid> [--field fieldId] [--json]` | 查看表单字段已配置的公式 |
-| `openyida formula test <appType> <formUuid> <formula\|file> --data-file file [--context form\|validation] [--binding platform\|numeric-literals] [--expect JSON] [--json]` | 带入数据在宜搭试算公式并核对结果 |
+| `openyida formula test <appType> <formUuid> [formula\|file] [--data-file file \| --cases file] [--field fieldId] [--timezone-offset minutes] [--context form\|validation] [--binding platform\|numeric-literals] [--expect JSON] [--json]` | 带入数据在宜搭试算公式并核对结果 |
 | `openyida update` | 检查并更新到最新版本 |
 | `openyida export-conversation [options]` | 导出 AI 对话记录 |
 | `openyida feedback <report\|setup\|url\|dismiss\|status> [options]` | 整理本地问题报告、配置反馈表单与提醒 |

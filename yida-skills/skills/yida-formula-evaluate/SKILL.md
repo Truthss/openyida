@@ -1,6 +1,6 @@
 ---
 name: yida-formula-evaluate
-description: 查看字段公式、查询函数参数、检查引用和类型，并带样例调用宜搭表达式接口。用于排查公式报错和核对计算结果；说明每一步能验证什么，以及还需在实际入口检查什么。
+description: 读取已有公式和依赖、查询函数、检查写法与类型；带样例按原生字段链路试算，批量核对预期结果。用于排查公式报错、日期或金额为空、子表计算不对；其他配置使用对应实际入口验证。
 ---
 
 # 检查和试算公式
@@ -16,6 +16,8 @@ description: 查看字段公式、查询函数参数、检查引用和类型，�
 | 函数需要什么参数 | `formula functions APP --name ROUND --json` |
 | 公式写法、参数和字段引用有没有问题 | `formula check`，旧命令 `formula evaluate` 继续做本地检查 |
 | 通用表达式接口对这份输入返回什么 | `formula test` |
+| 已存字段公式能否正确绑定并得到目标值 | `formula test APP FORM --field 字段ID --data-file data.json --expect JSON` |
+| 修改后多组样例是否都正确 | `formula test APP FORM --field 字段ID --cases cases.json` |
 
 ## 读取配置和函数
 
@@ -55,7 +57,22 @@ openyida formula check formula.txt --contract field-value --schema schema.json -
 | 函数未收录、类型或可用位置未知 | 查询当前配置提供的函数和字段，保留未确认状态 |
 | 输入方式未支持 | 使用对应的数据集编辑器或 JavaScript 工具检查 |
 
-`ok: true` 表示本地没有发现错误；`unknown` 表示缺少信息。`checks.consumerPreprocessing/platform/runtime: not_run` 表示未完成预处理、平台执行和实际运行。`--strict` 在发现错误时返回失败退出码。
+`ok: true` 表示本地没有发现错误；`unknown` 表示缺少信息。混合类型分支、日期对象及数值目标中的文本结果会提示进一步试算。`checks.consumerPreprocessing/platform/runtime: not_run` 表示未完成预处理、平台执行和实际运行。`--strict` 在发现错误时返回失败退出码。
+
+## 优先按目标字段试算
+
+```bash
+openyida formula test APP_XXX FORM_XXX --field numberField_total --data-file data.json --expect 24.6 --json
+openyida formula test APP_XXX FORM_XXX --field numberField_total --cases cases.json --json
+```
+
+字段试算读取已保存公式及其依赖，将组件类型、子表行和计算顺序交给平台原生字段计算接口。也可以在 APP/FORM 后提供候选公式，只用于本次试算。完整样例、保存后重试和日期说明由统一的 `yida-formula` 技能提供，按其“字段绑定与样例验证”参考执行。
+
+`--cases` 文件每项包含唯一 `name`、`data` 和 `expect`，单次 1 至 100 项；与 `--data-file/--expect` 分开使用。字段试算的 `--context` 为默认 `form`，无需 `--binding`；原始数据保持组件格式，子字段放入子表行对象。`--timezone-offset` 单位为分钟、向东为正，默认 480。
+
+`verification: field-runtime` 表示平台字段计算已调用。`rawValue` 是平台组件绑定后的字段值；`value` 是 CLI 按部分原生回填规则转换后的值。没有预期值时 `assertion: not_requested`；结果缺失、转换为空或只解析出部分数字会明确失败。批量结果保留每个样例名称和失败原因。
+
+试算不保存字段、不提交记录。`widgetFormatting/submission: not_run` 表示字段精度、日期显示、页面事件及提交还需实际验收。依赖公式会重新计算，不把样例中预填的计算结果当成已验证结果。
 
 ## 调用表达式接口
 
@@ -85,6 +102,6 @@ openyida formula test APP_XXX FORM_XXX 'ROUND(#{numberField_total}, 2)' --data-f
 
 ## 说明验证范围
 
-分别报告本地检查、接口探查、配置回读和实际执行。接口探查返回 `verification: expression-endpoint`、`runtimeVerified: false`，并标明未执行的预处理和目标类型转换。即使接口有结果，也要通过实际页面填写、提交校验、节点日志或图表查询确认对应功能。
+分别报告本地检查、原生字段试算或接口探查、配置回读和实际执行。通用接口返回 `verification: expression-endpoint`；字段试算返回 `field-runtime`，批量返回 `field-runtime-cases`。这些结果仍标记 `runtimeVerified: false`，避免把部分试算当成页面、校验、节点或图表的完整验收。
 
 用户要求暂停测试时，保留上述步骤作为后续验收说明，不执行接口探查或实际业务操作。

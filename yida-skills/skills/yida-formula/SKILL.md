@@ -1,13 +1,13 @@
 ---
 name: yida-formula
-description: 指导宜搭公式配置，包括金额计算、明细汇总、默认值、提交校验、节点筛选和报表计算。提供嵌套 IF、AND/OR、子表和复杂节点的完整示例，说明字段引用与保存方法。新增、修改或排查公式时使用，各设计器共用此入口。
+description: 配置和排查宜搭公式，包括金额计算、明细汇总、默认值、提交校验、节点筛选和报表计算。提供完整嵌套示例；字段公式可带样例按原生计算链路试算，核对绑定与类型转换。各设计器共用此入口。
 ---
 
 # 配置宜搭公式
 
 先说明想得到什么结果，例如“单价乘数量，保留两位小数”“提交时提醒编号重复”“按上一步的金额筛选记录”。再读取已有配置，确定输入数据和结果存放位置。
 
-同一种公式用法共用这里的说明。页面名称不同，也可以采用相同配置；真正需要区分的是字段引用、保存内容和执行时的数据。
+公式写法、嵌套、字段引用、空值和类型转换统一在这里维护。对应的业务技能提供真实字段、输入数据和结果保存位置。同样的表达式与执行方式共用规则；需要适配哪些差异，由实际输入、保存结构和执行调用决定，不按页面名称另分一套公式能力。
 
 ## 先认清要保存的内容
 
@@ -21,6 +21,62 @@ description: 指导宜搭公式配置，包括金额计算、明细汇总、默�
 | 在页面代码或自定义校验函数中计算 | JavaScript 表达式或回调函数 | [表达式保存方式](references/expression-formats.md)，配合原页面或表单技能 |
 
 表单中的普通字段配置也适用于流程表单中的同类字段。节点公式用于哪些设计器，以目标节点实际提供的输入为准。自定义页面上的原生组件若暴露相同公式属性，可以沿用相同方法；页面代码里的计算则按 JavaScript 处理。
+
+## 字段 Schema 中怎样保存公式
+
+宜搭的字段计算使用普通组件，例如 `NumberField`、`TextField`、`DateField`、`EmployeeField`，无需创建独立的“公式字段”组件。公式配置在组件的 `props` 中：
+
+| 属性 | 应填写的内容 |
+| --- | --- |
+| `valueType` | `"formula"`，表示使用公式取值 |
+| `formula` | 公式字符串 |
+| `complexValue` | `{"complexType":"formula","formula":"同一公式字符串"}` |
+
+例如，数值字段的 `props` 中保存：
+
+```json
+{
+  "valueType": "formula",
+  "formula": "ROUND(#{numberField_price} * #{numberField_qty}, 2)",
+  "complexValue": {
+    "complexType": "formula",
+    "formula": "ROUND(#{numberField_price} * #{numberField_qty}, 2)"
+  }
+}
+```
+
+两处公式保持一致。使用 `create-form create/update` 时可以只提供 `formula`，CLI 会同步这三个属性。修改已有字段时保留其他属性；流水号的专用公式对象按流水号配置处理。完整创建、更新、恢复手动输入及子表示例见 [字段取值与完整配置](references/field-values.md)。校验和节点表达式按各自保存结构配置，不直接套用字段默认值的三个属性。
+
+## 公式语法速查
+
+以下规则用于原生公式原文；页面 JavaScript、数据集表达式和已编译的流程条件，按其实际输入格式处理。
+
+| 规则 | 正确写法或说明 |
+| --- | --- |
+| 字段用真实 ID，并包在 `#{}` 中 | `ROUND(#{numberField_price} * #{numberField_qty}, 2)`；不要直接写裸 ID 或显示名称 |
+| 普通子表字段使用子字段自身 ID | `SUM(#{numberField_lineAmount})`；当前行计算与整列汇总由绑定位置决定。组件子属性保留设计器提供的路径 |
+| 使用半角括号、逗号和引号 | `IF(GT(#{numberField_total}, 100), "高", "低")` |
+| 函数名保持原有大小写 | `ROUND`、`UserBuilder`、`DeptBuilder`；按函数清单填写 |
+| 文本加引号，数字直接写 | `"通过"`、`100`；写进 JSON 字符串时，内部双引号写为 `\"` |
+| 加减乘除使用 `+ - * /` | 先算的部分加括号；除法先处理零和空值，完整示例见下表 |
+| 比较和逻辑使用函数 | `GT/GE/LT/LE/EQ/NE`、`AND/OR/NOT`；例如 `AND(GE(#{numberField_score}, 60), NE(#{textField_status}, "作废"))` |
+| 嵌套时写全每个函数的参数 | `IF(条件, 满足时的值, 不满足时的值)`；内外层括号配对，两个返回分支都匹配目标类型 |
+| 区分数字、文本、日期和数组 | `VALUE("12.5")` 得到数字；`TEXT` 用于格式化文本；日期对象填日期字段用 `TIMESTAMP`；成员值保留成员结构 |
+| 避免循环依赖 | 允许“单价、数量 → 行金额 → 合计”，不要让合计反过来依赖自己；显示状态、计算和是否提交分别配置 |
+
+## 按用途找函数
+
+| 要做什么 | 常用函数名 |
+| --- | --- |
+| 数值计算 | `SUM`、`AVERAGE`、`MAX`、`MIN`、`ROUND`、`INT`、`ABS`、`MOD`、`PRODUCT`、`SUMPRODUCT`、`SQRT`、`POWER` |
+| 判断与校验 | `IF`、`AND`、`OR`、`NOT`、`EQ`、`NE`、`GT`、`GE`、`LT`、`LE`、`ISEMPTY`、`EXACT`、`ARRAYREPEATED` |
+| 文本处理 | `CONCATENATE`、`LEFT`、`RIGHT`、`MID`、`LEN`、`TRIM`、`UPPER`、`LOWER`、`REPLACE`、`TEXT`、`VALUE`、`UUID`、`RMBFORMAT`、`SPLIT`、`ARRAYGET` |
+| 日期与时间 | `TODAY`、`NOW`、`YEAR`、`MONTH`、`DAY`、`DAYS`、`DATEDELTA`、`NETWORKDAYS`、`DATE`、`TIMESTAMP`、`CASCADEDATEINTERVAL`、`TIMECOMPARE` |
+| 人员与部门 | `USER`、`GETUSERNAME`、`LOGINUSERWORKNO`、`DEPTNAME`、`DIRECTOR`、`UserBuilder`、`DeptBuilder`、`DirectorBuilder` |
+| 多选集合 | `UNIONSET`、`INTERSECTIONSET`、`DIFFERENCESET`、`SUBSET` |
+| 查已有记录或执行数据动作 | `EXIST`、`COUNT`、`INSERT`、`UPDATE`、`DELETE` 等；先确认表单上下文、预处理和触发时机 |
+
+参数写法、返回值、完整分类名单和例子见 [公式函数速查](../../references/formula-functions.md)。查询当前组织的函数签名后，再核对目标配置实际提供的函数清单；索引中的函数不保证在每个输入位置都可用。
 
 ## 写配置前先处理这些易错点
 
@@ -38,6 +94,8 @@ description: 指导宜搭公式配置，包括金额计算、明细汇总、默�
 | 给日期字段自动填今天 | 使用 `TIMESTAMP(TODAY())`，把日期对象转换为字段需要的毫秒时间戳；再核对页面显示和提交值 |
 | 选择函数 | 查询参数并核对目标配置提供的菜单；`EXIST` 查已有记录，`COUNT` 统计表单提交数，各按真实用途选择 |
 | 本地通过或保存成功 | 分别记录检查、保存回读和实际运行结果；接口探查未覆盖的页面联动、提交校验、节点上下文及聚合保持待验证 |
+| 试算字段公式 | 使用 `formula test APP FORM --field 目标字段ID --data-file data.json --expect JSON`；直接读取已存公式，按依赖顺序重算，并核对转换前后的值 |
+| 公式依赖其他计算字段 | 提供最初的输入数据；试算会先计算依赖字段，再计算结果。子表数据按“表 ID → 多行对象”提供，每行使用子字段 ID |
 
 用户已要求暂停测试时，完成配置说明和本地修改，并注明实际运行尚未验证；保留后续验收步骤即可。
 
@@ -83,10 +141,6 @@ openyida formula contracts --json
 | 成员字段填当前登录人 | `USER()` |
 | 拼接姓名和编号 | `CONCATENATE(#{textField_name}, "-", #{textField_code})` |
 
-使用半角括号、逗号和引号。函数名保持查询结果中的大小写，例如 `ROUND`、`UserBuilder`。原生公式常用 `GT/GE/LT/LE/EQ` 比较；JavaScript 和由流程条件生成的表达式使用各自的运算规则。
-
-字段默认值引用写成 `#{字段ID}`。子表普通字段也用子字段自身的 ID；组件开放的子属性可能使用 `#{组件字段ID.属性名}`。节点和数据集引用按各自格式填写，不从显示名称猜 ID。
-
 ## 检查结果怎么看
 
 ```bash
@@ -95,6 +149,8 @@ openyida formula check formula.txt --contract field-value --schema schema.json -
 
 本地检查帮助找出写法、参数和部分类型问题。`formula functions` 查询函数签名；实际可选函数还取决于目标配置传入的函数清单和组织开关。
 
-`formula test` 调用通用表达式接口，不保存配置；它没有重现页面初始化、子表同行取值、校验预处理、节点上下文或图表聚合。交付时分别说明检查、回读和实际执行到了哪一步。详细命令见 `yida-formula-evaluate`。
+`formula test --field` 使用平台原生字段计算接口，保留组件类型、子表行和公式依赖，并检查数值、日期及成员的部分回填转换。复杂试算、样例文件和返回值说明见 [字段绑定与样例验证](references/runtime-examples.md)。多组输入可保存成 `--cases` 文件，每组都给出期望结果。
+
+不带 `--field` 的 `formula test` 继续探查通用表达式接口。字段试算也需要补页面显示、组件精度和提交检查；原生校验、节点及图表计算仍从各自实际入口验收。详细检查命令见 `yida-formula-evaluate`。
 
 本技能不依赖跨会话 memory。字段映射、原配置和变更文件保存在当前任务目录中。

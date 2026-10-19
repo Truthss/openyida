@@ -1,5 +1,6 @@
 'use strict';
 
+
 /**
  * Traditional Chinese optional locale pack
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
@@ -2233,6 +2234,8 @@ Object.assign(module.exports.formula_v2, {
 Object.assign(module.exports.help, {"cmd_formula_contracts": "查看公式儲存方式和檢查範圍"});
 
 Object.assign(module.exports.formula_v2, {"parallel_formula": "並行分支使用 conditions/rules 或 all:true；expression 目前只適用於 route 分支。"});
+
+Object.assign(module.exports.formula_v2, {"conversion_empty":"公式結果轉成目標欄位後為空。日期請用 TIMESTAMP(日期公式)，並核對原值與欄位類型。","result_missing":"平台完成請求，但沒有返回目標欄位值。日期通常需要 TIMESTAMP(日期公式)。","conversion_partial":"結果只轉出部分數字或不是有限數值。請返回完整數字或毫秒時間戳。","target_branches":"公式可能返回 {0}，部分結果與 {1} 不相容；請逐一試算各分支。","date_timestamp":"日期物件與欄位保存值不同。通常用 TIMESTAMP(日期公式) 返回毫秒時間戳。","numeric_result_text":"公式可能返回文字；請用 --field 試算，核對是否轉成空值或部分數字。"});
 
 module.exports.feedback_report = {
   comparison: 'Test pass/fail requires a command, actual result and evidence.',

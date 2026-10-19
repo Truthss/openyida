@@ -42,6 +42,14 @@ describe('formula syntax and signatures', () => {
     expect(analyzeFormula('ROUND(#{lookup}.numberField_amount,2)', { context: 'automation' }).ok).toBe(true);
     expect(codes(analyzeFormula('${lookup}.numberField_amount'))).toContain('reference_context');
   });
+  test('does not present broad metadata types as proof of numeric or date assignment', () => {
+    const mixed = analyzeFormula('IF(TRUE(),1,"not a number")', { targetType: 'NumberField' });
+    expect(mixed.checks.types).toBe('unknown');
+    expect(codes(mixed)).toContain('numeric_result_text');
+    const date = analyzeFormula('TODAY()', { targetType: 'DateField' });
+    expect(codes(date)).toContain('date_timestamp');
+    expect(date.checks.types).toBe('unknown');
+  });
   test('accepts explicitly mixed optional types and retains same-type checks', () => {
     expect(analyzeFormula('SEARCH("a","banana",2)').ok).toBe(true);
     expect(analyzeFormula('SEARCH("a","banana","2")').ok).toBe(false);

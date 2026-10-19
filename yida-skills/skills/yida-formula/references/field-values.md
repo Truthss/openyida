@@ -14,7 +14,7 @@
 | 人员 | `EmployeeField` | 当前登录人、主管 |
 | 多个选项或人员 | 接受数组的对应组件 | 多选集合、成员列表 |
 
-人员、日期、选项等值保留组件要求的数据结构。显示名称相同不代表原始值类型相同；先读取字段配置和样例值。函数与组件是否兼容，可以用 `formula check --target-type` 辅助检查。
+人员、日期、选项等值保留组件要求的数据结构。显示名称相同不代表原始值类型相同；先读取字段配置和样例值。函数与组件是否兼容，可以用 `formula check --target-type` 辅助检查，再用 `formula test --field` 核对平台绑定后的字段值。
 
 日期计算与日期字段赋值分两步：`TODAY()` 返回日期对象，填入日期字段时用 `TIMESTAMP(TODAY())`。本地类型检查通过后，也要核对页面是否显示日期，以及提交后的值是否为毫秒时间戳。
 
@@ -122,7 +122,7 @@ openyida formula inspect APP_XXX FORM_XXX --field numberField_total --json
     "action": "update",
     "fieldId": "numberField_total",
     "changes": {
-      "formula": "SUM(#{numberField_lineAmount})",
+      "formula": "IF(ISEMPTY(#{numberField_lineAmount}),0,SUM(#{numberField_lineAmount}))",
       "precision": 2,
       "behavior": "READONLY"
     }
@@ -131,6 +131,8 @@ openyida formula inspect APP_XXX FORM_XXX --field numberField_total --json
 ```
 
 通过 `create-form update APP_XXX FORM_XXX changes.json` 保存。单价 12.30、数量 2 的行金额预期为 24.60；单价 5、数量 3 的行金额预期为 15；主表合计预期为 39.60。修改第一行数量时，关注第一行及主表合计是否变化，第二行金额应按其自己的单价和数量计算。这些是后续验收的业务预期，不表示本轮已运行。
+
+完整示例用 `ISEMPTY` 为零行明细返回 0。业务允许空表时保留这一分支，使用空表样例检查；单独 `SUM` 空列在平台上可能没有字段值。
 
 ## 隐藏、提交和依赖
 
@@ -157,4 +159,4 @@ openyida formula inspect APP_XXX FORM_XXX --field numberField_total --json
 | 子表每行结果相同或合计不对 | 公式配置位置、同行值与整列值的区别 |
 | 本地通过，页面结果不同 | 页面预处理、空值与零、日期和成员结构、执行时机 |
 
-用户要求验收时，保存后回读，再从实际页面检查正常值、空值、零和两行不同明细。公式接口试算仅提供其中一步证据。
+用户要求验收时，保存后回读，用 `formula test --field` 检查依赖和样例，再从实际页面检查正常值、空值、零和两行不同明细。可直接使用 [完整试算与回归样例](runtime-examples.md)，页面精度和提交策略另行核对。

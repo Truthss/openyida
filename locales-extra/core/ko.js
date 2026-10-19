@@ -2283,6 +2283,8 @@ Object.assign(module.exports.help, {"cmd_formula_contracts": "수식 저장 형�
 
 Object.assign(module.exports.formula_v2, {"parallel_formula": "병렬 분기에는 conditions/rules 또는 all:true를 사용하세요. expression은 현재 route 분기에서만 지원됩니다."});
 
+Object.assign(module.exports.formula_v2, {"conversion_empty":"수식 결과가 대상 필드 변환 후 빈 값이 되었습니다. 날짜에는 TIMESTAMP(날짜 수식)를 사용하고 원래 값과 유형을 확인하세요.","result_missing":"요청은 완료되었지만 대상 필드 값이 없습니다. 날짜에는 일반적으로 TIMESTAMP(날짜 수식)가 필요합니다.","conversion_partial":"숫자가 일부만 변환되었거나 유한수가 아닙니다. 완전한 숫자나 밀리초 타임스탬프를 반환하세요.","target_branches":"반환 유형 {0} 중 일부는 {1}과 맞지 않습니다. 각 분기를 시험하세요.","date_timestamp":"날짜 객체와 저장 값은 다릅니다. 일반적으로 TIMESTAMP(날짜 수식)로 밀리초를 반환하세요.","numeric_result_text":"결과가 텍스트일 수 있습니다. --field로 각 분기의 빈 값과 부분 숫자 변환을 확인하세요."});
+
 module.exports.feedback_report = {
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',

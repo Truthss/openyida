@@ -2284,6 +2284,8 @@ Object.assign(module.exports.help, {"cmd_formula_contracts": "Afficher les forma
 
 Object.assign(module.exports.formula_v2, {"parallel_formula": "Utilisez conditions/rules ou all:true pour les branches parallèles ; expression est actuellement réservé aux branches route."});
 
+Object.assign(module.exports.formula_v2, {"conversion_empty":"La conversion vers le champ cible donne une valeur vide. Pour une date, utilisez TIMESTAMP(formule de date) et vérifiez la valeur brute et le type.","result_missing":"La requête est terminée, mais la valeur du champ cible manque. Une date nécessite généralement TIMESTAMP(formule de date).","conversion_partial":"La valeur est partiellement numérique ou non finie. Renvoyez un nombre complet ou un horodatage en millisecondes.","target_branches":"Certains types de résultat {0} ne correspondent pas à {1}. Testez chaque branche.","date_timestamp":"Un objet date diffère de la valeur stockée. Utilisez généralement TIMESTAMP(formule de date) pour les millisecondes.","numeric_result_text":"Le résultat peut être du texte. Testez chaque branche avec --field pour détecter une conversion vide ou partielle."});
+
 module.exports.feedback_report = {
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',

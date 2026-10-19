@@ -198,6 +198,8 @@
 | 查询当前组织的公式函数和参数 | `openyida formula functions <appType> [--name ROUND] [--output metadata.json] [--json]` |
 | 查看表单字段已保存的公式 | `openyida formula inspect <appType> <formUuid> [--field fieldId] [--json]` |
 | 调用表达式接口核对样例 | `openyida formula test <appType> <formUuid> <formula\|file> --data-file data.json [--binding platform\|numeric-literals] [--expect JSON] [--json]`；只运行已确认不写业务数据的函数 |
+| 按原生字段链路试算 | `openyida formula test <appType> <formUuid> --field <fieldId> --data-file data.json [--expect JSON] [--timezone-offset 480] --json`；读取已存公式，按依赖顺序计算并保留子表行 |
+| 重跑多组公式样例 | `openyida formula test <appType> <formUuid> --field <fieldId> --cases cases.json --json`；每组提供 `name/data/expect`，报告缺失值及类型转换问题 |
 | 读取钉钉文档并转为 Markdown | `openyida read-dingtalk-doc <docUrl> [--output <file>] [--json]` |
 | 按 taskUuid 读取钉钉听记 | `openyida read-dingtalk-tingji <taskUuid> [--json]` |
 | 闪记/会议纪要转 PRD | `openyida flash-to-prd --file <path> --name "<project>"` |

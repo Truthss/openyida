@@ -73,4 +73,30 @@ describe('formula platform commands', () => {
     await expect(run('test', ['APP_TEST', 'FORM_TEST', '1', '--data-file', dataFile])).rejects.toThrow(/backend rejected/);
     await expect(run('inspect', ['APP_TEST', 'FORM_TEST', '--expect', '1'])).rejects.toThrow();
   });
+  test('tests a saved formula with native field binding and explicit timezone', async () => {
+    postFormOnce.mockResolvedValue({ success: true, content: { calculateComplete: true,
+      data: [{ fieldId: 'numberField_amount', fieldData: { value: '12.35' } }] } });
+    expect(await run('test', ['APP_TEST', 'FORM_TEST', '--field', 'numberField_amount', '--data-file', dataFile,
+      '--timezone-offset', '0', '--expect', '12.35'])).toMatchObject({ success: true, value: 12.35, timezoneOffset: 0 });
+    expect(postFormOnce.mock.calls[0][1]._locale_time_zone_offset).toBe(0);
+  });
+  test('runs repeatable field cases and retains failures by name', async () => {
+    fs.writeFileSync(dataFile, JSON.stringify([
+      { name: 'positive', data: {}, expect: 12.35 }, { name: 'zero', data: {}, expect: 0 },
+    ]));
+    postFormOnce.mockResolvedValueOnce({ success: true, content: { calculateComplete: true,
+      data: [{ fieldId: 'numberField_amount', fieldData: { value: '12.35' } }] } })
+      .mockResolvedValueOnce({ success: false, errorMsg: 'calculation failed' });
+    await expect(run('test', ['APP_TEST', 'FORM_TEST', '--field', 'numberField_amount', '--cases', dataFile])).rejects.toThrow();
+    const result = JSON.parse(log.mock.calls[0][0]);
+    expect(result.summary).toEqual({ total: 2, passed: 1, failed: 1 });
+    expect(result.results[1]).toMatchObject({ name: 'zero', success: false });
+  });
+  test('validates every case before executing any formula', async () => {
+    fs.writeFileSync(dataFile, JSON.stringify([{ name: 'valid', data: {}, expect: 1 }, { name: 'bad', data: { typo: 1 }, expect: 1 }]));
+    await expect(run('test', ['APP_TEST', 'FORM_TEST', '--field', 'numberField_amount', '--cases', dataFile])).rejects.toThrow();
+    expect(postFormOnce).not.toHaveBeenCalled();
+    fs.writeFileSync(dataFile, JSON.stringify([{ name: 'without-expect', data: {} }]));
+    await expect(run('test', ['APP_TEST', 'FORM_TEST', '--field', 'numberField_amount', '--cases', dataFile])).rejects.toThrow();
+  });
 });
