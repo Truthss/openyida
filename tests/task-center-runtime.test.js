@@ -3,75 +3,9 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const Babel = require('@babel/standalone');
 const { buildSource, validateSpec } = require('../lib/task-center/scaffold');
 
-// A small hook host exercises the shipped component's requests and view state.
-function mount(source, bridge, fetch) {
-  const slots = [];
-  let cursor = 0;
-  let dirty = false;
-  let effects = [];
-  let tree;
-  const cleanups = [];
-  const React = {
-    createContext: () => ({}),
-    createElement: (type, props, ...children) => ({ type, props: { ...props, children } }),
-    useState(initial) {
-      const index = cursor++;
-      if (!(index in slots)) { slots[index] = typeof initial === 'function' ? initial() : initial; }
-      return [slots[index], value => { slots[index] = typeof value === 'function' ? value(slots[index]) : value; dirty = true; }];
-    },
-    useRef(value) {
-      const index = cursor++;
-      if (!(index in slots)) { slots[index] = { current: value }; }
-      return slots[index];
-    },
-    useEffect(effect, deps) {
-      const index = cursor++;
-      const old = slots[index];
-      if (!old || deps.some((value, i) => value !== old[i])) {
-        slots[index] = deps;
-        effects.push(() => { cleanups[index]?.(); cleanups[index] = effect(); });
-      }
-    },
-  };
-  const antd = { Input: { Search: 'Search' }, Typography: { Title: 'Title', Text: 'Text' }, Empty: 'Empty' };
-  for (const name of ['ConfigProvider', 'Drawer', 'Alert', 'Button', 'Pagination', 'Space', 'Spin', 'Table', 'Tabs']) { antd[name] = name; }
-  const window = { __OPENYIDA_YIDA_API__: bridge, fetch, document: { hidden: false, addEventListener: jest.fn(), removeEventListener: jest.fn() }, addEventListener: jest.fn(), removeEventListener: jest.fn(), setTimeout };
-  const compiled = Babel.transform(source + '\nexport { TaskInboxSection };', { presets: ['react'], plugins: ['transform-modules-commonjs'] }).code;
-  const module = { exports: {} };
-  const requireModule = name => name === 'react' ? React : name === 'antd' ? antd : {};
-  new Function('require', 'module', 'exports', 'window', compiled)(requireModule, module, module.exports, window);
-  const render = () => {
-    cursor = 0; dirty = false; effects = [];
-    tree = module.exports.TaskInboxSection({});
-    effects.forEach(effect => effect());
-  };
-  const nodes = type => {
-    const result = [];
-    function walk(value) {
-      if (Array.isArray(value)) { value.forEach(walk); return; }
-      if (!value || typeof value !== 'object') { return; }
-      if (value.type === type) { result.push(value); }
-      walk(value.props?.children);
-    }
-    walk(tree);
-    return result;
-  };
-  render();
-  return {
-    nodes,
-    async flush() {
-      for (let i = 0; i < 8; i++) {
-        await new Promise(resolve => setImmediate(resolve));
-        if (dirty) { render(); }
-      }
-    },
-    unmount() { cleanups.forEach(cleanup => cleanup?.()); },
-    window,
-  };
-}
+const { mount } = require('./helpers/task-center-renderer');
 
 let directory;
 let source;
@@ -79,7 +13,7 @@ beforeAll(() => {
   directory = fs.mkdtempSync(path.join(os.tmpdir(), 'task-runtime-'));
   const designFile = path.join(directory, 'design.md');
   fs.writeFileSync(designFile, 'Use existing application theme.');
-  source = buildSource(validateSpec({ appType: 'APP_TEST', designFile, customPage: { source: 'explicit-user-request', confirmed: true } }));
+  source = buildSource(validateSpec({ appType: 'APP_TEST', designFile, customPage: { source: 'explicit-user-request', confirmed: true }, kinds: ['todo', 'cc'] }));
 });
 afterAll(() => fs.rmSync(directory, { recursive: true, force: true }));
 const payload = (title, extra = {}) => ({ data: [{ taskId: title, title, processInstanceId: 'p', ...extra }], totalCount: 40, currentPage: 1 });
@@ -128,7 +62,7 @@ test('failed refresh retains the last successful result and exposes an error', a
 
 test('advanced scaffold forwards per-kind server filters through pagination without a bridge', async () => {
   const advanced = buildSource(validateSpec({ appType: 'APP_TEST', designFile: path.join(directory, 'design.md'),
-    customPage: { source: 'explicit-user-request', confirmed: true }, transport: 'app-query',
+    customPage: { source: 'explicit-user-request', confirmed: true }, kinds: ['todo', 'cc'], transport: 'app-query',
     filters: { todo: { originators: ['person-a'] }, cc: { processCodes: ['process-a'] } },
   }));
   const fetch = jest.fn().mockImplementation(async () => ({ ok: true, json: async () => ({ success: true, content: {

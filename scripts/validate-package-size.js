@@ -88,7 +88,10 @@ const MAX_TARBALL_BYTES = 2400 * 1024;
 // 9,090,404 unpacked bytes / 706 entries; next 16 KiB boundary.
 // Personal task filter examples add one shared skill reference.
 // Measured 9,099,864 unpacked bytes / 707 entries; next 16 KiB boundary.
-const MAX_UNPACKED_BYTES = 8896 * 1024;
+// Portable workflow readers, optional progress/filter components and their guide
+// measure about 9.15 MB unpacked / 712 files on Node 20. Compression remains
+// within the existing cap; retain the next 16 KiB unpacked boundary.
+const MAX_UNPACKED_BYTES = 8944 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -103,10 +106,15 @@ const MAX_UNPACKED_BYTES = 8896 * 1024;
 // Main adds the shared integration detail-log module.
 // Portable task lookup options add one runtime module.
 // Native form-view runtime and self-contained skill add two packaged files.
-const MAX_ENTRY_COUNT = 707;
+const MAX_ENTRY_COUNT = 712;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
+  'lib/task-center/workflow.js',
+  'lib/task-center/workflow-loader.js',
+  'lib/samples/yida-task-center/progress.canvas.jsx',
+  'lib/samples/yida-task-center/filters.jsx',
+  'yida-skills/skills/yida-canvas-data-binding/references/workflow-capabilities.md',
   'lib/task-center/contract.js',
   'lib/task-center/loader.js',
   'lib/task-center/lookups.js',

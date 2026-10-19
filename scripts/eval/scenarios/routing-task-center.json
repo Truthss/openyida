@@ -72,5 +72,37 @@
     "forbiddenDefaultSkills": [
       "yida-task-center"
     ]
+  },
+  {
+    "id": "workflow-progress-embedded",
+    "prompt": "在现有自定义采购单详情中接入该记录关联流程的审批进度和时间线，不增加待办中心",
+    "expectedSkill": "yida-canvas-data-binding",
+    "forbiddenDefaultSkills": [
+      "yida-task-center"
+    ]
+  },
+  {
+    "id": "workflow-home-preview",
+    "prompt": "现有自定义首页只展示五条本人待办和匹配数量，保留应用风格，不增加其他栏目",
+    "expectedSkill": "yida-canvas-data-binding",
+    "forbiddenDefaultSkills": [
+      "yida-task-center"
+    ]
+  },
+  {
+    "id": "workflow-inspect-readonly",
+    "prompt": "只查询指定流程实例的当前环节和审批历史，不创建页面",
+    "expectedSkill": "yida-data-management",
+    "forbiddenDefaultSkills": [
+      "yida-task-center"
+    ]
+  },
+  {
+    "id": "workflow-count-readonly",
+    "prompt": "查询当前应用中本人待办的服务端总数，不新增界面",
+    "expectedSkill": "yida-data-management",
+    "forbiddenDefaultSkills": [
+      "yida-task-center"
+    ]
   }
 ]

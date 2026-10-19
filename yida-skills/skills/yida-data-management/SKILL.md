@@ -214,6 +214,8 @@ openyida data query tasks <appType> --type todo|created|done|cc --normalized [--
 
 需要过滤时按需读取[个人任务筛选示例](../yida-task-center/references/task-filters.md)，复用所需类型的组合命令与时间条件。
 
+只读数量、流程详情和审批历史可独立使用 `task-center count / inspect`，无需选择自定义页面；返回含义与按需装配见[流程任务能力](../yida-canvas-data-binding/references/workflow-capabilities.md)。
+
 ## 接口总览
 
 ### 表单实例

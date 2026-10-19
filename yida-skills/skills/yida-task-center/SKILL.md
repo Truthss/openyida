@@ -11,6 +11,8 @@ description: 仅在用户明确要求用自定义页面开发待办中心，或�
 
 需要筛选时按需读取[个人任务筛选示例](references/task-filters.md)，包含四类任务的组合条件、候选项查询及初始配置片段。
 
+需要数量、摘要或展开审批进度时，按需读取[流程任务能力与装配](../yida-canvas-data-binding/references/workflow-capabilities.md)；单条业务关联进度仍由数据绑定按需接入，不要求装配任务中心。
+
 1. 复用目标 app/page、现有业务要求和 `design.md`。沿用应用主题、导航、密度与控件风格；不重新选风格、不自动升级主题。
 2. 执行 `openyida task-center capabilities --json`，按返回的 specExample 派生配置。`customPage.source` 记录真实选择来源，`confirmed=true` 仅用于明确同意；`designFile` 指向当前应用设计文件。`kinds` 仅填写需求涉及的类型，不照抄示例的四类栏目；承载方式沿用当前设计，不因接入任务数据另建页面。
 3. 用 `openyida data query tasks <appType> --type <todo|created|done|cc> --normalized` 核查数据，再执行 `openyida task-center scaffold --spec <配置.json> --output <新文件.canvas.jsx>`。已有页面先备份，把生成的 `TaskInboxSection` 和依赖合并进原页面，已有主题容器和详情容器各保留一份。

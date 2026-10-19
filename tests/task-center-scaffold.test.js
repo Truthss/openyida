@@ -113,7 +113,7 @@ test('local commands do not expand managed tasks to organization queries', () =>
 });
 
 test('explicit query transport and per-kind filters use the same portable contract', () => {
-  const config = validateSpec({ ...spec(explicit), transport: 'app-query', filters: {
+  const config = validateSpec({ ...spec(explicit), kinds: ['todo', 'created'], transport: 'app-query', filters: {
     todo: { originators: '["person-a"]', taskCreateFrom: '1792195200000' },
     created: { processCodes: ['process-a'] },
   } });
@@ -134,4 +134,36 @@ test('explicit query transport and per-kind filters use the same portable contra
 test('lookup options are application-bound read actions, not global-query admission', () => {
   expect(resolveManagedPolicy('task-center', ['options', 'APP_TEST', '--type', 'originators']).policy).toEqual({ scope: 'app', appPosition: 1 });
   expect(capabilities().lookups.kinds).toEqual(['originators', 'processes', 'forms']);
+});
+
+test('default assembly contains one task kind and only the requested filters and fields', () => {
+  expect(validateSpec(spec(explicit)).kinds).toEqual(['todo']);
+  expect(capabilities().scaffold.specExample.kinds).toEqual(['todo']);
+  const config = validateSpec({ ...spec(explicit), transport: 'app-query', filterFields: { todo: ['originators', 'taskCreateFrom'] }, fields: ['title', 'summary'] });
+  expect(config.filterFields.todo).toEqual(['originators', 'taskCreateFrom']);
+  expect(() => compileCanvasLocal(buildSource(config))).not.toThrow();
+  for (const patch of [{ filterFields: { todo: ['instanceStatus'] } }, { filterFields: { created: [] } }, { fields: ['title', 'unknown'] }, { fields: ['summary'] }, { expandProcess: 'true' }, { history: true }]) {
+    expect(() => validateSpec({ ...spec(explicit), ...patch })).toThrow();
+  }
+});
+
+test('progress assembly compiles with a real linked instance or an explicit embedded prop', () => {
+  const input = path.join(directory, 'progress.json'), output = path.join(directory, 'progress.canvas.jsx');
+  fs.writeFileSync(input, JSON.stringify({ ...spec(explicit), view: 'progress', history: true }));
+  const receipt = scaffold(input, output);
+  expect(receipt).toMatchObject({ component: 'ProcessProgressSection', mode: 'embedded', requiredProps: ['processInstanceId'] });
+  expect(findDirectFormOpenIssues(fs.readFileSync(output, 'utf8'))).toEqual([]);
+  const known = validateSpec({ ...spec(explicit), view: 'progress', mode: 'page', processInstanceId: 'instance-a' });
+  expect(() => compileCanvasLocal(buildSource(known))).not.toThrow();
+  for (const patch of [{ mode: 'page' }, { processInstanceId: '' }, { kinds: ['todo'] }, { filters: {} }, { formUuid: 'FORM_A' }]) {
+    expect(() => validateSpec({ ...spec(explicit), view: 'progress', ...patch })).toThrow();
+  }
+  expect(() => validateSpec({ appType: 'APP_TEST', designFile, view: 'progress' })).toThrow('customPage');
+});
+
+test('workflow reads are application-bound read actions without a custom-page confirmation', () => {
+  for (const action of ['inspect', 'count']) {
+    const result = resolveManagedPolicy('task-center', [action, 'APP_TEST']);
+    expect(result.policy).toEqual({ scope: 'app', appPosition: 1 });
+  }
 });

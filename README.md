@@ -508,7 +508,7 @@ Your AI prepares the summary from observed evidence and selected reproduction sc
 | Command | Description |
 |---------|-------------|
 | `openyida data <query\|get\|create\|update> <resource> ... \| delete form <appType> <formUuid> --inst-id <id> --expect-form-name <name> --expect-form-type receipt --confirm [--json]` | Unified data management (form/process/task/subform) |
-| `openyida task-center <todo\|created\|done\|cc\|proxy\|capabilities\|scaffold\|options> [--spec <file.json> --output <file.canvas.jsx>] [options]` | Global task center (todo/processed/cc etc.) |
+| `openyida task-center <todo\|created\|done\|cc\|proxy\|capabilities\|scaffold\|options\|inspect\|count> [--spec <file.json> --output <file.canvas.jsx>] [options]` | Global task center (todo/processed/cc etc.) |
 | `openyida basic-info <overview\|commodity\|grant\|capacity\|quota\|abs-path\|dataflow\|i18n\|domain>` | Query organization basic info, capacity, quotas, and domain settings |
 | `openyida read-dingtalk-doc <docUrl> [--output <file>] [--json]` | Fetch Markdown content from a DingTalk document |
 | `openyida read-dingtalk-tingji <taskUuid> [--json]` | Fetch DingTalk Tingji details by task UUID |
@@ -612,7 +612,7 @@ Your AI prepares the summary from observed evidence and selected reproduction sc
 
 <!-- OPENYIDA_COMMANDS_END -->
 
-### Custom task pages
+### Personal tasks and process progress
 
 Query application tasks with `openyida data query tasks <appType> --type todo --normalized`; `created`, `done`, and `cc` select the other personal task lists. Use `openyida task-center capabilities --json` for supported filters and the page configuration example.
 
@@ -621,6 +621,10 @@ The default `app-v1` transport preserves the existing queries. Select `--transpo
 After explicitly choosing a custom task page, run `openyida task-center scaffold --spec <file.json> --output <new-file.canvas.jsx>`. The configuration requires the choice record and the application's existing design file. Generated pages follow the application theme, read the current visitor's tasks, and open native pages for processing. `embedded` mode provides the same task section for an existing workbench. Compile and publish the page using the usual commands.
 
 Page configurations can explicitly set `transport: "app-query"` and per-kind initial filters, for example `filters: { "todo": { "originators": ["USER_ID"] } }`. Generated pages include the same `filterSchema`, `normalizeFilters`, task loader, and option lookup helpers as the CLI.
+
+Use `task-center count <appType> --type todo --transport app-query --filters-json '{"keyword":"purchase"}' --json` for a one-record query with a matching server total; an unknown total remains `null`. `task-center inspect <appType> --process-inst-id <id> [--form-uuid <id>] [--history] [--task-id <id>] --json` reads an authorized linked process and optional operation history. Personal task outcomes, selected-task outcomes and final process results remain separate. Read commands do not create custom pages or require a custom-page choice.
+
+Scaffolds select only the needed task kinds, `fields` and `filterFields`; the default is a single todo list. `view: "progress", mode: "embedded"` provides a progress component for an existing business page, using its real linked `processInstanceId`. History and task-row expansion are opt-in. See the [workflow capability reference](yida-skills/skills/yida-canvas-data-binding/references/workflow-capabilities.md) for configuration and integration examples.
 
 ### CLI Notes
 

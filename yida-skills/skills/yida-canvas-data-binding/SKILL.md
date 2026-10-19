@@ -15,6 +15,8 @@ description: 为 YidaCodeCanvas 自定义内容接入真实表单、个人流程
 
 个人任务需要过滤时，按需读取[四类任务筛选与组合示例](../yida-task-center/references/task-filters.md)；业务记录的条件继续按其表单字段确定。
 
+需要个人任务数量、业务关联审批进度或操作历史时，按需读取[流程任务能力与装配](references/workflow-capabilities.md)，复用 CLI 读取契约和所需组件，不默认增加完整审批中心。
+
 本技能只处理使用 `YidaCodeCanvas` 组件实现的页面里的真实数据接入：把页面所需数据先声明成 `dataBinding` 契约，再由页面生成器或业务组件生成统一的 `DataBridge`。读取宜搭表单数据时，默认消费外层普通自定义页面在 `didMount` 中注册到 `window.__OPENYIDA_YIDA_API__` 的 yida JS-API 桥；根级工具消费同层注册的 `window.__OPENYIDA_UTILS__`，其中 `.yida` 指向同一个 yida API 桥；连接器代理或自定义同源接口仍按自身 endpoint 读取。
 
 `YidaCodeCanvas` 组件运行时是标准 React 组件环境，组件没有普通宜搭自定义页实例对象。因此数据接入要显式写清来源、字段映射、刷新策略和异常处理，不能靠隐式页面实例补齐。连接器模式使用发布层注入的 `window.__OPENYIDA_CONNECTOR_API__`。

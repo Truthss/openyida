@@ -26,6 +26,36 @@ beforeEach(() => {
 });
 
 describe('task-center run', () => {
+  test('流程详情按需读取历史，并区分指定任务与流程最终结果', async () => {
+    utils.requestWithAutoLogin.mockImplementation((request, auth) => request(auth));
+    utils.httpGet.mockResolvedValueOnce({ success: true, content: { appType: 'APP_TEST', processInstanceId: 'instance-a', instanceStatus: 'COMPLETED', approvedResult: 'AGREE' } })
+      .mockResolvedValueOnce({ success: true, content: [{ processInstanceId: 'instance-a', taskId: 'task-a', type: 'HISTORY', actionExt: 'DISAGREE' }] });
+    const log = jest.spyOn(console, 'log').mockImplementation(() => {});
+    try {
+      const result = await run(['inspect', 'APP_TEST', '--process-inst-id', 'instance-a', '--history', '--task-id', 'task-a', '--json']);
+      expect(result).toMatchObject({ processResult: 'AGREE', taskResult: { taskId: 'task-a', result: 'DISAGREE' }, history: { state: 'ready' } });
+      expect(utils.httpGet.mock.calls.map(call => call[1])).toEqual(['/dingtalk/web/APP_TEST/v1/process/getInstanceById.json', '/dingtalk/web/APP_TEST/v1/process/getOperationRecords.json']);
+    } finally { log.mockRestore(); }
+  });
+
+  test('计数只读一次带相同条件的服务端总数', async () => {
+    utils.requestWithAutoLogin.mockImplementation((request, auth) => request(auth));
+    utils.httpGet.mockResolvedValue({ success: true, content: { values: [], totalCount: 20 } });
+    const log = jest.spyOn(console, 'log').mockImplementation(() => {});
+    try {
+      const result = await run(['count', 'APP_TEST', '--type', 'cc', '--transport', 'app-query', '--filters-json', '{"instanceStatus":0}', '--json']);
+      expect(result).toMatchObject({ total: 20, scope: 'current-visitor-in-app', filters: { instanceStatus: 0 } });
+      expect(utils.httpGet).toHaveBeenCalledTimes(1);
+      expect(JSON.parse(utils.httpGet.mock.calls[0][2].query)).toMatchObject({ appKeys: ['APP_TEST'], limit: 1, instanceStatus: 0 });
+    } finally { log.mockRestore(); }
+  });
+
+  test('通用读取的无效条件在登录前被拒绝', async () => {
+    for (const args of [['inspect', 'APP_TEST'], ['inspect', 'APP_TEST', '--process-inst-id', 'p', '--user-id', 'other'], ['count', 'APP_TEST', '--type', 'created', '--filters-json', '{"instanceStatus":0}']]) {
+      await expect(run(args)).rejects.toBeTruthy();
+    }
+    expect(utils.loadAuthData).not.toHaveBeenCalled();
+  });
   test('候选项查询返回标准选项且不输出完整成员记录', async () => {
     utils.httpGet.mockResolvedValue({ success: true, content: { values: [{ staffId: 'person-a', displayName: 'Requester A', email: 'private@example.test' }] } });
     utils.requestWithAutoLogin.mockImplementation((request, auth) => request(auth));
