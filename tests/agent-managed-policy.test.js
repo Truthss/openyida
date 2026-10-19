@@ -108,6 +108,20 @@ test('native custom buttons stay within the bound app and classify only mutation
     .toThrow(expect.objectContaining({ code: 'MANAGED_COMMAND_UNSUPPORTED' }));
 });
 
+test('native cards and settings enforce the bound app with app-level mutation receipts', () => {
+  for (const action of ['list', 'get', 'probe', 'create', 'save', 'publish', 'release-get', 'release-check', 'refs', 'release-save']) {
+    expect(run('data-card', [action, 'APP_BOUND', 'CARD-x'])).toMatchObject({ appType: 'APP_BOUND' });
+    expect(() => run('data-card', [action, 'APP_OTHER', 'CARD-x'])).toThrow(expect.objectContaining({ code: 'MANAGED_APP_MISMATCH' }));
+    expect(classifyManagedMutation('data-card', [action, 'APP_BOUND', 'CARD-x'])).toEqual(
+      ['list', 'get', 'probe', 'release-check', 'refs'].includes(action) ? null : { operation: 'update_app_setting' }
+    );
+  }
+  expect(() => run('data-card', ['release-test', 'APP_BOUND', 'CARD-x', '--allow-send'])).toThrow(expect.objectContaining({ code: 'MANAGED_COMMAND_UNSUPPORTED' }));
+  expect(() => run('data-card', ['delete', 'APP_BOUND', 'CARD-x'])).toThrow(expect.objectContaining({ code: 'MANAGED_COMMAND_UNSUPPORTED' }));
+  expect(run('app-settings', ['APP_BOUND', '--section', 'theme'])).toMatchObject({ appType: 'APP_BOUND' });
+  expect(() => run('app-settings', ['APP_OTHER'])).toThrow(expect.objectContaining({ code: 'MANAGED_APP_MISMATCH' }));
+});
+
 test('blocked command diagnostics name its declaration without logging arguments or grants', () => {
   let failure;
   try {run('auth', ['status', 'private-value']);} catch (error) {failure = error;}

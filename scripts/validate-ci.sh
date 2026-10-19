@@ -61,7 +61,9 @@ npm run check:package
 
 echo ""
 echo "=== Step 12: Run tests ==="
-npm run test:unit -- --runInBand
+# Reclaim discarded Jest/Babel VM contexts after each suite in the serial run.
+# Without exposed GC, the combined suites can exhaust Node's default heap.
+node --expose-gc node_modules/jest/bin/jest.js --runInBand --logHeapUsage
 
 echo ""
 echo "=== All checks passed! ==="

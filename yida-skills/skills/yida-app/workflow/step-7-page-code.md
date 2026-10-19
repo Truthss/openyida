@@ -19,6 +19,8 @@
 
 ## 操作
 
+自定义待办中心或审批任务区块只在用户显式要求该实现方式，或 ask_human 明确确认后加载 `yida-task-center`，由 CLI 装配。缺少选择时不因已有 Canvas、工作台或辅助待办指标自动进入；返回编排阶段确认或保留原生能力。继续沿用本应用 `design.md` 和主题，不追加另一套品牌与导航。
+
 **先接通主题与动作**：给页面实现者传入真实资源映射（appType、目标类型、formUuid/navUuid；详情另带 formInstId 的数据来源）。含 antd 控件先提取并合并 `canvas-theme`；跨页入口先提取 `canvas-navigation`，按 [动作与目标清单](../../yida-canvas-custom-page/references/navigation-and-entry-guide.md#先建立动作与目标清单) 实现。页面内 Tab 使用状态，不拼平台路由；暂缺资源的动作禁用，独立页面布局继续开发。完成后逐项核对 Tab/按钮/链接各交互状态的主题色及最终地址，不把编译通过当作换肤或跳转验收。
 
 **编码前置条件（MUST）**：新建 Canvas 页面或调整视觉时，执行页面开发的模型必须先完整读取 [canvas-style-implementation-guide.md](../../yida-canvas-custom-page/references/canvas-style-implementation-guide.md)，按 [编码前必读](../../yida-canvas-custom-page/SKILL.md#编码前必读must) 记录适用规则与落点，再写源码。派发页面任务时必须带上这个文件路径和读取要求；不能只传递设计摘要或认为主流程读过就等于页面实现者读过。

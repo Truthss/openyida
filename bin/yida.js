@@ -761,6 +761,23 @@ async function main() {
       break;
     }
 
+    case 'cool-card': {
+      const { run } = require('../lib/app/cool-card');
+      await run(args);
+      break;
+    }
+    case 'data-card': {
+      const { run } = require('../lib/app/data-card');
+      await run(args);
+      break;
+    }
+
+    case 'app-settings': {
+      const { run } = require('../lib/app/app-settings');
+      await run(args);
+      break;
+    }
+
     case 'app-entry': {
       const { run } = require('../lib/app/app-entry');
       await run(args);

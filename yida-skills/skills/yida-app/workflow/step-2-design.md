@@ -20,6 +20,8 @@
 2. 按 [模式路由](../../yida-design/references/design-mode.md) 确定执行方式，沿用用户最后一次明确选择。
 3. AI 根据有效功能、`userTasks` 与 `entryRecommendation`，按 [导航决策](../../yida-design/references/navigation-decision.md) 规划各入口的页面和菜单，补齐稳定 `pageScenes` 与主题映射。新增建议标记来源，范围遵守 explicitScope。
 
+待办中心默认复用原生能力。只有用户明确要求用自定义页面开发，或对该建议通过 ask_human 明确同意后，才规划自定义待办中心或审批任务区块并交接 `yida-task-center`。问题说明采用自定义页面、沿用应用风格、办理打开原生审批页，提供“采用自定义页面 / 保留原生待办中心”选择。未回答、拒绝或含糊答复时不创建该自定义页；Fast、通用搭建确认、已有 Canvas 和“你决定”不能代替这项选择。记录真实选择与应用范围供装配使用；受管本地 Run 按总入口使用 `agent ask-human`，其余使用宿主 ask_human。
+
 进入视觉阶段前，先按[已选风格只确认一次](../../yida-design/references/theme-selection.md#已选风格只确认一次)复用用户已选结果；补充设计细节不重新选型。
 
 Fast / Plan 先按[已选风格只确认一次](../../yida-design/references/theme-selection.md#已选风格只确认一次)检查用户原始需求、最新补充与视觉参考：已有风格意向就直接推演，参考网站或设计图按[视觉 DNA 提取](../../yida-design/references/reference-visual-dna.md)读取后设计，不再询问主题风格。将结果和来源写回 brief，后续复用；缺少 themeId、色值或 Token 由 AI 补齐。仅没有风格意向、视觉参考或可复用选择时，按[设计方向比较](../../yida-design/references/theme-selection.md#设计方向比较)生成三套方向：Fast 内部选定；Plan 未获 AI 决策委托时按[宿主展示规则](../../yida-design/references/theme-selection.md#选择时展示名称与效果图)收集选择，用户明确要求时才展示预览。

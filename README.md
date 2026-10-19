@@ -95,6 +95,22 @@ Local terminals and AI tools share the same policy. Managed cloud Agent runtimes
 
 If Codex is already installed, OpenYida also imports a local Codex plugin during postinstall. Restart Codex after installation, then type `@宜搭` or `@openyida` in the composer to attach the OpenYida context.
 
+<details>
+<summary>Optional: install DingTalk Workspace CLI (dws)</summary>
+
+For DingTalk A2UI authoring, validation or messaging, install the official [DingTalk Workspace CLI](https://github.com/DingTalk-Real-AI/dingtalk-workspace-cli#installation) separately:
+
+```bash
+npm install -g dingtalk-workspace-cli
+dws version
+```
+
+Alternatively, `openyida dws install` displays official instructions for your platform without running an installer. Once installed, `openyida dws <command> [args]` forwards arguments to your system's dws.
+
+OpenYida does not bundle or automatically install dws. Dws manages its own version, updates and login. Use `dws auth login` for DingTalk business access and verify the target organization and account. Native YiDA cool-card creation, reads and editor links work without dws; updating a chat card through dws does not save a YiDA template. See the official instructions for other installation methods and check the installed command's `--help` before use.
+
+</details>
+
 ### 2. Check Your Environment
 
 Run this from the AI coding workspace where you want OpenYida to operate:
@@ -447,6 +463,9 @@ Your AI prepares the summary from observed evidence and selected reproduction sc
 
 | Command | Description |
 |---------|-------------|
+| `openyida app-settings <appType> [--section theme\|basic\|data-card\|cool-card] [--json]` | Read theme, frontend/backend, native data card and cool card management links |
+| `openyida cool-card <list\|templates\|create\|get> <appType> [cardPageCode] [--type im\|onebox] [--name <title>] [--page <n>] [--size <n>] [--search <text>] [--out <file>] [--json]` | Create and read native YiDA cool cards (interactive and pinned) |
+| `openyida data-card <list\|create\|get\|save\|publish\|probe\|release-get\|release-save\|release-check\|release-test\|refs> <appType> [cardCode] [--name <title>] [--description <text>] [--schema <file>\|--config <file>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--published\|--version <version>] [--page <n>] [--size <n>] [--search <text>] [--allow-send] [--json]` | Create, configure, publish and distribute native YiDA data cards |
 | `openyida app-entry get <appType> [--json]` | Read frontend and management runtime entries |
 | `openyida app-entry set <appType> [--frontend <url>\|--frontend-page <formUuid>] [--management <url>\|--management-page <formUuid>] [--clear-frontend] [--clear-management] [--json]` | Register application entries with partial update and readback |
 | `openyida app-list [--type managed\|created] [--page N] [--size N]` | Page through apps I manage or created |
@@ -509,7 +528,7 @@ Your AI prepares the summary from observed evidence and selected reproduction sc
 | Command | Description |
 |---------|-------------|
 | `openyida data <query\|get\|create\|update> <resource> ... \| delete form <appType> <formUuid> --inst-id <id> --expect-form-name <name> --expect-form-type receipt --confirm [--json]` | Unified data management (form/process/task/subform) |
-| `openyida task-center <type> [options]` | Global task center (todo/processed/cc etc.) |
+| `openyida task-center <todo\|created\|done\|cc\|proxy\|capabilities\|scaffold\|options\|inspect\|count> [--spec <file.json> --output <file.canvas.jsx>] [options]` | Global task center (todo/processed/cc etc.) |
 | `openyida basic-info <overview\|commodity\|grant\|capacity\|quota\|abs-path\|dataflow\|i18n\|domain>` | Query organization basic info, capacity, quotas, and domain settings |
 | `openyida read-dingtalk-doc <docUrl> [--output <file>] [--json]` | Fetch Markdown content from a DingTalk document |
 | `openyida read-dingtalk-tingji <taskUuid> [--json]` | Fetch DingTalk Tingji details by task UUID |
@@ -618,6 +637,20 @@ Your AI prepares the summary from observed evidence and selected reproduction sc
 | `openyida cdn-refresh [options]` | Refresh CDN cache |
 
 <!-- OPENYIDA_COMMANDS_END -->
+
+### Personal tasks and process progress
+
+Query application tasks with `openyida data query tasks <appType> --type todo --normalized`; `created`, `done`, and `cc` select the other personal task lists. Use `openyida task-center capabilities --json` for supported filters and the page configuration example.
+
+The default `app-v1` transport preserves the existing queries. Select `--transport app-query` for additional server filters while keeping the query fixed to the target application: `--originators '["USER_ID"]'` accepts one originator, `--process-codes '["PROCESS_CODE"]'` selects processes, and date bounds use Unix milliseconds. Available fields vary by task kind; unsupported fields fail before a request. `openyida task-center options <appType> --type originators|processes|forms --keyword TEXT --json` returns readable lookup options. The CLI never silently falls back to an unfiltered query.
+
+After explicitly choosing a custom task page, run `openyida task-center scaffold --spec <file.json> --output <new-file.canvas.jsx>`. The configuration requires the choice record and the application's existing design file. Generated pages follow the application theme, read the current visitor's tasks, and open native pages for processing. `embedded` mode provides the same task section for an existing workbench. Compile and publish the page using the usual commands.
+
+Page configurations can explicitly set `transport: "app-query"` and per-kind initial filters, for example `filters: { "todo": { "originators": ["USER_ID"] } }`. Generated pages include the same `filterSchema`, `normalizeFilters`, task loader, and option lookup helpers as the CLI.
+
+Use `task-center count <appType> --type todo --transport app-query --filters-json '{"keyword":"purchase"}' --json` for a one-record query with a matching server total; an unknown total remains `null`. `task-center inspect <appType> --process-inst-id <id> [--form-uuid <id>] [--history] [--task-id <id>] --json` reads an authorized linked process and optional operation history. Personal task outcomes, selected-task outcomes and final process results remain separate. Read commands do not create custom pages or require a custom-page choice.
+
+Scaffolds select only the needed task kinds, `fields` and `filterFields`; the default is a single todo list. `view: "progress", mode: "embedded"` provides a progress component for an existing business page, using its real linked `processInstanceId`. History and task-row expansion are opt-in. See the [workflow capability reference](yida-skills/skills/yida-canvas-data-binding/references/workflow-capabilities.md) for configuration and integration examples.
 
 ### CLI Notes
 

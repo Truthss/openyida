@@ -27,6 +27,8 @@ function cliEnv() {
     USERPROFILE: tempHome,
     OPENYIDA_LANG: 'zh',
     CI: '1',
+    // Keep Node runtime diagnostics separate from the CLI JSON error contract.
+    NODE_NO_WARNINGS: '1',
     // 清除可能从父进程继承的 AI 工具环境变量，避免干扰测试
     QODER_IDE: '',
     QODER_AGENT: '',
