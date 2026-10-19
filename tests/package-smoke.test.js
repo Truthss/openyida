@@ -21,6 +21,10 @@ describe('npm package smoke', () => {
     expect(getPackageBudgetErrors({ ...budgetLimit, unpackedSize: 8358003 })).toEqual([]);
   });
 
+  test('package budget covers the task-center package measured on CI Node 20', () => {
+    expect(getPackageBudgetErrors({ size: 2439886, unpackedSize: 9099864, entryCount: 707 })).toEqual([]);
+  });
+
   test.each(['size', 'unpackedSize', 'entryCount'])('package budgets reject %s above its boundary', field => {
     expect(getPackageBudgetErrors({ ...budgetLimit, [field]: budgetLimit[field] + 1 })).toHaveLength(1);
   });

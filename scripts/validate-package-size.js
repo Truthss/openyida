@@ -40,7 +40,10 @@ const path = require('path');
 // Offline feedback screenshots, test comparisons and user guidance measure
 // 2,410,795 compressed bytes on Node 24; retain the next 16 KiB boundary.
 // Feedback plus native form views measures 2,419,790 bytes on Node 22; this limit fits.
-const MAX_TARBALL_BYTES = 2368 * 1024;
+// Task filters, lookup runtime and their reference examples bring the merged
+// package to 2,439,886 compressed bytes on CI Node 20 (9,099,864 unpacked,
+// 707 files). Retain less than 32 KiB of cross-runtime compression headroom.
+const MAX_TARBALL_BYTES = 2400 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.
