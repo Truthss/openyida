@@ -5,6 +5,8 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  data_card: {"description":"创建、读取、保存草稿和发布宜搭原生数据卡片","usage":"用法： openyida data-card <list|create|get|save|publish> <appType> [cardCode] [--name <title>] [--description <text>] [--schema <file>|--config <file>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--published|--version <version>] [--page <n>] [--size <n>] [--search <text>] [--json]","failed":"原生数据卡片操作已停止：{0}","conflict":"卡片草稿已发生变化，请重新读取后再保存或发布。","mismatch":"回读配置或发布状态与预期不一致，请保留备份并检查卡片后再重试。"},
+  app_settings: {"description":"获取主题、业务前后台和原生数据卡片管理入口","usage":"用法： openyida app-settings <appType> [--section theme|basic|data-card] [--json]","failed":"无法读取应用设置：{0}"},
   form_view: {
     usage: "用法: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
     invalid_config: "原生檢視設定或參數無效：%s",

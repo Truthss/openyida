@@ -95,6 +95,19 @@ test('native form views stay in the bound app and classify only actual mutation 
   expect(() => run('form-view', ['delete', 'APP_BOUND', 'FORM-x'])).toThrow(expect.objectContaining({ code: 'MANAGED_COMMAND_UNSUPPORTED' }));
 });
 
+test('native cards and settings enforce the bound app with app-level mutation receipts', () => {
+  for (const action of ['list', 'get', 'create', 'save', 'publish']) {
+    expect(run('data-card', [action, 'APP_BOUND', 'CARD-x'])).toMatchObject({ appType: 'APP_BOUND' });
+    expect(() => run('data-card', [action, 'APP_OTHER', 'CARD-x'])).toThrow(expect.objectContaining({ code: 'MANAGED_APP_MISMATCH' }));
+    expect(classifyManagedMutation('data-card', [action, 'APP_BOUND', 'CARD-x'])).toEqual(
+      ['list', 'get'].includes(action) ? null : { operation: 'update_app_setting' }
+    );
+  }
+  expect(() => run('data-card', ['delete', 'APP_BOUND', 'CARD-x'])).toThrow(expect.objectContaining({ code: 'MANAGED_COMMAND_UNSUPPORTED' }));
+  expect(run('app-settings', ['APP_BOUND', '--section', 'theme'])).toMatchObject({ appType: 'APP_BOUND' });
+  expect(() => run('app-settings', ['APP_OTHER'])).toThrow(expect.objectContaining({ code: 'MANAGED_APP_MISMATCH' }));
+});
+
 test('blocked command diagnostics name its declaration without logging arguments or grants', () => {
   let failure;
   try {run('auth', ['status', 'private-value']);} catch (error) {failure = error;}

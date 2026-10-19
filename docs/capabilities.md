@@ -26,6 +26,8 @@
 
 ## 应用与组织管理
 
+原生数据卡片支持 `data-card list/create/get/save/publish`，可导出完整 Schema、备份保存草稿并独立发布；`save --config` 从简化配置和真实表单字段直接搭建原生指标卡。配置字段及图表使用原生数据模型，详见[数据卡片指南](guides/data-cards.md)。`app-settings <appType> --section theme|basic|data-card --json` 返回目标应用的主题、业务前后台配置或数据卡片管理入口。
+
 | 功能 | 执行操作 |
 |---|---|
 | 查询我管理的或我创建的应用（手动分页） | `openyida app-list [--type managed\|created] [--page N] [--size N]` |

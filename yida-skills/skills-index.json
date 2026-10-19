@@ -4,6 +4,38 @@
   "entry": "openyida",
   "skills": [
     {
+      "name": "yida-data-card",
+      "path": "skills/yida-data-card/SKILL.md",
+      "display_name": "宜搭原生数据卡片",
+      "description": "创建、读取、保存和发布宜搭原生数据卡片，查询主题、业务前后台及数据卡片管理入口。",
+      "category": "yida-skills/analytics",
+      "tags": [
+        "原生数据卡片",
+        "数据卡片配置",
+        "cardCode"
+      ],
+      "aliases": [
+        "数据卡片管理"
+      ],
+      "positive_signals": [
+        "创建宜搭原生数据卡片",
+        "读取卡片Schema",
+        "修改原生数据卡片配置",
+        "发布数据卡片",
+        "主题在哪里配置",
+        "业务前后台配置入口"
+      ],
+      "negative_signals": [
+        "React指标卡",
+        "钉钉酷卡片"
+      ],
+      "command_ids": [
+        "data-card",
+        "app-settings"
+      ],
+      "requires_login": true
+    },
+    {
       "name": "yida-form-view",
       "path": "skills/yida-form-view/SKILL.md",
       "display_name": "原生数据管理视图配置",
