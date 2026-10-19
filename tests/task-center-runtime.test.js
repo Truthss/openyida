@@ -7,7 +7,7 @@ const Babel = require('@babel/standalone');
 const { buildSource, validateSpec } = require('../lib/task-center/scaffold');
 
 // A small hook host exercises the shipped component's requests and view state.
-function mount(source, bridge) {
+function mount(source, bridge, fetch) {
   const slots = [];
   let cursor = 0;
   let dirty = false;
@@ -38,7 +38,7 @@ function mount(source, bridge) {
   };
   const antd = { Input: { Search: 'Search' }, Typography: { Title: 'Title', Text: 'Text' }, Empty: 'Empty' };
   for (const name of ['ConfigProvider', 'Drawer', 'Alert', 'Button', 'Pagination', 'Space', 'Spin', 'Table', 'Tabs']) { antd[name] = name; }
-  const window = { __OPENYIDA_YIDA_API__: bridge, document: { hidden: false, addEventListener: jest.fn(), removeEventListener: jest.fn() }, addEventListener: jest.fn(), removeEventListener: jest.fn(), setTimeout };
+  const window = { __OPENYIDA_YIDA_API__: bridge, fetch, document: { hidden: false, addEventListener: jest.fn(), removeEventListener: jest.fn() }, addEventListener: jest.fn(), removeEventListener: jest.fn(), setTimeout };
   const compiled = Babel.transform(source + '\nexport { TaskInboxSection };', { presets: ['react'], plugins: ['transform-modules-commonjs'] }).code;
   const module = { exports: {} };
   const requireModule = name => name === 'react' ? React : name === 'antd' ? antd : {};
@@ -123,5 +123,28 @@ test('failed refresh retains the last successful result and exposes an error', a
   expect(app.nodes('Table')[0].props.dataSource[0].title).toBe('saved');
   expect(app.nodes('Alert')[0].props.message).toBeTruthy();
   expect(app.nodes('Alert')[0].props.description).toBeTruthy();
+  app.unmount();
+});
+
+test('advanced scaffold forwards per-kind server filters through pagination without a bridge', async () => {
+  const advanced = buildSource(validateSpec({ appType: 'APP_TEST', designFile: path.join(directory, 'design.md'),
+    customPage: { source: 'explicit-user-request', confirmed: true }, transport: 'app-query',
+    filters: { todo: { originators: ['person-a'] }, cc: { processCodes: ['process-a'] } },
+  }));
+  const fetch = jest.fn().mockImplementation(async () => ({ ok: true, json: async () => ({ success: true, content: {
+    values: [{ appType: 'APP_TEST', title: 'invoice', taskId: 'task-a', processInstanceId: 'instance-a' }], totalCount: 40, currentPage: 1,
+  } }) }));
+  const app = mount(advanced, undefined, fetch);
+  await app.flush();
+  const query = () => JSON.parse(new URL(fetch.mock.calls[fetch.mock.calls.length - 1][0], 'https://example.test').searchParams.get('query'));
+  expect(query()).toMatchObject({ appKeys: ['APP_TEST'], page: 1, originators: ['person-a'] });
+  app.nodes('Pagination')[0].props.onChange(2);
+  await app.flush();
+  expect(query()).toMatchObject({ appKeys: ['APP_TEST'], page: 2, originators: ['person-a'] });
+  app.nodes('Tabs')[0].props.onChange('cc');
+  await app.flush();
+  expect(query()).toMatchObject({ appKeys: ['APP_TEST'], page: 1, processCodes: ['process-a'] });
+  expect(query()).not.toHaveProperty('originators');
+  expect(app.nodes('Table')[0].props.dataSource[0].title).toBe('invoice');
   app.unmount();
 });

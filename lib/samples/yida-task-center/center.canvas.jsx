@@ -41,7 +41,9 @@ function TaskInboxSection({ config = TASK_CENTER_CONFIG }) {
   const requestVersion = useRef(0);
   const scrollPositions = useRef({});
   const rootRef = useRef(null);
-  const view = views[kind] || { page: 1, keyword: '', query: '' };
+  const filterKey = JSON.stringify(config.filters?.[kind] || {});
+  const configuredFilters = JSON.parse(filterKey);
+  const view = views[kind] || { page: 1, keyword: configuredFilters.keyword || '', query: configuredFilters.keyword || '' };
   const result = results[kind] || { items: [], total: null, loading: true, error: '', loaded: false };
   const refresh = () => setRevision(value => value + 1);
   const { openForm, formOpenContainer } = useYidaFormOpen(config.appType, refresh);
@@ -53,6 +55,7 @@ function TaskInboxSection({ config = TASK_CENTER_CONFIG }) {
     let cancelled = false;
     setResults(previous => ({ ...previous, [kind]: { ...previous[kind], loading: true, error: '' } }));
     const waitForBridge = async () => {
+      if (config.transport === 'app-query') return;
       for (let attempt = 0; attempt < 25; attempt += 1) {
         if (cancelled) return;
         if (window.__OPENYIDA_YIDA_API__?.ready) return;
@@ -60,7 +63,8 @@ function TaskInboxSection({ config = TASK_CENTER_CONFIG }) {
       }
     };
     waitForBridge().then(() => cancelled ? null : loadTaskCenter(kind, {
-      appType: config.appType, page: view.page, pageSize: config.pageSize, keyword: view.query,
+      ...configuredFilters, appType: config.appType, transport: config.transport,
+      page: view.page, pageSize: config.pageSize, keyword: view.query,
     })).then(data => {
       if (cancelled || version !== requestVersion.current || !data) return;
       if (data.total !== null && view.page > 1 && !data.items.length && (view.page - 1) * config.pageSize >= data.total) {
@@ -73,7 +77,7 @@ function TaskInboxSection({ config = TASK_CENTER_CONFIG }) {
       setResults(previous => ({ ...previous, [kind]: { ...previous[kind], loading: false, error: taskError(error) } }));
     });
     return () => { cancelled = true; };
-  }, [kind, view.page, view.query, config.appType, config.pageSize, revision]);
+  }, [kind, view.page, view.query, config.appType, config.pageSize, config.transport, filterKey, revision]);
 
   useEffect(() => {
     const onVisible = () => { if (!window.document.hidden) refresh(); };

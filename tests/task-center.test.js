@@ -5,6 +5,7 @@ jest.mock('../lib/core/utils', () => ({
   triggerLogin: jest.fn(),
   resolveBaseUrl: jest.fn(() => 'https://www.aliwork.com'),
   httpGet: jest.fn(),
+  httpPost: jest.fn(),
   requestWithAutoLogin: jest.fn(),
 }));
 
@@ -25,6 +26,36 @@ beforeEach(() => {
 });
 
 describe('task-center run', () => {
+  test('候选项查询返回标准选项且不输出完整成员记录', async () => {
+    utils.httpGet.mockResolvedValue({ success: true, content: { values: [{ staffId: 'person-a', displayName: 'Requester A', email: 'private@example.test' }] } });
+    utils.requestWithAutoLogin.mockImplementation((request, auth) => request(auth));
+    const log = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const result = await run(['options', 'APP_TEST', '--type', 'originators', '--keyword', 'Requester', '--size', '5', '--json']);
+    expect(utils.httpGet.mock.calls[0][1]).toBe('/query/userservice/searchUsers.json');
+    expect(utils.httpGet.mock.calls[0][2]).toMatchObject({ key: 'Requester', size: 5 });
+    expect(result).toEqual({ items: [{ value: 'person-a', label: 'Requester A' }], total: null });
+    expect(log.mock.calls.join(' ')).not.toContain('private@example.test');
+    log.mockRestore();
+  });
+
+  test('流程候选通过应用范围只读POST查询', async () => {
+    utils.httpPost.mockResolvedValue({ success: true, content: [{ appType: 'APP_TEST', processCode: 'process-a', formUuid: 'FORM_A', formType: 'process', title: { zh_CN: '采购申请' } }] });
+    utils.requestWithAutoLogin.mockImplementation((request, auth) => request(auth));
+    const log = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const result = await run(['options', 'APP_TEST', '--type', 'processes', '--keyword', '采购', '--json']);
+    expect(utils.httpPost.mock.calls[0][1]).toBe('/dingtalk/web/APP_TEST/query/formdesign/listFormDesignsByFormType.json');
+    expect(new URLSearchParams(utils.httpPost.mock.calls[0][2]).get('key')).toBe('采购');
+    expect(result.items[0]).toMatchObject({ value: 'process-a', label: '采购申请' });
+    log.mockRestore();
+  });
+
+  test('候选项非法范围和未知参数在认证前失败', async () => {
+    await expect(run(['options', 'APP_TEST', '--type', 'unknown'])).rejects.toHaveProperty('code', 'TASK_LOOKUP_INVALID');
+    await expect(run(['options', 'APP_TEST', '--type', 'originators', '--user-id', 'other'])).rejects.toHaveProperty('isCliError', true);
+    expect(utils.loadAuthData).not.toHaveBeenCalled();
+    expect(utils.requestWithAutoLogin).not.toHaveBeenCalled();
+  });
+
   test('全局查询第二页使用 page/limit 协议', async () => {
     const log = jest.spyOn(console, 'log').mockImplementation(() => {});
     utils.httpGet.mockResolvedValue({ success: true, content: { values: [] } });

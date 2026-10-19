@@ -111,3 +111,27 @@ test('local commands do not expand managed tasks to organization queries', () =>
   }
   expect(capabilities().inlineApproval).toBe(false);
 });
+
+test('explicit query transport and per-kind filters use the same portable contract', () => {
+  const config = validateSpec({ ...spec(explicit), transport: 'app-query', filters: {
+    todo: { originators: '["person-a"]', taskCreateFrom: '1792195200000' },
+    created: { processCodes: ['process-a'] },
+  } });
+  expect(config).toMatchObject({ transport: 'app-query', filters: { todo: { originators: ['person-a'], taskCreateFrom: 1792195200000 }, created: { processCodes: ['process-a'] } } });
+  const source = buildSource(config);
+  expect(() => compileCanvasLocal(source)).not.toThrow();
+  expect(source).toContain('function normalizeFilters(');
+  expect(source).toContain('credentials: \'include\'');
+  expect(source).not.toMatch(/Bearer |access_token|\/Users\//);
+  for (const patch of [
+    { transport: 'automatic' }, { filters: [] }, { filters: { proxy: {} } },
+    { filters: { created: { originators: ['person-a'] } } },
+    { filters: { todo: { userId: 'other' } } },
+  ]) { expect(() => validateSpec({ ...spec(explicit), transport: 'app-query', ...patch })).toThrow(); }
+  expect(() => validateSpec({ ...spec(explicit), filters: { todo: { originators: ['person-a'] } } })).toThrow('TASK_FILTER_UNSUPPORTED');
+});
+
+test('lookup options are application-bound read actions, not global-query admission', () => {
+  expect(resolveManagedPolicy('task-center', ['options', 'APP_TEST', '--type', 'originators']).policy).toEqual({ scope: 'app', appPosition: 1 });
+  expect(capabilities().lookups.kinds).toEqual(['originators', 'processes', 'forms']);
+});

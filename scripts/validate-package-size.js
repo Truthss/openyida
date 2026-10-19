@@ -70,7 +70,9 @@ const MAX_TARBALL_BYTES = 2352 * 1024;
 // Retain the next 16 KiB boundary for the combined package.
 // Application task contracts, page template and skill add five packaged files.
 // Combined content measures 9,006,669 bytes; retain the next 16 KiB boundary.
-const MAX_UNPACKED_BYTES = 8800 * 1024;
+// Application task filter schemas and portable option loading measure 9,022,266
+// unpacked bytes; retain the next 16 KiB boundary without raising tarball limits.
+const MAX_UNPACKED_BYTES = 8816 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -83,12 +85,14 @@ const MAX_UNPACKED_BYTES = 8800 * 1024;
 // Content shrinks overall (8,794,095 unpacked bytes); byte budgets stay fixed.
 // Remove the two obsolete process reference redirects after updating consumers.
 // Main adds the shared integration detail-log module.
-const MAX_ENTRY_COUNT = 698;
+// Portable task lookup options add one runtime module.
+const MAX_ENTRY_COUNT = 699;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
   'lib/task-center/contract.js',
   'lib/task-center/loader.js',
+  'lib/task-center/lookups.js',
   'lib/task-center/scaffold.js',
   'lib/samples/yida-task-center/center.canvas.jsx',
   'yida-skills/skills/yida-task-center/SKILL.md',

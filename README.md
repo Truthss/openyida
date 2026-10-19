@@ -497,7 +497,7 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 | Command | Description |
 |---------|-------------|
 | `openyida data <query\|get\|create\|update> <resource> ... \| delete form <appType> <formUuid> --inst-id <id> --expect-form-name <name> --expect-form-type receipt --confirm [--json]` | Unified data management (form/process/task/subform) |
-| `openyida task-center <todo\|created\|done\|cc\|proxy\|capabilities\|scaffold> [--spec <file.json> --output <file.canvas.jsx>] [options]` | Task queries, capability discovery and custom task page assembly |
+| `openyida task-center <todo\|created\|done\|cc\|proxy\|capabilities\|scaffold\|options> [--spec <file.json> --output <file.canvas.jsx>] [options]` | Task queries, capability discovery and custom task page assembly |
 | `openyida basic-info <overview\|commodity\|grant\|capacity\|quota\|abs-path\|dataflow\|i18n\|domain>` | Query organization basic info, capacity, quotas, and domain settings |
 | `openyida read-dingtalk-doc <docUrl> [--output <file>] [--json]` | Fetch Markdown content from a DingTalk document |
 | `openyida read-dingtalk-tingji <taskUuid> [--json]` | Fetch DingTalk Tingji details by task UUID |
@@ -605,7 +605,11 @@ Run `openyida --help` or `openyida <command> --help` for detailed usage.
 
 Query application tasks with `openyida data query tasks <appType> --type todo --normalized`; `created`, `done`, and `cc` select the other personal task lists. Use `openyida task-center capabilities --json` for supported filters and the page configuration example.
 
+The default `app-v1` transport preserves the existing queries. Select `--transport app-query` for additional server filters while keeping the query fixed to the target application: `--originators '["USER_ID"]'` accepts one originator, `--process-codes '["PROCESS_CODE"]'` selects processes, and date bounds use Unix milliseconds. Available fields vary by task kind; unsupported fields fail before a request. `openyida task-center options <appType> --type originators|processes|forms --keyword TEXT --json` returns readable lookup options. The CLI never silently falls back to an unfiltered query.
+
 After explicitly choosing a custom task page, run `openyida task-center scaffold --spec <file.json> --output <new-file.canvas.jsx>`. The configuration requires the choice record and the application's existing design file. Generated pages follow the application theme, read the current visitor's tasks, and open native pages for processing. `embedded` mode provides the same task section for an existing workbench. Compile and publish the page using the usual commands.
+
+Page configurations can explicitly set `transport: "app-query"` and per-kind initial filters, for example `filters: { "todo": { "originators": ["USER_ID"] } }`. Generated pages include the same `filterSchema`, `normalizeFilters`, task loader, and option lookup helpers as the CLI.
 
 ### CLI Notes
 
