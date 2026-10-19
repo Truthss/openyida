@@ -15,6 +15,8 @@
 
 能读取索引的工具优先按 `skills-index.json` 自动匹配；不能读取索引时，按主入口技能路由表人工 fallback。
 
+先应用技能的显式触发边界，再做信号匹配：`yida-data-card` 只处理用户显式指定的宜搭原生数据卡片及其已明确的后续操作。泛称卡片、指标卡、看板或播报不触发；索引命中关键词不能替代用户选择。
+
 如果工具能读取索引，按这个顺序匹配：先用 `route_groups[].signals` 命中 `yida-skills/<area>` 大类；只在该 `category` 下用 skill 的 `description`、`tags`、`aliases`、`positive_signals` 精排；命中 `negative_signals` 的候选降权或剔除；再用“高频分歧”覆盖易混场景；最后调用 `use_skill`。`command_ids` 只用于解释该技能可能调用哪些 CLI，不要替代技能加载；`done_when` 只用于判断完成条件。`category` 是路由目录，不是技能路径，必须保持 `yida-skills/<简名>` 格式。
 
 ## 无独立子技能的 CLI

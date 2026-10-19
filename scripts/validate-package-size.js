@@ -81,7 +81,8 @@ const MAX_TARBALL_BYTES = 2368 * 1024;
 // Native multi-chart builder and its self-contained configuration guide measure
 // 9,086,358 unpacked bytes / 705 entries on Node 26; next 16 KiB boundary.
 // Broadcast runtime and its self-contained skill reference add ~21 KiB; next 16 KiB boundary.
-const MAX_UNPACKED_BYTES = 8896 * 1024;
+// Explicit native-card routing guidance is present in both host rules and skill metadata.
+const MAX_UNPACKED_BYTES = 8912 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.

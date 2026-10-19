@@ -2,6 +2,8 @@
 
 `publish` 发布设计草稿，投放页的播报配置是另一份资源。投放相关能力使用同一个 `data-card` 命令：
 
+本说明仅适用于用户已经显式选择的宜搭原生数据卡片。不能仅凭“投放、数据播报、发送到群”等泛称触发本能力；明确选择原生卡片也不等于授权实际发送。
+
 ```bash
 openyida data-card release-get APP_XXX CARD-xxx --out release-config.json --json
 openyida data-card release-check APP_XXX CARD-xxx --json
