@@ -44,8 +44,8 @@ description: 配置宜搭自动化的执行时机和处理步骤，修改已有�
 | 创建新自动化 | 使用 `integration create`，由 CLI 生成 `processCode` |
 | 选择表单事件、流程事件、定时或字段变化触发 | 读 [触发设置](references/triggers.md)，先确定何时执行 |
 | 选择数据、通知、条件分支、并行或循环 | 调用 `use_skill("yida-flow-node-config", "所需节点类别")`，按类别读取配置 |
-| 获取数据节点按条件过滤，右值选择字段 | 使用 `dataRetrieve.conditions` 或 `--data-condition`，右值类型 `processVar`；触发字段与上游单条节点字段格式见 [条件与变量](../yida-flow-node-config/references/conditions-variables.md#获取数据节点按条件过滤--字段) |
-| 获取数据时右值需要计算，或 route 分支按整段公式判断 | 通过 `use_skill` 加载 `yida-formula`，再读 [完整节点示例](../yida-formula/references/node-examples.md)，保留执行文本和编辑器内容 |
+| 获取数据时，用触发记录或上游节点的字段来筛选，例如“库存小于申请数量” | 使用 `dataRetrieve.conditions` 或 `--data-condition`，将用来比较的字段配置为 `valueType: processVar`；字段引用格式见 [条件与变量](../yida-flow-node-config/references/conditions-variables.md#获取数据节点按条件过滤--字段) |
+| 获取数据时，用公式算出的结果来筛选，例如“库存小于申请数量的两倍”；或用公式决定进入哪个条件分支 | 通过 `use_skill` 加载 `yida-formula`，再读 [完整节点示例](../yida-formula/references/node-examples.md)，保留执行文本和编辑器内容 |
 | 开始节点触发过滤或分支的字段与字段比较 | 与取数筛选分别验收；尚未通过平台运行验收，不能由取数字段引用推断已可用，见 [条件与变量](../yida-flow-node-config/references/conditions-variables.md) |
 | 批量取数、新增或复制子表多行 | 使用 `integration create --spec`，读取通用技能的数据操作说明 |
 | 整图替换已有自动化 | 校验 `appType/formUuid/processCode`，明确告知“CLI 无法读取原有节点定义；本次将整体覆盖，原节点不保留”，获得确认后使用 `integration create ... --process-code <code> --replace` |
