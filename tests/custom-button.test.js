@@ -107,6 +107,49 @@ test('create resolves linked-form app and type from the association list', async
   expect(client.postFormOnce.mock.calls[0][1].relationId).toBe('FORM_LINKED');
 });
 
+test('create accepts native i18n fallbacks and nullable metadata in readback', async () => {
+  const post = client.postFormOnce.getMockImplementation();
+  client.postFormOnce.mockImplementation(async (...params) => {
+    const result = await post(...params);
+    const saved = buttons[buttons.length - 1];
+    for (const key of ['name', 'description']) {
+      saved[key] = { ...saved[key], en_US: saved[key].en_US || saved[key].zh_CN,
+        pureEn_US: saved[key].en_US || saved[key].zh_CN, ja_JP: null, value: null, key: null };
+    }
+    return result;
+  });
+  const result = await execute(mutation('create', { name: { type: 'i18n', zh_CN: '修改', en_US: 'Edit' },
+    description: { type: 'i18n', zh_CN: '真实验收' }, actionType: 'fillInForm',
+    actionConfig: { fillType: 'fillCurrentForm', fieldsSelected: ['owner'] } }), client);
+  expect(result.readbackVerified).toBe(true);
+  expect(client.postFormOnce).toHaveBeenCalledTimes(1);
+});
+
+test('native i18n expansion cannot hide loss of a preserved translation', async () => {
+  const post = client.postFormOnce.getMockImplementation();
+  client.postFormOnce.mockImplementation(async (...params) => {
+    const result = await post(...params);
+    buttons[0].name.en_US = 'Incorrect';
+    buttons[0].name.pureEn_US = 'Incorrect';
+    return result;
+  });
+  await expect(execute(mutation('update', { name: { zh_CN: '修改' } }), client))
+    .rejects.toMatchObject({ code: 'CUSTOM_BUTTON_READBACK_MISMATCH' });
+});
+
+test('updates accept nullable native i18n metadata and preserve other translations', async () => {
+  buttons[0].name = { ...buttons[0].name, pureEn_US: 'Assign', ja_JP: null, value: null, key: null };
+  buttons[0].description = { ...buttons[0].description, ja_JP: null, key: null };
+  const result = await execute(mutation('update', { name: { zh_CN: '更新' } }), client);
+  expect(result).toMatchObject({ readbackVerified: true, button: { name: { zh_CN: '更新', en_US: 'Assign', ja_JP: null } } });
+});
+
+test('overlong translated button names fail before any remote write', async () => {
+  await expect(execute(mutation('update', { name: { en_US: 'Live test edit' } }), client))
+    .rejects.toMatchObject({ code: 'CUSTOM_BUTTON_INVALID_CONFIG' });
+  expect(client.postFormOnce).not.toHaveBeenCalled();
+});
+
 test('action changes replace incompatible properties and published automation defaults to confirmation', async () => {
   const result = await execute(mutation('update', { actionType: 'invokeFlow', actionConfig: { processCode: 'FLOW_A' } }), client);
   expect(result.button.actionConfig).toEqual({ processCode: 'FLOW_A', needSecondCheck: ['y'] });
@@ -183,10 +226,15 @@ test('live metadata SQL keys and editor labels resolve to consistent operator co
     { id: 'status', op: 'eq', value: 'open' }, { id: 'status', op: '为空' }, { id: 'deadline', op: 'lt', value: 1000 },
   ] } }), client);
   expect(result.button.permissionConfig.rules).toEqual([
-    { id: 'status', op: 'eq', value: 'open', opCode: 'Equal', valueType: 'literal' },
-    { id: 'status', op: '为空', opCode: 'NotExistValue', valueType: 'literal' },
-    { id: 'deadline', op: 'lt', opCode: 'Before', valueType: 'literal', value: 1000 },
+    expect.objectContaining({ id: 'status', op: 'eq', value: 'open', opCode: 'Equal', valueType: 'literal', ruleValue: 'open', extValue: 'value' }),
+    expect.objectContaining({ id: 'status', op: '为空', opCode: 'NotExistValue', valueType: 'literal', ruleValue: '' }),
+    expect.objectContaining({ id: 'deadline', op: 'lt', opCode: 'Before', valueType: 'literal', value: 1000, componentType: 'DateField', ruleType: 'rule_date' }),
   ]);
+  expect(result.button.permissionConfig.ruleId).toMatch(/^group-/);
+  for (const rule of result.button.permissionConfig.rules) {
+    expect(rule.ruleId).toMatch(/^item-/);
+    expect(rule.parentId).toBe(result.button.permissionConfig.ruleId);
+  }
 });
 
 test('button limit rejects the eleventh creation', async () => {

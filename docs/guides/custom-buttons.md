@@ -13,6 +13,10 @@ openyida custom-button delete APP_XXX FORM_XXX BUTTON_XXX --expected-hash HASH -
 
 `options` reads fields, condition variables/operators, associated forms, pages, manual custom-button automations (type 6), table views and custom detail pages. Use returned identifiers in JSON files.
 
+Each translated button name is limited to 10 characters. Native responses add fallback translations and nullable i18n metadata; readback verifies every supplied or preserved translation while accepting those server additions.
+
+Filter rules are enriched with their native component type, rule parser, value, and group/item identifiers. These fields are required for runtime evaluation even when a minimal `id/op/value` rule can be displayed by the editor. Always verify both a matching and a nonmatching record when testing conditions.
+
 ```json
 {
   "name": {"type": "i18n", "zh_CN": "分配", "en_US": "Assign"},
