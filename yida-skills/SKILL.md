@@ -135,6 +135,8 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 
 `yida-data-card` 只在用户显式指定宜搭原生数据卡片，或继续已明确的原生卡片上下文时触发。泛称数据卡片、指标卡、看板、投放、数据播报或发送到群不满足条件；不能在完整应用搭建中自行添加原生数据卡片。用户主动提供原生卡片链接并要求操作该资源属于明确指定；否定原生时按实际页面、图表或自动化意图路由。按本次实际修改对象判断，提及或引用原生卡片不等于请求修改该资源。
 
+`yida-cool-card` 只在用户明确指定宜搭原生酷卡片（交互卡片、置顶卡片），或继续已明确的酷卡片任务时使用。它使用 `cardPageCode`/`cardTemplateId`，独立于 `yida-data-card` 的 `CARD-xxx` 和页面中的展示卡片。`dataCardDesigner.html?cardCode=CARD-...` 属于原生数据卡片；酷卡片管理入口为 `coolCardManage`。名称与链接冲突时说明实际资源并核对目标，不能互换接口。泛称卡片、图表或群通知不自动选择这两类原生资源。
+
 ### 大类目录
 
 | 大类目录 | 第一层意图信号 | 子技能 |
@@ -146,7 +148,7 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 | `yida-skills/process` | 审批、流程表单、流程规则、节点/分支/字段权限、流程代理 | `yida-create-process`、`yida-process-rule`、`yida-flow-node-config`、`yida-agent-center` |
 | `yida-skills/page` | 工作台、办事门户、任务看板、自定义展示页、页面源码开发、平台 JSX 组件页面维护、页面发布、页面内导航、PPT 页面 | `yida-create-page`、`yida-canvas-custom-page`、`yida-custom-page`、`yida-canvas-data-binding`、`yida-canvas-upgrade`、`yida-publish-page`、`yida-openyida-publish-guard`、`yida-density`、`yida-nav-shell`、`yida-ppt-slider` |
 | `yida-skills/analytics` | 用户显式指定宜搭原生数据卡片（含其投放播报）；聚合表、虚拟视图、报表、统计、图表、Recharts、ECharts、经营分析看板、驾驶舱、大屏 | `yida-data-card`、`yida-aggregate-table`、`yida-report`、`yida-rechart`、`yida-chart`、`yida-dashboard` |
-| `yida-skills/integration` | 连接器、钉钉开放平台、外部 API、执行动作、设计器数据源、集成自动化、逻辑流 | `yida-integration`、`yida-flow-node-config`、`yida-dingtalk-openapi`、`yida-connector`、`yida-connector-safe-actions`、`yida-data-source-connectors` |
+| `yida-skills/integration` | 用户明确指定宜搭原生酷卡片；连接器、钉钉开放平台、外部 API、执行动作、设计器数据源、集成自动化、逻辑流 | `yida-cool-card`、`yida-integration`、`yida-flow-node-config`、`yida-dingtalk-openapi`、`yida-connector`、`yida-connector-safe-actions`、`yida-data-source-connectors` |
 | `yida-skills/access` | 平台/应用/表单/页面权限、公开访问、分享 | `yida-corp-manager`、`yida-app-permission`、`yida-form-permission`、`yida-page-config` |
 | `yida-skills/ops` | Sequence、主键冲突、VOC、OpenYida 本地故障、Issue/Fork PR | `yida-db-seq-fix`、`yida-voc`、`yida-feedback` |
 | `yida-skills/agent` | 导出对话、读取钉钉文档/听记、会议纪要/闪记转 PRD | `yida-export-conversation`、`yida-document-markdown`、`yida-tingji`、`yida-flash-note-to-prd` |
@@ -199,10 +201,11 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 | 图片需求、搜图、生图 | `yida-image-assets`；完整应用按 `design.md.assetStrategy` 加载 |
 | 平台左侧导航树分组/排序 | `yida-nav-group` |
 | 自定义应用导航或独立前台菜单 | `yida-nav-shell` |
+| 用户明确指定宜搭原生酷卡片（交互卡片或置顶卡片） | `yida-cool-card`；创建、读取与模板查询，返回官方入口由用户配置保存，再由 CLI 回读；要求完全不同的样式或自由 HTML/CSS/React 时仍由本技能判断原生限制和替代方案，不自动切换成网页；不代替编辑器保存、发布或发送，不调整权益 |
 | 用户显式指定宜搭原生数据卡片，或在已明确的原生卡片上下文中继续操作 | `yida-data-card`；仅泛称卡片、指标卡、看板、投放或播报不触发；原生卡片保存、发布与播报分离，启用或测试发送另需明确授权 |
 | 自定义页面中的数据卡片、指标卡、统计卡 | 页面内组件随页面发布：新增/开发走页面技能，接数据走 `yida-canvas-data-binding`，仅外观走 `yida-design`；不自动创建原生 CARD 资源 |
 | 页面引用了原生 `CARD-xxx` | 按实际修改对象分流：页面外层或引用配置仍归页面；用户明确要求修改源卡片配置才用 `yida-data-card`，不能只凭 CARD/FORM 字样判断 |
-| 查询主题配置、业务前后台配置或数据卡片管理入口 | 使用 `openyida app-settings <appType> --section theme|basic|data-card --json`，直接返回对应 url；只问入口不修改设置 |
+| 查询主题配置、业务前后台配置或数据卡片管理入口 | 使用 `openyida app-settings <appType> --section theme|basic|data-card|cool-card --json`，直接返回对应 url；只问入口不修改设置 |
 | 普通报表/统计 | `yida-report` |
 | 聚合表 / 虚拟视图的读取、预览、草稿保存或发布 | `yida-aggregate-table`；save 验证 stash revision，publish 验证 live revision |
 | PPT 页面 | `yida-ppt-slider` |

@@ -37,15 +37,20 @@ const path = require('path');
 // Automation triggers, guarded updates, lifecycle operations and conditional actors
 // bring the package to 2,390,301 compressed bytes on Node 24 (692 files).
 // Round to the next 16 KiB boundary with cross-runtime compression headroom.
+// Offline feedback screenshots, test comparisons and user guidance measure
+// 2,410,795 compressed bytes on Node 24; retain the next 16 KiB boundary.
+// Feedback plus native form views measures 2,419,790 bytes on Node 22; this limit fits.
+// Native cool-card CLI and its independent skill add ~8 KiB compressed.
+// Native cool-card import sample and design guidance need one additional 16 KiB gzip step.
 // Combined formula configuration/examples and offline feedback reports, npm dry-run:
 // Node 24.19.0: 2,442,200 compressed; Node 26.4.0: 2,417,070 compressed.
 // Both: 9,111,642 unpacked bytes / 709 files. Keep cross-runtime gzip headroom.
 // Keep byte budgets on 16 KiB boundaries; per-file limits are unchanged.
 // Formula component querying and exact-name guidance measure 2,460,061 bytes
 // on Node 22; retain the next 16 KiB boundary across compression runtimes.
-// PR #638 merged with main: Node 20.20.2 measures 2,496,932 compressed
-// bytes. Round to the next 16 KiB boundary with less than 16 KiB headroom.
-const MAX_TARBALL_BYTES = 2448 * 1024;
+// Merged formula support, native cards and import sample: Node 20 measures
+// 2,517,672 compressed bytes; retain the next 16 KiB boundary.
+const MAX_TARBALL_BYTES = 2464 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.
@@ -87,6 +92,10 @@ const MAX_TARBALL_BYTES = 2448 * 1024;
 // 9,086,358 unpacked bytes / 705 entries on Node 26; next 16 KiB boundary.
 // Broadcast runtime and its self-contained skill reference add ~21 KiB; next 16 KiB boundary.
 // Explicit native-card routing guidance is present in both host rules and skill metadata.
+// Cool-card runtime, skill and reference: 9,137,177 bytes / 710 files on Node 26.
+// External dws installation guidance and localized notices: 9,144,203 bytes,
+// still 710 files; round the unpacked budget to the next 16 KiB boundary.
+// Native cool-card design guide and import-ready brief add one sample and one reference.
 // Offline feedback adds one runtime module and four skill/reference files.
 // Combined formula/feedback content retains the next 16 KiB boundary.
 // Native field-runtime binding and its complete regression examples:
@@ -97,8 +106,8 @@ const MAX_TARBALL_BYTES = 2448 * 1024;
 // formula support; retain the next 16 KiB boundary for the merged content.
 // Combined Node 22 package: 2,468,324 compressed / 9,194,708 unpacked bytes,
 // 713 files. Keep the compressed and single-file caps unchanged.
-// PR #638 plus main: 9,278,325 unpacked bytes on Node 20; next 16 KiB boundary.
-const MAX_UNPACKED_BYTES = 9072 * 1024;
+// Combined package: 9,377,402 unpacked bytes on Node 20; next 16 KiB boundary.
+const MAX_UNPACKED_BYTES = 9168 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -114,15 +123,28 @@ const MAX_UNPACKED_BYTES = 9072 * 1024;
 // Native form-view runtime and self-contained skill add two packaged files.
 // Native card management and application setting links add exactly three packaged files.
 // Native broadcast support adds exactly two packaged files.
+// Cool-card runtime plus its skill and protocol reference add exactly three files.
 // Formula support and offline feedback reports bring the total to 709 files.
 // Formula runtime/examples bring it to 711; native form views add two files.
 // Shared formula CLI/manifest/help parameter definitions add one runtime file.
 // Node 22: 2,469,301 compressed / 9,198,911 unpacked bytes; byte caps unchanged.
-// Native data-card runtime, skills and references add seven files to main.
-const MAX_ENTRY_COUNT = 721;
+// The merged native data/cool-card commands, guides and sample add 12 files.
+const MAX_ENTRY_COUNT = 726;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
+  'lib/app/app-settings.js',
+  'lib/app/data-card.js',
+  'lib/app/data-card-builder.js',
+  'lib/app/data-card-release.js',
+  'lib/app/cool-card.js',
+  'lib/samples/yida-cool-card/project-brief.json',
+  'yida-skills/skills/yida-data-card/SKILL.md',
+  'yida-skills/skills/yida-data-card/references/chart-config.md',
+  'yida-skills/skills/yida-data-card/references/release.md',
+  'yida-skills/skills/yida-cool-card/SKILL.md',
+  'yida-skills/skills/yida-cool-card/references/configuration.md',
+  'yida-skills/skills/yida-cool-card/references/design.md',
   'lib/feedback/report.js',
   'yida-skills/skills/yida-feedback/references/user-interaction.md',
   'yida-skills/skills/yida-feedback/SKILL.md',
