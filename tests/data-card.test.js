@@ -52,14 +52,29 @@ test('preserves native action constructors as data without rejecting a designer 
   schema.actions = { module: { source: { constructor: { type: 'JSFunction', value: 'function() {}' } } } };
   expect(validateSchema(schema)).toBe(schema);
 });
-test('creates a native resource once with an i18n name and verifies the returned identity', async () => {
-  const result = await execute(args('create', ['--name', '销售', '--description', '业务统计']), client);
-  expect(result.cardCode).toBe('CARD-abc');
-  const [endpoint, body] = client.postFormOnce.mock.calls[0];
-  expect(endpoint).toBe('/APP_TEST/visual/dataCardRpc/createCard.json');
-  expect(JSON.parse(body.cardName).zh_CN).toBe('销售');
-  expect(Object.keys(JSON.parse(body.description))).toEqual(['type', 'zh_CN']);
-  expect(client.postFormOnce).toHaveBeenCalledTimes(1);
+test.each([
+  ['explicit Chinese', { OPENYIDA_CONTENT_LOCALE: 'zh_CN' }, 'zh_CN'],
+  ['explicit English', { OPENYIDA_CONTENT_LOCALE: 'en_US' }, 'en_US'],
+  ['explicit Japanese', { OPENYIDA_CONTENT_LOCALE: 'ja_JP' }, 'ja_JP'],
+  ['English system locale', { LANG: 'en_US.UTF-8' }, 'en_US'],
+])('creates a native resource once with the selected content locale: %s', async (_name, environment, locale) => {
+  const originalEnv = process.env;
+  process.env = {
+    ...originalEnv,
+    OPENYIDA_CONTENT_LOCALE: '', YIDA_CONTENT_LOCALE: '', OPENYIDA_APP_LOCALE: '',
+    OPENYIDA_LANG: '', LC_ALL: '', LANG: '', ...environment,
+  };
+  try {
+    const result = await execute(args('create', ['--name', '销售', '--description', '业务统计']), client);
+    expect(result.cardCode).toBe('CARD-abc');
+    const [endpoint, body] = client.postFormOnce.mock.calls[0];
+    expect(endpoint).toBe('/APP_TEST/visual/dataCardRpc/createCard.json');
+    expect(JSON.parse(body.cardName)).toEqual({ type: 'i18n', [locale]: '销售' });
+    expect(JSON.parse(body.description)).toEqual({ type: 'i18n', [locale]: '业务统计' });
+    expect(client.postFormOnce).toHaveBeenCalledTimes(1);
+  } finally {
+    process.env = originalEnv;
+  }
 });
 test('a failed creation readback retains the created card ID for recovery', async () => {
   client.get.mockRejectedValue(new Error('read timeout'));
