@@ -212,6 +212,8 @@ openyida data query tasks <appType> --type todo|created|done|cc --normalized [--
 
 按用户描述选择待我处理、我创建的、我已处理或抄送我的；`submitted` 兼容为 `created` 别名。我创建的包含普通表单和流程，我已处理不代表流程已完成。筛选条件与候选查询以 `openyida task-center capabilities --json` 为准。自定义内容只需某项任务数据时交接 `yida-canvas-data-binding`，不要求搭建待办中心；业务工单、订单等待处理记录继续使用业务表单查询。
 
+需要过滤时按需读取[个人任务筛选示例](../yida-task-center/references/task-filters.md)，复用所需类型的组合命令与时间条件。
+
 ## 接口总览
 
 ### 表单实例

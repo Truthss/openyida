@@ -83,7 +83,9 @@ const MAX_TARBALL_BYTES = 2368 * 1024;
 // Feedback plus native form views measures 9,036,200 bytes on Node 22.
 // Merged task-center, form-view and feedback package: 2,412,020 compressed,
 // 9,090,404 unpacked bytes / 706 entries; next 16 KiB boundary.
-const MAX_UNPACKED_BYTES = 8880 * 1024;
+// Personal task filter examples add one shared skill reference.
+// Measured 9,099,864 unpacked bytes / 707 entries; next 16 KiB boundary.
+const MAX_UNPACKED_BYTES = 8896 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -98,7 +100,7 @@ const MAX_UNPACKED_BYTES = 8880 * 1024;
 // Main adds the shared integration detail-log module.
 // Portable task lookup options add one runtime module.
 // Native form-view runtime and self-contained skill add two packaged files.
-const MAX_ENTRY_COUNT = 706;
+const MAX_ENTRY_COUNT = 707;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -108,6 +110,7 @@ const REQUIRED_PACKAGE_FILES = [
   'lib/task-center/scaffold.js',
   'lib/samples/yida-task-center/center.canvas.jsx',
   'yida-skills/skills/yida-task-center/SKILL.md',
+  'yida-skills/skills/yida-task-center/references/task-filters.md',
   'lib/feedback/report.js',
   'yida-skills/skills/yida-feedback/references/user-interaction.md',
   'yida-skills/skills/yida-feedback/SKILL.md',
