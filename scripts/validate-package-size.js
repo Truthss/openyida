@@ -80,7 +80,8 @@ const MAX_TARBALL_BYTES = 2368 * 1024;
 // Retain the next 16 KiB boundary; the tarball and per-file caps stay unchanged.
 // Native multi-chart builder and its self-contained configuration guide measure
 // 9,086,358 unpacked bytes / 705 entries on Node 26; next 16 KiB boundary.
-const MAX_UNPACKED_BYTES = 8880 * 1024;
+// Broadcast runtime and its self-contained skill reference add ~21 KiB; next 16 KiB boundary.
+const MAX_UNPACKED_BYTES = 8896 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -95,7 +96,8 @@ const MAX_UNPACKED_BYTES = 8880 * 1024;
 // Main adds the shared integration detail-log module.
 // Native form-view runtime and self-contained skill add two packaged files.
 // Native card management and application setting links add exactly three packaged files.
-const MAX_ENTRY_COUNT = 705;
+// Native broadcast support adds exactly two packaged files.
+const MAX_ENTRY_COUNT = 707;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [

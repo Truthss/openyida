@@ -448,7 +448,7 @@ Your AI prepares the summary from observed evidence and selected reproduction sc
 | Command | Description |
 |---------|-------------|
 | `openyida app-settings <appType> [--section theme\|basic\|data-card] [--json]` | Read theme, frontend/backend and native data card management links |
-| `openyida data-card <list\|create\|get\|save\|publish\|probe> <appType> [cardCode] [--name <title>] [--description <text>] [--schema <file>\|--config <file>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--published\|--version <version>] [--page <n>] [--size <n>] [--search <text>] [--json]` | Create, read, save drafts and publish native YiDA data cards |
+| `openyida data-card <list\|create\|get\|save\|publish\|probe\|release-get\|release-save\|release-check\|release-test\|refs> <appType> [cardCode] [--name <title>] [--description <text>] [--schema <file>\|--config <file>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--published\|--version <version>] [--page <n>] [--size <n>] [--search <text>] [--allow-send] [--json]` | Create, configure, publish and distribute native YiDA data cards |
 | `openyida app-entry get <appType> [--json]` | Read frontend and management runtime entries |
 | `openyida app-entry set <appType> [--frontend <url>\|--frontend-page <formUuid>] [--management <url>\|--management-page <formUuid>] [--clear-frontend] [--clear-management] [--json]` | Register application entries with partial update and readback |
 | `openyida app-list [--type managed\|created] [--page N] [--size N]` | Page through apps I manage or created |

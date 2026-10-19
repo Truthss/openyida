@@ -34,7 +34,9 @@ openyida app-settings APP_XXX --section data-card --json
 
 分别返回主题与导航、基础设置（业务前后台配置入口）、原生数据卡片管理的 `url`。省略 `--section` 返回全部 `urls`。地址使用当前应用域名和真实应用 ID，仅查询入口不会修改设置。
 
-卡片操作受平台管理员权限、卡片数量和图表数量限制。CLI 保留平台权益错误，不改变版本、应用标记或额度。当前命令不包含播报、消息发送或删除。
+卡片操作受平台管理员权限、卡片数量和图表数量限制。CLI 保留平台权益错误，不改变版本、应用标记或额度。不包含删除。
+
+投放页与设计发布是独立操作。`release-get` 读取/导出播报配置及 `releaseHash`，`release-save --config <file> --expected-hash <releaseHash>` 备份保存并回读；`release-check` 检查已发布状态和播报权益；`refs --page 1 --size 20` 查询门户使用记录。所有单卡结果均返回 `urls.releaseUrl`。启用定时播报和 `release-test` 测试发送要求显式 `--allow-send`；测试只发送给当前操作人，受理成功不代表送达。群配置还需要在钉钉客户端确认酷应用安装。当前不自动挂载门户组件。完整参数、关闭操作及快照数据视角见[投放与播报](../../yida-skills/skills/yida-data-card/references/release.md)。
 
 
 ## 通过 CLI 搭建指标卡

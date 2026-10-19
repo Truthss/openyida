@@ -143,7 +143,7 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 | `yida-skills/form` | 表单字段、公式、校验、业务关联规则、批量录入、数据记录 | `yida-create-form-page`、`yida-form-view`、`yida-formula`、`yida-formula-evaluate`、`yida-business-rule`、`yida-canvas-table-form`、`yida-table-form`、`yida-data-management` |
 | `yida-skills/process` | 审批、流程表单、流程规则、节点/分支/字段权限、流程代理 | `yida-create-process`、`yida-process-rule`、`yida-flow-node-config`、`yida-agent-center` |
 | `yida-skills/page` | 工作台、办事门户、任务看板、自定义展示页、页面源码开发、平台 JSX 组件页面维护、页面发布、页面内导航、PPT 页面 | `yida-create-page`、`yida-canvas-custom-page`、`yida-custom-page`、`yida-canvas-data-binding`、`yida-canvas-upgrade`、`yida-publish-page`、`yida-openyida-publish-guard`、`yida-density`、`yida-nav-shell`、`yida-ppt-slider` |
-| `yida-skills/analytics` | 聚合表、虚拟视图、报表、统计、图表、Recharts、ECharts、经营分析看板、驾驶舱、大屏 | `yida-data-card`、`yida-aggregate-table`、`yida-report`、`yida-rechart`、`yida-chart`、`yida-dashboard` |
+| `yida-skills/analytics` | 原生数据卡片、卡片投放、数据播报、聚合表、虚拟视图、报表、统计、图表、Recharts、ECharts、经营分析看板、驾驶舱、大屏 | `yida-data-card`、`yida-aggregate-table`、`yida-report`、`yida-rechart`、`yida-chart`、`yida-dashboard` |
 | `yida-skills/integration` | 连接器、钉钉开放平台、外部 API、执行动作、设计器数据源、集成自动化、逻辑流 | `yida-integration`、`yida-flow-node-config`、`yida-dingtalk-openapi`、`yida-connector`、`yida-connector-safe-actions`、`yida-data-source-connectors` |
 | `yida-skills/access` | 平台/应用/表单/页面权限、公开访问、分享 | `yida-corp-manager`、`yida-app-permission`、`yida-form-permission`、`yida-page-config` |
 | `yida-skills/ops` | Sequence、主键冲突、VOC、OpenYida 本地故障、Issue/Fork PR | `yida-db-seq-fix`、`yida-voc`、`yida-feedback` |
@@ -197,7 +197,7 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 | 图片需求、搜图、生图 | `yida-image-assets`；完整应用按 `design.md.assetStrategy` 加载 |
 | 平台左侧导航树分组/排序 | `yida-nav-group` |
 | 自定义应用导航或独立前台菜单 | `yida-nav-shell` |
-| 宜搭原生数据卡片创建、读取、配置草稿保存或发布 | `yida-data-card`；使用原生数据卡片资源和 cardCode，保存与发布分离，不以 Canvas 卡片替代 |
+| 宜搭原生数据卡片创建、读取、保存、发布、投放播报或使用记录 | `yida-data-card`；原生 cardCode 资源，保存、发布与播报分离；投放先读 references/release.md，启用或测试发送须明确授权，门户暂不自动挂载 |
 | 查询主题配置、业务前后台配置或数据卡片管理入口 | 使用 `openyida app-settings <appType> --section theme|basic|data-card --json`，直接返回对应 url；只问入口不修改设置 |
 | 普通报表/统计 | `yida-report` |
 | 聚合表 / 虚拟视图的读取、预览、草稿保存或发布 | `yida-aggregate-table`；save 验证 stash revision，publish 验证 live revision |
