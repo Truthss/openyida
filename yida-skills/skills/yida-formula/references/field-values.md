@@ -18,6 +18,8 @@
 
 日期计算与日期字段赋值分两步：`TODAY()` 返回日期对象，填入日期字段时用 `TIMESTAMP(TODAY())`。本地类型检查通过后，也要核对页面是否显示日期，以及提交后的值是否为毫秒时间戳。
 
+“今天”不等于“当天零点”。`TIMESTAMP(TODAY())` 的接口试算可能保留时分秒；日期组件还会按显示格式处理提交值。业务明确需要零点时，先查询 `DAYBEGIN`，使用 `DAYBEGIN(TIMESTAMP(TODAY()))`，按所用时区核对结果；不要直接把接口值、页面日期和提交时间戳当成同一个值。
+
 日期也可以作为判断条件。例如判断结束时间晚于开始时间，可使用当前函数列表支持的 `GT(#{dateField_end}, #{dateField_start})`，将两边统一为毫秒时间戳。按“同一天”判断时先统一时区和日期粒度；完整时刻的相等与日历日期的相等是不同业务条件。不要为比较日期而一律增加文本字段。
 
 ## 组件、参数与结果类型
@@ -156,6 +158,20 @@ openyida formula inspect APP_XXX FORM_XXX --field numberField_total --json
 通过 `create-form update APP_XXX FORM_XXX changes.json` 保存。单价 12.30、数量 2 的行金额预期为 24.60；单价 5、数量 3 的行金额预期为 15；主表合计预期为 39.60。修改第一行数量时，关注第一行及主表合计是否变化，第二行金额应按其自己的单价和数量计算。这些是后续验收的业务预期，不表示本轮已运行。
 
 完整示例用 `ISEMPTY` 为零行明细返回 0。业务允许空表时保留这一分支，使用空表样例检查；单独 `SUM` 空列在平台上可能没有字段值。
+
+页面里的空白行与零行明细分别检查。子表默认 `minItems: 1`，只把它改为 0 也可能在提交时保留空白行；需要允许不填明细并过滤全空行时，读取真实子表 ID 后保存下面补丁：
+
+```json
+[
+  {
+    "action": "field-props",
+    "fieldId": "tableField_lines",
+    "props": { "minItems": 0, "filterEmptyRowData": true }
+  }
+]
+```
+
+`tableField_lines` 替换为当前子表的真实 ID，用 `create-form patch APP_XXX FORM_XXX patch.json` 保存。分别验收空明细和有内容的明细；提交后用 `data query subform` 核对条数，不能仅凭页面看起来为空或合计显示 0 判断没有明细行。
 
 ## 隐藏、提交和依赖
 
