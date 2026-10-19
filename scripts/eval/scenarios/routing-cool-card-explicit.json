@@ -80,5 +80,48 @@
       "yida-cool-card",
       "yida-data-card"
     ]
+  },
+  {
+    "id": "cool-native-full-visual-change",
+    "prompt": "把已有宜搭原生酷卡片做成和默认模板完全不一样的外观，保留消息里的动态指标和操作，先判断原生组件能做到哪些。",
+    "expectedSkill": "yida-cool-card",
+    "mustNotTrigger": [
+      "yida-canvas-custom-page",
+      "yida-custom-page",
+      "yida-data-card"
+    ],
+    "forbiddenDefaultSkills": [
+      "yida-canvas-custom-page",
+      "yida-custom-page",
+      "yida-data-card"
+    ]
+  },
+  {
+    "id": "cool-native-code-rendering-limit",
+    "prompt": "已有宜搭原生交互酷卡片，想直接写HTML、CSS和React做完全不同的样式，所有效果必须留在钉钉聊天消息卡片里。请说明限制和替代方案，不要新建网页。",
+    "expectedSkill": "yida-cool-card",
+    "mustNotTrigger": [
+      "yida-canvas-custom-page",
+      "yida-custom-page",
+      "yida-data-card"
+    ],
+    "forbiddenDefaultSkills": [
+      "yida-canvas-custom-page",
+      "yida-custom-page",
+      "yida-data-card"
+    ]
+  },
+  {
+    "id": "cool-style-explicit-canvas-target",
+    "prompt": "不做宜搭原生酷卡片；只修改现有Canvas自定义页面内的React和CSS展示卡片，外观要完全不同，不要创建消息卡片资源。",
+    "expectedSkill": "yida-canvas-custom-page",
+    "mustNotTrigger": [
+      "yida-cool-card",
+      "yida-data-card"
+    ],
+    "forbiddenDefaultSkills": [
+      "yida-cool-card",
+      "yida-data-card"
+    ]
   }
 ]

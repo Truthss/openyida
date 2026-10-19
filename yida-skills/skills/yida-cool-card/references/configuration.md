@@ -18,6 +18,17 @@
 
 新建资源可能已有 cardTemplateId，但 getCardSchema 仍返回平台 500“卡片模板不存在”。创建流程分别标记资源列表回读与模板回读，不重复创建，不把模板失败当成空配置。已有卡片的 cardTemplateId 与 cardSchema.templateId 也可能不同；原样保留，并显示 templateIdsMatch，不凭字段名假定版本相同。
 
+## 代码与样式边界
+
+宜搭原生酷卡片使用平台组件及其原生属性，不是任意 HTML/CSS/React 的执行环境。当前场景的对照实测结果：
+
+- 原始 HTML 或 JSX 源码作为导入内容时，被 JSON 格式检查拒绝；写进 `BaseText` 文本后可以保存，但原样显示，不执行。
+- 原生 `BaseText` 的 `fontSizeType`、`customFontSize`、`fontColorType`、`customLightColor`、`customDarkColor` 和 `bold` 已验证保存与预览生效。额外添加任意 `props.style` 的字号、颜色、背景、旋转等 CSS 对象可留在设计数据里，但本次实测没有进入对应原生编译输出，预览不生效。
+- `RichText` 的 DX 内容及样式结构有专用协议，需同时保留编辑表示、辅助变量和数据绑定；其中的 `style` 不是任意 CSS。已验证生成 `DDRichTextView` 并通过变量绑定渲染。
+- 未注册的 HTML `div` 节点可留在设计数据里，保存状态仍可能为 `build`，但本次实测没有有效渲染；结合原生编译输出、预览和编译诊断判定，不能只凭状态或一条 Durbo 日志下结论。
+
+`editorData` 保留代码不等于代码生效。`widgetInfo` 在该实测版本中是平台生成的原生 XML DSL，也不是 HTML，更不是已验证可直接提交源码的入口。Markdown 和表达式变量只支持各自协议，不能据此推导可运行任意 JavaScript 或 JSX。未来平台能力改变时重新核实当前宜搭场景；不为了验证隐藏入口修改权益或开关。用户需要超出原生范围的外观时，按 [完全不同样式的处理方式](design.md#用户要求完全不同的样式时) 说明限制与替代方案。
+
 ## 后续保存链路的验收条件
 
 先确认适用于 CLI 的登录契约、模板版本与保存回调，再实现允许字段、原始摘要、备份、写前重读及保存后回读；单次写请求不自动重放。不能只改 editorData 而忽略编译后的 widgetInfo/renderTemplate，也不能把旧模板 ID 的内容当成新版本验证。
