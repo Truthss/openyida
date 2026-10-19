@@ -146,7 +146,7 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 | `yida-skills/design` | 完整应用需求分析、PRD、视觉设计、单页 UI 改造、应用主题色、全局换肤、图片素材 | `yida-requirement-analysis`、`yida-prd`、`yida-design`、`yida-data-manage-ui`、`yida-image-assets` |
 | `yida-skills/form` | 表单字段、公式、校验、业务关联规则、批量录入、数据记录 | `yida-create-form-page`、`yida-form-view`、`yida-formula`、`yida-formula-evaluate`、`yida-business-rule`、`yida-canvas-table-form`、`yida-table-form`、`yida-data-management` |
 | `yida-skills/process` | 审批、流程表单、流程规则、节点/分支/字段权限、流程代理 | `yida-create-process`、`yida-process-rule`、`yida-flow-node-config`、`yida-agent-center` |
-| `yida-skills/page` | 工作台、办事门户、任务看板、自定义展示页、页面源码开发、平台 JSX 组件页面维护、页面发布、页面内导航、PPT 页面 | `yida-create-page`、`yida-canvas-custom-page`、`yida-custom-page`、`yida-canvas-data-binding`、`yida-canvas-upgrade`、`yida-publish-page`、`yida-openyida-publish-guard`、`yida-density`、`yida-nav-shell`、`yida-ppt-slider` |
+| `yida-skills/page` | 工作台、办事门户、任务看板、自定义展示页、页面源码开发、平台 JSX 组件页面维护、页面发布、页面内导航、PPT 页面 | `yida-create-page`、`yida-canvas-custom-page`、`yida-custom-page`、`yida-canvas-data-binding`、`yida-task-center`（仅显式选择自定义待办）、`yida-canvas-upgrade`、`yida-publish-page`、`yida-openyida-publish-guard`、`yida-density`、`yida-nav-shell`、`yida-ppt-slider` |
 | `yida-skills/analytics` | 用户显式指定宜搭原生数据卡片（含其投放播报）；聚合表、虚拟视图、报表、统计、图表、Recharts、ECharts、经营分析看板、驾驶舱、大屏 | `yida-data-card`、`yida-aggregate-table`、`yida-report`、`yida-rechart`、`yida-chart`、`yida-dashboard` |
 | `yida-skills/integration` | 用户明确指定宜搭原生酷卡片；连接器、钉钉开放平台、外部 API、执行动作、设计器数据源、集成自动化、逻辑流 | `yida-cool-card`、`yida-integration`、`yida-flow-node-config`、`yida-dingtalk-openapi`、`yida-connector`、`yida-connector-safe-actions`、`yida-data-source-connectors` |
 | `yida-skills/access` | 平台/应用/表单/页面权限、公开访问、分享 | `yida-corp-manager`、`yida-app-permission`、`yida-form-permission`、`yida-page-config` |
@@ -192,7 +192,11 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 | 高级图表、可视化、看板图表 | 默认 `yida-rechart` |
 | 明确 ECharts、维护旧 ECharts 页面、复杂 option 超出 Recharts 能力 | `yida-chart` |
 | 产品化经营分析看板/驾驶舱交付 | `yida-dashboard`，按指标分析任务触发 |
-| 待办、操作队列、业务工作台或办事门户页面 | `yida-canvas-custom-page`；接真实数据时加载 `yida-canvas-data-binding`，不因页面名称或辅助统计转为经营看板 |
+| 自定义内容需要“我创建的”“待我处理”等个人流程任务或业务待处理数据 | `yida-canvas-data-binding`；按用户描述确定任务含义、数据来源和所需能力，不因页面或区块名称默认四类栏目或待办中心 |
+| 用户已明确选择自定义流程任务展示，并需要复用任务列表装配 | `yida-task-center`；按需求选择栏目，已有明确要求不重复确认，沿用应用主题 |
+| 普通待办查询 | `yida-data-management`，使用 CLI 任务查询，不加载 `yida-task-center` |
+| 增加待办中心、审批工作台或任务页签，但未指定自定义页面 | 不加载 `yida-task-center`、不默认创建自定义待办页面；先复用原生入口，已有入口整理用 `yida-nav-group`。完整应用仍由 `yida-app` 编排；Agent 建议自定义实现时先 ask_human，明确同意后才交接；Fast、通用授权和已有 Canvas 均不能替代该选择 |
+| 业务操作队列、业务工作台或办事门户页面 | `yida-canvas-custom-page`；接业务数据时加载 `yida-canvas-data-binding`，不因页面名称或辅助统计转为经营看板；不顺带新增自定义审批待办中心 |
 | 批量录入、表格填写、多行编辑 | 默认 `yida-canvas-table-form`；已检测到平台 JSX 组件页面、native 页面或存量源码使用 `this.utils.yida.saveFormData` 时用 `yida-table-form` |
 | 原生数据管理页视图列表、显示列配置、字段显隐与顺序、列宽、冻结列、默认筛选、多视图 | `yida-form-view`；使用原生配置读写，保存前备份并回读，不通过 CSS 隐藏字段或重建自定义列表 |
 | 当前数据管理页换风格、只留横线、突出新增/筛选/行操作、列级强调、状态列标签、数据管理 UI 异常、自定义简单数据管理 | `yida-data-manage-ui`（优先于通用美化）；保留承载类型和业务，从目标推导维度、定位 token/CSS 并按页改写；备份发布并实测，不要求选择配方 |

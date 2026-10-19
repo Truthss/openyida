@@ -405,7 +405,7 @@ openyida feedback report --input summary.json --output-dir feedback-draft-001
 | 命令 | 说明 |
 |------|------|
 | `openyida data <query\|get\|create\|update> <resource> ... \| delete form <appType> <formUuid> --inst-id <id> --expect-form-name <name> --expect-form-type receipt --confirm [--json]` | 统一数据管理（表单/流程/任务/子表单） |
-| `openyida task-center <type> [options]` | 全局任务中心（待办/已处理/抄送等） |
+| `openyida task-center <todo\|created\|done\|cc\|proxy\|capabilities\|scaffold\|options\|inspect\|count> [--spec <file.json> --output <file.canvas.jsx>] [options]` | 全局任务中心（待办/已处理/抄送等） |
 | `openyida basic-info <overview\|commodity\|grant\|capacity\|quota\|abs-path\|dataflow\|i18n\|domain>` | 查询组织基本信息、容量、额度和域名设置 |
 | `openyida read-dingtalk-doc <docUrl> [--output <file>] [--json]` | 获取钉钉文档的 Markdown 内容 |
 | `openyida read-dingtalk-tingji <taskUuid> [--json]` | 按任务 UUID 获取钉钉听记详情 |
@@ -514,6 +514,20 @@ openyida feedback report --input summary.json --output-dir feedback-draft-001
 | `openyida cdn-refresh [options]` | 刷新 CDN 缓存 |
 
 <!-- OPENYIDA_COMMANDS_END -->
+
+### 个人任务与流程进度
+
+通过 `openyida data query tasks <appType> --type todo --normalized` 查询应用内个人待办；`created`、`done`、`cc` 分别查询我创建的、我已处理和抄送我的。执行 `openyida task-center capabilities --json` 查看支持的筛选和页面配置示例。
+
+默认 `app-v1` 保留原查询行为。显式选择 `--transport app-query` 可使用更多服务端筛选，查询始终限定目标应用：`--originators '["USER_ID"]'` 支持一位发起人，`--process-codes '["PROCESS_CODE"]'` 选择流程，日期端点使用毫秒时间戳。各任务类别可用字段以能力查询为准，不支持的字段在请求前报错。通过 `openyida task-center options <appType> --type originators|processes|forms --keyword 关键词 --json` 查询可读候选项，不会静默退回无筛选查询。
+
+明确选择自定义待办页面后，执行 `openyida task-center scaffold --spec <配置.json> --output <新文件.canvas.jsx>`。配置需要记录该选择并引用应用现有设计文件。生成页面沿用应用主题，读取当前访问者的任务，办理时打开原生页面；`embedded` 模式可作为既有工作台中的任务区块。生成后按常规流程编译和发布。
+
+页面配置可显式设置 `transport: "app-query"` 与分类初始筛选，如 `filters: { "todo": { "originators": ["USER_ID"] } }`。生成页面包含与 CLI 相同的 `filterSchema`、`normalizeFilters`、任务加载及候选项查询辅助函数。
+
+`task-center count <appType> --type todo --transport app-query --filters-json '{"keyword":"采购"}' --json` 只读取一页一条及匹配条件的服务端总数，未知总数保留为 `null`。`task-center inspect <appType> --process-inst-id <id> [--form-uuid <id>] [--history] [--task-id <id>] --json` 读取有权查看的关联流程及可选历史，区分本人处理、指定任务及流程最终结果。只读命令不创建自定义页面，也不要求选择自定义实现。
+
+装配只选择所需任务类别、`fields` 和 `filterFields`，默认单个待办列表；`view: "progress", mode: "embedded"` 提供既有业务详情的审批进度组件，传入真实关联 `processInstanceId`。审批历史和行展开按需启用，配置与接入示例见[流程任务能力](yida-skills/skills/yida-canvas-data-binding/references/workflow-capabilities.md)。
 
 ### 连接本地 Agent
 

@@ -21,9 +21,23 @@ describe('npm package smoke', () => {
     expect(getPackageBudgetErrors({ ...budgetLimit, unpackedSize: 8358003 })).toEqual([]);
   });
 
+  test('package budget covers the task-center package measured on CI Node 20', () => {
+    expect(getPackageBudgetErrors({ size: 2439886, unpackedSize: 9099864, entryCount: 707 })).toEqual([]);
+  });
+
+  test('package budget includes portable workflow readers and optional components on Node 20', () => {
+    expect(getPackageBudgetErrors({ size: 2452398, unpackedSize: 9144691, entryCount: 712 })).toEqual([]);
+  });
+
+  test('package budget covers merged formula and workflow capabilities on Node 20', () => {
+    expect(getPackageBudgetErrors({ size: 2504841, unpackedSize: 9309589, entryCount: 726 })).toEqual([]);
+  });
+
   test.each([
     ['original PR 638', { size: 2444722, unpackedSize: 9113751, entryCount: 707 }],
     ['PR 638 merged with main', { size: 2496932, unpackedSize: 9278325, entryCount: 721 }],
+    ['native cards combined with personal workflow', { size: 2528519, unpackedSize: 9387803, entryCount: 733 }],
+    ['data and cool cards combined with personal workflow', { size: 2552878, unpackedSize: 9493590, entryCount: 738 }],
   ])('package budget covers the native data-card Node 20 artifact: %s', (_name, artifact) => {
     expect(getPackageBudgetErrors(artifact)).toEqual([]);
   });

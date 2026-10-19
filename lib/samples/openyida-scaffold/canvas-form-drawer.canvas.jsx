@@ -43,6 +43,20 @@ function getYidaFormInstId(row) {
 function buildYidaFormUrl(request, currentAppType) {
   if (!request) return '';
   const appType = request.appType || currentAppType;
+  if (request.type === 'process-detail' || request.type === 'carbon-detail') {
+    if (!/^APP_[A-Za-z0-9_-]+$/.test(appType || '') || typeof request.processInstanceId !== 'string' || !request.processInstanceId.trim()) return '';
+    const carbon = request.type === 'carbon-detail';
+    if (carbon && (typeof request.activityId !== 'string' || !request.activityId.trim())) return '';
+    return appendQuery('/' + appType + '/processDetail', {
+      ...request.params,
+      procInsId: carbon ? undefined : request.processInstanceId,
+      formInstId: carbon ? request.processInstanceId : undefined,
+      taskId: carbon ? undefined : request.taskId,
+      activityId: carbon ? request.activityId : undefined,
+      url_type: carbon ? 'carbon' : undefined,
+      isRenderNav: false,
+    });
+  }
   if (request.type === 'submission') {
     return appendQuery('/' + appType + '/submission/' + request.formUuid, {
       ...request.params,

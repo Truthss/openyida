@@ -80,6 +80,38 @@
       "requires_login": true
     },
     {
+      "name": "yida-task-center",
+      "path": "skills/yida-task-center/SKILL.md",
+      "display_name": "自定义待办中心",
+      "description": "仅用户明确要求用自定义页面开发待办中心，或应用搭建中经 ask_human 明确同意后使用；接口与页面装配由 CLI 提供，沿用应用主题。",
+      "category": "yida-skills/page",
+      "tags": [
+        "自定义待办中心"
+      ],
+      "positive_signals": [
+        "用自定义页面开发待办中心",
+        "通过自定义页面实现审批任务区块",
+        "已通过 ask_human 明确选择自定义待办页面"
+      ],
+      "negative_signals": [
+        "查询我的待办",
+        "增加待办中心但未指定自定义页面",
+        "原生待办中心",
+        "普通审批工作台",
+        "已有 Canvas 但未选择自定义待办",
+        "仅选择 Fast 模式",
+        "业务工单待处理列表",
+        "管理流程代理"
+      ],
+      "command_ids": [
+        "task-center",
+        "data",
+        "compile",
+        "publish"
+      ],
+      "requires_login": true
+    },
+    {
       "name": "yida-form-view",
       "path": "skills/yida-form-view/SKILL.md",
       "display_name": "原生数据管理视图配置",
@@ -513,7 +545,7 @@
       "name": "yida-canvas-data-binding",
       "path": "skills/yida-canvas-data-binding/SKILL.md",
       "display_name": "自定义页面数据绑定",
-      "description": "使用 YidaCodeCanvas 接真实数据，通过发布层 yida/utils window 桥调用表单与流程 API，处理 dataBinding、DataBridge、返回体解析、空值筛选、服务端分页、totalCount 和轮询静默刷新。",
+      "description": "使用 YidaCodeCanvas 接真实表单、个人流程任务或连接器数据；按用户描述确定任务含义、数据来源和所需能力，复用 CLI 契约及发布层 yida/utils window 桥调用表单与流程 API，处理分页、解析和刷新。",
       "category": "yida-skills/page",
       "tags": [
         "YidaCodeCanvas",
@@ -535,7 +567,12 @@
         "表单数据接入",
         "流程数据接入",
         "轮询刷新列表或 KPI",
-        "页面空值筛选"
+        "页面空值筛选",
+        "自定义区块展示个人流程任务",
+        "自定义内容接入我创建的或待我处理的任务数据",
+        "自定义业务详情展示关联审批进度",
+        "自定义首页个人任务数量卡片",
+        "自定义内容展示审批时间线"
       ],
       "negative_signals": [
         "已有 this.dataSourceMap",
@@ -543,6 +580,7 @@
       ],
       "command_ids": [
         "data",
+        "task-center",
         "get-schema",
         "sample",
         "publish"
@@ -949,7 +987,9 @@
         "表单空值查询",
         "子表条件查询",
         "按当前审批人查询流程",
-        "指定审批人的待审批数据条数"
+        "指定审批人的待审批数据条数",
+        "查询关联流程详情和审批历史",
+        "查询个人任务数量"
       ],
       "negative_signals": [
         "新增字段",
