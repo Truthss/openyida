@@ -221,10 +221,27 @@ test('settings resolve the requested tenant entry without carrying credentials',
   expect(client.postFormOnce).not.toHaveBeenCalled();
 });
 test('managed policies bind every action to its app and reject unknown subcommands', () => {
-  for (const action of ['get', 'list', 'create', 'save', 'publish']) {
+  for (const action of ['get', 'list', 'probe', 'create', 'save', 'publish']) {
     const resolved = resolveManagedPolicy('data-card', [action, 'APP_TEST', 'CARD-a']);
     expect(resolved.policy.appPosition).toBe(1);
     expect(!!resolved.policy.mutation).toBe(['create', 'save', 'publish'].includes(action));
   }
   expect(resolveManagedPolicy('data-card', ['delete', 'APP_TEST', 'CARD-a'])).toBeNull();
+});
+test('probe uses native CARD runtime queries and returns actual component data without saving', async () => {
+  draft.pages[0].componentsTree[0].children.push({ componentName: 'YoushuSimpleIndicatorCard', id: 'indicator',
+    props: { cid: 'indicator', dataSetModelMap: { youshuData: {} } } });
+  client.postFormOnce.mockResolvedValue({ success: true, content: { data: [{ n: 24 }], meta: [{ alias: 'n' }] } });
+  const result = await execute(args('probe'), client);
+  expect(result.runtimeQueryVerified).toBe(true);
+  expect(result.probes[0].data.data[0].n).toBe(24);
+  expect(client.postFormOnce.mock.calls[0][1]).toMatchObject({ visualType: 'CARD', prdId: 'CARD-abc', cid: 'indicator', draft: true, enabledCache: false });
+  expect(client.postFormOnce.mock.calls[0][0]).toContain('visualizationDataRpc/getDataAsync');
+});
+test.each([{ success: true, content: {} }, { success: false, errorCode: 'EDGE_DENIED', errorMsg: 'denied' }])('probe rejects false query success and preserves failures %j', async response => {
+  draft.pages[0].componentsTree[0].children.push({ componentName: 'YoushuTable', id: 'table', props: { cid: 'table', dataSetModelMap: { table: {} } } });
+  client.postFormOnce.mockResolvedValue(response);
+  await expect(execute(args('probe'), client)).rejects.toMatchObject({ code: 'DATA_CARD_RUNTIME_QUERY_FAILED', details: {
+    probes: [expect.objectContaining({ componentName: 'YoushuTable', success: false })],
+  } });
 });

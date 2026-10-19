@@ -5,6 +5,8 @@ description: 创建、读取、保存和发布宜搭原生数据卡片，按 car
 
 # 宜搭原生数据卡片
 
+多组件搭建先读 [图表配置与验收](references/chart-config.md)：支持九类原生组件、多指标、日期维度、同源下拉筛选和运行时探测；包含错误引导和当前能力缺口。
+
 先用 auth snapshot 核对目标组织和应用。已有 cardCode 时复用；用户要求新建时使用 create。卡片与表单、页面是不同资源，不调用 create-page 或 publish 页面命令替代。
 
 ## Skill 与 CLI 执行边界
@@ -35,6 +37,7 @@ openyida data-card get APP_XXX CARD-xxx --out .cache/openyida/data-card/draft.js
 openyida data-card save APP_XXX CARD-xxx --config .cache/openyida/data-card/indicators.json --expected-hash <get返回的schemaHash> --json
 openyida data-card publish APP_XXX CARD-xxx --expected-hash <最新草稿schemaHash> --json
 openyida data-card get APP_XXX CARD-xxx --published --json
+openyida data-card probe APP_XXX CARD-xxx --published --json
 ```
 
 `get` 默认读取草稿，可通过 `--version` 读取指定版本。输出 `card.schemaBody` 为完整配置，`--out` 单独导出该 Schema；输出文件已存在时拒绝覆盖。平台初始 Schema 可以没有 schemaType/schemaVersion，保留其实际结构。
@@ -75,4 +78,4 @@ openyida data-card get APP_XXX CARD-xxx --published --json
 openyida data-card save APP_XXX CARD-xxx --config indicators.json --expected-hash <当前草稿schemaHash> --json
 ```
 
-`--config` 与 `--schema` 二选一。CLI 读取目标应用中的真实表单字段，生成原生基础指标组件、查询模型、组件映射和布局，追加到当前卡片并保存草稿；已有组件及未知配置保留。每个配置项生成一个指标组件，再次保存相同配置会再次追加，应先回读当前状态。数字字段支持 COUNT/SUM/AVG/MIN/MAX；文本、多行文本和流水号支持 COUNT。暂不自动生成子表指标、复杂筛选或其他图表，不能填写未核实的字段。权益与权限仍由平台校验，失败停止，不更改应用标记或额度。
+`--config` 与 `--schema` 二选一。上例 indicators 是兼容格式；复杂卡片使用参考文档中的 charts/filters 格式。CLI 校验真实字段，生成原生组件、查询模型、组件映射和布局，追加到当前卡片并保存草稿；已有组件及未知配置保留，再次保存相同配置会再次追加。单卡现有加新增最多五个图表。数字字段支持 COUNT/SUM/AVG/MIN/MAX；文本计数、分类维度和日期粒度按参考文档约束。子表、跨源筛选和未注册组件明确拒绝；权限和权益仍由平台校验，失败停止，不更改应用标记或额度。

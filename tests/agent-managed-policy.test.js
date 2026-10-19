@@ -96,11 +96,11 @@ test('native form views stay in the bound app and classify only actual mutation 
 });
 
 test('native cards and settings enforce the bound app with app-level mutation receipts', () => {
-  for (const action of ['list', 'get', 'create', 'save', 'publish']) {
+  for (const action of ['list', 'get', 'probe', 'create', 'save', 'publish']) {
     expect(run('data-card', [action, 'APP_BOUND', 'CARD-x'])).toMatchObject({ appType: 'APP_BOUND' });
     expect(() => run('data-card', [action, 'APP_OTHER', 'CARD-x'])).toThrow(expect.objectContaining({ code: 'MANAGED_APP_MISMATCH' }));
     expect(classifyManagedMutation('data-card', [action, 'APP_BOUND', 'CARD-x'])).toEqual(
-      ['list', 'get'].includes(action) ? null : { operation: 'update_app_setting' }
+      ['list', 'get', 'probe'].includes(action) ? null : { operation: 'update_app_setting' }
     );
   }
   expect(() => run('data-card', ['delete', 'APP_BOUND', 'CARD-x'])).toThrow(expect.objectContaining({ code: 'MANAGED_COMMAND_UNSUPPORTED' }));

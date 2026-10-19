@@ -1,6 +1,6 @@
 # 宜搭原生数据卡片
 
-`data-card` 管理宜搭原生数据卡片，可在原生设计器编辑并供门户等场景使用。
+`data-card` 管理宜搭原生数据卡片，可在原生设计器编辑并供门户等场景使用。简化配置支持九类组件、多指标、日期维度和同源下拉筛选，完整参数见[多组件配置与验收](../../yida-skills/skills/yida-data-card/references/chart-config.md)。
 
 通过 `yida-data-card` Skill 编排搭建，使用 CLI 查询真实字段、创建卡片、配置组件、保存和发布，浏览器负责最终效果与可编辑性验收。研发阶段可以用浏览器核实接口、参数和组件能力，但交付能力必须落实到 CLI 与 Skill；尚未支持的操作应明确说明，不能用浏览器完成后当作 CLI 能力交付。
 
@@ -11,6 +11,7 @@ openyida data-card get APP_XXX CARD-xxx --out draft.json --json
 openyida data-card save APP_XXX CARD-xxx --schema edited.json --expected-hash <草稿schemaHash> --json
 openyida data-card publish APP_XXX CARD-xxx --expected-hash <最新草稿schemaHash> --json
 openyida data-card get APP_XXX CARD-xxx --published --json
+openyida data-card probe APP_XXX CARD-xxx --published --json
 ```
 
 创建返回真实 `cardCode`、初始 Schema 和设计器入口。初始卡片为空，可用 `save --config` 通过 CLI 搭建基础指标卡，或用 `save --schema` 保存完整原生 Schema。读取支持草稿、已发布状态或 `--version <version>`；输出文件不会覆盖已有文件。
@@ -56,4 +57,10 @@ openyida app-settings APP_XXX --section data-card --json
 openyida data-card save APP_XXX CARD-xxx --config indicators.json --expected-hash <当前草稿schemaHash> --json
 ```
 
-`--config` 与 `--schema` 二选一。CLI 读取目标应用中的真实表单字段，生成原生基础指标组件、查询模型、组件映射和布局，追加到当前卡片并保存草稿；已有组件及未知配置保留。每个配置项生成一个指标组件，再次保存相同配置会再次追加，应先回读当前状态。数字字段支持 COUNT/SUM/AVG/MIN/MAX；文本、多行文本和流水号支持 COUNT。暂不自动生成子表指标、复杂筛选或其他图表，不能填写未核实的字段。权益与权限仍由平台校验，失败停止，不更改应用标记或额度。
+`--config` 与 `--schema` 二选一。CLI 读取目标应用中的真实表单字段，生成原生基础指标组件、查询模型、组件映射和布局，追加到当前卡片并保存草稿；已有组件及未知配置保留。每个配置项生成一个指标组件，再次保存相同配置会再次追加，应先回读当前状态。数字字段支持 COUNT/SUM/AVG/MIN/MAX；文本、多行文本和流水号支持 COUNT。复杂卡片可改用 charts/filters 格式，生成 indicator/bar/line/pie/table/combo/gauge/funnel/calendarheatmap；子表、跨源筛选、时间或区间筛选和未注册组件暂不自动生成。不能填写未核实的字段。权益与权限仍由平台校验，失败停止，不更改应用标记或额度。
+
+## 多样化验收
+
+单卡最多五个图表，指标卡内多个指标仍是一个组件；已有与新增合计超过上限时在卡片写入前停止。简化配置默认追加，不是按标题更新。表格默认占六列，其余组件默认三列，可通过 w 调整；仪表盘需明确单位，可用 range 指定刻度。
+
+probe 使用原生 CARD 运行时逐组件查询，返回 data/meta，查询失败给出组件级诊断；这不同于保存后的 Schema 回读。渲染、筛选和可编辑性仍需浏览器验收。屏幕外组件会延迟加载，必须逐块滚动并等待，筛选后也要核对下方明细和重置结果。COUNT 只计非空字段，零与负数应保留。数字精度、货币及自定义日期显示格式尚未进入简化配置 DSL。

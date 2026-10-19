@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-- 新增 `data-card list/create/get/save/publish`，支持宜搭原生数据卡片的创建、完整 Schema 读取、草稿保存和独立发布，`save --config` 可基于真实字段直接搭建原生指标卡；写前备份与草稿摘要检查，写后回读核对。（#87831872）
+- 新增 `data-card list/create/get/save/publish/probe`，支持宜搭原生数据卡片的创建、完整 Schema 读取、草稿保存和独立发布，`save --config` 可基于真实字段搭建九类原生组件、多指标、日期维度与同源下拉筛选，probe 逐组件验证运行时数据；写前备份与草稿摘要检查，写后回读核对。（#87831872）
 - 新增 `app-settings`，按目标应用返回主题、业务前后台配置和原生数据卡片管理入口，提供 `yida-data-card` 技能与使用指南。
 
 ## [2026.10.19] - 2026-10-19
