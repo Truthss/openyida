@@ -40,6 +40,8 @@ describe('managed mutation receipt', () => {
     ['get-page-config', ['APP_X', 'FORM_X'], null],
     ['verify-short-url', ['APP_X', 'FORM_X', '/s/local-e2e'], null],
     ['report', ['inspect', 'APP_X', 'REPORT_X', '--json'], null],
+    ['report', ['configure', 'APP_X', 'REPORT_X', 'cid_1', '--hide-zero-values', 'true'], 'update_report'],
+    ['report', ['configure', 'APP_X', 'REPORT_X', 'cid_1', '--hide-zero-values', 'true', '--dry-run'], null],
     ['create-form', ['validate-fields', 'fields.json'], null],
   ])('%s %j maps only known writes', (command, args, operation) => {
     expect(classifyManagedMutation(command, args)?.operation || null).toBe(operation);

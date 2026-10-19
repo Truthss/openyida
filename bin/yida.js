@@ -1134,10 +1134,11 @@ async function main() {
 
     case 'report': {
       const subCommand = args[0];
-      if (subCommand !== 'inspect') {
-        throwCliUsage('用法: openyida report inspect <appType> <reportId> --json');
+      if (!['inspect', 'configure'].includes(subCommand)) {
+        throwCliUsage('用法: openyida report <inspect|configure> ... --json');
       }
-      const { run } = require('../lib/report/inspect');
+      const { run } = subCommand === 'inspect'
+        ? require('../lib/report/inspect') : require('../lib/report/configure');
       await run(args.slice(1));
       break;
     }

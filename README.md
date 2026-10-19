@@ -564,6 +564,7 @@ Your AI prepares the summary from observed evidence and selected reproduction sc
 | `openyida create-report <appType> "<name>" ... [--json] [--open\|--no-open]` | Create a Yida report |
 | `openyida append-chart <appType> <reportId> ... [--json] [--open\|--no-open]` | Append chart to existing report |
 | `openyida report inspect <appType> <reportId> --json` | Inspect report runtime bindings (read-only) |
+| `openyida report configure <appType> <reportId> <cid> --hide-zero-values <true\|false> [--hide-zero-categories <true\|false>] [--hide-zero-legends <true\|false>] [--dry-run] [--json]` | Configure dynamic zero-value hiding on a native bar chart (explicit opt-in) |
 
 ### Connectors
 
