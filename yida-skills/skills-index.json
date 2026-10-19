@@ -469,7 +469,7 @@
       "name": "yida-canvas-data-binding",
       "path": "skills/yida-canvas-data-binding/SKILL.md",
       "display_name": "自定义页面数据绑定",
-      "description": "使用 YidaCodeCanvas 接真实数据，通过发布层 yida/utils window 桥调用表单与流程 API，处理 dataBinding、DataBridge、返回体解析、空值筛选、服务端分页、totalCount 和轮询静默刷新。",
+      "description": "使用 YidaCodeCanvas 接真实表单、个人流程任务或连接器数据；按用户描述确定任务含义、数据来源和所需能力，复用 CLI 契约及发布层 yida/utils 桥，处理分页、解析和刷新。",
       "category": "yida-skills/page",
       "tags": [
         "YidaCodeCanvas",
@@ -491,7 +491,9 @@
         "表单数据接入",
         "流程数据接入",
         "轮询刷新列表或 KPI",
-        "页面空值筛选"
+        "页面空值筛选",
+        "自定义区块展示个人流程任务",
+        "自定义内容接入我创建的或待我处理的任务数据"
       ],
       "negative_signals": [
         "已有 this.dataSourceMap",
@@ -499,6 +501,7 @@
       ],
       "command_ids": [
         "data",
+        "task-center",
         "get-schema",
         "sample",
         "publish"

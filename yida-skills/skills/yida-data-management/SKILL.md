@@ -207,8 +207,10 @@ openyida data query process <appType> <formUuid> --current-approver <真实userI
 ### 任务中心
 
 ```bash
-openyida data query tasks <appType> --type todo|done|submitted|cc [--page 1 --size 20]
+openyida data query tasks <appType> --type todo|created|done|cc --normalized [--page 1 --size 20]
 ```
+
+按用户描述选择待我处理、我创建的、我已处理或抄送我的；`submitted` 兼容为 `created` 别名。我创建的包含普通表单和流程，我已处理不代表流程已完成。筛选条件与候选查询以 `openyida task-center capabilities --json` 为准。自定义内容只需某项任务数据时交接 `yida-canvas-data-binding`，不要求搭建待办中心；业务工单、订单等待处理记录继续使用业务表单查询。
 
 ## 接口总览
 
@@ -244,8 +246,8 @@ openyida data query tasks <appType> --type todo|done|submitted|cc [--page 1 --si
 | 接口 | 说明 |
 |------|------|
 | `getTodoTasksInApp` | 待办 |
-| `getDoneTasksInApp` | 已完成 |
-| `getMySubmitInApp` | 已提交 |
+| `getDoneTasksInApp` | 我已处理 |
+| `getMySubmitInApp` | 我创建的普通表单与流程 |
 | `getNotifyMeTasksInApp` | 抄送 |
 
 ## 数据格式

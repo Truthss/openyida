@@ -188,7 +188,8 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 | 高级图表、可视化、看板图表 | 默认 `yida-rechart` |
 | 明确 ECharts、维护旧 ECharts 页面、复杂 option 超出 Recharts 能力 | `yida-chart` |
 | 产品化经营分析看板/驾驶舱交付 | `yida-dashboard`，按指标分析任务触发 |
-| 用户明确要求用自定义页面开发待办中心或审批任务区块 | `yida-task-center`；已有明确要求不重复确认，沿用应用主题 |
+| 自定义内容需要“我创建的”“待我处理”等个人流程任务或业务待处理数据 | `yida-canvas-data-binding`；按用户描述确定任务含义、数据来源和所需能力，不因页面或区块名称默认四类栏目或待办中心 |
+| 用户已明确选择自定义流程任务展示，并需要复用任务列表装配 | `yida-task-center`；按需求选择栏目，已有明确要求不重复确认，沿用应用主题 |
 | 普通待办查询 | `yida-data-management`，使用 CLI 任务查询，不加载 `yida-task-center` |
 | 增加待办中心、审批工作台或任务页签，但未指定自定义页面 | 不加载 `yida-task-center`、不默认创建自定义待办页面；先复用原生入口，已有入口整理用 `yida-nav-group`。完整应用仍由 `yida-app` 编排；Agent 建议自定义实现时先 ask_human，明确同意后才交接；Fast、通用授权和已有 Canvas 均不能替代该选择 |
 | 业务操作队列、业务工作台或办事门户页面 | `yida-canvas-custom-page`；接业务数据时加载 `yida-canvas-data-binding`，不因页面名称或辅助统计转为经营看板；不顺带新增自定义审批待办中心 |

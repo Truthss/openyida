@@ -1,13 +1,17 @@
 ---
 name: yida-canvas-data-binding
-description: 为 YidaCodeCanvas 自定义页面接入真实表单、流程、连接器或同源接口数据，处理数据解析、空值筛选、服务端分页、totalCount 和轮询静默刷新。触发词：dataBinding、DataBridge、数据桥、YidaCodeCanvas 真实数据、页面显示 0 条但数据管理有数据、表单数据接入、流程数据接入、轮询刷新列表或 KPI。
+description: 为 YidaCodeCanvas 自定义内容接入真实表单、个人流程任务、连接器或同源接口数据；按用户描述判断数据来源，处理 dataBinding、DataBridge、数据解析、空值筛选、服务端分页、totalCount 和静默刷新。适用于页面或区块接入真实数据、展示个人任务，以及排查页面为零条但数据管理有数据。
 ---
 
 # 自定义页面数据绑定
 
 ## 核心定位
 
-流程待办的四类个人任务使用 CLI 任务契约，不用 `searchFormDatas` 模拟。仅在用户明确选择自定义待办实现后交接 `yida-task-center`；普通任务查询直接使用 CLI，未指定自定义实现不因数据绑定需求自动创建待办页。
+先根据用户描述确定“待办”指什么：对象是个人流程任务还是业务记录，与当前访问者有什么关系，需要哪些信息、筛选、刷新及点击行为。页面、区块、卡片或“待办”名称都不能代替业务含义；只接入需求涉及的能力，不默认增加四类栏目、统计或审批按钮。关键语义无法从上下文确定时，只澄清影响数据来源或权限范围的问题。
+
+个人流程任务复用 CLI 的 `todo`（待我处理）、`created`（我创建的普通表单与流程）、`done`（我已处理）、`cc`（抄送我的）契约；先用 `openyida task-center capabilities --json` 查询条件，再按所需类型执行 `openyida data query tasks <appType> --type <类型> --normalized` 核查。需要加载实现时复用 CLI 装配产物中的任务加载与详情助手，保留当前展示布局；发布运行态读取实际访问者的任务，不把 CLI 登录人的结果或凭证嵌入页面。订单待发货、工单待处理等业务记录仍按真实表单字段和权限查询，不用流程任务接口代替。
+
+用户已明确要求该自定义展示时按原范围接入，不因使用任务接口再确认，也不强制装配待办中心。确需复用任务列表装配时交接 `yida-task-center`，仅选择所需类型并沿用应用主题；Agent 主动建议增加自定义任务展示时先 ask_human，未明确同意不实施。普通任务查询直接用 CLI，不创建展示界面。
 
 本技能只处理使用 `YidaCodeCanvas` 组件实现的页面里的真实数据接入：把页面所需数据先声明成 `dataBinding` 契约，再由页面生成器或业务组件生成统一的 `DataBridge`。读取宜搭表单数据时，默认消费外层普通自定义页面在 `didMount` 中注册到 `window.__OPENYIDA_YIDA_API__` 的 yida JS-API 桥；根级工具消费同层注册的 `window.__OPENYIDA_UTILS__`，其中 `.yida` 指向同一个 yida API 桥；连接器代理或自定义同源接口仍按自身 endpoint 读取。
 
