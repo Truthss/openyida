@@ -371,7 +371,7 @@ module.exports = {
     publish_example: 'Example: openyida publish pages/src/home.canvas.jsx APP_XXX FORM-XXX --health-check --auto-nav-order',
     check_prd_completeness_usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     check_prd_completeness_example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
-    formula_usage: 'Usage: openyida formula evaluate <formula|file> [--schema schema.json] [--json] [--strict]',
+    formula_usage: 'Usage: openyida formula <check|evaluate|contracts|functions|types|inspect|test> ...',
     formula_example: `Example: openyida formula evaluate 'IF(GT(#{numberField_total}, 100), "high", "low")' --schema .cache/schema.json`,
     verify_usage: 'Usage: openyida verify-short-url <appType> <formUuid> <url>',
     verify_example: 'Example: openyida verify-short-url APP_XXX FORM-XXX /o/myapp',
@@ -2246,6 +2246,56 @@ Object.assign(module.exports.integration, {
   batch_readback_mismatch: 'Persisted batch node type, source or quantity differs from the submitted configuration.',
   create_opt_spec: '  --spec <file.json>            Configure batch retrieve/create, updates and branches with a structured spec',
 });
+
+module.exports.formula_v2 = {
+  trigger_formula: 'Use fixed values or fields in event trigger conditions. Put formula checks in a branch after the trigger.',
+  branch_choose: 'Choose conditions or expression for a branch.',
+  branch_formula: 'Use expression for formula-based branch conditions.',
+  expression_required: 'Enter a non-empty formula expression.',
+  failed: 'Invalid formula configuration: {0}',
+  syntax_invalid: 'Invalid or unsupported formula syntax: {0}',
+  bare_identifier: 'Unbound name {0}. Read the field ID from the form and use #{}.',
+  reference_context: 'Use form field references here; node paths are unsupported: {0}',
+  field_missing: 'Field not found in the form: {0}',
+  argument_type: 'Argument {1} of {0} requires {2}.',
+  function_unknown: 'Formula function {0} is not in the selected list. Query metadata and copy an available formula function name exactly.',
+  function_case: 'Copy the formula function name exactly, including case: {0}',
+  context_unknown: 'Availability of {0} in this context is unknown.',
+  function_context: '{0} is not in the function list for {1}.',
+  argument_count: '{0} requires {1} to {2} arguments; received {3}.',
+  same_type: 'These arguments of {0} must use the same type.',
+  operator_invalid: 'Operator {0} is unsupported here. Use GT, GE, LT, LE, EQ or NE for comparisons.',
+  target_type: 'Formula result {0} does not match target field {1}.',
+  target_unknown: 'Unknown target field type: {0}',
+  schema_missing: 'Load the form schema to check field existence and types.',
+  local_pass: 'Local checks passed; platform execution is not verified.',
+  test_blocked: 'Formula was not executed: {0}. Testing accepts only known non-writing functions.',
+  expect_failed: 'Actual result differs from the expected result.',
+  usage: 'Usage: formula types APP [--component NumberField]; formula functions APP [--name IF]; formula inspect APP FORM [--field ID]; formula test APP FORM <formula|file> --data-file file [--expect JSON]. Use formula check for local checks.',
+};
+Object.assign(module.exports.help, {
+  cmd_formula_check: 'Check formula syntax, fields, arguments and types',
+  cmd_formula_functions: 'Read Yida formula functions and signatures',
+  cmd_formula_types: 'Consultar tipos de valores dos componentes de fórmulas',
+  cmd_formula_inspect: 'Inspect configured form field formulas',
+  cmd_formula_test: 'Evaluate a non-writing formula in Yida and compare its result',
+});
+
+Object.assign(module.exports.formula_v2, {
+  "config_text": "Forneça uma fórmula não vazia. Para restaurar a entrada manual, defina valueType como custom e formula como uma string vazia.",
+  "config_conflict": "formula e complexValue.formula são diferentes. Torne-as idênticas ou forneça apenas formula para o CLI sincronizá-las.",
+  "config_mode": "Use valueType: formula ou omita valueType ao definir uma fórmula. Para entrada manual, use valueType: custom e formula: \"\".",
+  "config_cycle": "Referência circular encontrada: {0}. Organize as dependências das entradas aos resultados e evite autorreferências diretas ou indiretas.",
+  "reference_details_unknown": "A definição completa e o tipo do campo ou subcampo {0} não foram verificados.",
+  "contract_not_supported": "Este verificador não suporta a sintaxe nem a execução de {0}; use o validador da configuração de destino.",
+  "consumer_required": "{0} requer o pré-processamento e o contexto de dados da configuração de destino. Valide-o na interface correspondente.",
+  "contracts_help": "Formatos: field-value, validation-rule, business-action e node-expression. dataset-expression e javascript ainda não têm adaptador de verificação. Um formato pode atender a vários editores. Detalhes: --json."
+});
+Object.assign(module.exports.help, {"cmd_formula_contracts": "Mostrar formatos de fórmula e escopo de verificação"});
+
+Object.assign(module.exports.formula_v2, {"parallel_formula": "Use conditions/rules ou all:true para ramos paralelos; expression é suportado atualmente apenas nos ramos route."});
+
+Object.assign(module.exports.formula_v2, {"conversion_empty":"A conversão para o campo de destino produziu um valor vazio. Para datas, use TIMESTAMP(fórmula de data) e confira o valor original e o tipo.","result_missing":"A solicitação terminou sem valor para o campo de destino. Datas geralmente precisam de TIMESTAMP(fórmula de data).","conversion_partial":"O valor foi convertido parcialmente ou não é finito. Retorne um número completo ou milissegundos.","target_branches":"Alguns tipos de resultado {0} não correspondem a {1}. Teste cada ramo.","date_timestamp":"Um objeto de data difere do valor salvo. Use normalmente TIMESTAMP(fórmula de data) para milissegundos.","numeric_result_text":"O resultado pode ser texto. Teste cada ramo com --field para detectar conversões vazias ou parciais."});
 
 module.exports.feedback_report = {
   comparison: 'Test pass/fail requires a command, actual result and evidence.',

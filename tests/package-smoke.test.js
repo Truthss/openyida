@@ -29,6 +29,10 @@ describe('npm package smoke', () => {
     expect(getPackageBudgetErrors({ size: 2452398, unpackedSize: 9144691, entryCount: 712 })).toEqual([]);
   });
 
+  test('package budget covers merged formula and workflow capabilities on Node 20', () => {
+    expect(getPackageBudgetErrors({ size: 2504841, unpackedSize: 9309589, entryCount: 726 })).toEqual([]);
+  });
+
   test.each(['size', 'unpackedSize', 'entryCount'])('package budgets reject %s above its boundary', field => {
     expect(getPackageBudgetErrors({ ...budgetLimit, [field]: budgetLimit[field] + 1 })).toHaveLength(1);
   });

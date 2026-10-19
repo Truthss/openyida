@@ -43,7 +43,15 @@ const path = require('path');
 // Task filters, lookup runtime and their reference examples bring the merged
 // package to 2,439,886 compressed bytes on CI Node 20 (9,099,864 unpacked,
 // 707 files). Retain less than 32 KiB of cross-runtime compression headroom.
-const MAX_TARBALL_BYTES = 2400 * 1024;
+// Combined formula configuration/examples and offline feedback reports, npm dry-run:
+// Node 24.19.0: 2,442,200 compressed; Node 26.4.0: 2,417,070 compressed.
+// Both: 9,111,642 unpacked bytes / 709 files. Keep cross-runtime gzip headroom.
+// Keep byte budgets on 16 KiB boundaries; per-file limits are unchanged.
+// Formula component querying and exact-name guidance measure 2,460,061 bytes
+// on Node 22; retain the next 16 KiB boundary across compression runtimes.
+// Merged formula and personal-workflow capabilities measure 2,504,841 compressed
+// bytes on Node 20. Retain less than 32 KiB of cross-runtime gzip headroom.
+const MAX_TARBALL_BYTES = 2464 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.
@@ -91,7 +99,19 @@ const MAX_TARBALL_BYTES = 2400 * 1024;
 // Portable workflow readers, optional progress/filter components and their guide
 // measure about 9.15 MB unpacked / 712 files on Node 20. Compression remains
 // within the existing cap; retain the next 16 KiB unpacked boundary.
-const MAX_UNPACKED_BYTES = 8944 * 1024;
+// Offline feedback adds one runtime module and four skill/reference files.
+// Combined formula/feedback content retains the next 16 KiB boundary.
+// Native field-runtime binding and its complete regression examples:
+// Node 24: 9,139,711 unpacked bytes / 711 files (2 new packaged files).
+// Exact formula-name validation, component-type query and required guidance:
+// Node 26: 9,163,220 unpacked bytes / 711 files; next 16 KiB boundary.
+// Native form views add their runtime, skill and localized documentation to
+// formula support; retain the next 16 KiB boundary for the merged content.
+// Combined Node 22 package: 2,468,324 compressed / 9,194,708 unpacked bytes,
+// 713 files. Keep the compressed and single-file caps unchanged.
+// Combined formula and workflow content measures 9,309,589 unpacked bytes;
+// retain the next 16 KiB boundary for the merged package.
+const MAX_UNPACKED_BYTES = 9104 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -106,7 +126,12 @@ const MAX_UNPACKED_BYTES = 8944 * 1024;
 // Main adds the shared integration detail-log module.
 // Portable task lookup options add one runtime module.
 // Native form-view runtime and self-contained skill add two packaged files.
-const MAX_ENTRY_COUNT = 712;
+// Formula support and offline feedback reports bring the total to 709 files.
+// Formula runtime/examples bring it to 711; native form views add two files.
+// Shared formula CLI/manifest/help parameter definitions add one runtime file.
+// Node 22: 2,469,301 compressed / 9,198,911 unpacked bytes; byte caps unchanged.
+// The combined formula and workflow package contains 726 published files.
+const MAX_ENTRY_COUNT = 726;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [

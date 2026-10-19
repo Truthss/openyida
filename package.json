@@ -88,6 +88,7 @@
   "homepage": "https://github.com/openyida/openyida#readme",
   "dependencies": {
     "@babel/standalone": "^7.15.1",
+    "esprima": "4.0.1",
     "globals": "^17.11.0",
     "js-yaml": "^4.3.2",
     "uglify-js": "^3.19.3"
