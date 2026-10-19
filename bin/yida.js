@@ -815,6 +815,11 @@ async function main() {
       break;
     }
 
+    case 'custom-button': {
+      const { run } = require('../lib/app/custom-button');
+      await run(args);
+      break;
+    }
     case 'form-view': {
       const { run } = require('../lib/app/form-view');
       await run(args);

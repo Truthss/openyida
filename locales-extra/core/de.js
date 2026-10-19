@@ -5,6 +5,16 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  custom_button: {
+    "usage": "Usage: openyida custom-button <list|inspect|options|create|update|delete> <appType> <formUuid> [buttonUuid] [--config <file>] [--expected-hash <hash>] [--backup <file>] [--yes] [--json]",
+    "invalid_config": "Ungültige Konfiguration oder Argument: {0}",
+    "invalid_response": "Unvollständige Schaltflächenantwort: {0}",
+    "api_error": "Schaltflächen-API fehlgeschlagen: {0}. Anmeldung, Rechte und Edition prüfen.",
+    "not_found": "Schaltfläche fehlt im Zielformular: {0}",
+    "conflict": "Konfiguration wurde geändert. Vor dem Speichern erneut lesen.",
+    "limit": "Ein Formular unterstützt höchstens 10 Schaltflächen.",
+    "readback_mismatch": "Gespeicherte Konfiguration stimmt nicht mit Rücklesung überein. Sicherung behalten und Remotezustand prüfen."
+  },
   form_view: {
     usage: "Verwendung: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
     invalid_config: "Ungültige native Ansichtskonfiguration oder ungültiges Argument: %s",
@@ -71,6 +81,7 @@ module.exports = {
     invalidStrategy: "Die Bildanforderungen müssen ein Objekt mit Bildpositionen pro Seite sein.",
   },
   help: {
+    cmd_custom_button: "Benutzerdefinierte Schaltflächen: Formulare, Automatisierung und Links",
     cmd_check_design: 'Designdokumente, Theme-Variablen und PRD-Übergabe prüfen',
     subtitle: 'KI-gestütztes Low-Code-Entwicklungstool für Yida',
     usage: 'Verwendung:',

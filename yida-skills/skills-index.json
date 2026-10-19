@@ -4,6 +4,19 @@
   "entry": "openyida",
   "skills": [
     {
+      "name": "yida-custom-button",
+      "path": "skills/yida-custom-button/SKILL.md",
+      "display_name": "表单自定义按钮",
+      "description": "配置页面设置中的原生自定义按钮：修改当前记录、填写被关联表单、触发自动化、打开页面和设置显示位置。",
+      "category": "yida-skills/form",
+      "tags": ["自定义按钮", "页面设置", "客户跟进", "审批后发起订单"],
+      "aliases": ["表单按钮", "详情页自定义操作"],
+      "positive_signals": ["配置表单自定义按钮", "客户详情页添加跟进按钮", "按钮触发手动自动化", "审批结束后发起采购订单", "表格视图中显示分配按钮"],
+      "negative_signals": ["自定义页面React按钮", "仅修改按钮颜色", "提交表单按钮文案"],
+      "command_ids": ["custom-button"],
+      "requires_login": true
+    },
+    {
       "name": "yida-form-view",
       "path": "skills/yida-form-view/SKILL.md",
       "display_name": "原生数据管理视图配置",

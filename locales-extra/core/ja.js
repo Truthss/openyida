@@ -5,6 +5,16 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  custom_button: {
+    "usage": "Usage: openyida custom-button <list|inspect|options|create|update|delete> <appType> <formUuid> [buttonUuid] [--config <file>] [--expected-hash <hash>] [--backup <file>] [--yes] [--json]",
+    "invalid_config": "無効な設定または引数：{0}",
+    "invalid_response": "ボタン設定の応答が不完全です：{0}",
+    "api_error": "ボタン API が失敗しました：{0}。ログイン、権限、エディションを確認してください。",
+    "not_found": "対象フォームにボタンがありません：{0}",
+    "conflict": "設定が変更されました。再取得してください。",
+    "limit": "フォームごとに最大10個のボタンを設定できます。",
+    "readback_mismatch": "保存内容と再取得内容が一致しません。バックアップを保持し、リモート状態を確認してください。"
+  },
   form_view: {
     usage: "使用法: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
     invalid_config: "ネイティブビューの設定または引数が無効です：%s",
@@ -71,6 +81,7 @@ module.exports = {
     invalidStrategy: "画像の要件は、ページごとの画像の配置を記述したオブジェクトで指定してください。",
   },
   help: {
+    cmd_custom_button: "カスタムボタン：フォーム編集、自動化フロー、ページリンクの設定",
     cmd_check_design: 'デザイン文書、テーマ変数、PRD の引き継ぎを検証',
     subtitle: '宜搭ローコード AI 開発ツール',
     usage: '使用方法:',

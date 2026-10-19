@@ -5,6 +5,16 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  custom_button: {
+    "usage": "Usage: openyida custom-button <list|inspect|options|create|update|delete> <appType> <formUuid> [buttonUuid] [--config <file>] [--expected-hash <hash>] [--backup <file>] [--yes] [--json]",
+    "invalid_config": "अमान्य कॉन्फ़िगरेशन या तर्क: {0}",
+    "invalid_response": "बटन कॉन्फ़िगरेशन का अधूरा उत्तर: {0}",
+    "api_error": "बटन API विफल: {0}। लॉगिन, अनुमति और संस्करण जाँचें।",
+    "not_found": "लक्षित फ़ॉर्म में बटन नहीं है: {0}",
+    "conflict": "कॉन्फ़िगरेशन बदल गया है। सहेजने से पहले फिर पढ़ें।",
+    "limit": "एक फ़ॉर्म में अधिकतम 10 कस्टम बटन समर्थित हैं।",
+    "readback_mismatch": "सहेजा गया डेटा दोबारा पढ़ने से मेल नहीं खाता। बैकअप रखें और दूरस्थ स्थिति जाँचें।"
+  },
   form_view: {
     usage: "उपयोग: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
     invalid_config: "मूल दृश्य का कॉन्फ़िगरेशन या आर्ग्युमेंट अमान्य है: %s",
@@ -71,6 +81,7 @@ module.exports = {
     invalidStrategy: "चित्र आवश्यकताएँ एक ऑब्जेक्ट में दें, जिसमें हर पृष्ठ के चित्र स्थान हों।",
   },
   help: {
+    cmd_custom_button: "कस्टम बटन: फ़ॉर्म संपादन, स्वचालन और पेज लिंक",
     cmd_check_design: 'डिज़ाइन दस्तावेज़, थीम चर और PRD हस्तांतरण सत्यापित करें',
     subtitle: 'Yida के लिए AI-संचालित लो-कोड विकास उपकरण',
     usage: 'उपयोग:',

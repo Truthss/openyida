@@ -5,6 +5,16 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  custom_button: {
+    "usage": "Usage: openyida custom-button <list|inspect|options|create|update|delete> <appType> <formUuid> [buttonUuid] [--config <file>] [--expected-hash <hash>] [--backup <file>] [--yes] [--json]",
+    "invalid_config": "Cấu hình hoặc tham số không hợp lệ: {0}",
+    "invalid_response": "Phản hồi cấu hình nút không đầy đủ: {0}",
+    "api_error": "API nút thất bại: {0}. Kiểm tra đăng nhập, quyền và phiên bản.",
+    "not_found": "Nút không có trong biểu mẫu đích: {0}",
+    "conflict": "Cấu hình đã thay đổi. Đọc lại trước khi lưu.",
+    "limit": "Mỗi biểu mẫu hỗ trợ tối đa 10 nút tùy chỉnh.",
+    "readback_mismatch": "Dữ liệu đọc lại không khớp. Giữ bản sao lưu và kiểm tra trạng thái từ xa."
+  },
   form_view: {
     usage: "Cách dùng: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
     invalid_config: "Cấu hình chế độ xem gốc hoặc đối số không hợp lệ: %s",
@@ -71,6 +81,7 @@ module.exports = {
     invalidStrategy: "Yêu cầu về ảnh phải là một đối tượng liệt kê vị trí ảnh theo từng trang.",
   },
   help: {
+    cmd_custom_button: "Nút tùy chỉnh: biểu mẫu, luồng tự động và liên kết trang",
     cmd_check_design: 'Xác thực tài liệu thiết kế, biến giao diện và bàn giao PRD',
     subtitle: 'Công cụ phát triển AI low-code cho Yida',
     usage: 'Cách dùng:',

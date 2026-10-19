@@ -5,6 +5,16 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  custom_button: {
+    "usage": "Usage: openyida custom-button <list|inspect|options|create|update|delete> <appType> <formUuid> [buttonUuid] [--config <file>] [--expected-hash <hash>] [--backup <file>] [--yes] [--json]",
+    "invalid_config": "Configuración o argumento no válido: {0}",
+    "invalid_response": "Respuesta de configuración incompleta: {0}",
+    "api_error": "Error de API de botones: {0}. Revise sesión, permisos y edición.",
+    "not_found": "El botón no existe en el formulario de destino: {0}",
+    "conflict": "La configuración cambió. Vuelva a consultarla.",
+    "limit": "Un formulario admite hasta 10 botones personalizados.",
+    "readback_mismatch": "La lectura no coincide con lo guardado. Conserve la copia y revise el estado remoto."
+  },
   form_view: {
     usage: "Uso: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
     invalid_config: "Configuración de vista nativa o argumento no válido: %s",
@@ -71,6 +81,7 @@ module.exports = {
     invalidStrategy: "Los requisitos de imágenes deben ser un objeto con las posiciones de imágenes por página.",
   },
   help: {
+    cmd_custom_button: "Botones personalizados: formularios, automatizaciones y enlaces",
     cmd_check_design: 'Validar documentos de diseño, variables del tema y entrega del PRD',
     subtitle: 'Herramienta de desarrollo IA low-code para Yida',
     usage: 'Uso:',

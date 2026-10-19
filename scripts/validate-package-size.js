@@ -43,7 +43,9 @@ const path = require('path');
 // Keep byte budgets on 16 KiB boundaries; per-file limits are unchanged.
 // Formula component querying and exact-name guidance measure 2,460,061 bytes
 // on Node 22; retain the next 16 KiB boundary across compression runtimes.
-const MAX_TARBALL_BYTES = 2416 * 1024;
+// Native custom buttons: Node 22 measures 2,478,924 compressed bytes;
+// Node 26 measures 2,455,567. Retain the next 16 KiB boundary.
+const MAX_TARBALL_BYTES = 2432 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.
@@ -85,7 +87,9 @@ const MAX_TARBALL_BYTES = 2416 * 1024;
 // formula support; retain the next 16 KiB boundary for the merged content.
 // Combined Node 22 package: 2,468,324 compressed / 9,194,708 unpacked bytes,
 // 713 files. Keep the compressed and single-file caps unchanged.
-const MAX_UNPACKED_BYTES = 8992 * 1024;
+// Native custom buttons add one runtime module and one skill, plus localized
+// help: Node 22/26 measure 9,230,635 bytes / 716 files. Next 16 KiB boundary.
+const MAX_UNPACKED_BYTES = 9024 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -102,10 +106,12 @@ const MAX_UNPACKED_BYTES = 8992 * 1024;
 // Formula runtime/examples bring it to 711; native form views add two files.
 // Shared formula CLI/manifest/help parameter definitions add one runtime file.
 // Node 22: 2,469,301 compressed / 9,198,911 unpacked bytes; byte caps unchanged.
-const MAX_ENTRY_COUNT = 714;
+const MAX_ENTRY_COUNT = 716;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
+  'lib/app/custom-button.js',
+  'yida-skills/skills/yida-custom-button/SKILL.md',
   'lib/feedback/report.js',
   'yida-skills/skills/yida-feedback/references/user-interaction.md',
   'yida-skills/skills/yida-feedback/SKILL.md',
