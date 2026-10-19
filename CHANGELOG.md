@@ -12,6 +12,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+- 原生酷卡片补充模板选型、变量与交互契约、明暗视觉验收指南；新增 `sample yida-cool-card project-brief` 本地导入样例，包含原生头部、富文本、指标、标签、进度和折叠详情。
+
+- 新增独立 `yida-cool-card` 技能及 `cool-card list/templates/create/get`，区分交互卡片、置顶卡片、原生数据卡片和页面展示卡片；支持完整快照导出与创建回读，返回官方入口交由用户配置保存，再通过 CLI 回读；不修改权益或官方开关，不代替编辑器保存、发布或发送。（#87840868）
+- 补充可选外部钉钉 Workspace CLI（dws）的安装、独立登录与能力检查说明；`openyida dws install/setup` 只展示指引，普通命令缺少 dws 时不再询问执行安装。不捆绑或自动安装，明确 A2UI 消息更新与宜搭模板保存的边界。（#87840868）
+
 - 新增 `data-card list/create/get/save/publish/probe`，支持宜搭原生数据卡片的创建、完整 Schema 读取、草稿保存和独立发布，`save --config` 可基于真实字段搭建九类原生组件、多指标、日期维度与同源下拉筛选，probe 逐组件验证运行时数据；写前备份与草稿摘要检查，写后回读核对。（#87831872）
 - 新增 `app-settings`，按目标应用返回主题、业务前后台配置和原生数据卡片管理入口，提供 `yida-data-card` 技能与使用指南。
 - 原生数据卡片新增投放播报配置读取、保存与启停、权益检查、当前操作人测试发送和门户使用记录查询；启用与测试需显式允许发送，配置写入有摘要检查、备份和回读，返回独立投放入口。群投放仍需钉钉客户端确认安装，暂不自动挂载门户组件。（#87831872）

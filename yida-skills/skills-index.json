@@ -4,6 +4,37 @@
   "entry": "openyida",
   "skills": [
     {
+      "name": "yida-cool-card",
+      "path": "skills/yida-cool-card/SKILL.md",
+      "display_name": "宜搭原生酷卡片",
+      "description": "用户明确指定宜搭原生酷卡片时使用，支持交互卡片和置顶卡片的创建、读取与模板查询，返回官方入口由用户配置保存；不代替编辑器保存、发布或发送。数据卡片和页面展示卡片不触发。",
+      "category": "yida-skills/integration",
+      "tags": [
+        "宜搭原生酷卡片",
+        "交互卡片",
+        "置顶卡片",
+        "cardPageCode"
+      ],
+      "aliases": [
+        "宜搭酷卡片"
+      ],
+      "positive_signals": [
+        "明确创建宜搭原生交互卡片",
+        "明确读取宜搭原生置顶卡片配置",
+        "继续已明确的宜搭原生酷卡片操作"
+      ],
+      "negative_signals": [
+        "原生数据卡片CARD资源",
+        "Canvas页面指标卡",
+        "普通卡片或发送消息未明确原生酷卡片",
+        "只修改页面中的卡片外层"
+      ],
+      "command_ids": [
+        "cool-card"
+      ],
+      "requires_login": true
+    },
+    {
       "name": "yida-data-card",
       "path": "skills/yida-data-card/SKILL.md",
       "display_name": "宜搭原生数据卡片",
@@ -1671,6 +1702,9 @@
       "display_name": "连接器与集成",
       "description": "HTTP 连接器、连接器动作、页面设计器数据源、提交后集成自动化和外部 API 接入。",
       "signals": [
+        "宜搭原生酷卡片",
+        "酷卡片管理",
+        "cardPageCode",
         "连接器",
         "HTTP API",
         "执行动作",

@@ -40,7 +40,9 @@ const path = require('path');
 // Offline feedback screenshots, test comparisons and user guidance measure
 // 2,410,795 compressed bytes on Node 24; retain the next 16 KiB boundary.
 // Feedback plus native form views measures 2,419,790 bytes on Node 22; this limit fits.
-const MAX_TARBALL_BYTES = 2368 * 1024;
+// Native cool-card CLI and its independent skill add ~8 KiB compressed.
+// Native cool-card import sample and design guidance need one additional 16 KiB gzip step.
+const MAX_TARBALL_BYTES = 2400 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.
@@ -82,7 +84,11 @@ const MAX_TARBALL_BYTES = 2368 * 1024;
 // 9,086,358 unpacked bytes / 705 entries on Node 26; next 16 KiB boundary.
 // Broadcast runtime and its self-contained skill reference add ~21 KiB; next 16 KiB boundary.
 // Explicit native-card routing guidance is present in both host rules and skill metadata.
-const MAX_UNPACKED_BYTES = 8912 * 1024;
+// Cool-card runtime, skill and reference: 9,137,177 bytes / 710 files on Node 26.
+// External dws installation guidance and localized notices: 9,144,203 bytes,
+// still 710 files; round the unpacked budget to the next 16 KiB boundary.
+// Native cool-card design guide and import-ready brief add one sample and one reference.
+const MAX_UNPACKED_BYTES = 9008 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -98,7 +104,8 @@ const MAX_UNPACKED_BYTES = 8912 * 1024;
 // Native form-view runtime and self-contained skill add two packaged files.
 // Native card management and application setting links add exactly three packaged files.
 // Native broadcast support adds exactly two packaged files.
-const MAX_ENTRY_COUNT = 707;
+// Cool-card runtime plus its skill and protocol reference add exactly three files.
+const MAX_ENTRY_COUNT = 712;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [

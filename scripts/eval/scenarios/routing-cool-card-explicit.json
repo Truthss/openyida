@@ -1,0 +1,84 @@
+[
+  {
+    "id": "cool-native-im",
+    "prompt": "在已有应用 APP_TEST 创建宜搭原生酷卡片里的交互卡片。",
+    "expectedSkill": "yida-cool-card",
+    "mustNotTrigger": [
+      "yida-data-card"
+    ],
+    "forbiddenDefaultSkills": [
+      "yida-data-card"
+    ]
+  },
+  {
+    "id": "cool-native-onebox",
+    "prompt": "读取宜搭原生酷卡片 form123 的置顶卡片配置，不发送。",
+    "expectedSkill": "yida-cool-card",
+    "mustNotTrigger": [
+      "yida-data-card"
+    ],
+    "forbiddenDefaultSkills": [
+      "yida-data-card"
+    ]
+  },
+  {
+    "id": "cool-native-context",
+    "prompt": "上文已明确在做宜搭原生酷卡片，现在继续列出它的模板。",
+    "expectedSkill": "yida-cool-card"
+  },
+  {
+    "id": "cool-native-link",
+    "prompt": "读取应用的 coolCardManage 酷卡片管理里的交互卡片列表。",
+    "expectedSkill": "yida-cool-card"
+  },
+  {
+    "id": "cool-vs-native-data",
+    "prompt": "读取这张原生数据卡片 https://tenant.aliwork.com/alibaba/web/APP_TEST/report/dataCardDesigner.html?cardCode=CARD-abc 的配置。",
+    "expectedSkill": "yida-data-card",
+    "mustNotTrigger": [
+      "yida-cool-card"
+    ],
+    "forbiddenDefaultSkills": [
+      "yida-cool-card"
+    ]
+  },
+  {
+    "id": "cool-vs-page",
+    "prompt": "给已有 Canvas 页面里的指标卡加个同比数字，不创建宜搭原生资源。",
+    "expectedSkill": "yida-canvas-custom-page",
+    "mustNotTrigger": [
+      "yida-cool-card",
+      "yida-data-card"
+    ],
+    "forbiddenDefaultSkills": [
+      "yida-cool-card",
+      "yida-data-card"
+    ]
+  },
+  {
+    "id": "cool-vs-generic-send",
+    "prompt": "用集成自动化定时统计订单并通知指定钉钉群，不需要原生酷卡片。",
+    "expectedSkill": "yida-integration",
+    "mustNotTrigger": [
+      "yida-cool-card",
+      "yida-data-card"
+    ],
+    "forbiddenDefaultSkills": [
+      "yida-cool-card",
+      "yida-data-card"
+    ]
+  },
+  {
+    "id": "cool-vs-reference-wrapper",
+    "prompt": "只改已有 Canvas 页内卡片引用组件的外层边距，源酷卡片配置保持原样。",
+    "expectedSkill": "yida-canvas-custom-page",
+    "mustNotTrigger": [
+      "yida-cool-card",
+      "yida-data-card"
+    ],
+    "forbiddenDefaultSkills": [
+      "yida-cool-card",
+      "yida-data-card"
+    ]
+  }
+]
