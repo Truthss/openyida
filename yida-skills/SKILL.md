@@ -211,7 +211,7 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 | 自定义页面中的数据卡片、指标卡、统计卡 | 页面内组件随页面发布：新增/开发走页面技能，接数据走 `yida-canvas-data-binding`，仅外观走 `yida-design`；不自动创建原生 CARD 资源 |
 | 页面引用了原生 `CARD-xxx` | 按实际修改对象分流：页面外层或引用配置仍归页面；用户明确要求修改源卡片配置才用 `yida-data-card`，不能只凭 CARD/FORM 字样判断 |
 | 查询主题配置、业务前后台配置或数据卡片管理入口 | 使用 `openyida app-settings <appType> --section theme|basic|data-card|cool-card --json`，直接返回对应 url；只问入口不修改设置 |
-| 普通报表/统计 | `yida-report` |
+| 普通报表/统计、原生报表零值隐藏配置 | `yida-report`；隐藏数值 0 必须由用户明确要求，默认关闭 |
 | 聚合表 / 虚拟视图的读取、预览、草稿保存或发布 | `yida-aggregate-table`；save 验证 stash revision，publish 验证 live revision |
 | PPT 页面 | `yida-ppt-slider` |
 | 公开访问/组织内分享 | `yida-page-config` |

@@ -84,6 +84,17 @@ test('scope and mutation receipts consume the same app policy', () => {
   expect(run('create-form', ['list-icons'])).not.toBeNull();
 });
 
+test('native report configuration is app-bound with no dry-run mutation receipt', () => {
+  const args = ['configure', 'APP_BOUND', 'REPORT_1', 'cid_1', '--hide-zero-values', 'true', '--json'];
+  expect(run('report', args)).toMatchObject({ appType: 'APP_BOUND' });
+  expect(classifyManagedMutation('report', args)).toEqual({ operation: 'update_report', formUuid: 'REPORT_1' });
+  expect(classifyManagedMutation('report', [...args, '--dry-run'])).toBeNull();
+  expect(() => run('report', ['configure', 'APP_OTHER', 'REPORT_1', 'cid_1', '--hide-zero-values', 'true']))
+    .toThrow(expect.objectContaining({ code: 'MANAGED_APP_MISMATCH' }));
+  expect(() => run('report', [...args, '--corp-id', 'other']))
+    .toThrow(expect.objectContaining({ code: 'MANAGED_OVERRIDE_FORBIDDEN' }));
+});
+
 test('native form views stay in the bound app and classify only actual mutation actions', () => {
   for (const action of ['list', 'inspect', 'save', 'create', 'order']) {
     expect(run('form-view', [action, 'APP_BOUND', 'FORM-x', 'VIEW-x'])).toMatchObject({ appType: 'APP_BOUND' });

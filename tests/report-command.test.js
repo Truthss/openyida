@@ -19,6 +19,7 @@ jest.mock('../lib/integration/integration-api', () => ({
   getFormSchema: jest.fn(),
 }));
 jest.mock('../lib/report/runtime-probe', () => ({
+  ...jest.requireActual('../lib/report/runtime-probe'),
   probeReportSchema: jest.fn(),
   repairMetadataFieldCodes: jest.fn(),
 }));
@@ -156,7 +157,7 @@ describe('report command helpers', () => {
     expect(utils.requestWithAutoLogin).not.toHaveBeenCalled();
   });
 
-  test('create-report run creates a report and saves generated schema', async () => {
+  test.each([undefined, false, true])('create-report persists explicit hideZeroValues=%p through save/readback', async hideZeroValues => {
     utils.httpPost
       .mockResolvedValueOnce({ success: true, content: { formUuid: 'REPORT_1' } })
       .mockResolvedValueOnce({ success: true });
@@ -172,7 +173,8 @@ describe('report command helpers', () => {
         };
       });
 
-    const result = await createReport.run(['APP_XXX', '销售报表', JSON.stringify(chartConfig)]);
+    const config = [{ ...chartConfig[0], ...(hideZeroValues === undefined ? {} : { hideZeroValues }) }];
+    const result = await createReport.run(['APP_XXX', '销售报表', JSON.stringify(config)]);
 
     expect(result).toMatchObject({
       success: true,
@@ -192,6 +194,10 @@ describe('report command helpers', () => {
       id: 'REPORT_1',
       pages: expect.any(Array),
     });
+    const { summarizeReportSchema } = require('../lib/report/inspect');
+    const summary = summarizeReportSchema(JSON.parse(saveBody.content));
+    expect(summary.components.find(component => component.componentName === 'YoushuGroupedBarChart').hideZeroValues)
+      .toBe(hideZeroValues === true);
     expect(saveBody.gmtModified).toBe('100');
     expect(saveBody.domainCode).toBe('tEXDRG');
     expect(utils.httpGet.mock.calls[0][2]).toMatchObject({
@@ -463,6 +469,16 @@ describe('report command helpers', () => {
     expect(utils.httpGet).not.toHaveBeenCalled();
   });
 
+  test.each([
+    { ...chartConfig[0], hideZeroValues: 'true' },
+    { ...chartConfig[0], type: 'line', hideZeroValues: true },
+    { ...chartConfig[0], hideZeroValues: true, afterFetch: { source: 'function custom(data) {return data;}' } },
+  ])('zero-value opt-in validation prevents create and append writes: %p', async invalidChart => {
+    await expect(createReport.run(['APP_XXX', '零值报表', JSON.stringify([invalidChart])])).rejects.toThrow();
+    await expect(appendReport.run(['APP_XXX', 'REPORT_1', JSON.stringify([invalidChart])])).rejects.toThrow();
+    expect(utils.httpPost).not.toHaveBeenCalled();
+  });
+
   test('create-report validates explicit filter link/cube/field consistency before remote writes', async () => {
     const invalidConfig = {
       charts: chartConfig,
@@ -592,7 +608,7 @@ describe('report command helpers', () => {
     expect(warn).toHaveBeenCalledWith('报表创建成功，ID: REPORT_PARTIAL');
   });
 
-  test('append-chart run fetches existing schema and saves appended chart', async () => {
+  test.each([false, true])('append-chart persists hideZeroValues=%p with strict readback', async hideZeroValues => {
     utils.httpGet.mockResolvedValueOnce({
       success: true,
       content: makeReportSchema(),
@@ -606,7 +622,8 @@ describe('report command helpers', () => {
       };
     });
 
-    const result = await appendReport.run(['APP_XXX', 'REPORT_1', JSON.stringify(chartConfig)]);
+    const config = [{ ...chartConfig[0], hideZeroValues }];
+    const result = await appendReport.run(['APP_XXX', 'REPORT_1', JSON.stringify(config)]);
 
     expect(result).toMatchObject({
       success: true,
@@ -625,6 +642,8 @@ describe('report command helpers', () => {
     const savedSchema = JSON.parse(saveBody.content);
     const rootContent = savedSchema.pages[0].componentsTree[0].children[0];
     expect(rootContent.children).toHaveLength(1);
+    const { isZeroValueAfterFetch } = require('../lib/report/zero-values');
+    expect(isZeroValueAfterFetch(rootContent.children[0].props.afterFetch)).toBe(hideZeroValues);
     expect(rootContent.props.layout).toHaveLength(1);
     expect(warn).toHaveBeenCalledWith('报表 ID: REPORT_1');
     expect(warn).toHaveBeenCalledWith('追加图表数: 1');

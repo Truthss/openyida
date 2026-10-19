@@ -1604,8 +1604,8 @@
     {
       "name": "yida-report",
       "path": "skills/yida-report/SKILL.md",
-      "display_name": "原生报表创建",
-      "description": "宜搭原生报表创建，支持图表、表格、筛选器和指标卡等组件。",
+      "display_name": "原生报表创建与配置",
+      "description": "创建和配置宜搭原生报表，支持图表、表格、筛选器和指标卡；用户明确要求时，可分别隐藏原生柱状图零值、全零分类及全零指标图例，默认关闭；范围不明确时交互确认，支持保留全零分类轴名称。",
       "category": "yida-skills/analytics",
       "tags": [
         "报表",
@@ -1621,7 +1621,8 @@
         "统计报表",
         "指标卡",
         "表格报表",
-        "筛选器"
+        "筛选器",
+        "原生报表隐藏零值"
       ],
       "negative_signals": [
         "ECharts 大屏",
@@ -1630,9 +1631,11 @@
       ],
       "command_ids": [
         "create-report",
-        "append-chart"
+        "append-chart",
+        "report.inspect",
+        "report.configure"
       ],
-      "done_when": "原生报表或图表创建成功并返回 reportId / 页面链接。"
+      "done_when": "原生报表或图表创建成功并返回 reportId / 页面链接；已有图表配置保存须严格回读并验证查询，浏览器效果单独验收。"
     },
     {
       "name": "yida-rechart",

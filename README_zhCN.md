@@ -443,6 +443,7 @@ openyida feedback report --input summary.json --output-dir feedback-draft-001
 | `openyida create-report <appType> "<name>" ... [--json] [--open\|--no-open]` | 创建宜搭报表 |
 | `openyida append-chart <appType> <reportId> ... [--json] [--open\|--no-open]` | 向已有报表追加图表 |
 | `openyida report inspect <appType> <reportId> --json` | 只读检查报表运行时绑定摘要 |
+| `openyida report configure <appType> <reportId> <cid> --hide-zero-values <true\|false> [--hide-zero-categories <true\|false>] [--hide-zero-legends <true\|false>] [--dry-run] [--json]` | 配置原生柱状图动态隐藏零值（需显式开启） |
 
 ### 连接器
 
