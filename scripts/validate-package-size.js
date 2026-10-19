@@ -39,6 +39,7 @@ const path = require('path');
 // Round to the next 16 KiB boundary with cross-runtime compression headroom.
 // Offline feedback screenshots, test comparisons and user guidance measure
 // 2,410,795 compressed bytes on Node 24; retain the next 16 KiB boundary.
+// Feedback plus native form views measures 2,419,790 bytes on Node 22; this limit fits.
 const MAX_TARBALL_BYTES = 2368 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
@@ -69,11 +70,13 @@ const MAX_TARBALL_BYTES = 2368 * 1024;
 // cover triggers, maintenance and management; related node/condition topics stay
 // in their existing guides. Merging main also adds its detail-log module and
 // localized help. Node 24 measures 8,968,987 unpacked bytes / 693 files.
+// Native form views bring the merged package to 8,996,291 bytes on Node 22.
 // Retain the next 16 KiB boundary for the combined package.
 // Offline feedback reports add one runtime module and four skill/reference files.
 // Screenshot staging, comparisons and user guidance measure 9,008,896 unpacked
 // bytes / 698 files on Node 26; retain the next 16 KiB boundary.
-const MAX_UNPACKED_BYTES = 8800 * 1024;
+// Feedback plus native form views measures 9,036,200 bytes on Node 22.
+const MAX_UNPACKED_BYTES = 8832 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -86,7 +89,8 @@ const MAX_UNPACKED_BYTES = 8800 * 1024;
 // Content shrinks overall (8,794,095 unpacked bytes); byte budgets stay fixed.
 // Remove the two obsolete process reference redirects after updating consumers.
 // Main adds the shared integration detail-log module.
-const MAX_ENTRY_COUNT = 698;
+// Native form-view runtime and self-contained skill add two packaged files.
+const MAX_ENTRY_COUNT = 700;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [

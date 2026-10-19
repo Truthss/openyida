@@ -5,6 +5,15 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  form_view: {
+    usage: "Cách dùng: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
+    invalid_config: "Cấu hình chế độ xem gốc hoặc đối số không hợp lệ: %s",
+    target_mismatch: "Chế độ xem không thuộc biểu mẫu đích: %s",
+    api_error: "API chế độ xem gốc bị lỗi: %s. Kiểm tra quyền và gói dịch vụ; không thử ghi lại khi chưa xác minh.",
+    unsupported: "Nền tảng không trả về danh sách chế độ xem gốc. Kiểm tra loại biểu mẫu và khả năng hỗ trợ.",
+    conflict: "Chế độ xem đã thay đổi sau khi đọc. Kiểm tra lại trước khi lưu.",
+    readback_mismatch: "Cấu hình đã lưu khác kết quả đọc lại. Giữ bản sao lưu và kiểm tra chế độ xem từ xa.",
+  },
   integration_manage: {"failed": "Automation operation failed: {0}", "usage": "integration <monitor|copy|rename|delete> <appType> ...", "desc_monitor": "Read or save automation error monitors", "desc_copy": "Copy an automation as disabled", "desc_rename": "Rename an automation", "desc_delete": "Delete a disabled automation"},
   permission_manage: {"failed": "Permission group operation failed: {0}", "usage": "permission-manage <copy|rename|delete> <appType> <formUuid> <packageUuid> [--name name] [--dry-run] [--confirm]", "description": "Copy, rename or delete a permission group"},
   matrix_manage: {"failed": "Matrix operation failed: {0}", "usage": "matrix <list|detail|references|rows|create|update|delete|upsert-rows|delete-rows> [matrixId] [--file config.json] [--dry-run] [--confirm]", "description": "Manage permission matrix definitions, references and rows"},
@@ -98,6 +107,7 @@ module.exports = {
     cmd_validate_form: 'Validate form field JSON locally',
     cmd_update_form: 'Cập nhật trang biểu mẫu',
     cmd_list_forms: 'List forms/pages in an app',
+    cmd_form_view: "Quản lý cột hiển thị, độ rộng, cột cố định và bộ lọc của biểu mẫu",
     cmd_aggregate_table: 'Manage aggregate tables (virtualView)',
     cmd_get_schema: 'Lấy Schema biểu mẫu',
     cmd_check_prd_completeness: 'Check PRD page/resource count risk',
