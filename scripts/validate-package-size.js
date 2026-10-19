@@ -41,7 +41,9 @@ const path = require('path');
 // Node 24.19.0: 2,442,200 compressed; Node 26.4.0: 2,417,070 compressed.
 // Both: 9,111,642 unpacked bytes / 709 files. Keep cross-runtime gzip headroom.
 // Keep byte budgets on 16 KiB boundaries; per-file limits are unchanged.
-const MAX_TARBALL_BYTES = 2400 * 1024;
+// Formula component querying and exact-name guidance measure 2,460,061 bytes
+// on Node 22; retain the next 16 KiB boundary across compression runtimes.
+const MAX_TARBALL_BYTES = 2416 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.
@@ -76,7 +78,9 @@ const MAX_TARBALL_BYTES = 2400 * 1024;
 // Combined formula/feedback content retains the next 16 KiB boundary.
 // Native field-runtime binding and its complete regression examples:
 // Node 24: 9,139,711 unpacked bytes / 711 files (2 new packaged files).
-const MAX_UNPACKED_BYTES = 8944 * 1024;
+// Exact formula-name validation, component-type query and required guidance:
+// Node 26: 9,163,220 unpacked bytes / 711 files; next 16 KiB boundary.
+const MAX_UNPACKED_BYTES = 8960 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.

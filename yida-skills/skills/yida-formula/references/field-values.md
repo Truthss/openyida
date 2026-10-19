@@ -18,6 +18,27 @@
 
 日期计算与日期字段赋值分两步：`TODAY()` 返回日期对象，填入日期字段时用 `TIMESTAMP(TODAY())`。本地类型检查通过后，也要核对页面是否显示日期，以及提交后的值是否为毫秒时间戳。
 
+日期也可以作为判断条件。例如判断结束时间晚于开始时间，可使用当前函数列表支持的 `GT(#{dateField_end}, #{dateField_start})`，将两边统一为毫秒时间戳。按“同一天”判断时先统一时区和日期粒度；完整时刻的相等与日历日期的相等是不同业务条件。不要为比较日期而一律增加文本字段。
+
+## 组件、参数与结果类型
+
+先从 Schema 读取真实字段的 `componentName`，例如 `NumberField`；再查当前组织的组件类型映射和函数签名：
+
+```bash
+openyida formula types APP_XXX --component NumberField --json
+openyida formula functions APP_XXX --name ROUND --output metadata.json --json
+```
+
+组件映射用于检查字段引用和目标字段的兼容类型；函数签名中的 `required/optional` 表示各参数接受的类型，`result` 表示返回类型。例如内置参考中，`NumberField` 支持 `number/string`，`DateField` 支持 `date/number/timestamp/string`，`EmployeeField` 支持 `array/string`。这类宽类型不是任意文本都能赋值成功的保证：数值文本、日期对象和人员结构还要经过对应转换。当前组织查询结果优先，无法确定自定义组件子属性类型时保留未知。
+
+将完整 Schema、元数据和目标组件一起提供给检查器，可核对“字段组件 → 函数参数 → 返回结果 → 目标组件”：
+
+```bash
+openyida formula check formula.txt --schema schema.json --metadata metadata.json --target-type NumberField --strict --json
+```
+
+字段 ID 前缀、显示名称和样例外观不能代替组件类型。数值精度、日期毫秒时间戳及成员数组的实际回填，继续用字段试算和页面结果核对。
+
 ## 读取已有配置
 
 ```bash
@@ -26,6 +47,8 @@ openyida formula inspect APP_XXX FORM_XXX --field numberField_total --json
 ```
 
 字段映射用于找 ID；完整 Schema 用于保留字段属性、子表结构、显示状态和原公式。修改前记录 `valueType`、`formula`、`complexValue`，并核对两处公式是否一致。
+
+映射中的字段必须属于目标表单；使用组件 `props.fieldId`，保留真实值的全部字符。文中的示例 ID 全部先替换再保存；`formUuid`、组件树节点 `id`、字段显示名称和 `UUID()` 生成的字符串都不能代替字段 ID。自定义组件的子属性沿用设计器提供的完整引用。
 
 ## 保存公式
 
@@ -146,7 +169,11 @@ openyida formula inspect APP_XXX FORM_XXX --field numberField_total --json
 
 用 `create-form patch APP_XXX FORM_XXX patch.json` 保存。隐藏状态、是否计算、是否提交是分别需要核对的行为；`submittable: ALWAYS` 表示始终提交，并不能单独证明公式已执行。
 
+隐藏字段不等于永远不参与计算。平台取值会检查公式依赖和提交策略；公式明确需要的隐藏输入字段也可能被取入计算。先确认依赖字段有值、计算目标能得到结果，再核对提交数据。展示正确、试算正确与提交成功分别记录。
+
 让计算按清楚的顺序进行，例如“单价、数量 → 行金额 → 合计”。修改公式时检查直接引用自身及 A→B→A 的循环。CLI 保存时同步公式属性并检查字段公式依赖；更完整的函数、参数和类型诊断由显式的 `formula check` 提供。
+
+例如，给“合计”配置公式时，输入应是其他金额字段，不能写成“合计 = 合计 + 金额”。空值默认文本的示例也配置在另一个输出字段；给当前字段设默认值时，选择不引用自身的表达式。
 
 ## 常见问题
 

@@ -1,6 +1,6 @@
 'use strict';
 
-const { analyzeFormula, parseArgs } = require('../lib/formula/evaluate');
+const { analyzeFormula, parseArgs, run: runCheck } = require('../lib/formula/evaluate');
 const { collectFields, bindNumericValues } = require('../lib/formula/syntax');
 const { applyFieldFormula, validateSchemaFormulas, formulaFields } = require('../lib/formula/config');
 const { builtin, normalize } = require('../lib/formula/metadata');
@@ -28,10 +28,41 @@ describe('formula syntax and signatures', () => {
   });
   test('marks unverified information rather than claiming platform execution', () => {
     const result = analyzeFormula('NEWFUNCTION(#{numberField_amount})');
-    expect(result.ok).toBe(true);
+    expect(result.ok).toBe(false);
     expect(codes(result)).toEqual(expect.arrayContaining(['function_unknown', 'schema_missing']));
     expect(result.checks.platform).toBe('not_run');
     expect(result.checks.runtime).toBe('not_run');
+  });
+  test.each([['round(1,2)', 'ROUND'], ['Round(1,2)', 'ROUND'], ['userbuilder("u")', 'UserBuilder'], ['USERBUILDER("u")', 'UserBuilder'], ['deptbuilder()', 'DeptBuilder']])('rejects case changes and suggests the exact name: %s', (formula, suggestion) => {
+    const result = analyzeFormula(formula);
+    expect(result.ok).toBe(false);
+    expect(result.checks.signatures).toBe('failed');
+    expect(result.diagnostics).toContainEqual(expect.objectContaining({ level: 'error', code: 'function_case', suggestion }));
+    expect(result.formula).toBe(formula);
+  });
+  test('only validates formula calls, preserving identical names inside text', () => {
+    expect(analyzeFormula('CONCATENATE("round(1,2)", "MYROUND()")').ok).toBe(true);
+    expect(analyzeFormula('IF(TRUE(),round(1,2),0)').ok).toBe(false);
+    expect(analyzeFormula('ROUND(1,2)', { contract: 'javascript' }).verification).toBe('not_supported');
+  });
+  test.each(['Round(1,2)', 'USERBUILDER("u")', 'MYROUND(1,2)'])('strict CLI check rejects formula names without rewriting them: %s', async formula => {
+    const log = jest.spyOn(console, 'log').mockImplementation(() => {});
+    try {
+      await expect(runCheck([formula, '--strict', '--json'])).rejects.toMatchObject({ code: 'CLI_FORMULA_INVALID' });
+      expect(JSON.parse(log.mock.calls[0][0])).toMatchObject({ ok: false, formula, checks: { signatures: 'failed' } });
+    } finally { log.mockRestore(); }
+  });
+  test.each(['SUMIF(1,2)', 'MYROUND(1,2)', 'constructor()', 'toString()'])('rejects names outside the selected catalog: %s', formula => {
+    const result = analyzeFormula(formula);
+    expect(result.ok).toBe(false);
+    expect(result.diagnostics).toContainEqual(expect.objectContaining({ level: 'error', code: 'function_unknown' }));
+  });
+  test('accepts exact mixed-case names and uses the supplied catalog as the function list', () => {
+    expect(analyzeFormula('UserBuilder("user-id")').ok).toBe(true);
+    const metadata = { ...builtin, functions: { ROUND: builtin.functions.ROUND } };
+    expect(analyzeFormula('ROUND(1,2)', { metadata }).ok).toBe(true);
+    expect(analyzeFormula('SUM(1,2)', { metadata }).ok).toBe(false);
+    expect(analyzeFormula('ROUND(1,2)', { metadata: { ...metadata, functions: { NEWROUND: builtin.functions.ROUND } } }).ok).toBe(false);
   });
   test('checks usage location and target type', () => {
     expect(codes(analyzeFormula('INSERT("x")'))).toContain('function_context');

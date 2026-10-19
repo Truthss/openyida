@@ -16,6 +16,7 @@ const metadata = { success: true, content: { expressionMapping: Object.fromEntri
 describe('formula platform commands', () => {
   let directory, dataFile, get, postFormOnce, log;
   beforeEach(() => {
+    getFormSchema.mockClear();
     directory = fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-formula-'));
     dataFile = path.join(directory, 'data.json');
     fs.writeFileSync(dataFile, JSON.stringify({ numberField_amount: 12.345 }));
@@ -53,9 +54,24 @@ describe('formula platform commands', () => {
     await expect(run('test', ['APP_TEST', 'FORM_TEST', 'ROUND(1,2)', '--data-file', dataFile, '--expect', '12.35'])).rejects.toThrow();
     expect(postFormOnce).toHaveBeenCalledTimes(1);
   });
-  test.each(['INSERT("x")', 'IF(TRUE(),1,UPDATE("x"))', 'NEWFUNCTION()', 'ROUND(1,2,3,4)', 'ROUND(#{numberField_missing},2)'])('blocks unsafe or invalid test before evaluation: %s', async formula => {
+  test.each(['INSERT("x")', 'IF(TRUE(),1,UPDATE("x"))', 'NEWFUNCTION()', 'round(1,2)', 'USERBUILDER("u")', 'ROUND(1,2,3,4)', 'ROUND(#{numberField_missing},2)'])('blocks unsafe or invalid test before evaluation: %s', async formula => {
     await expect(run('test', ['APP_TEST', 'FORM_TEST', formula, '--data-file', dataFile])).rejects.toThrow();
     expect(postFormOnce).not.toHaveBeenCalled();
+  });
+  test('queries exact component mappings without reading or evaluating a form', async () => {
+    const result = await run('types', ['APP_TEST', '--component', 'NumberField', '--json']);
+    expect(result).toMatchObject({ success: true, runtimeVerified: false,
+      components: [{ componentName: 'NumberField', valueTypes: builtin.components.NumberField }] });
+    expect(result.source.kind).toBe('platform-metadata');
+    expect(getFormSchema).not.toHaveBeenCalled();
+    expect(postFormOnce).not.toHaveBeenCalled();
+    await expect(run('types', ['APP_TEST', '--component', 'numberfield'])).rejects.toThrow();
+  });
+  test('lists metadata component types and rejects unrelated options', async () => {
+    const result = await run('types', ['APP_TEST']);
+    expect(result.components).toHaveLength(Object.keys(builtin.components).length);
+    expect(log).toHaveBeenCalledWith(expect.stringContaining('DateField —'));
+    await expect(run('types', ['APP_TEST', '--field', 'x'])).rejects.toThrow();
   });
   test('requires referenced data and parses the expectation before any evaluation', async () => {
     fs.writeFileSync(dataFile, '{}');

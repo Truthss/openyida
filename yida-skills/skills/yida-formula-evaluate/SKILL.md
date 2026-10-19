@@ -21,6 +21,7 @@ description: 检查宜搭公式的语法、字段引用和常见错误。适用�
 | 有哪些保存方式，哪些已接入检查器 | `formula contracts --json` |
 | 字段保存了什么公式 | `formula inspect APP FORM --json` |
 | 函数需要什么参数 | `formula functions APP --name ROUND --json` |
+| 字段组件支持哪些值类型 | `formula types APP --component NumberField --json`，组件名从 Schema 读取 |
 | 公式写法、参数和字段引用有没有问题 | `formula check`，旧命令 `formula evaluate` 继续做本地检查 |
 | 通用表达式接口对这份输入返回什么 | `formula test` |
 | 已存字段公式能否正确绑定并得到目标值 | `formula test APP FORM --field 字段ID --data-file data.json --expect JSON` |
@@ -82,7 +83,7 @@ openyida formula check formula.txt --contract field-value --schema schema.json -
 | `fullwidth_punctuation` / `semicolon_argument_separator` | 公式结构中用了中文标点或分号。括号、引号和参数逗号改为英文半角；引号内正常的中文文本保留 |
 | `parenthesis_unclosed` / `parenthesis_extra_close` / `string_unclosed` | 括号或引号不成对。逐层补全或移除多余符号；嵌套 IF 同时核对条件、满足值、不满足值三个参数 |
 | `syntax_invalid` | 表达式无法解析。按报错位置检查漏写的参数、逗号、括号或引号；先让最内层公式完整，再拼接外层 |
-| `function_unknown` / `function_case` | 函数未收录或大小写不符。用 `formula functions APP --name 函数名 --json` 查询，并核对目标编辑器菜单；按实际名称填写。未确认时保留待验证状态 |
+| `function_unknown` / `function_case` | 当前列表中没有该公式函数名，或大小写不符，检查会报错。用 `formula functions APP --json` 查询列表，并核对目标编辑器菜单；逐字照抄名称，保持大小写。更新平台元数据后仍未列出的函数不能自行构造 |
 | `argument_count` | 参数数量不对。按查询结果补齐必填参数或去掉多余参数，例如 `ROUND(12.345, 2)` |
 | `argument_type` / `same_type` / `target_type` | 参数之间或返回结果与字段类型不匹配。核对原始值；数字文本按需用 `VALUE` 转数字，成员字段使用成员结构，金额字段返回数字 |
 | `target_branches` / `numeric_result_text` | IF 分支类型混合，或数值目标可能收到文本。逐个检查分支，让金额分支都返回数字，并分别带样例试算 |

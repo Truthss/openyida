@@ -8,6 +8,10 @@ openyida formula functions APP_XXX --name ROUND --context form --json
 
 `required` 是必填参数类型，`optional` 是可选参数类型，`variadic` 表示可继续添加参数，`result` 是结果类型。函数清单会随平台更新，本页提供常用例子。
 
+公式函数名按可用列表逐字填写，大小写保持不变；`ROUND` 与 `Round`、`UserBuilder` 与 `USERBUILDER` 是不同名称。只组合目标配置提供的函数，不自行改造函数名或添加自定义公式函数。CLI 对大小写不符和列表外的调用报错；更新元数据后按新列表检查。这条规则针对公式语法中的函数调用，页面 JavaScript 自定义函数另按代码规则处理。
+
+本页公式里的字段 ID 是示例。使用前从目标表单 Schema 的组件 `props.fieldId` 取得真实值并逐项替换；新字段创建后再取 ID。`UUID()` 生成业务编号，不能用来生成表单 `formUuid` 或组件字段 ID。
+
 ## 完整分类索引
 
 以下列出 CLI 内置参考清单中的 108 个名称，便于按用途查找；它是参考索引，不表示当前组织或每个编辑器都开放全部函数。先找函数，再用上面的命令查询参数和当前配置的可用范围。大小写按表保留。
@@ -75,7 +79,7 @@ openyida formula functions APP_XXX --name ROUND --context form --json
 | 按条件返回不同值 | `IF(GT(#{numberField_total},100), "高", "低")` |
 | 多个条件同时满足 | `AND(GE(#{numberField_age},18), LE(#{numberField_age},60))` |
 | 任一条件满足 | `OR(EQ(#{textField_status},"通过"), EQ(#{textField_status},"免审"))` |
-| 空备注显示默认文本 | `IF(ISEMPTY(#{textField_remark}), "无备注", #{textField_remark})` |
+| 空备注显示默认文本 | 在另一个输出字段配置 `IF(ISEMPTY(#{textField_remark}), "无备注", #{textField_remark})`，避免当前字段引用自身 |
 
 ## 文本
 

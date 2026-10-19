@@ -601,6 +601,7 @@ Your AI prepares the summary from observed evidence and selected reproduction sc
 | `openyida formula check <formula\|file> [--schema file] [--contract field-value\|validation-rule\|business-action\|node-expression] [--context form\|validation\|automation\|business] [--target-type NumberField] [--metadata file] [--strict] [--json]` | Check formula syntax, fields, arguments and types |
 | `openyida formula contracts [--json]` | Show formula formats and checker coverage |
 | `openyida formula functions <appType> [--name IF] [--context form] [--output file] [--json]` | Read Yida formula functions and signatures |
+| `openyida formula types <appType> [--component NumberField] [--json]` | Query formula component value types |
 | `openyida formula inspect <appType> <formUuid> [--field fieldId] [--json]` | Inspect configured form field formulas |
 | `openyida formula test <appType> <formUuid> [formula\|file] [--data-file file \| --cases file] [--field fieldId] [--timezone-offset minutes] [--context form\|validation] [--binding platform\|numeric-literals] [--expect JSON] [--json]` | Evaluate a non-writing formula in Yida and compare its result |
 | `openyida update` | Check and update to latest version |
