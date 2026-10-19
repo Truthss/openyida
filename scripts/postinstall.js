@@ -307,6 +307,8 @@ openyida copy
 
 ## 子技能目录
 
+原生数据卡片仅在用户显式指定宜搭原生数据卡片，或继续已明确的原生卡片操作时加载 \`yida-data-card\`。泛称卡片、指标卡、看板、投放或数据播报不触发；完整应用搭建也不自动添加该资源。自定义页面内的卡片随页面发布；页面虽有 CARD 引用，只改外层仍属页面任务，明确修改源卡片才进入原生卡片技能。
+
 根据用户意图先命中一个大类目录，再选择最匹配的子技能。支持 \`use_skill\` / \`search_skills\` 的宿主中，必须调用 \`use_skill("<技能名>", "<本次目的>")\` 加载子技能；不要用 Read / read_file / cat 读取 SKILL.md 路径，也不要猜测 .skills、插件缓存或 workspace/project/.skills。\`skills-index.json\` 的 \`route_groups\` 与下表一致，供 yida-agent 或同构宿主做机器路由。机器路由推荐顺序：先用 \`route_groups[].signals\` 命中 \`yida-skills/<area>\` 大类，只在该 \`category\` 下用 skill 的 description/tags/signals 精排，再调用 \`use_skill\`。完全没有 \`use_skill\` 的本地工具，才允许按根技能路由表选定技能，并按 \`skills/<技能名>/SKILL.md\` 定位当前阶段唯一必要的 SKILL.md，禁止并发批量读取多个 SKILL.md。
 
 | 大类目录 | 第一层意图信号 | 子技能 |
@@ -317,7 +319,7 @@ openyida copy
 | \`yida-skills/form\` | 表单字段、公式、校验、业务规则、批量录入、数据记录、日期为空、日期区间筛选 | \`yida-create-form-page\`, \`yida-formula\`, \`yida-formula-evaluate\`, \`yida-business-rule\`, \`yida-canvas-table-form\`, \`yida-table-form\`, \`yida-data-management\` |
 | \`yida-skills/process\` | 审批、流程表单、流程规则、代理人 | \`yida-create-process\`, \`yida-process-rule\`, \`yida-agent-center\` |
 | \`yida-skills/page\` | 自定义展示页、YidaCodeCanvas 组件、dataBinding、DataBridge、轮询刷新列表或 KPI、历史平台 JSX 组件页面维护、发布、导航壳、PPT | \`yida-create-page\`, \`yida-canvas-custom-page\`, \`yida-custom-page\`, \`yida-canvas-data-binding\`, \`yida-canvas-upgrade\`, \`yida-publish-page\`, \`yida-openyida-publish-guard\`, \`yida-density\`, \`yida-nav-shell\`, \`yida-ppt-slider\` |
-| \`yida-skills/analytics\` | 报表、统计、图表、Recharts、ECharts、看板、驾驶舱 | \`yida-report\`, \`yida-rechart\`, \`yida-chart\`, \`yida-dashboard\` |
+| \`yida-skills/analytics\` | 用户显式指定宜搭原生数据卡片；报表、统计、图表、Recharts、ECharts、看板、驾驶舱 | \`yida-data-card\`, \`yida-report\`, \`yida-rechart\`, \`yida-chart\`, \`yida-dashboard\` |
 | \`yida-skills/integration\` | 连接器、钉钉开放平台、外部 API、数据源、集成自动化 | \`yida-integration\`, \`yida-dingtalk-openapi\`, \`yida-connector\`, \`yida-connector-safe-actions\`, \`yida-data-source-connectors\` |
 | \`yida-skills/access\` | 平台/应用/表单/页面权限、公开访问、分享 | \`yida-corp-manager\`, \`yida-app-permission\`, \`yida-form-permission\`, \`yida-page-config\` |
 | \`yida-skills/ops\` | Sequence、VOC、OpenYida 故障、Issue/Fork PR | \`yida-db-seq-fix\`, \`yida-voc\`, \`yida-feedback\` |

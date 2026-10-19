@@ -51,7 +51,11 @@ const path = require('path');
 // on Node 22; retain the next 16 KiB boundary across compression runtimes.
 // Merged formula and personal-workflow capabilities measure 2,504,841 compressed
 // bytes on Node 20. Retain less than 32 KiB of cross-runtime gzip headroom.
-const MAX_TARBALL_BYTES = 2464 * 1024;
+// PR #638 merged with main: Node 20.20.2 measures 2,496,932 compressed
+// bytes. Round to the next 16 KiB boundary with less than 16 KiB headroom.
+// Combined personal-workflow and native data-card content measures 2,528,519
+// compressed bytes on Node 20; retain the next 16 KiB boundary.
+const MAX_TARBALL_BYTES = 2480 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.
@@ -99,6 +103,12 @@ const MAX_TARBALL_BYTES = 2464 * 1024;
 // Portable workflow readers, optional progress/filter components and their guide
 // measure about 9.15 MB unpacked / 712 files on Node 20. Compression remains
 // within the existing cap; retain the next 16 KiB unpacked boundary.
+// Native data cards add two CLI modules, one skill and 12-locale help (~9.07 MB total).
+// Retain the next 16 KiB boundary; the tarball and per-file caps stay unchanged.
+// Native multi-chart builder and its self-contained configuration guide measure
+// 9,086,358 unpacked bytes / 705 entries on Node 26; next 16 KiB boundary.
+// Broadcast runtime and its self-contained skill reference add ~21 KiB; next 16 KiB boundary.
+// Explicit native-card routing guidance is present in both host rules and skill metadata.
 // Offline feedback adds one runtime module and four skill/reference files.
 // Combined formula/feedback content retains the next 16 KiB boundary.
 // Native field-runtime binding and its complete regression examples:
@@ -111,7 +121,10 @@ const MAX_TARBALL_BYTES = 2464 * 1024;
 // 713 files. Keep the compressed and single-file caps unchanged.
 // Combined formula and workflow content measures 9,309,589 unpacked bytes;
 // retain the next 16 KiB boundary for the merged package.
-const MAX_UNPACKED_BYTES = 9104 * 1024;
+// PR #638 plus main: 9,278,325 unpacked bytes on Node 20; next 16 KiB boundary.
+// The combined package measures 9,387,803 unpacked bytes. Retain less than
+// 32 KiB headroom across supported packaging runtimes; per-file limits stay fixed.
+const MAX_UNPACKED_BYTES = 9184 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -126,12 +139,17 @@ const MAX_UNPACKED_BYTES = 9104 * 1024;
 // Main adds the shared integration detail-log module.
 // Portable task lookup options add one runtime module.
 // Native form-view runtime and self-contained skill add two packaged files.
+// Native form-view runtime and self-contained skill add two packaged files.
+// Native card management and application setting links add exactly three packaged files.
+// Native broadcast support adds exactly two packaged files.
 // Formula support and offline feedback reports bring the total to 709 files.
 // Formula runtime/examples bring it to 711; native form views add two files.
 // Shared formula CLI/manifest/help parameter definitions add one runtime file.
 // Node 22: 2,469,301 compressed / 9,198,911 unpacked bytes; byte caps unchanged.
 // The combined formula and workflow package contains 726 published files.
-const MAX_ENTRY_COUNT = 726;
+// Native data-card runtime, skills and references add seven files to main.
+// The merged workflow and native data-card package contains 733 files.
+const MAX_ENTRY_COUNT = 733;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [

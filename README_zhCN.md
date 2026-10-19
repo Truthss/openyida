@@ -325,6 +325,8 @@ openyida feedback report --input summary.json --output-dir feedback-draft-001
 
 | 命令 | 说明 |
 |------|------|
+| `openyida app-settings <appType> [--section theme\|basic\|data-card] [--json]` | 获取主题、业务前后台和原生数据卡片管理入口 |
+| `openyida data-card <list\|create\|get\|save\|publish\|probe\|release-get\|release-save\|release-check\|release-test\|refs> <appType> [cardCode] [--name <title>] [--description <text>] [--schema <file>\|--config <file>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--published\|--version <version>] [--page <n>] [--size <n>] [--search <text>] [--allow-send] [--json]` | 创建、配置、发布原生数据卡片并管理投放播报 |
 | `openyida app-entry get <appType> [--json]` | 读取应用前台和业务工作台入口 |
 | `openyida app-entry set <appType> [--frontend <url>\|--frontend-page <formUuid>] [--management <url>\|--management-page <formUuid>] [--clear-frontend] [--clear-management] [--json]` | 登记应用访问入口（局部更新并回读） |
 | `openyida app-list [--type managed\|created] [--page N] [--size N]` | 分页查询我管理的或我创建的应用 |

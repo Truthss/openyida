@@ -10,6 +10,8 @@ description: >
 
 面向用户只介绍主题名称、风格特点和选择方式；说明文档、选择提示及交付总结均不展示主题总套数。
 
+用户询问“主题在哪里配置”“怎么进入主题配置”等设置入口，且没有要求实际修改外观时，执行 `openyida app-settings <appType> --section theme --json`，直接返回其中的 `url`，不进入美化方案确认。业务前后台配置入口使用 `--section basic`；原生数据卡片管理入口使用 `--section data-card`。均以目标应用的真实地址为准。
+
 已有资源的 UI 调整和美化后恢复，先进入 [ui-improve](sub_skill/ui-improve/SKILL.md)，再按其确认、备份和业务保留约束使用下方设计规则。
 
 先读已有需求、设计和应用主题，确定哪些地方需要调整。优先使用平台已有的主题变量，只在表达不了所需效果时新增变量，并写清哪些组件使用它；见 [主题扩展规则](references/application-theme-consistency.md#平台基础变量是应用主题基础框架)。

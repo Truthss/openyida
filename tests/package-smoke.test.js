@@ -33,6 +33,14 @@ describe('npm package smoke', () => {
     expect(getPackageBudgetErrors({ size: 2504841, unpackedSize: 9309589, entryCount: 726 })).toEqual([]);
   });
 
+  test.each([
+    ['original PR 638', { size: 2444722, unpackedSize: 9113751, entryCount: 707 }],
+    ['PR 638 merged with main', { size: 2496932, unpackedSize: 9278325, entryCount: 721 }],
+    ['native cards combined with personal workflow', { size: 2528519, unpackedSize: 9387803, entryCount: 733 }],
+  ])('package budget covers the native data-card Node 20 artifact: %s', (_name, artifact) => {
+    expect(getPackageBudgetErrors(artifact)).toEqual([]);
+  });
+
   test.each(['size', 'unpackedSize', 'entryCount'])('package budgets reject %s above its boundary', field => {
     expect(getPackageBudgetErrors({ ...budgetLimit, [field]: budgetLimit[field] + 1 })).toHaveLength(1);
   });

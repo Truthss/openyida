@@ -26,6 +26,8 @@
 
 ## 应用与组织管理
 
+原生数据卡片支持 `data-card list/create/get/save/publish/probe`，可导出完整 Schema、备份保存草稿并独立发布；`save --config` 从真实表单字段搭建九类原生组件、多指标和同源下拉筛选，probe 逐组件核对运行时数据；单卡最多五个图表。配置字段及图表使用原生数据模型，详见[数据卡片指南](guides/data-cards.md)。投放另有 `release-get/release-save/release-check/release-test/refs`，支持播报配置、启停、显式测试发送和使用记录，群安装仍需钉钉客户端确认，门户暂不自动挂载。`app-settings <appType> --section theme|basic|data-card --json` 返回目标应用的主题、业务前后台配置或数据卡片管理入口。
+
 | 功能 | 执行操作 |
 |---|---|
 | 查询我管理的或我创建的应用（手动分页） | `openyida app-list [--type managed\|created] [--page N] [--size N]` |
