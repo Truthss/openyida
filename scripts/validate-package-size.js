@@ -136,7 +136,10 @@ const MAX_TARBALL_BYTES = 2512 * 1024;
 // 32 KiB headroom across supported packaging runtimes; per-file limits stay fixed.
 // Combined package: 9,377,402 unpacked bytes on Node 20; next 16 KiB boundary.
 // The merged package measures 9,493,590 unpacked bytes; next 16 KiB boundary.
-const MAX_UNPACKED_BYTES = 9280 * 1024;
+// Native zero-value configuration adds two runtime modules and a skill guide:
+// Independent category/legend choices and ask-human guidance bring this to
+// 9,521,185 unpacked bytes / 741 files on Node 26; next 16 KiB boundary.
+const MAX_UNPACKED_BYTES = 9312 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -163,7 +166,8 @@ const MAX_UNPACKED_BYTES = 9280 * 1024;
 // Native data-card runtime, skills and references add seven files to main.
 // The merged workflow and native data-card package contains 733 files.
 // The combined workflow, data-card and cool-card package contains 738 files.
-const MAX_ENTRY_COUNT = 738;
+// Zero-value configuration adds exactly two runtime files and one skill reference.
+const MAX_ENTRY_COUNT = 741;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
