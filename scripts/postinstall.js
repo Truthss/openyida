@@ -307,7 +307,7 @@ openyida copy
 
 ## 子技能目录
 
-原生数据卡片仅在用户显式指定宜搭原生数据卡片，或继续已明确的原生卡片操作时加载 \`yida-data-card\`。泛称卡片、指标卡、看板、投放或数据播报不触发；完整应用搭建也不自动添加该资源。
+原生数据卡片仅在用户显式指定宜搭原生数据卡片，或继续已明确的原生卡片操作时加载 \`yida-data-card\`。泛称卡片、指标卡、看板、投放或数据播报不触发；完整应用搭建也不自动添加该资源。自定义页面内的卡片随页面发布；页面虽有 CARD 引用，只改外层仍属页面任务，明确修改源卡片才进入原生卡片技能。
 
 根据用户意图先命中一个大类目录，再选择最匹配的子技能。支持 \`use_skill\` / \`search_skills\` 的宿主中，必须调用 \`use_skill("<技能名>", "<本次目的>")\` 加载子技能；不要用 Read / read_file / cat 读取 SKILL.md 路径，也不要猜测 .skills、插件缓存或 workspace/project/.skills。\`skills-index.json\` 的 \`route_groups\` 与下表一致，供 yida-agent 或同构宿主做机器路由。机器路由推荐顺序：先用 \`route_groups[].signals\` 命中 \`yida-skills/<area>\` 大类，只在该 \`category\` 下用 skill 的 description/tags/signals 精排，再调用 \`use_skill\`。完全没有 \`use_skill\` 的本地工具，才允许按根技能路由表选定技能，并按 \`skills/<技能名>/SKILL.md\` 定位当前阶段唯一必要的 SKILL.md，禁止并发批量读取多个 SKILL.md。
 
