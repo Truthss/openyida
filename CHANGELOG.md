@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-## [2026.10.19-1] - 2026-10-19
+## [2026.10.19] - 2026-10-19
 
 在 2026.10.18-3 基础上，补齐原生数据管理页的视图查询与配置能力，支持为同一表单设置不同的列表视图，并修复 Canvas 动态属性访问的编译误判。
 
