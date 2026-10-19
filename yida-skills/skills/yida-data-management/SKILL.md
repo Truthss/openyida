@@ -250,8 +250,8 @@ openyida data query tasks <appType> --type todo|created|done|cc --normalized [--
 | 接口 | 说明 |
 |------|------|
 | `getTodoTasksInApp` | 待办 |
-| `getDoneTasksInApp` | 我已处理 |
-| `getMySubmitInApp` | 我创建的普通表单与流程 |
+| `getDoneTasksInApp` | 已完成 |
+| `getMySubmitInApp` | 已提交 |
 | `getNotifyMeTasksInApp` | 抄送 |
 
 ## 数据格式
