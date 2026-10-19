@@ -28,14 +28,10 @@ beforeEach(() => {
     }),
   };
 });
-afterEach(() => {
-  jest.restoreAllMocks();
-  fs.rmSync(dir, { recursive: true, force: true });
-});
+afterEach(() => fs.rmSync(dir, { recursive: true, force: true }));
 
 test('reads complex nested components and variables while preserving the exact raw template snapshot', async () => {
   const out = path.join(dir, 'snapshot.json');
-  const write = jest.spyOn(fs, 'writeFileSync');
   const result = await execute(args('get', ['--out', out]), client);
   expect(client.get).toHaveBeenCalledWith('/APP_TEST/query/cardDesign/getCardSchema.json', { cardAppId: 'APP_TEST', cardPageCode: 'form123' });
   expect(result.components).toEqual(['BaseText', 'Card', 'Grid', 'Loop']);
@@ -43,11 +39,8 @@ test('reads complex nested components and variables while preserving the exact r
   expect(result.template.widgetInfo).toEqual({ original: true });
   expect(result.editorData.unknown.preserve).toBe(true);
   expect(JSON.parse(fs.readFileSync(out)).card.cardSchema).toBe(card.cardSchema);
-  expect(write).toHaveBeenCalledWith(out, expect.any(String), { mode: 0o600, flag: 'wx' });
-  // Windows does not expose POSIX owner/group permission bits through stat.
-  if (process.platform !== 'win32') {
-    expect(fs.statSync(out).mode & 0o777).toBe(0o600);
-  }
+  // Windows reports synthesized mode bits rather than POSIX owner/group permissions.
+  if (process.platform !== 'win32') { expect(fs.statSync(out).mode & 0o777).toBe(0o600); }
   expect(result.capabilities).toMatchObject({ save: false, publish: false, send: false });
   expect(result).toMatchObject({ readbackVerified: true, configurationVerified: false, deliveryVerified: false });
   expect(result.urls.editorUrl).toContain('scene=yida_card&bizId=APP_TEST.form123');
@@ -55,6 +48,17 @@ test('reads complex nested components and variables while preserving the exact r
     url: 'https://tenant.aliwork.com/APP_TEST/admin/appSetting/coolCardManage',
     verificationCommand: 'openyida cool-card get APP_TEST form123 --json' });
   expect(client.postFormOnce).not.toHaveBeenCalled();
+});
+test('exports snapshots with owner-only mode requested and exclusive creation on every platform', async () => {
+  const out = path.join(dir, 'secure-snapshot.json');
+  const writeFile = jest.spyOn(fs, 'writeFileSync');
+  try {
+    await execute(args('get', ['--out', out]), client);
+    expect(writeFile).toHaveBeenCalledWith(out, expect.any(String), { mode: 0o600, flag: 'wx' });
+    expect(JSON.parse(fs.readFileSync(out)).card.cardSchema).toBe(card.cardSchema);
+  } finally {
+    writeFile.mockRestore();
+  }
 });
 test.each(['im', 'onebox'])('creates a %s resource with only name and type, once, and verifies it', async type => {
   const result = await execute(args('create', ['--name', '验证', '--type', type]), client);
