@@ -5,6 +5,16 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  custom_button: {
+    "usage": "Usage: openyida custom-button <list|inspect|options|create|update|delete> <appType> <formUuid> [buttonUuid] [--config <file>] [--expected-hash <hash>] [--backup <file>] [--yes] [--json]",
+    "invalid_config": "無効な設定または引数：{0}",
+    "invalid_response": "ボタン設定の応答が不完全です：{0}",
+    "api_error": "ボタン API が失敗しました：{0}。ログイン、権限、エディションを確認してください。",
+    "not_found": "対象フォームにボタンがありません：{0}",
+    "conflict": "設定が変更されました。再取得してください。",
+    "limit": "フォームごとに最大10個のボタンを設定できます。",
+    "readback_mismatch": "保存内容と再取得内容が一致しません。バックアップを保持し、リモート状態を確認してください。"
+  },
   dws_external: {"note": "dws is an independent external tool. OpenYida only shows installation instructions; it does not download or install it.", "install_guide": "Show official DingTalk CLI installation instructions"},
   cool_card: {"description": "Create and read native YiDA cool cards (interactive and pinned)", "usage": "Usage: openyida cool-card <list|templates|create|get> <appType> [cardPageCode] [--type im|onebox] [--name <title>] [--page <n>] [--size <n>] [--search <text>] [--out <file>] [--json]", "failed": "Native cool card operation stopped: {0}"},
   data_card: {"description":"Create, read, save drafts and publish native YiDA data cards","usage":"Usage: openyida data-card <list|create|get|save|publish|probe|release-get|release-save|release-check|release-test|refs> <appType> [cardCode] [--name <title>] [--description <text>] [--schema <file>|--config <file>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--published|--version <version>] [--page <n>] [--size <n>] [--search <text>] [--allow-send] [--json]","failed":"Native data card operation stopped: {0}","conflict":"The draft changed. Read it again before saving or publishing.","mismatch":"Readback does not match the expected schema or published state. Keep the backup and inspect the card before retrying."},
@@ -75,6 +85,7 @@ module.exports = {
     invalidStrategy: "画像の要件は、ページごとの画像の配置を記述したオブジェクトで指定してください。",
   },
   help: {
+    cmd_custom_button: "カスタムボタン：フォーム編集、自動化フロー、ページリンクの設定",
     cmd_check_design: 'デザイン文書、テーマ変数、PRD の引き継ぎを検証',
     subtitle: '宜搭ローコード AI 開発ツール',
     usage: '使用方法:',

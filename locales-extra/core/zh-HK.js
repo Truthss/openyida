@@ -6,6 +6,16 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  custom_button: {
+    "usage": "Usage: openyida custom-button <list|inspect|options|create|update|delete> <appType> <formUuid> [buttonUuid] [--config <file>] [--expected-hash <hash>] [--backup <file>] [--yes] [--json]",
+    "invalid_config": "配置或參數無效：{0}",
+    "invalid_response": "平台傳回的按鈕配置不完整：{0}",
+    "api_error": "自訂按鈕接口失敗：{0}。請檢查登入、權限和版本支援。",
+    "not_found": "目標表單中沒有此按鈕：{0}",
+    "conflict": "配置已變更，請重新查詢後再儲存。",
+    "limit": "每個表單最多支援 10 個自訂按鈕。",
+    "readback_mismatch": "儲存配置與回讀不一致，請保留備份並檢查遠端狀態。"
+  },
   dws_external: {"note": "dws is an independent external tool. OpenYida only shows installation instructions; it does not download or install it.", "install_guide": "Show official DingTalk CLI installation instructions"},
   cool_card: {"description": "Create and read native YiDA cool cards (interactive and pinned)", "usage": "Usage: openyida cool-card <list|templates|create|get> <appType> [cardPageCode] [--type im|onebox] [--name <title>] [--page <n>] [--size <n>] [--search <text>] [--out <file>] [--json]", "failed": "Native cool card operation stopped: {0}"},
   data_card: {"description":"创建、读取、保存草稿和发布宜搭原生数据卡片","usage":"用法： openyida data-card <list|create|get|save|publish|probe|release-get|release-save|release-check|release-test|refs> <appType> [cardCode] [--name <title>] [--description <text>] [--schema <file>|--config <file>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--published|--version <version>] [--page <n>] [--size <n>] [--search <text>] [--allow-send] [--json]","failed":"原生数据卡片操作已停止：{0}","conflict":"卡片草稿已发生变化，请重新读取后再保存或发布。","mismatch":"回读配置或发布状态与预期不一致，请保留备份并检查卡片后再重试。"},
@@ -76,6 +86,7 @@ module.exports = {
     invalidStrategy: "圖片要求應填寫為物件，按頁面列出圖片位置。",
   },
   help: {
+    cmd_custom_button: "原生自訂按鈕：查詢與配置表單、流程和頁面跳轉",
     cmd_check_design: '檢查設計文件、主題變數與 PRD 交接',
     subtitle: '宜搭低程式碼 AI 開發工具',
     usage: '用法:',

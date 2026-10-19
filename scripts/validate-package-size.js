@@ -61,7 +61,7 @@ const path = require('path');
 // 2,517,672 compressed bytes; retain the next 16 KiB boundary.
 // Combined personal workflows, native data cards and cool-card tooling measure
 // 2,552,878 compressed bytes on Node 20; retain less than 32 KiB runtime headroom.
-const MAX_TARBALL_BYTES = 2512 * 1024;
+const MAX_TARBALL_BYTES = 2528 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.
@@ -136,10 +136,15 @@ const MAX_TARBALL_BYTES = 2512 * 1024;
 // 32 KiB headroom across supported packaging runtimes; per-file limits stay fixed.
 // Combined package: 9,377,402 unpacked bytes on Node 20; next 16 KiB boundary.
 // The merged package measures 9,493,590 unpacked bytes; next 16 KiB boundary.
+// Custom buttons merged with personal workflows and native cards:
+// Node 22 measures 9,526,388 unpacked bytes / 740 files. Next 16 KiB boundary.
 // Native zero-value configuration adds two runtime modules and a skill guide:
 // Independent category/legend choices and ask-human guidance bring this to
 // 9,521,185 unpacked bytes / 741 files on Node 26; next 16 KiB boundary.
-const MAX_UNPACKED_BYTES = 9312 * 1024;
+// Combined buttons, live-test fixes and report controls (Node 22):
+// 2,573,647 compressed bytes / 9,556,794 unpacked bytes / 743 files.
+// Keep less than 16 KiB compressed headroom and the next 16 KiB unpacked boundary.
+const MAX_UNPACKED_BYTES = 9344 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -166,11 +171,13 @@ const MAX_UNPACKED_BYTES = 9312 * 1024;
 // Native data-card runtime, skills and references add seven files to main.
 // The merged workflow and native data-card package contains 733 files.
 // The combined workflow, data-card and cool-card package contains 738 files.
-// Zero-value configuration adds exactly two runtime files and one skill reference.
-const MAX_ENTRY_COUNT = 741;
+// Custom buttons and native report zero-value controls add five packaged files.
+const MAX_ENTRY_COUNT = 743;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
+  'lib/app/custom-button.js',
+  'yida-skills/skills/yida-custom-button/SKILL.md',
   'lib/task-center/workflow.js',
   'lib/task-center/workflow-loader.js',
   'lib/samples/yida-task-center/progress.canvas.jsx',

@@ -106,6 +106,19 @@ test('native form views stay in the bound app and classify only actual mutation 
   expect(() => run('form-view', ['delete', 'APP_BOUND', 'FORM-x'])).toThrow(expect.objectContaining({ code: 'MANAGED_COMMAND_UNSUPPORTED' }));
 });
 
+test('native custom buttons stay within the bound app and classify only mutations', () => {
+  for (const action of ['list', 'inspect', 'options', 'create', 'update', 'delete']) {
+    expect(run('custom-button', [action, 'APP_BOUND', 'FORM-x', 'BUTTON-x'])).toMatchObject({ appType: 'APP_BOUND' });
+    expect(() => run('custom-button', [action, 'APP_OTHER', 'FORM-x']))
+      .toThrow(expect.objectContaining({ code: 'MANAGED_APP_MISMATCH' }));
+    expect(classifyManagedMutation('custom-button', [action, 'APP_BOUND', 'FORM-x'])).toEqual(
+      ['list', 'inspect', 'options'].includes(action) ? null : { operation: 'update_form', formUuid: 'FORM-x' }
+    );
+  }
+  expect(() => run('custom-button', ['execute', 'APP_BOUND', 'FORM-x']))
+    .toThrow(expect.objectContaining({ code: 'MANAGED_COMMAND_UNSUPPORTED' }));
+});
+
 test('native cards and settings enforce the bound app with app-level mutation receipts', () => {
   for (const action of ['list', 'get', 'probe', 'create', 'save', 'publish', 'release-get', 'release-check', 'refs', 'release-save']) {
     expect(run('data-card', [action, 'APP_BOUND', 'CARD-x'])).toMatchObject({ appType: 'APP_BOUND' });

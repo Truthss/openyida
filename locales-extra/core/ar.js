@@ -5,6 +5,16 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  custom_button: {
+    "usage": "Usage: openyida custom-button <list|inspect|options|create|update|delete> <appType> <formUuid> [buttonUuid] [--config <file>] [--expected-hash <hash>] [--backup <file>] [--yes] [--json]",
+    "invalid_config": "إعداد أو وسيطة غير صالحة: {0}",
+    "invalid_response": "استجابة إعداد الزر غير مكتملة: {0}",
+    "api_error": "فشل واجهة الأزرار: {0}. تحقق من تسجيل الدخول والصلاحيات والإصدار.",
+    "not_found": "الزر غير موجود في النموذج المستهدف: {0}",
+    "conflict": "تغير الإعداد. أعد قراءته قبل الحفظ.",
+    "limit": "يدعم النموذج 10 أزرار مخصصة كحد أقصى.",
+    "readback_mismatch": "الإعداد المحفوظ لا يطابق القراءة. احتفظ بالنسخة الاحتياطية وافحص الحالة البعيدة."
+  },
   dws_external: {"note": "dws is an independent external tool. OpenYida only shows installation instructions; it does not download or install it.", "install_guide": "Show official DingTalk CLI installation instructions"},
   cool_card: {"description": "Create and read native YiDA cool cards (interactive and pinned)", "usage": "Usage: openyida cool-card <list|templates|create|get> <appType> [cardPageCode] [--type im|onebox] [--name <title>] [--page <n>] [--size <n>] [--search <text>] [--out <file>] [--json]", "failed": "Native cool card operation stopped: {0}"},
   data_card: {"description":"Create, read, save drafts and publish native YiDA data cards","usage":"Usage: openyida data-card <list|create|get|save|publish|probe|release-get|release-save|release-check|release-test|refs> <appType> [cardCode] [--name <title>] [--description <text>] [--schema <file>|--config <file>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--published|--version <version>] [--page <n>] [--size <n>] [--search <text>] [--allow-send] [--json]","failed":"Native data card operation stopped: {0}","conflict":"The draft changed. Read it again before saving or publishing.","mismatch":"Readback does not match the expected schema or published state. Keep the backup and inspect the card before retrying."},
@@ -75,6 +85,7 @@ module.exports = {
     invalidStrategy: "يجب أن تكون متطلبات الصور كائنًا يحدد مواضع الصور حسب الصفحة.",
   },
   help: {
+    cmd_custom_button: "أزرار مخصصة: تعديل النماذج والأتمتة وروابط الصفحات",
     cmd_check_design: 'التحقق من مستندات التصميم ومتغيرات السمة وتسليم PRD',
     subtitle: 'أداة تطوير الذكاء الاصطناعي منخفضة الكود لـ Yida',
     usage: 'الاستخدام:',

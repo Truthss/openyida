@@ -5,6 +5,16 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  custom_button: {
+    "usage": "Usage: openyida custom-button <list|inspect|options|create|update|delete> <appType> <formUuid> [buttonUuid] [--config <file>] [--expected-hash <hash>] [--backup <file>] [--yes] [--json]",
+    "invalid_config": "Configuração ou argumento inválido: {0}",
+    "invalid_response": "Resposta de configuração incompleta: {0}",
+    "api_error": "Falha na API de botões: {0}. Verifique login, permissões e edição.",
+    "not_found": "O botão não existe no formulário de destino: {0}",
+    "conflict": "A configuração mudou. Consulte novamente antes de salvar.",
+    "limit": "Um formulário suporta até 10 botões personalizados.",
+    "readback_mismatch": "A leitura difere do conteúdo salvo. Mantenha o backup e verifique o estado remoto."
+  },
   dws_external: {"note": "dws is an independent external tool. OpenYida only shows installation instructions; it does not download or install it.", "install_guide": "Show official DingTalk CLI installation instructions"},
   cool_card: {"description": "Create and read native YiDA cool cards (interactive and pinned)", "usage": "Usage: openyida cool-card <list|templates|create|get> <appType> [cardPageCode] [--type im|onebox] [--name <title>] [--page <n>] [--size <n>] [--search <text>] [--out <file>] [--json]", "failed": "Native cool card operation stopped: {0}"},
   data_card: {"description":"Create, read, save drafts and publish native YiDA data cards","usage":"Usage: openyida data-card <list|create|get|save|publish|probe|release-get|release-save|release-check|release-test|refs> <appType> [cardCode] [--name <title>] [--description <text>] [--schema <file>|--config <file>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--published|--version <version>] [--page <n>] [--size <n>] [--search <text>] [--allow-send] [--json]","failed":"Native data card operation stopped: {0}","conflict":"The draft changed. Read it again before saving or publishing.","mismatch":"Readback does not match the expected schema or published state. Keep the backup and inspect the card before retrying."},
@@ -75,6 +85,7 @@ module.exports = {
     invalidStrategy: "Os requisitos de imagens devem ser um objeto com as posições das imagens por página.",
   },
   help: {
+    cmd_custom_button: "Botões personalizados: formulários, automações e links",
     cmd_check_design: 'Validar documentos de design, variáveis do tema e entrega do PRD',
     subtitle: 'Ferramenta de desenvolvimento IA low-code para Yida',
     usage: 'Uso:',
