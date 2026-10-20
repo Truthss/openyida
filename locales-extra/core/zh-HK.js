@@ -21,6 +21,7 @@ module.exports = {
     "limit": "每個表單最多支援 10 個自訂按鈕。",
     "readback_mismatch": "儲存配置與回讀不一致，請保留備份並檢查遠端狀態。"
   },
+  form_message: {"usage":"用法：openyida form-message <list|inspect|options|create|update|delete> <appType> <formUuid> [messageId] [--config <文件>] [--expected-hash <哈希>] [--backup <文件>] [--yes] [--json]","invalid_config":"消息通知配置或參數無效：{0}","invalid_response":"平台返回的消息通知配置不完整：{0}","api_error":"表單消息通知接口失敗：{0}。請檢查登入、權限和版本。","not_found":"目標表單中不存在消息通知：{0}","conflict":"消息通知已變更，請重新查詢。","unsupported_trigger":"尚未驗證此觸發規則的寫入：{0}。","unsupported_form":"尚未驗證此表單類型的寫入：{0}。","readback_mismatch":"保存結果與回讀不一致，請保留備份並檢查遠端狀態。"},
   dws_external: {"note": "dws is an independent external tool. OpenYida only shows installation instructions; it does not download or install it.", "install_guide": "Show official DingTalk CLI installation instructions"},
   cool_card: {"unsupported_environment": "集團版不支援酷卡片搭建。", "description": "Create and read native YiDA cool cards (interactive and pinned)", "usage": "Usage: openyida cool-card <list|templates|create|get> <appType> [cardPageCode] [--type im|onebox] [--name <title>] [--page <n>] [--size <n>] [--search <text>] [--out <file>] [--json]", "failed": "Native cool card operation stopped: {0}"},
   data_card: {"description":"创建、读取、保存草稿和发布宜搭原生数据卡片","usage":"用法： openyida data-card <list|create|get|save|publish|probe|release-get|release-save|release-check|release-test|refs> <appType> [cardCode] [--name <title>] [--description <text>] [--schema <file>|--config <file>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--published|--version <version>] [--page <n>] [--size <n>] [--search <text>] [--allow-send] [--json]","failed":"原生数据卡片操作已停止：{0}","conflict":"卡片草稿已发生变化，请重新读取后再保存或发布。","mismatch":"回读配置或发布状态与预期不一致，请保留备份并检查卡片后再重试。"},
@@ -92,6 +93,7 @@ module.exports = {
   },
   help: {
     cmd_custom_button: "原生自訂按鈕：查詢與配置表單、流程和頁面跳轉",
+    cmd_form_message: "原生表單消息通知：觸發、接收對象與模板",
     cmd_check_design: '檢查設計文件、主題變數與 PRD 交接',
     subtitle: '宜搭低程式碼 AI 開發工具',
     usage: '用法:',

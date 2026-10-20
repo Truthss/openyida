@@ -154,7 +154,10 @@ const MAX_TARBALL_BYTES = 2560 * 1024;
 // on Node 26 before generated command docs; retain the next 16 KiB boundary.
 // Container-aware responsive diagnostics and the reusable Canvas scaffold add
 // two published files. Keep a small byte margin for npm metadata variance.
-const MAX_UNPACKED_BYTES = 9444 * 1024;
+// Native form-message management adds one runtime module plus its skill and reference:
+// Node 26 measures 9,701,121 unpacked bytes / 767 files. Keep the next 16 KiB
+// boundary; compressed and per-file caps remain unchanged.
+const MAX_UNPACKED_BYTES = 9488 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -183,7 +186,8 @@ const MAX_UNPACKED_BYTES = 9444 * 1024;
 // The combined workflow, data-card and cool-card package contains 738 files.
 // Custom buttons and native report zero-value controls add five packaged files.
 // Include the shared AI application eligibility helper merged from main.
-const MAX_ENTRY_COUNT = 764;
+// Native form-message management adds exactly three packaged files; retain two entries of headroom.
+const MAX_ENTRY_COUNT = 769;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -207,6 +211,9 @@ const REQUIRED_PACKAGE_FILES = [
   'yida-skills/skills/yida-print-template/references/scenarios.md',
   'lib/app/custom-button.js',
   'yida-skills/skills/yida-custom-button/SKILL.md',
+  'lib/app/form-message.js',
+  'yida-skills/skills/yida-form-message/SKILL.md',
+  'yida-skills/skills/yida-form-message/references/guide.md',
   'lib/task-center/workflow.js',
   'lib/task-center/workflow-loader.js',
   'lib/samples/yida-task-center/progress.canvas.jsx',

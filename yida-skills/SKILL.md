@@ -144,7 +144,7 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 | `yida-skills/context` | 登录、退出、切换组织、组织版本/容量、Schema、fieldId、执行前检查 | `yida-login`、`yida-logout`、`yida-basic-info`、`yida-get-schema`、`yida-corp-efficiency` |
 | `yida-skills/app` | 从零搭应用、完整系统、应用启停、应用导航、多语言、AI 老应用主题升级 | `yida-app`、`yida-create-app`、`yida-app-lifecycle`、`yida-nav-group`、`yida-i18n`、`yida-upgrade-app-theme`（仅明确升级要求并 ask_human 确认） |
 | `yida-skills/design` | 完整应用需求分析、PRD、视觉设计、单页 UI 改造、应用主题色、全局换肤、图片素材 | `yida-requirement-analysis`、`yida-prd`、`yida-design`、`yida-data-manage-ui`、`yida-image-assets` |
-| `yida-skills/form` | 表单字段、公式、校验、业务关联规则、原生自定义按钮、打印模板、批量录入、数据记录 | `yida-create-form-page`、`yida-custom-button`、`yida-print-template`、`yida-form-view`、`yida-formula`、`yida-formula-evaluate`、`yida-business-rule`、`yida-canvas-table-form`、`yida-table-form`、`yida-data-management` |
+| `yida-skills/form` | 表单字段、公式、校验、业务关联规则、原生自定义按钮、消息通知、打印模板、批量录入、数据记录 | `yida-create-form-page`、`yida-custom-button`、`yida-form-message`、`yida-print-template`、`yida-form-view`、`yida-formula`、`yida-formula-evaluate`、`yida-business-rule`、`yida-canvas-table-form`、`yida-table-form`、`yida-data-management` |
 | `yida-skills/process` | 审批、流程表单、流程规则、节点/分支/字段权限、流程代理 | `yida-create-process`、`yida-process-rule`、`yida-flow-node-config`、`yida-agent-center` |
 | `yida-skills/page` | 工作台、办事门户、任务看板、自定义展示页、页面源码开发、平台 JSX 组件页面维护、页面发布、页面内导航、PPT 页面 | `yida-create-page`、`yida-canvas-custom-page`、`yida-custom-page`、`yida-canvas-data-binding`、`yida-task-center`（仅显式选择自定义待办）、`yida-canvas-upgrade`、`yida-publish-page`、`yida-openyida-publish-guard`、`yida-density`、`yida-nav-shell`、`yida-ppt-slider` |
 | `yida-skills/analytics` | 用户显式指定宜搭原生数据卡片（含其投放播报）；聚合表、虚拟视图、报表、统计、图表、Recharts、ECharts、经营分析看板、驾驶舱、大屏 | `yida-data-card`、`yida-aggregate-table`、`yida-report`、`yida-rechart`、`yida-chart`、`yida-dashboard` |
@@ -199,6 +199,7 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 | 业务操作队列、业务工作台或办事门户页面 | `yida-canvas-custom-page`；接业务数据时加载 `yida-canvas-data-binding`，不因页面名称或辅助统计转为经营看板；不顺带新增自定义审批待办中心 |
 | 批量录入、表格填写、多行编辑 | 默认 `yida-canvas-table-form`；已检测到平台 JSX 组件页面、native 页面或存量源码使用 `this.utils.yida.saveFormData` 时用 `yida-table-form` |
 | 页面设置中的自定义按钮、客户跟进/分配、审批后发起订单、按钮触发自动化或打开页面 | `yida-custom-button`；配置原生按钮定义和显示位置，自定义页面内 React 按钮不走此入口 |
+| 页面设置中的消息通知、表单提交/编辑/删除/评论后通知、原生工作通知与详情/置顶卡片 | `yida-form-message`；配置表单级原生消息绑定，不当作应用级通知、自定义页面消息或机器人/集成自动化；真实发送另需授权 |
 | 打印这条数据/数据详情链接、原生打印模板、打印设置、订单/报价/出入库/审批单、单据版式与字段明细、字段二维码/条形码、备份恢复和PDF生成 | `yida-print-template`；复用已有表单和模板，以真实打印字典生成动态内容；Word组件、叮当打印和浏览器页面打印不走此入口 |
 | 原生数据管理页视图列表、显示列配置、字段显隐与顺序、列宽、冻结列、默认筛选、多视图 | `yida-form-view`；使用原生配置读写，保存前备份并回读，不通过 CSS 隐藏字段或重建自定义列表 |
 | 当前数据管理页换风格、只留横线、突出新增/筛选/行操作、列级强调、状态列标签、数据管理 UI 异常、自定义简单数据管理 | `yida-data-manage-ui`（优先于通用美化）；保留承载类型和业务，从目标推导维度、定位 token/CSS 并按页改写；备份发布并实测，不要求选择配方 |
