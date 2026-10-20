@@ -837,6 +837,11 @@ async function main() {
       await run(args);
       break;
     }
+    case 'print-template': {
+      const { run } = require('../lib/print-template/print-template');
+      await run(args);
+      break;
+    }
     case 'form-view': {
       const { run } = require('../lib/app/form-view');
       await run(args);
