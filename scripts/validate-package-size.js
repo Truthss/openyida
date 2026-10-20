@@ -172,7 +172,8 @@ const MAX_UNPACKED_BYTES = 9344 * 1024;
 // The merged workflow and native data-card package contains 733 files.
 // The combined workflow, data-card and cool-card package contains 738 files.
 // Custom buttons and native report zero-value controls add five packaged files.
-const MAX_ENTRY_COUNT = 743;
+// The shared AI application eligibility helper adds one required runtime module.
+const MAX_ENTRY_COUNT = 744;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -235,6 +236,7 @@ const REQUIRED_PACKAGE_FILES = [
   ...['application-coverage', 'backup-and-restore', 'component-replacement', 'confirmation']
     .map(name => `yida-skills/skills/yida-design/sub_skill/ui-improve/references/${name}.md`),
   'lib/app/upgrade-app-theme.js',
+  'lib/app/agent-app-type.js',
   'lib/app/prepare-app-theme-upgrade.js',
   'yida-skills/skills/yida-upgrade-app-theme/SKILL.md',
   'yida-skills/skills/yida-upgrade-app-theme/references/page-migration.md',
