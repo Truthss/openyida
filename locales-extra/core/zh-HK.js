@@ -36,7 +36,10 @@ module.exports = {
   integration_update_v2: {"usage": "integration update <appType> <formUuid> <processCode> --patch patch.json [--dry-run] [--expect fingerprint] [--publish]"},
 
   conditional_actors: { unavailable: 'Conditional actors are unavailable or could not be verified.', invalid: 'Invalid conditional actors: {0}' },
-  integration_triggers: { invalid: 'Invalid automation trigger: {0}' },
+  integration_triggers: {
+    invalid: 'Invalid automation trigger: {0}',
+    end_required: '請選擇定時任務的結束條件：觸發次數填寫 schedule.maxCount（1–100），指定時間填寫 schedule.expireDate（截止時間的毫秒時間戳）。長期執行可選擇較遠的截止日期，並在設定摘要中展示實際日期。',
+  },
   permission_conditions: { invalid: 'Invalid permission conditions: {0}' },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {

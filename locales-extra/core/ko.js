@@ -35,7 +35,10 @@ module.exports = {
   integration_update_v2: {"usage": "integration update <appType> <formUuid> <processCode> --patch patch.json [--dry-run] [--expect fingerprint] [--publish]"},
 
   conditional_actors: { unavailable: 'Conditional actors are unavailable or could not be verified.', invalid: 'Invalid conditional actors: {0}' },
-  integration_triggers: { invalid: 'Invalid automation trigger: {0}' },
+  integration_triggers: {
+    invalid: 'Invalid automation trigger: {0}',
+    end_required: '타이머 종료 조건을 선택하세요. 실행 횟수는 schedule.maxCount(1–100), 지정 시간은 schedule.expireDate(종료 시각의 밀리초)를 설정합니다. 장기 실행은 먼 미래의 종료일을 선택하고 설정 요약에 실제 날짜를 표시하세요.',
+  },
   permission_conditions: { invalid: 'Invalid permission conditions: {0}' },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
