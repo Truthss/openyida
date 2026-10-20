@@ -1338,6 +1338,10 @@ async function main() {
     }
 
     case 'feedback': {
+      if (args[0] === 'github') {
+        await require('../lib/feedback/github').run(args.slice(1));
+        break;
+      }
       const { run: runFeedback } = require('../lib/feedback/feedback');
       await runFeedback(args);
       break;

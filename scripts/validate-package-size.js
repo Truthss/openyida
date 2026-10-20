@@ -150,7 +150,9 @@ const MAX_TARBALL_BYTES = 2560 * 1024;
 // Keep less than 16 KiB compressed headroom and the next 16 KiB unpacked boundary.
 // Print templates plus main's AI app helper measure 9,640,515 bytes / 761 files on Node 26.
 // Keep the next 16 KiB boundary and the existing 512 KiB per-file cap.
-const MAX_UNPACKED_BYTES = 9424 * 1024;
+// Issue contribution account checks add one runtime module: 9,653,376 unpacked bytes
+// on Node 26 before generated command docs; retain the next 16 KiB boundary.
+const MAX_UNPACKED_BYTES = 9440 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -179,10 +181,11 @@ const MAX_UNPACKED_BYTES = 9424 * 1024;
 // The combined workflow, data-card and cool-card package contains 738 files.
 // Custom buttons and native report zero-value controls add five packaged files.
 // Include the shared AI application eligibility helper merged from main.
-const MAX_ENTRY_COUNT = 761;
+const MAX_ENTRY_COUNT = 762;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
+  'lib/feedback/github.js',
   'lib/print-template/builder.js',
   'lib/print-template/codes.js',
   'lib/print-template/contract.js',

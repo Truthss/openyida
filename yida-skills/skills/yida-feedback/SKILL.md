@@ -37,7 +37,7 @@ openyida feedback report --input summary.json --output-dir feedback-draft-001
 ## 按用户条件交付
 
 - **无 GitHub 账号**：先引导用户创建 GitHub 账号，由用户自行完成注册和登录。实在不行，只提示“反馈到AI开发者群”，附上已整理的脱敏报告。不索取群链接或群 ID，不编造入群入口，不替用户发送群消息。离线或暂不愿注册时同样交付报告，明确“材料已生成，尚未提交”。
-- **有 GitHub 账号，提交 Issue**：不需 clone/fork。先准备正文、核对公开目标、查重，再按 [GitHub 提交](references/github-contribution.md) 执行。登录由用户在可信本机流程完成，不索取 Token。
+- **有 GitHub 账号，提交 Issue**：不需 clone/fork。用户明确选择提交 Issue 后，用 `openyida feedback github status --json` 检查当前 GitHub 账号的 Star 与个人 Fork 状态；仅对明确未完成的操作提供一次可选邀请，已有的不重复提示，未知状态不说成未完成。按 [GitHub 提交](references/github-contribution.md) 处理用户选择、正文公开确认与查重。拒绝 Star/Fork 不影响提交；登录由用户在可信本机流程完成，不索取 Token。
 - **有账号，希望提交修复 PR**：仅适用于公开 OpenYida CLI/skill/docs 的可验证问题。先准备最小修复和验证，再通过用户自己的 Fork 提交到公开上游，详见同一参考。没有源码时由 Agent 在独立目录准备公开源码，不修改 npm 全局安装或用户业务目录。无法定位/验证时如实写入测试对比，优先交付 Issue 草稿；不要承诺未经验证的修复。
 
 创建 Issue、评论、Fork、push 或 PR 前必须有用户对相应外部动作及公开内容的授权；已有对同一最终稿和截图的隐私确认不重复问；单纯授权提 Issue/PR 不能替代公开内容审阅。只要求“排查”“整理反馈”不代表允许公开提交。提交超时先查是否成功，不自动重复创建。
