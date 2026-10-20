@@ -2,6 +2,10 @@
 
 const querystring = require('querystring');
 
+jest.mock('../lib/permission/matrix-availability', () => ({
+  assertMatrixUsage: jest.fn(async () => ({ status: 'available' })),
+}));
+
 jest.mock('../lib/core/utils', () => ({
   loadAuthData: jest.fn(),
   triggerLogin: jest.fn(),

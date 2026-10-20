@@ -45,3 +45,25 @@ foreach($item in $items){
     fs.rmSync(fixture, { recursive: true, force: true });
   }
 }, 60000);
+
+windowsTest('private directory creation supports paths beyond MAX_PATH', () => {
+  const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-long-'));
+  try {
+    const target = path.join(fixture, 'a'.repeat(100), 'b'.repeat(100), 'c'.repeat(60));
+    expect(target.length).toBeGreaterThan(260);
+    mkdirPrivate(target);
+    expect(fs.statSync(target).isDirectory()).toBe(true);
+    const script = `$ErrorActionPreference='Stop'
+$acl = [System.IO.DirectoryInfo]::new($env:OPENYIDA_LONG_PATH).GetAccessControl()
+$current = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+if ($acl.GetOwner([System.Security.Principal.SecurityIdentifier]).Value -ne $current) {throw 'Unexpected owner'}
+foreach ($rule in $acl.GetAccessRules($true,$true,[System.Security.Principal.SecurityIdentifier])) {
+  if ($rule.AccessControlType -ne 'Allow' -or $rule.IdentityReference.Value -notin @($current,'S-1-5-18','S-1-5-32-544')) {throw 'Unexpected grant'}
+}
+'private'`;
+    const result = execFileSync(path.join(process.env.SystemRoot, 'System32/WindowsPowerShell/v1.0/powershell.exe'), ['-NoProfile','-NonInteractive','-Command',script], {
+      encoding:'utf8', windowsHide:true, env:{...process.env, OPENYIDA_LONG_PATH:path.toNamespacedPath(target)},
+    });
+    expect(result.trim()).toBe('private');
+  } finally { fs.rmSync(fixture, {recursive:true,force:true}); }
+}, 60000);

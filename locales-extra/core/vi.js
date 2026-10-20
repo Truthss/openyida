@@ -5,6 +5,38 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  custom_button: {
+    "usage": "Usage: openyida custom-button <list|inspect|options|create|update|delete> <appType> <formUuid> [buttonUuid] [--config <file>] [--expected-hash <hash>] [--backup <file>] [--yes] [--json]",
+    "invalid_config": "Cấu hình hoặc tham số không hợp lệ: {0}",
+    "invalid_response": "Phản hồi cấu hình nút không đầy đủ: {0}",
+    "api_error": "API nút thất bại: {0}. Kiểm tra đăng nhập, quyền và phiên bản.",
+    "not_found": "Nút không có trong biểu mẫu đích: {0}",
+    "conflict": "Cấu hình đã thay đổi. Đọc lại trước khi lưu.",
+    "limit": "Mỗi biểu mẫu hỗ trợ tối đa 10 nút tùy chỉnh.",
+    "readback_mismatch": "Dữ liệu đọc lại không khớp. Giữ bản sao lưu và kiểm tra trạng thái từ xa."
+  },
+  dws_external: {"note": "dws is an independent external tool. OpenYida only shows installation instructions; it does not download or install it.", "install_guide": "Show official DingTalk CLI installation instructions"},
+  cool_card: {"description": "Create and read native YiDA cool cards (interactive and pinned)", "usage": "Usage: openyida cool-card <list|templates|create|get> <appType> [cardPageCode] [--type im|onebox] [--name <title>] [--page <n>] [--size <n>] [--search <text>] [--out <file>] [--json]", "failed": "Native cool card operation stopped: {0}"},
+  data_card: {"description":"Create, read, save drafts and publish native YiDA data cards","usage":"Usage: openyida data-card <list|create|get|save|publish|probe|release-get|release-save|release-check|release-test|refs> <appType> [cardCode] [--name <title>] [--description <text>] [--schema <file>|--config <file>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--published|--version <version>] [--page <n>] [--size <n>] [--search <text>] [--allow-send] [--json]","failed":"Native data card operation stopped: {0}","conflict":"The draft changed. Read it again before saving or publishing.","mismatch":"Readback does not match the expected schema or published state. Keep the backup and inspect the card before retrying."},
+  app_settings: {"description":"Read theme, frontend/backend, native data card and cool card management links","usage":"Usage: openyida app-settings <appType> [--section theme|basic|data-card|cool-card] [--json]","failed":"Application settings could not be read: {0}"},
+  form_view: {
+    usage: "Cách dùng: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
+    invalid_config: "Cấu hình chế độ xem gốc hoặc đối số không hợp lệ: %s",
+    target_mismatch: "Chế độ xem không thuộc biểu mẫu đích: %s",
+    api_error: "API chế độ xem gốc bị lỗi: %s. Kiểm tra quyền và gói dịch vụ; không thử ghi lại khi chưa xác minh.",
+    unsupported: "Nền tảng không trả về danh sách chế độ xem gốc. Kiểm tra loại biểu mẫu và khả năng hỗ trợ.",
+    conflict: "Chế độ xem đã thay đổi sau khi đọc. Kiểm tra lại trước khi lưu.",
+    readback_mismatch: "Cấu hình đã lưu khác kết quả đọc lại. Giữ bản sao lưu và kiểm tra chế độ xem từ xa.",
+  },
+  integration_manage: {"failed": "Automation operation failed: {0}", "usage": "integration <monitor|copy|rename|delete> <appType> ...", "desc_monitor": "Read or save automation error monitors", "desc_copy": "Copy an automation as disabled", "desc_rename": "Rename an automation", "desc_delete": "Delete a disabled automation"},
+  permission_manage: {"failed": "Permission group operation failed: {0}", "usage": "permission-manage <copy|rename|delete> <appType> <formUuid> <packageUuid> [--name name] [--dry-run] [--confirm]", "description": "Copy, rename or delete a permission group"},
+  matrix_manage: {"failed": "Matrix operation failed: {0}", "usage": "matrix <list|detail|references|rows|create|update|delete|upsert-rows|delete-rows> [matrixId] [--file config.json] [--dry-run] [--confirm]", "description": "Manage permission matrix definitions, references and rows"},
+  integration_baseline: {"failed": "Automation update stopped: {0}"},
+  integration_update_v2: {"usage": "integration update <appType> <formUuid> <processCode> --patch patch.json [--dry-run] [--expect fingerprint] [--publish]"},
+
+  conditional_actors: { unavailable: 'Conditional actors are unavailable or could not be verified.', invalid: 'Invalid conditional actors: {0}' },
+  integration_triggers: { invalid: 'Invalid automation trigger: {0}' },
+  permission_conditions: { invalid: 'Invalid permission conditions: {0}' },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
     frontend_nav_required: 'Chưa xác minh việc ẩn điều hướng của trang {0}. Hãy lưu renderNav=false và đọc lại cấu hình trước khi đăng ký địa chỉ giao diện độc lập.',
@@ -53,6 +85,7 @@ module.exports = {
     invalidStrategy: "Yêu cầu về ảnh phải là một đối tượng liệt kê vị trí ảnh theo từng trang.",
   },
   help: {
+    cmd_custom_button: "Nút tùy chỉnh: biểu mẫu, luồng tự động và liên kết trang",
     cmd_check_design: 'Xác thực tài liệu thiết kế, biến giao diện và bàn giao PRD',
     subtitle: 'Công cụ phát triển AI low-code cho Yida',
     usage: 'Cách dùng:',
@@ -89,6 +122,7 @@ module.exports = {
     cmd_validate_form: 'Validate form field JSON locally',
     cmd_update_form: 'Cập nhật trang biểu mẫu',
     cmd_list_forms: 'List forms/pages in an app',
+    cmd_form_view: "Quản lý cột hiển thị, độ rộng, cột cố định và bộ lọc của biểu mẫu",
     cmd_aggregate_table: 'Manage aggregate tables (virtualView)',
     cmd_get_schema: 'Lấy Schema biểu mẫu',
     cmd_check_prd_completeness: 'Check PRD page/resource count risk',
@@ -144,11 +178,12 @@ module.exports = {
     cmd_connector_more: 'Xem thêm lệnh con',
     group_integration: 'Tích hợp & DingTalk',
     cmd_integration: 'Tạo luồng tự động hóa tích hợp',
-    cmd_integration_update: 'Probe integration update capability (currently blocked without full readback)',
+    cmd_integration_update: 'Patch automation using a verified local dual-definition baseline',
     cmd_integration_list: 'List integration automation flows',
     cmd_integration_enable: 'Enable integration automation flow',
     cmd_integration_disable: 'Disable integration automation flow',
     cmd_integration_check: 'Check abnormal integration automation run logs',
+    cmd_integration_detail_log: 'View integration automation run log details',
     cmd_integration_diagnose: 'Diagnose integration automation tickets and common pitfalls',
     cmd_dws: 'DingTalk CLI (danh bạ/lịch/việc cần làm/phê duyệt v.v.)',
     cmd_dingtalk_link: 'Tạo liên kết DingTalk AppLink / dingtalk:// cũ',
@@ -165,7 +200,7 @@ module.exports = {
     cmd_formula_evaluate: 'Static-check Yida formula syntax and field refs',
     cmd_update: 'Kiểm tra và cập nhật lên phiên bản mới nhất',
     cmd_export_conversation: 'Xuất bản ghi hội thoại AI',
-    cmd_feedback: 'Configure experience feedback form and local reminder state',
+    cmd_feedback: 'Chuẩn bị báo cáo cục bộ, biểu mẫu phản hồi và lời nhắc',
     cmd_batch: 'Run OpenYida commands in batch',
     cmd_flash_to_prd: 'Convert flash notes or meeting notes to a PRD prompt',
     cmd_ai: 'Call Yida AI text and image recognition APIs',
@@ -330,7 +365,7 @@ module.exports = {
     forbidden_alias_get_schema_form_uuid_option: '`{0}` takes formUuid as the second positional argument, not `{1}`.',
     nearest_command_suggestion: 'Unknown OpenYida command root "{0}". Did you mean "{1}"?',
     run_help: 'Run openyida --help for usage',
-    integration_help: 'Usage: openyida integration <create|update|list|enable|disable|check|diagnose> ...',
+    integration_help: 'Usage: openyida integration <create|update|list|enable|disable|check|detail-log|diagnose|monitor|copy|rename|delete> ...',
     integration_unknown: 'Lenh con integration khong xac dinh: {0}',
     integration_help_hint: 'Chay openyida integration --help de xem cac lenh con kha dung',
     integration_list_usage: 'Cach dung: openyida integration list <appType> [--form-uuid <uuid>] [--status y|n] [--key <kw>] [--size <n>] [--json]',
@@ -351,7 +386,7 @@ module.exports = {
     publish_example: 'Example: openyida publish pages/src/home.canvas.jsx APP_XXX FORM-XXX --health-check --auto-nav-order',
     check_prd_completeness_usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     check_prd_completeness_example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
-    formula_usage: 'Usage: openyida formula evaluate <formula|file> [--schema schema.json] [--json] [--strict]',
+    formula_usage: 'Usage: openyida formula <check|evaluate|contracts|functions|types|inspect|test> ...',
     formula_example: `Example: openyida formula evaluate 'IF(GT(#{numberField_total}, 100), "high", "low")' --schema .cache/schema.json`,
     verify_usage: 'Usage: openyida verify-short-url <appType> <formUuid> <url>',
     verify_example: 'Example: openyida verify-short-url APP_XXX FORM-XXX /o/myapp',
@@ -380,9 +415,9 @@ module.exports = {
       '  preview <appType> <processInstanceId> [--output <path>]  Preview process instance (generate visual flowchart)',
     process_preview_usage: 'Usage: openyida process preview <appType> <processInstanceId> [--output <path>]',
     process_preview_example: 'Example: openyida process preview APP_XXX proc-inst-id-xxx',
-    get_permission_usage: 'Usage: openyida get-permission <appType> <formUuid> [--package-uuid <packageUuid>]',
+    get_permission_usage: 'Usage: openyida get-permission <appType> <formUuid> [--package-uuid <packageUuid>] [--package-type <FORM_PACKAGE_VIEW|FORM_PACKAGE_START>]',
     get_permission_example: 'Example: openyida get-permission APP_XXX FORM-XXX',
-    save_permission_usage: 'Usage: openyida save-permission <appType> <formUuid> [--package-uuid <packageUuid>] [--data-permission <json>] [--action-permission <json>]',
+    save_permission_usage: 'Usage: openyida save-permission <appType> <formUuid> [--package-uuid <packageUuid>] [--data-permission <json>] [--action-permission <json>] [--package-type <FORM_PACKAGE_VIEW|FORM_PACKAGE_START>]',
     save_permission_example: `Example: openyida save-permission APP_XXX FORM-XXX --data-permission '{"role":"DEFAULT","dataRange":"SELF"}'`,
     exec_failed: '\n❌ Execution failed: {0}',
     login_usage: 'Usage: openyida login [entryUrl|--public|--alibaba|--intl] [--no-browser] [--check-only] [--json] [--client-id <clientId>]',
@@ -450,6 +485,18 @@ module.exports = {
     current: ', current: {0}',
     excel_exported: 'Excel exported: {0}'
   },
+  integration_detail_log: {
+    usage: "Usage: openyida integration detail-log <appType> <procInstId> [--json] [--include-params] (known secrets are always masked; max 100 pages / 10,000 nodes; business parameters may still be sensitive)",
+    missing_args: "Run log details require appType and procInstId",
+    unknown_option: "Unsupported run log detail option: {0}",
+    params_require_json: "--include-params requires --json; known secrets are always masked, but business parameters may still be sensitive",
+    api_failed: "Failed to query run log details: {0}",
+    invalid_response: "Run log detail response has no valid node list or total count",
+    pagination_failed: "Run log detail pages are inconsistent; incomplete data was not printed",
+    pagination_limit: "Run log details exceed the pagination limit ({0} pages / {1} nodes); incomplete data was not printed",
+    summary: "Run log details: {0} nodes (parameter keys only by default)",
+  },
+
   integration: {
     spec_mixed_structural_flag: '{0} cannot be mixed with --spec. Put the complete node in the spec to prevent silently dropped parameters.',
     spec_message_node_required: 'Notification flags mixed with --spec require an explicit sendMessage node in the spec.',
@@ -485,6 +532,7 @@ module.exports = {
     create_opt_spec: '  --spec <file.json>            Use a structured flow spec for complex automation nodes (dataUpdate/route, etc.)',
     create_opt_data_form_uuid: '  --data-form-uuid <uuid>     Target form UUID for a get-single-data node',
     create_opt_data_condition: '  --data-condition <rule>     Get-data condition: targetField:label:triggerField[:component[:opCode[:valueType]]]',
+    create_opt_trigger_condition: '  --trigger-condition <rule>    Điều kiện: field:label:opCode:value[:component[:valueType]]; trường bên phải: processVar, hằng số: literal',
     create_opt_get_self: '  --get-self                    Insert a get-self node (process runtime uses pid, designer uses proc_inst_id; ordinary forms use form_inst_id on both sides)',
     create_opt_get_self_field: '  --get-self-field <field>     Override the trigger-side system field, default __masterdata_form_inst_id',
     create_opt_get_self_query_field: '  --get-self-query-field <f>  Override the query-side system field (process: pid runtime / proc_inst_id designer; ordinary: form_inst_id)',
@@ -953,6 +1001,8 @@ module.exports = {
     failed: '  ❌ Tạo thất bại: {0}'
   },
   common: {
+    auth_profile_required: 'Có thông tin xác thực đã lưu cho nhiều tổ chức. Chạy openyida auth profiles, rồi openyida auth profile switch <auth_profile> để chọn tổ chức cho dự án này.',
+    auth_profile_not_found: 'Không tìm thấy thông tin xác thực của tổ chức được yêu cầu. Chạy openyida auth profiles để kiểm tra các tổ chức đã lưu và chọn hồ sơ phù hợp.',
     auth_identity_changed: 'Authentication identity changed during preflight; no write was issued.',
     http_status: '  HTTP status: {0}',
     http_response: '  HTTP response: {0}',
@@ -1492,6 +1542,10 @@ module.exports = {
     stdin_closed: 'Luồng đầu vào đã đóng, không thể chọn tổ chức'
   },
   check_prd_completeness: {
+    application_theme_mismatch: 'Chủ đề ứng dụng không khớp với chủ đề đã chọn cho dự án.',
+    application_theme_not_checked: 'Không thể xác minh cấu hình chủ đề ứng dụng; chưa xác nhận chủ đề đã được áp dụng.',
+    frontend_navigation_not_checked: 'Chưa xác minh việc ẩn trang giao diện trong menu quản trị: {0}',
+    frontend_navigation_visible: 'Trang giao diện vẫn xuất hiện trong menu quản trị trên máy tính hoặc di động: {0}',
     usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
     prd_not_found: 'PRD file not found: {0}',
@@ -1978,6 +2032,19 @@ Object.assign(module.exports.app_permission || (module.exports.app_permission = 
   verify_failed: 'Lỗi xác minh lưu của quản trị viên ứng dụng',
 });
 
+module.exports.permission_scope = {
+  roles_summary: 'Roles: {0}',
+  options_help: '--owner-field restricts records to those whose top-level member field contains the current user; --roles selects ordinary Yida roles; --field-access is repeatable. Initial custom field access requires --field-default and shorthand updates require --package-uuid. --dry-run previews without writes.',
+  invalid: 'Invalid permission options: {0}. Shorthand updates require --package-uuid; do not mix member scopes or field defaults.',
+  owner_invalid: '--owner-field must identify a real top-level EmployeeField in the target form, not a creator alias, text or subtable field.',
+  field_default_required: 'Initial --field-access requires --field-default view|edit|hidden|encrypt for all other fields; form-dependent behavior cannot be inferred.',
+  overlap_notice: 'Other permission groups or overlapping roles may grant broader access. Saving this group does not verify effective row isolation or field access for all users.',
+  matrix_notice: 'Native matrices use the OA enhancement entitlement package. Available does not prove purchase; unavailable requires an administrator to check or enable entitlement. Business APIs remain authoritative.',
+  matrix_unavailable: 'Matrix usage is unavailable for this app. Ask an administrator to check or enable the OA enhancement entitlement package before retrying. No writes performed.',
+  matrix_unknown: 'Matrix availability could not be established. Resolve the returned account-access or API error first. No writes performed.',
+};
+
+
 Object.assign(module.exports.corp_manager || (module.exports.corp_manager = {}), {
   address_book_verify_failed: 'Xác minh lưu thư mục địa chỉ thất bại: mong đợi={0}, thực tế={1}',
   admin_verify_failed: 'Xác minh lưu quản trị viên thất bại: {0} không có trong danh sách {1}',
@@ -2043,6 +2110,11 @@ Object.assign(module.exports.publish || (module.exports.publish = {}), {
 });
 
 Object.assign(module.exports.query_data || (module.exports.query_data = {}), {
+  approver_query_help: 'Người phê duyệt hiện tại: --current-approver <userId> [--count]. Đọc mọi trang có quyền xem và đếm các phiên bản không trùng lặp. Truy vấn chưa hoàn tất hoặc thiếu quyền sẽ báo lỗi.',
+  approver_option_invalid: 'Tùy chọn truy vấn người phê duyệt hiện tại không hợp lệ: {0}. Dùng userId chính xác và đọc các phiên bản RUNNING từ trang 1.',
+  approver_incomplete: 'Không thể hoàn tất thống kê theo người phê duyệt hiện tại. Chưa trả về tổng đầy đủ; hãy kiểm tra lỗi, quyền và phạm vi phân trang.',
+  approver_response_invalid: 'Không xác minh được cấu trúc phản hồi API quy trình nên không thể xác định số lượng theo người phê duyệt hiện tại.',
+  approver_scope_note: 'Chỉ đếm các phiên bản mà máy chủ cho phép người đang đăng nhập xem; điều này không có nghĩa là có quyền xem toàn bộ dữ liệu ứng dụng.',
   command_unsupported: 'Lệnh dữ liệu không được hỗ trợ: {0} {1}. Chạy openyida commands --json để xem năng lực thực tế.',
   delete_confirmation_required: 'Trước khi xóa bản ghi biểu mẫu, hãy đọc mục tiêu, hiển thị tóm tắt cho người dùng và chỉ thêm --confirm sau khi được xác nhận rõ ràng. Chưa thực hiện xóa.',
   delete_preflight_failed: 'Không thể đọc bản ghi biểu mẫu {0} để kiểm tra trước khi xóa. Chưa thực hiện xóa.',
@@ -2159,3 +2231,168 @@ module.exports.help.cmd_data_manage_style_list = 'Liệt kê ví dụ kiểu gia
 module.exports.help.cmd_data_manage_style_generate = 'Tạo CSS từ ví dụ tùy chọn (chỉ cục bộ)';
 
 module.exports.help.cmd_data_manage_style_guide = 'Xem hướng cải tiến UI, token và CSS cho quản lý dữ liệu';
+
+// Process fields and submission permission packages.
+Object.assign(module.exports.permission_common || (module.exports.permission_common = {}), {
+  "package_type_invalid": "Use FORM_PACKAGE_VIEW or FORM_PACKAGE_START for --package-type.",
+  "start_scope_invalid": "START supports submission members, fields and OPERATE_CREATE only; configure record data ranges and matrices separately."
+});
+Object.assign(module.exports.process_errors || (module.exports.process_errors = {}), {
+  "field_permissions_invalid": "Field permissions contain invalid or duplicate field IDs or behaviors.",
+  "field_source_failed": "Could not read the form fields. Check the process binding and schema response.",
+  "fields_empty": "The bound form has no readable fields. Check its saved schema.",
+  "designer_fields_missing": "The process designer cannot load all bound form fields. Check its schema and process binding before publishing.",
+  "field_not_found": "A process permission references a field missing from the bound form.",
+  "fields_verified": "Field IDs were checked; browser behavior and runtime permissions remain unverified."
+});
+Object.assign(module.exports.help || (module.exports.help = {}), {
+  "cmd_process_fields": "Check process designer field loading and subtable field paths"
+});
+module.exports.cli.process_usage += '\n  fields <appType> <formUuid> [--json]  Inspect process designer field loading';
+
+// Batch data nodes.
+Object.assign(module.exports.integration, {
+  batch_invalid: 'Invalid batch configuration. Check source, quantity and fields using details.reason.',
+  message_roles_invalid: 'Message roles require a non-empty role ID and NORMAL message type.',
+  message_roles_readback_mismatch: 'Persisted message roles differ from the submitted recipients.',
+  batch_retrieve_name: 'Get multiple records',
+  batch_readback_mismatch: 'Persisted batch node type, source or quantity differs from the submitted configuration.',
+  create_opt_spec: '  --spec <file.json>            Configure batch retrieve/create, updates and branches with a structured spec',
+});
+
+module.exports.formula_v2 = {
+  trigger_formula: 'Use fixed values or fields in event trigger conditions. Put formula checks in a branch after the trigger.',
+  branch_choose: 'Choose conditions or expression for a branch.',
+  branch_formula: 'Use expression for formula-based branch conditions.',
+  expression_required: 'Enter a non-empty formula expression.',
+  failed: 'Invalid formula configuration: {0}',
+  syntax_invalid: 'Invalid or unsupported formula syntax: {0}',
+  bare_identifier: 'Unbound name {0}. Read the field ID from the form and use #{}.',
+  reference_context: 'Use form field references here; node paths are unsupported: {0}',
+  field_missing: 'Field not found in the form: {0}',
+  argument_type: 'Argument {1} of {0} requires {2}.',
+  function_unknown: 'Formula function {0} is not in the selected list. Query metadata and copy an available formula function name exactly.',
+  function_case: 'Copy the formula function name exactly, including case: {0}',
+  context_unknown: 'Availability of {0} in this context is unknown.',
+  function_context: '{0} is not in the function list for {1}.',
+  argument_count: '{0} requires {1} to {2} arguments; received {3}.',
+  same_type: 'These arguments of {0} must use the same type.',
+  operator_invalid: 'Operator {0} is unsupported here. Use GT, GE, LT, LE, EQ or NE for comparisons.',
+  target_type: 'Formula result {0} does not match target field {1}.',
+  target_unknown: 'Unknown target field type: {0}',
+  schema_missing: 'Load the form schema to check field existence and types.',
+  local_pass: 'Local checks passed; platform execution is not verified.',
+  test_blocked: 'Formula was not executed: {0}. Testing accepts only known non-writing functions.',
+  expect_failed: 'Actual result differs from the expected result.',
+  usage: 'Usage: formula types APP [--component NumberField]; formula functions APP [--name IF]; formula inspect APP FORM [--field ID]; formula test APP FORM <formula|file> --data-file file [--expect JSON]. Use formula check for local checks.',
+};
+Object.assign(module.exports.help, {
+  cmd_formula_check: 'Check formula syntax, fields, arguments and types',
+  cmd_formula_functions: 'Read Yida formula functions and signatures',
+  cmd_formula_types: 'Tra cứu kiểu giá trị của thành phần công thức',
+  cmd_formula_inspect: 'Inspect configured form field formulas',
+  cmd_formula_test: 'Evaluate a non-writing formula in Yida and compare its result',
+});
+
+Object.assign(module.exports.formula_v2, {
+  "config_text": "Cung cấp công thức không rỗng. Để khôi phục nhập thủ công, đặt valueType thành custom và formula thành chuỗi rỗng.",
+  "config_conflict": "formula và complexValue.formula khác nhau. Đặt chúng giống nhau hoặc chỉ cung cấp formula để CLI đồng bộ.",
+  "config_mode": "Dùng valueType: formula hoặc bỏ valueType khi đặt công thức. Để nhập thủ công, dùng valueType: custom và formula: \"\".",
+  "config_cycle": "Phát hiện tham chiếu vòng: {0}. Sắp xếp phụ thuộc từ đầu vào đến kết quả, tránh tự tham chiếu trực tiếp hoặc gián tiếp.",
+  "reference_details_unknown": "Chưa xác minh định nghĩa đầy đủ và kiểu của trường hoặc trường con {0}.",
+  "contract_not_supported": "Trình kiểm tra này chưa hỗ trợ cú pháp và cách thực thi của {0}; hãy dùng trình xác thực của cấu hình đích.",
+  "consumer_required": "{0} cần bước tiền xử lý và ngữ cảnh dữ liệu của cấu hình đích. Hãy kiểm tra tại giao diện tương ứng.",
+  "contracts_help": "Định dạng: field-value, validation-rule, business-action và node-expression. dataset-expression và javascript chưa có bộ kiểm tra. Một định dạng có thể dùng trong nhiều trình thiết kế. Chi tiết: --json."
+});
+Object.assign(module.exports.help, {"cmd_formula_contracts": "Xem định dạng công thức và phạm vi kiểm tra"});
+
+Object.assign(module.exports.formula_v2, {"parallel_formula": "Dùng conditions/rules hoặc all:true cho nhánh song song; expression hiện chỉ được hỗ trợ cho nhánh route."});
+
+Object.assign(module.exports.formula_v2, {"conversion_empty":"Chuyển đổi sang trường đích tạo ra giá trị rỗng. Với ngày, dùng TIMESTAMP(công thức ngày) và kiểm tra giá trị gốc cùng kiểu dữ liệu.","result_missing":"Yêu cầu đã hoàn tất nhưng thiếu giá trị trường đích. Trường ngày thường cần TIMESTAMP(công thức ngày).","conversion_partial":"Giá trị chỉ được chuyển một phần thành số hoặc không hữu hạn. Hãy trả về số đầy đủ hoặc mili giây.","target_branches":"Một số kiểu kết quả {0} không phù hợp với {1}. Hãy thử từng nhánh.","date_timestamp":"Đối tượng ngày khác với giá trị lưu. Thường dùng TIMESTAMP(công thức ngày) để trả về mili giây.","numeric_result_text":"Kết quả có thể là văn bản. Dùng --field thử từng nhánh để phát hiện chuyển đổi rỗng hoặc chỉ một phần."});
+
+module.exports.feedback_report = {
+  comparison: 'Test pass/fail requires a command, actual result and evidence.',
+  screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
+  text: 'Feedback text fields must be strings of at most 12000 characters.',
+  list: 'Feedback lists must contain at most 40 text items.',
+  object: 'Feedback input must be a JSON object.',
+  required: 'Feedback input requires title and actual.',
+  count: 'occurrenceCount must be a positive integer when known.',
+  cause: 'cause must be an object.',
+  confirmed: 'A confirmed cause requires a summary and evidence.',
+  usage: 'Usage: openyida feedback report --input <summary.json> --output-dir <new-directory>',
+  duplicate: 'Duplicate feedback report option.',
+  options: 'Both --input and --output-dir are required.',
+  file: 'Feedback input must be a JSON file of at most 1 MiB.',
+  json: 'Feedback input is not valid JSON.',
+  help: 'report prepares local review drafts without login, a source checkout or network submission.',
+  login_hint: 'Ask your AI to prepare local feedback with yida-feedback; no GitHub account or source checkout is required.',
+};
+
+module.exports.task_center = {
+  'invalid_spec': 'Invalid task center configuration: {0}',
+  'confirmation_required': 'Custom task pages require an explicit user request or an affirmative ask_human choice. Record customPage.source (explicit-user-request or ask_human) and confirmed=true for this application.',
+  'page_title': 'Task center',
+  'kind_todo': 'To do',
+  'kind_created': 'Created by me',
+  'kind_done': 'Processed by me',
+  'kind_cc': 'Copied to me',
+  'time_todo': 'Arrived at',
+  'time_created': 'Submitted at',
+  'time_done': 'Processed at',
+  'time_cc': 'Copied at',
+  'status_running': 'In progress',
+  'status_completed': 'Completed',
+  'status_terminated': 'Terminated',
+  'status_agree': 'Agreed',
+  'status_disagree': 'Rejected',
+  'title': 'Title',
+  'originator': 'Initiator',
+  'status': 'Process status',
+  'result': 'Task result',
+  'action': 'Action',
+  'handle': 'Handle',
+  'view': 'View',
+  'detail': 'Details',
+  'untitled': 'Untitled',
+  'search': 'Search title',
+  'refresh': 'Refresh',
+  'retry': 'Retry',
+  'empty': 'No matching tasks',
+  'unavailable': 'Task data is unavailable',
+  'previous': 'Previous',
+  'next': 'Next',
+  'total': 'Matching total',
+  'totalUnknown': 'Total unavailable',
+  'apiUnavailable': 'Your tasks are temporarily unavailable. Please sign in again or contact the application administrator.',
+  'loginRequired': 'Sign in to view your tasks.',
+  'invalidResponse': 'Task data could not be verified. Please retry.',
+  'requestFailed': 'Tasks could not be loaded. Please retry.',
+  'missingDetail': 'Required details are missing; this item cannot be opened.',
+  'stale': 'Showing the last successful result; it may not match the current filters.',
+  'updated': 'Updated',
+  'unknown': 'Unknown',
+  'progress': 'Approval progress',
+  'instanceRequired': 'Provide the linked process instance to view its progress',
+  'processResult': 'Final process result',
+  'submittedAt': 'Initiated at',
+  'processFinishedAt': 'Process ended at',
+  'progressUnknown': 'Current step information is unavailable',
+  'taskResult': 'Selected task result',
+  'historyUnavailable': 'Approval history could not be fully loaded. Process details are retained; please retry.',
+  'noHistory': 'No approval operations',
+  'summary': 'Summary',
+  'status_error': 'Error',
+  'status_unknown': 'Unknown',
+  'filter_originators': 'Initiator',
+  'filter_processCodes': 'Process or form',
+  'filter_instanceStatus': 'Process status',
+  'filter_instanceCreateFrom': 'Initiated from',
+  'filter_instanceCreateTo': 'Initiated to',
+  'filter_taskCreateFrom': 'Arrived from',
+  'filter_taskCreateTo': 'Arrived to',
+  'filter_taskFinishFrom': 'Processed from',
+  'filter_taskFinishTo': 'Processed to',
+  'filter_carbonCreateFrom': 'Copied from',
+  'filter_carbonCreateTo': 'Copied to'
+};

@@ -3822,12 +3822,14 @@ describe('legacy create-form compatibility', () => {
             mainRules: [{
               source: 'remoteCustomerName',
               target: '@label:客户名称',
+              targetFieldId: '@label:客户名称',
             }],
             tableRules: [{
               tableId: 'remoteLines',
               rules: [{
                 source: 'remoteLineItems',
                 target: '@label:明细子表',
+                targetFieldId: '@label:明细子表',
               }],
             }],
           },

@@ -75,14 +75,14 @@ describe('configure-process approver DSL', () => {
     expect(processNode.props).toMatchObject({
       mode: 'multi',
       multiApprove: expectedMode,
-      multiRules: [{ status: '0', rules: [] }],
+      multiRules: [{ status: '0', rules: [expect.objectContaining({ type: 'ext_target_approval_originator', approvals: [['originator']] })] }],
     });
     const viewNode = result.viewJson.schema.children.find(function (node) {
       return node.componentName === 'MultiApprovalNode';
     });
-    expect(viewNode.props.multiApproverRules).toEqual({
+    expect(viewNode.props.multiApproverRules).toMatchObject({
       approvalType_multi: expectedMode,
-      multiRules: [{ status: '0', rules: [] }],
+      multiRules: [expect.objectContaining({ type: 'ext_target_approval_originator' })],
     });
     expect(viewNode.props).not.toHaveProperty('approverRules');
   });

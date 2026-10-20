@@ -231,15 +231,15 @@ describe('local agent thin launcher', () => {
     expect(spawn).not.toHaveBeenCalled();
   });
 
-  test('records a bounded error code when the runtime reports a failure', async () => {
+  test.each(['RUNTIME_ACTION_FAILED', 'ENROLLMENT_EXPIRED', 'ENROLLMENT_REJECTED', 'ENROLLMENT_CONFLICT'])('records a bounded error code: %s', async code => {
     const failingRuntime = path.join(root, 'failing-runtime.js');
-    fs.writeFileSync(failingRuntime, `#!${process.execPath}\nconsole.log(JSON.stringify({type:'error',code:'RUNTIME_ACTION_FAILED',message:'unsafe upstream detail'}));\n`, { mode: 0o700 });
+    fs.writeFileSync(failingRuntime, `#!${process.execPath}\nconsole.log(JSON.stringify({type:'error',code:${JSON.stringify(code)},message:'unsafe upstream detail'}));\n`, { mode: 0o700 });
     const diagnostic = jest.fn();
     await expect(launchRuntime({ executable: failingRuntime }, { command: 'status', node: { packageRoot: root } }, {
       diagnostic, signals: new EventEmitter(), stdout: { write: jest.fn() }, spawn: spawnFixture,
-    })).rejects.toMatchObject({ code: 'RUNTIME_ACTION_FAILED' });
+    })).rejects.toMatchObject({ code, ...(code === 'ENROLLMENT_EXPIRED' ? { message: expect.stringMatching(/过期|expired/) } : {}) });
     expect(diagnostic).toHaveBeenCalledWith('error', 'runtime_action_failed', {
-      command: 'status', component: 'node', errorCode: 'RUNTIME_ACTION_FAILED', retryable: false,
+      command: 'status', component: 'node', errorCode: code, retryable: false,
     });
     expect(JSON.stringify(diagnostic.mock.calls)).not.toContain('unsafe upstream detail');
   });

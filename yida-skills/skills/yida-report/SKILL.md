@@ -1,6 +1,6 @@
 ---
 name: yida-report
-description: "创建宜搭原生报表。"
+description: "创建和配置宜搭原生报表；仅在用户明确要求时动态隐藏零值、全零分类和全零指标图例。"
 ---
 
 # 宜搭原生报表技能
@@ -30,6 +30,7 @@ description: "创建宜搭原生报表。"
 - 报表配置 JSON 需要落盘时，必须用结构化文件写入工具创建到 `<projectRoot>/.cache/openyida/<项目名或任务名>/`，例如 `<projectRoot>/.cache/openyida/pm/pm-report-team.json`；不要在仓库根目录、系统临时目录或 `.cache/` 顶层生成 `*-report*.json`
 - 为 ECharts 页面创建报表后，必须同步写入 `<projectRoot>/.cache/openyida/<任务名>/report-binding.json`，记录数据源表单、`REPORT_xxx`、组件 `cid`、`className`、`dataSetKey`、`filterKey`
 - 本技能不读写 memory，报表配置通过 `openyida create-report` 命令写入宜搭平台，不依赖跨会话的 memory 状态
+- **零值隐藏默认关闭**。仅当用户显式要求“隐藏为 0 的数据／不显示零值／去掉全零分类或全零指标图例”时，才设置 `hideZeroValues: true` 或 `--hide-zero-values true`。普通创建报表、美化、隐藏空值、截图中存在很多 0，均不构成开启授权；空值与数值 0 必须区分。
 
 ## 适用场景
 
@@ -47,6 +48,41 @@ description: "创建宜搭原生报表。"
 - 为 ECharts 可视化提供数据源
 
 > ⚠️ 严禁在前端直接聚合表单数据，必须通过原生报表 `getDataAsync.json` 或 `getCacheData.json` 获取聚合数据。
+
+## 使用公式
+
+涉及计算表达式时，通过 `use_skill` 加载统一的 `yida-formula`，按其中的公式规则和示例配置。本技能提供当前数据集的真实字段、分组与聚合设置，以及报表配置保存和查询入口；表达式保存细节见 [数据集表达式](../yida-formula/references/expression-formats.md#数据集表达式)。
+
+## 按用户明确要求动态隐藏零值
+
+仅支持原生柱状图／条形图 `type: "bar"`（`YoushuGroupedBarChart`）。创建或追加时，在该图表配置上显式设置 `"hideZeroValues": true`；省略或设为 `false` 保持现有显示。其他图表类型不得照搬该配置，不得绕过 CLI 校验手写接口。
+
+**先确认展示范围**：用户只说“隐藏零值／去掉这些 0”而没有说明分类轴和图例时，通过 `ask_human` 分别确认“全零分类是否保留在分类轴上”和“全零指标是否保留图例”，不要擅自把三种行为一起开启。已有明确回答时直接执行，不重复询问。当前宿主有交互工具时使用该工具；受管 Local Agent 使用 `openyida agent ask-human --request-key <稳定业务键> --questions-file <相对路径> --json`，遵守其问题文件契约。缺少交互能力时用普通文字询问并等待答案；不把未回答当作同意。
+
+| 配置 | 开启后的行为 | 默认 |
+| --- | --- | --- |
+| `hideZeroValues` | 隐藏 0 标签和提示项，保留分类轴与图例 | false |
+| `hideZeroCategories` | 额外隐藏所有指标均为零或空的分类 | false |
+| `hideZeroLegends` | 额外隐藏当前结果中全零或空的指标图例 | false |
+
+后两个开关需要同时设置 `hideZeroValues: true`。用户明确“保留零售一、二部，只去掉 0”时，使用 `hideZeroValues: true, hideZeroCategories: false`，图例沿用已确认设置，未另行要求时保留。
+
+已有报表先执行 `openyida report inspect <appType> <reportId> --json`，使用返回的真实 `cid`，查看 `hideZeroValues` 状态，再配置：
+
+```bash
+openyida report configure <appType> <reportId> <cid> --hide-zero-values true --dry-run --json
+openyida report configure <appType> <reportId> <cid> --hide-zero-values true --json
+# 明确保留全零分类和指标图例，只隐藏 0 标签／提示
+openyida report configure <appType> <reportId> <cid> --hide-zero-values true --hide-zero-categories false --hide-zero-legends false --json
+# 用户明确要求同时隐藏全零分类和全零指标图例时
+openyida report configure <appType> <reportId> <cid> --hide-zero-values true --hide-zero-categories true --hide-zero-legends true --json
+# 用户要求恢复显示时
+openyida report configure <appType> <reportId> <cid> --hide-zero-values false --json
+```
+
+每次查询返回后，按已确认开关处理。某指标在其他分类有非零值，即使启用隐藏全零图例也仍保留其全局图例。后续查询返回非零值会自动恢复，负数也保留。处理发生在服务端聚合之后，不修改源数据、聚合方式或字段绑定。查询范围、分页和原生缓存会影响本次返回的数据；它不表示全库永远没有非零值。已有图表 configure 时，省略的分类／图例开关保留当前已确认值；更改展示范围应显式传 true／false，关闭主开关会同时复位后两个开关。
+
+若返回 `REPORT_ZERO_VALUES_CUSTOM_HOOK`，表明已有自定义“返回数据处理”代码，CLI 会在写入前停止，不得通过关闭开关、追加图表或重新创建报表覆盖该代码。其他保存或回读失败先 inspect 当前目标，不自动重放写入。详见 [零值隐藏配置与验收](references/zero-values.md)。
 
 ## 异常处理
 

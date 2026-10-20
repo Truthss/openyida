@@ -24,6 +24,8 @@
 
 ## 执行顺序
 
+含待办中心时先核对实现方式：未明确选择自定义页面就保留原生能力；Agent 推荐自定义实现须先 ask_human，明确同意后才纳入该页及后续 `yida-task-center` 交接。普通方案确认和 Fast/Plan 选择不能代替此项选择；用户已显式要求或已明确确认同一范围时复用，不重复询问。
+
 1. 直接复用已确认的 `requirement-brief.json`；若尚未完成 Step 2 的规划准备，先按 [交接契约](../../../yida-requirement-analysis/references/handoff.md#规划阶段补齐) 补齐页面承载、导航与主题，AI 建议保留来源，不重新询问业务或导航；本文件已经包含规划入口，不再额外读取 `step-1-understand.md` 或 `step-2-confirm.md`。
 2. 先按[已选风格只确认一次](../../../yida-design/references/theme-selection.md#已选风格只确认一次)识别用户风格意向并复用已有选择。用户已说明风格时直接推演；给出视觉参考网站或设计图时按[视觉 DNA 提取](../../../yida-design/references/reference-visual-dna.md)实际读取并设计，不再提风格选择题。仅没有风格意向、视觉参考或可复用选择且未委托 AI 决定时，执行 [Plan 视觉分支](../../../yida-design/sub_skill/yida-design-plan/SKILL.md)，按共用规则准备三套候选，再按[宿主展示规则](../../../yida-design/references/theme-selection.md#选择时展示名称与效果图)提问。按[交互顺序](../../../yida-design/references/theme-selection.md#交互顺序)与当前必要问答合并。已有意向或已获得选择后，AI 补齐主题映射并初始化；完整设计和 Token 不作为再次选型的前提。
 3. 主题映射未确定时，执行一次 `openyida design-plan catalog --json`，从返回的 `themes` 或 `creativeOption` 确定 themeId，并复用 `pagePatterns`。已有合法主题 ID 时直接初始化。初始化计划草稿，CLI 返回编写契约与当前主题的精简上下文：
@@ -73,3 +75,13 @@ build-plan.json（业务和视觉的源事实）
 如果已经改动主计划并出现 DESIGN_PLAN_STALE_PART，在原 materialize 命令增加 --rebase-parts。CLI 使用 init 保存的 .build-plan-base.json 做三方核对，保留已完成 facts；冲突按 details.conflicts 明确选择后重试。基线缺失或无法核实时告知阻塞并恢复可信文件，不手填 digest、不删除重建、不重新 init。方案确认后调整一律走 patch --materialize；确认前重复物化仍可用 --rebase-parts 与基线核对，但改动内容以当前 build-plan.json 为准。
 
 本地校验失败统一按[本地校验修复](../../../../references/source-repair.md)处理：先修正并回读源文件，未变化不重跑，连续两次修复无进展时保留产物并报告阻塞。
+
+
+### Windows 参数传递
+
+修改方案中的数组、对象或包含双引号的文本时，先用文件写入工具保存 UTF-8 JSON 文件，再执行
+
+`openyida design-plan patch prd/build-plan.json --set-file prd/changes.json --materialize --json`
+
+changes.json 是字段路径到值的映射，例如 {"dataModels[0].fields":[{"name":"物品名称","type":"TextField","required":true}]}。
+不要把整个 JSON 内联到 PowerShell 或 cmd 参数中；文件输入仍经过相同字段保护、方案校验和确认失效处理。

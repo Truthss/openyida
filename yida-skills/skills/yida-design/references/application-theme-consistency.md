@@ -2,6 +2,10 @@
 
 Fast、Plan 和单页开发使用同一条链路：配对主题与项目 `design.md` → 保留原规则并实例化项目 token 的 `app-theme.css` → 导航、应用框架、门户、自定义页面、原生表单、表单详情、数据管理、报表、抽屉及其他浮层。页面代码负责布局、业务交互和局部装饰，基础配色与组件风格统一读取应用主题；各区域是否实际消费主题必须核实，不能仅凭 CSS 上传成功断言全应用一致。
 
+选定“红色主题”意味着整个应用使用这一品牌主色与配套角色，不能右侧自定义页固定红色、左侧应用仍保留默认蓝色。前台可以采用品牌展示布局，后台采用原生操作布局；这种结构差异不另起一套基础色盘。中性色、辅助色、语义色按设计保留，不要求所有区域同色。`publish` 不会把页面里的品牌常量自动写成应用主题，单独调用 `create-app` 也不代表主题已配置。
+
+Plan 的已选主色与最终 `--color-brand1-6` 必须相符，冲突返回 `DESIGN_PLAN_THEME_COLOR_MISMATCH`，先修正同一份设计源再生成；Fast 的 design.md 同样校验 themeProfile.themeColor 与品牌 token。命名模板需要换品牌时明确修改项目的颜色角色及配套前景，不保留模板原色同时声称已采用另一主色。
+
 已有应用要求“统一和谐”时，按 [全应用覆盖与一致性](../sub_skill/ui-improve/references/application-coverage.md) 建立全部页面和浮层的清单，将范围、效果及平台限制纳入视觉方案，确认后实施。抽屉外壳与内部页面分别检查；报表保留指标和状态语义，门户保留模块及入口。未适配或未验证的区域必须说明，代表性页面截图不能代替全应用验收。
 
 ## 整套主题是设计单位
@@ -193,6 +197,8 @@ antd 控件按 Canvas 技能接入 `CanvasThemeProvider`，由适配层读取当
 发现已确认的全局风格没有对应变量时，先补设计源：Plan 修改 `visualStyle.tokens` 后重新 `materialize`；Fast 更新 `design.md` 后运行带 `--design-file` 的 `sample`。读取生成的 token，上传返回的同一份主题文件，再检查页面。不要只改生成后的 CSS，也不要靠复制色盘到各页补救。
 
 ## 验证主题是否真正一致
+
+完整应用的 PRD 结构化交接记录 `applicationTheme: {themeColor, navTheme, designFile}`，是从最终设计派生的交付期望，不写回 build-plan。Plan materialize 自动生成；Fast 用最终 design.md 中可解析的 `--color-brand1-6` 与明确的导航明暗记录相同字段。收尾 `check-prd-completeness` 会读取当前应用设置，核验 `colour=custom`、主色相符、自定义 CSS 已启用且存在资源 URL、导航明暗相符；不一致为 fail，读取或期望未知为 needs_review。该结果的 `runtimeVerified=false` 明确保留，不能拿配置通过代替浏览器的跨页面视觉验收。历史 PRD 未声明此字段不代表通过主题检查。
 
 1. **设计与文件**：逐项对照已确认的导航、框架、主色、页面底、面板、文字、字体及特色强调，确认它们出现在生成的主题 token 中，页面用的是同一角色。导航明暗与模板或自由创意决策一致，导航状态、形状与密度保留本项目设计。文件名叫 `app_theme.css` 或 `app-theme.css` 不影响契约，以本次输出路径为准。
 2. **绑定**：`themeVerification.verified=true` 仅证明应用设置绑定了主题资源。`iframePropagation` 是配置字段，不是当前页面主题加载的检测结果；不能凭它为 `false` 就断言 Canvas 收不到变量，更不能据此改成固定色盘。

@@ -1,5 +1,17 @@
 [
   {
+    "id": "native-custom-button-current-form",
+    "prompt": "给现有客户表单的页面设置加一个自定义分配按钮，点击后只允许改跟进人，并显示在表格视图和详情页。",
+    "expectedSkill": "yida-custom-button",
+    "note": "表单原生按钮定义与显示引用"
+  },
+  {
+    "id": "native-custom-button-automation",
+    "prompt": "在采购审批已结束的数据详情页加个自定义按钮，点击执行已发布的手动触发集成自动化。",
+    "expectedSkill": "yida-custom-button",
+    "note": "按钮绑定已有自动化，不是新建自动化"
+  },
+  {
     "id": "dashboard-vs-report-vs-chart-1",
     "prompt": "帮我做一个公司经营看板/驾驶舱，要能产品化交付给老板看",
     "expectedSkill": "yida-dashboard",

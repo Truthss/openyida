@@ -48,7 +48,7 @@
       {
         "id": "topology.branch-nodes",
         "values": ["ConditionContainer:route", "ConditionNode:condition", "ParallelNode:condition"],
-        "evidenceLocator": "bundle@sha256:a4d0d5e6...#byte:3841667(eBt component type map); reference:yida-skills/skills/yida-process-rule/references/official-component-nodes.md#透传规则"
+        "evidenceLocator": "bundle@sha256:a4d0d5e6...#byte:3841667(eBt component type map); reference:yida-skills/skills/yida-process-rule/references/official-component-nodes.md#如何使用真实配置"
       },
       {
         "id": "approval.multi-approver-mode",
@@ -100,7 +100,7 @@
       {
         "id": "approval.append-forward-configuration",
         "values": ["normalActions", "appendActions", "forward.hidden", "append.hidden", "appendPosition:BEFORE_APPEND|AFTER_APPEND", "appendResult:valid|invalid", "allowTaskAppend", "moldList", "isConsiderAppendedAction", "isNeedEndTaskGroupChain"],
-        "evidenceLocator": "compiler:lib/process/services/process-actions.js#buildNodeActions; tests:tests/process-actions.test.js; reference:yida-skills/skills/yida-process-rule/references/approval-actions.md",
+        "evidenceLocator": "compiler:lib/process/services/process-actions.js#buildNodeActions; tests:tests/process-actions.test.js; reference:yida-skills/skills/yida-flow-node-config/references/actions.md",
         "verificationScope": "Compiler and offline regression tests only; not a new assertion about the pinned bundle or successful tenant runtime execution."
       },
       {
@@ -114,7 +114,7 @@
       {
         "id": "advanced-node.complete-props",
         "values": ["ConnectorNode", "GroovyNode", "JavaScriptNode", "InitiateApprovalNode", "CycleContainer", "AINode"],
-        "evidenceLocator": "reference:yida-skills/skills/yida-process-rule/references/official-component-nodes.md#支持清单"
+        "evidenceLocator": "reference:yida-skills/skills/yida-process-rule/references/official-component-nodes.md#支持的组件与配置字段"
       },
       {
         "id": "runtime.platform-execution",

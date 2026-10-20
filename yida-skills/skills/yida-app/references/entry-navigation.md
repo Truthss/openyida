@@ -87,6 +87,19 @@ Fast（直接搭建）与 Plan（先确认方案）使用同一份入口规划�
 
 ### 整理管理菜单
 
+前后台分离时，前台专用 display 页面默认不出现在后台平台菜单。Plan 的结构化交接自动生成 `navigationVisibility`（不是 build-plan 输入字段），Fast 从相同的入口用途生成同样清单；覆盖全部前台专用子页，不只首页。将名称解析成真实页面 ID 后执行：
+
+```bash
+openyida nav-group hide <appType> <frontendDisplayFormUuid>
+openyida nav-group list <appType> --flat
+```
+
+逐项回读 PC `hidden=true` 与移动端 `mobileHidden=true`；页面配置的 `renderNav=false` 另行核验。排序不会删除或隐藏未列出的项；只给后台资源排序仍会把前台留在菜单中。共用业务表单、管理端明确引用的页面不自动隐藏，不用菜单隐藏代替权限。自定义前台菜单若仍需访问已隐藏资源，不能直接依赖 platform 模式的隐藏过滤；按下文 local/independent 的真实权限边界组织。
+
+将清单资源的真实 ID 写入 build-manifest，收尾 `check-prd-completeness` 从 PRD 清单与远端资源列表核验菜单隐藏：仍显示则 fail，配置或绑定未知则 needs_review。此检查不证明页面隐藏、后台首页、主题或阅读体验已通过。
+
+遇到“后台侧栏包住前台”时先对比实际打开的 URL：`workbench` 打开前台页就核对管理默认任务与菜单隐藏；独立 `custom` 入口再核对页面配置。单应用可以同时支持独立前台与原生后台，不因双导航直接改成公开免登、全局隐藏平台导航或拆应用。公开访问改变访问范围，与视觉独立展示分开决定。
+
 有独立入口规划时，从业务后台或不分前后台的系统菜单生成平台导航顺序：默认任务在前，同一资源只排一次。访客菜单不自动加入。
 
 - 已有 `navigationOrder` 与入口规划冲突时，先修正规划，再生成产物。
@@ -102,7 +115,7 @@ Fast（直接搭建）与 Plan（先确认方案）使用同一份入口规划�
 3. 按权限技能要求完成授权、保存，再重新查询确认；保留本次未涉及的权限。
 4. 使用实际访客和管理者账号检查结果。业务管理者需要的是业务权限，不要自动给他应用管理员身份。
 
-`yida-form-permission` 当前只管理 `FORM_PACKAGE_VIEW`。提交权限包 `FORM_PACKAGE_START`、视图权限绑定和页面人员白名单尚不属于该技能已支持的能力。遇到这些需求，记录具体任务、缺少的权限和平台处理入口，不能靠放宽其他权限完成。
+`yida-form-permission` 支持 VIEW 和 START 权限组：查看、管理已有数据用 `FORM_PACKAGE_VIEW`；谁能发起用 `FORM_PACKAGE_START`，查询和保存都传 `--package-type FORM_PACKAGE_START`。视图权限绑定和页面人员白名单仍未支持，需记录具体任务和平台处理入口，不能靠放宽其他权限完成。
 
 菜单隐藏、方案里的权限说明和页面上的筛选，都不能作为权限配置成功的证据。单条记录的操作权限也不能用来判断整个菜单或管理视图是否允许访问。
 

@@ -1,6 +1,6 @@
 ---
 name: yida-data-management
-description: 查询、新增、更新宜搭表单和流程数据，精确删除普通表单单条记录。支持日期为空、日期区间端点、多选数量、子表条件及服务端分页；表单使用 /v1/form/，流程使用 /v1/process/。
+description: 查询、新增、更新宜搭表单和流程数据，按当前审批人查询流程实例或统计条数，精确删除普通表单单条记录。支持日期为空、日期区间端点、多选数量、子表条件及服务端分页；表单使用 /v1/form/，流程使用 /v1/process/。
 ---
 
 # 数据管理
@@ -75,7 +75,7 @@ description: 查询、新增、更新宜搭表单和流程数据，精确删除�
 
 ## 完成检查清单
 
-- [ ] 已确认登录态、`appType`、`formUuid`；流程表单已确认 `processCode`
+- [ ] 已确认登录态、`appType`、`formUuid`；发起流程时确认 `processCode`，按当前审批人查询/计数不要求额外获取 `processCode` 或管理员专用 Schema
 - [ ] 已通过 schema/field map 使用真实 `fieldId`
 - [ ] 如使用 `--data-file`，文件位于 `.cache/openyida/<项目名或任务名>/data-import/`，且创建后已立即调用 `openyida data create ... --data-file ...`
 - [ ] 每条实例都实际执行了 `openyida data create form/process`，且命令返回无报错
@@ -98,6 +98,7 @@ description: 查询、新增、更新宜搭表单和流程数据，精确删除�
 - "查询数据"、"新增记录"、"更新数据"
 - "查看表单实例"、"发起流程"
 - "录入数据"、"批量导入"、"查询待办任务"
+- "按当前审批人统计"、"某人的待审批流程条数"、"查询指定审批人的流程实例"
 
 > ⚠️ 表单接口（`/v1/form/`）和流程接口（`/v1/process/`）不能混用。
 
@@ -182,11 +183,38 @@ openyida data query operation-records <appType> --process-inst-id <processInstan
 openyida data execute task <appType> --task-id <taskId> --process-inst-id <processInstanceId> --form-uuid <formUuid> --expect-form-name <name> --expect-form-type process --out-result AGREE --remark '同意' [--data-file .cache/openyida/<项目名或任务名>/data-import/task-data.json] [--resolve-aliases]
 ```
 
+### 按当前审批人查询和统计流程条数
+
+用户要求“某应用、某流程表单中当前审批人为某人的数据有多少条”时，使用：
+
+```bash
+openyida data query process <appType> <formUuid> --current-approver <真实userId> --count
+# 去掉 --count 返回匹配的实例数据
+openyida data query process <appType> <formUuid> --current-approver <真实userId>
+# 可叠加业务字段条件；默认每页100条、最多1000页
+openyida data query process <appType> <formUuid> --current-approver <真实userId> --count --search-json '<条件数组>' --max-pages 1000
+```
+
+- 先确认同一环境、组织、目标应用和流程表单；人员解析为该组织真实 userId，同名时先消歧，不能将姓名直接当作 userId，也不能猜人员 ID。
+- 统计口径是当前 `RUNNING` 实例中存在目标人员的 `TODO` 处理记录，每个 `processInstanceId` 只计一次。多人会签、并行任务或同一人有多个任务都不重复计流程条数；`HISTORY`、抄送以及代理人 ID 不用于当前审批人匹配。平台 TODO 也可能包含办理节点，这与“只统计历史同意/拒绝审批动作”不同，需按用户的业务口径说明。
+- 不使用 `task-center todo` 或 `data query tasks --type todo` 代替：它们查询的是当前登录人的待办，不能用于代查指定人员。查询目标人员不会切换调用者身份或模拟该人员登录。
+- 权限与平台一致：请求由服务端校验当前登录身份及实例可查看权限；CLI 不额外强制应用管理员/数据管理员角色，也不改变数据权限。管理员、数据管理员及普通成员最终能看到哪些记录，以服务端实际授权结果为准；普通用户有实例查看权限时可统计可见范围，不能把此结果称为全应用数量。
+- 不强制先调用仅管理员可用的 Schema/管理接口来拦截普通用户。仅需要 `--resolve-aliases` 时才额外读取字段映射，并遵守该接口自身的权限。
+- 返回 `count`/`totalCount` 是去重后的匹配数量，`sourceTotalCount` 是筛选前可见的运行中实例总量；`scannedInstanceCount` 和 `pagesFetched` 说明扫描范围。`scope=current_user_visible`、`complete=true` 只表示本次已遍历服务端返回的可见结果，不证明拥有全应用权限，也不是跨请求的事务快照。
+- 命令自动从第1页完整扫描，不支持 `--page` 大于1、`--ids-only`、`--task-id`、`--approved-result` 或非 `RUNNING` 状态。`--max-pages` 达到上限、分页重复/总数变化、返回结构不明、身份变化或任一接口鉴权失败都会报错，不把部分结果当作完整计数。
+- 返回0条时，只能说明本次可见范围未匹配；若与网页数量不一致，核对环境/组织/账号、appType/formUuid、状态和筛选、原始错误及分页。不得推测“平台API只能查本人提交”或“管理员也无法查看”。
+
 ### 任务中心
 
 ```bash
-openyida data query tasks <appType> --type todo|done|submitted|cc [--page 1 --size 20]
+openyida data query tasks <appType> --type todo|created|done|cc --normalized [--page 1 --size 20]
 ```
+
+按用户描述选择待我处理、我创建的、我已处理或抄送我的；`submitted` 兼容为 `created` 别名。我创建的包含普通表单和流程，我已处理不代表流程已完成。筛选条件与候选查询以 `openyida task-center capabilities --json` 为准。自定义内容只需某项任务数据时交接 `yida-canvas-data-binding`，不要求搭建待办中心；业务工单、订单等待处理记录继续使用业务表单查询。
+
+需要过滤时按需读取[个人任务筛选示例](../yida-task-center/references/task-filters.md)，复用所需类型的组合命令与时间条件。
+
+只读数量、流程详情和审批历史可独立使用 `task-center count / inspect`，无需选择自定义页面；返回含义与按需装配见[流程任务能力](../yida-canvas-data-binding/references/workflow-capabilities.md)。
 
 ## 接口总览
 

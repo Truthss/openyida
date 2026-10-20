@@ -82,10 +82,8 @@ describe('connect owns the pre-enrollment check', () => {
     expect(prepareConnection).toHaveBeenCalledTimes(1);
     expect(launchBackgroundRuntime.mock.calls[0][1].providers.map(p => p.provider)).toEqual([provider]);
     expect(JSON.parse(stdout.write.mock.calls[0][0])).toMatchObject({ ready: false, readyForEnrollment: true,
-      providers: [{ status: 'login_required', usable: false, registrable: true }] });
-    expect(execute.mock.calls.map(call => call[1])).toEqual(provider === 'qoder'
-      ? [['--version'], ['--acp'], ['--list-models']]
-      : [['--version'], ['app-server', '--listen', 'stdio://'], ['login', 'status']]);
+      providers: [{ status: 'cli_detected', usable: false, registrable: true, authKnown: false }] });
+    expect(execute.mock.calls.map(call => call[1])).toEqual([['--version']]);
   });
   test('run keeps a signed-out CLI in inventory when bringing a computer back online', async () => {
     const bin = path.join(root, '.local', 'bin'); fs.mkdirSync(bin, { recursive: true });

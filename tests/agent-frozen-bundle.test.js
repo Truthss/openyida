@@ -100,6 +100,16 @@ foreach($item in $items){
     expect(second.config.bundle).toEqual(first.config.bundle);
     expect(fs.readdirSync(path.join(fixture.config.stateDir, 'bundles'))).toEqual([first.config.bundle.id]);
   });
+  test('warm reuse hashes source once and still verifies every frozen file', () => {
+    const first = freeze();
+    const open = jest.spyOn(fs, 'openSync');
+    const second = freeze();
+    const source = path.join(root, 'package/lib/fixture.js');
+    const target = path.join(first.config.node.packageRoot, 'lib/fixture.js');
+    expect(open.mock.calls.filter(call => call[0] === source)).toHaveLength(1);
+    expect(open.mock.calls.filter(call => call[0] === target)).toHaveLength(1);
+    expect(second.config.bundle.id).toBe(first.config.bundle.id);
+  });
   test.each([0o027, 0o077])('freezes and verifies exact file modes under umask %i', (mask) => {
     if (process.platform === 'win32') {return;}
     const modulePath = path.resolve(__dirname, '../lib/agent/frozen-bundle.js');

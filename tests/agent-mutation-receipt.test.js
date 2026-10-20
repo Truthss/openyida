@@ -26,7 +26,7 @@ describe('managed mutation receipt', () => {
     ['integration', ['disable', 'APP_X', 'FORM_PROCESS', 'PROC_X'], 'update_process'],
     ['integration', ['list', 'APP_X', '--json'], null],
     ['integration', ['check', 'APP_X'], null],
-    ['integration', ['update', 'APP_X', 'FORM_PROCESS', 'PROC_X', '--spec', 'spec.json'], null],
+    ['integration', ['update', 'APP_X', 'FORM_PROCESS', 'PROC_X', '--patch', 'patch.json'], 'update_process'],
     ['process', ['preview', 'APP_X', 'FORM_PROCESS'], null],
     ['create-report', ['APP_X', '经营看板'], 'create_report'],
     ['publish', ['page.jsx', 'APP_X', 'FORM_X'], 'publish_page'],
@@ -34,11 +34,14 @@ describe('managed mutation receipt', () => {
     ['nav-group', ['move', 'APP_X', 'FORM_X', '--to', 'NAV_X'], 'update_nav'],
     ['app-permission', ['add', 'APP_X', 'dev'], 'update_app_permission'],
     ['save-permission', ['APP_X', 'FORM_X'], 'update_form_permission'],
+    ['save-permission', ['APP_X', 'FORM_X', '--owner-field', 'employeeField_owner', '--dry-run'], null],
     ['save-share-config', ['APP_X', 'FORM_X'], 'update_share_config'],
     ['nav-group', ['list', 'APP_X'], null],
     ['get-page-config', ['APP_X', 'FORM_X'], null],
     ['verify-short-url', ['APP_X', 'FORM_X', '/s/local-e2e'], null],
     ['report', ['inspect', 'APP_X', 'REPORT_X', '--json'], null],
+    ['report', ['configure', 'APP_X', 'REPORT_X', 'cid_1', '--hide-zero-values', 'true'], 'update_report'],
+    ['report', ['configure', 'APP_X', 'REPORT_X', 'cid_1', '--hide-zero-values', 'true', '--dry-run'], null],
     ['create-form', ['validate-fields', 'fields.json'], null],
   ])('%s %j maps only known writes', (command, args, operation) => {
     expect(classifyManagedMutation(command, args)?.operation || null).toBe(operation);
@@ -85,7 +88,7 @@ describe('managed mutation receipt', () => {
   test('flow readback/probes stay app-bound and never produce mutation receipts', () => {
     for (const [command, args] of [
       ['integration', ['list', 'APP_X', '--json']],
-      ['integration', ['update', 'APP_X', 'FORM_PROCESS', 'PROC_X', '--spec', 'spec.json']],
+      ['integration', ['update', 'APP_X', 'FORM_PROCESS', 'PROC_X', '--patch', 'patch.json', '--dry-run']],
       ['process', ['preview', 'APP_X', 'FORM_PROCESS']],
     ]) {
       expect(() => assertManagedInvocation(command, args, { env: managedEnvironment() })).not.toThrow();

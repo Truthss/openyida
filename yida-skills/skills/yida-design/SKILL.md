@@ -10,6 +10,8 @@ description: >
 
 面向用户只介绍主题名称、风格特点和选择方式；说明文档、选择提示及交付总结均不展示主题总套数。
 
+用户询问“主题在哪里配置”“怎么进入主题配置”等设置入口，且没有要求实际修改外观时，执行 `openyida app-settings <appType> --section theme --json`，直接返回其中的 `url`，不进入美化方案确认。业务前后台配置入口使用 `--section basic`；原生数据卡片管理入口使用 `--section data-card`。均以目标应用的真实地址为准。
+
 已有资源的 UI 调整和美化后恢复，先进入 [ui-improve](sub_skill/ui-improve/SKILL.md)，再按其确认、备份和业务保留约束使用下方设计规则。
 
 先读已有需求、设计和应用主题，确定哪些地方需要调整。优先使用平台已有的主题变量，只在表达不了所需效果时新增变量，并写清哪些组件使用它；见 [主题扩展规则](references/application-theme-consistency.md#平台基础变量是应用主题基础框架)。
@@ -89,7 +91,7 @@ Fast、Plan 和单页设计使用相同的 UI 设计规则、主题变量和质�
 
 1. **平台能力优先**：数据录入、提交、编辑、审批、权限、字段校验走宜搭表单/流程；自定义页负责展示数据、呈现分析结果、放置业务入口、打开详情页，并串联表单、流程、报表和导航入口。
 2. **美感提升保持功能契约**：页面美化、视觉升级和页面重构默认只调整颜色、布局、密度、间距、视觉层级、素材和图标表达；现有数据源、字段映射、按钮动作、筛选逻辑、提交 URL、权限和业务状态保持原样。
-3. **默认保留平台应用导航**：普通自定义页、页面内 tab、分段、筛选和快捷入口都不触发 `yida-nav-shell`。PRD 的应用工作区选择自定义导航，或用户明确要求自绘应用级导航、隐藏应用导航时，写 `appBlueprint.hideAppNav: 'y'` 并交给 `yida-nav-shell`。独立前台选择自己的菜单时，同样进入 `yida-nav-shell`，但只配置该页独立展示，保留后台应用导航。用户只说全屏、无导航或 `isRenderNav=false` 时，只写页面级隐藏配置。
+3. **后台工作区默认保留平台导航**：普通后台自定义页、页面内 tab、分段、筛选和快捷入口都不触发 `yida-nav-shell`。PRD 的应用工作区选择自定义导航，或用户明确要求自绘应用级导航、隐藏应用导航时，写 `appBlueprint.hideAppNav: 'y'` 并交给 `yida-nav-shell`。独立前台默认在自定义页内实现自己的菜单并进入 `yida-nav-shell`，只隐藏该页的平台导航，保留后台应用导航；单步入口可不绘菜单，用户明确保留平台导航时优先。前台专用页另从后台菜单隐藏，不能用页面隐藏代替。用户只说全屏、无导航或 `isRenderNav=false` 时，只写页面级隐藏配置。
 4. **同应用页面入口归导航**：同应用页面优先放入平台导航或导航分组；自定义页内容区放当前页动作、原生表单新建/查看、外部链接和跨应用资源。
 5. **表单入口响应式**：新增/提交页 URL 默认使用页面级隐藏导航的 `submission/{formUuid}?isRenderNav=false`；详情页 URL 默认使用 `formDetail/{formUuid}?formInstId={formInstId}&navConfig.layout=1180&isRenderNav=false`，且 `formInstId` 必须来自真实数据记录并优先取 `row.formInstId`；PC 端默认在侧边抽屉中用 iframe 承载宜搭原生表单，抽屉默认半屏 `50vw`，提交页和详情页使用同一宽度规则；移动端整页或新页打开。
 6. **主题文件**：**旧主题注入确认**：应用层 CSS 上传前必须按 [旧主题应用的样式作用域与确认](references/application-style-library.md#旧主题应用的样式作用域与确认) 检查实际主题能力。旧主题或能力未知时默认仅做页面局部样式；只有用户明确确认目标应用的全局注入后才传 `--confirm-legacy-app-style`。用户要求停用应用级 `appCustomTheme` 时使用 `update-app --disable-custom-theme` 并回读核验，不切换主题色。 主题目录统一包含设计、CSS、表单布局三个文件，导出和生成参数见 [命令与参数](references/application-style-library.md#命令与参数)。Plan 使用 CLI 返回的 `outputs.theme`；Fast 和已有主题调整按 [主题文件生成与更新](workflow/output-design.md#cli-token-契约fast--plan-共用) 执行。按 [共用主题规则](references/application-theme-consistency.md) 将已选风格落实为 token，并核对生成的 CSS。修改变量要回到设计源后重新生成、上传；仅 CLI 未覆盖且已核实选择器的样式覆盖可在 CSS 末尾小范围追加，不另写脚本生成或重写主题文件。

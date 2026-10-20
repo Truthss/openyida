@@ -167,6 +167,16 @@ describe('design-plan materialize', () => {
     expect(fs.existsSync(path.join(tempDir, 'prd.md'))).toBe(false);
   });
 
+  test('rejects a token palette that disagrees with the selected project brand', () => {
+    const plan = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
+    plan.visualStyle.tokens = { '--color-brand1-6': '#C8252C' };
+    expect(() => renderDesign(plan)).toThrow(expect.objectContaining({
+      code: 'DESIGN_PLAN_THEME_COLOR_MISMATCH', details: expect.objectContaining({ expected: '#6F4E37', actual: '#C8252C' }),
+    }));
+    plan.visualStyle.forUser.colorStrategy.primaryColor = '#C8252C';
+    expect(renderDesign(plan)).toContain('#C8252C');
+  });
+
   test('derives PRD, design contract, and anchor-based HTML from one plan', () => {
     const input = path.join(tempDir, 'build-plan.json');
     fs.copyFileSync(FIXTURE, input);
@@ -184,6 +194,7 @@ describe('design-plan materialize', () => {
     expect(handoff.resourceCreationOrder).toEqual(['应用与主题配置', '采购申请', '采购订单', '初始示例数据', '采购工作台', '发布与导航排序']);
     expect(handoff.resourceBlueprint.map(resource => resource.type)).toEqual(['process-form', 'normal-form', 'display-page']);
     expect(handoff.pages[0].pageSpecHandoff.designFile).toBe(result.outputs.design);
+    expect(handoff.applicationTheme).toEqual({ themeColor: '#6F4E37', navTheme: 'light', designFile: result.outputs.design });
     for (const reference of handoff.pages[0].pageSpecHandoff.designRefs) {
       const frontmatter = require('js-yaml').load(design.match(/^---\n([\s\S]*?)\n---/)[1]);
       expect(reference.split('.').reduce((value, key) => value?.[key], frontmatter)).toBeDefined();
@@ -629,6 +640,11 @@ describe('design-plan materialize', () => {
       plan.visualStyle.tokens = {};
       const expected = readDesignTokens(resolveThemeColors(fs.readFileSync(themeTemplatePath(theme), 'utf8')
         .replace(/\{\{PRIMARY_COLOR\}\}/g, plan.visualStyle.forUser.colorStrategy.primaryColor)));
+      // This preservation case adopts a template's authored brand rather than
+      // simultaneously claiming a different project brand. Rebranding is tested separately.
+      if (/^#[\da-f]{6}$/i.test(expected['--color-brand1-6'])) {
+        plan.visualStyle.forUser.colorStrategy.primaryColor = expected['--color-brand1-6'];
+      }
       const actual = readDesignTokens(renderDesign(plan));
       const contentTokens = tokens => Object.fromEntries(Object.entries(tokens).filter(([name]) => !navigation.has(name)));
       expect(contentTokens(actual)).toEqual(contentTokens(expected));
@@ -1564,4 +1580,21 @@ describe('Plan contract and file consistency', () => {
     expect(() => patchPlan(input, ['visualStyle.tokens.--corner-2=4px'], { materialize: true })).toThrow(/staging/);
     expect(files.map(file => fs.readFileSync(file))).toEqual(before);
   });
+});
+
+
+test('patch file preserves Chinese, quotes and arrays and rejects protected paths atomically',()=>{
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'plan-file-'));
+  try {
+    const input=path.join(dir,'build-plan.json'), changes=path.join(dir,'changes.json');
+    fs.copyFileSync(FIXTURE,input);
+    const fields=[{name:'物品"名称',type:'TextField',required:true}];
+    fs.writeFileSync(changes,JSON.stringify({'dataModels[0].fields':fields}));
+    patchPlan(input,[],{setFile:changes});
+    expect(JSON.parse(fs.readFileSync(input)).dataModels[0].fields).toEqual(fields);
+    const before=fs.readFileSync(input,'utf8');
+    fs.writeFileSync(changes,JSON.stringify({'meta.revision':'forbidden'}));
+    expect(()=>patchPlan(input,[],{setFile:changes})).toThrow();
+    expect(fs.readFileSync(input,'utf8')).toBe(before);
+  } finally {fs.rmSync(dir,{recursive:true,force:true});}
 });
