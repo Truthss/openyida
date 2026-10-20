@@ -6,6 +6,13 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  solution_template: {
+    description: 'Discover and inspect Solution Center templates, then use native AI build or direct enable',
+    usage: 'Usage: openyida solution-template search [--query <text>] [--scene <scene>] [--industry <industry>] [--page <n>] [--size <n>] [--json]\\n       openyida solution-template detail <TPL_...> [--json]\\n       openyida solution-template ai-build <TPL_...> [--json]\\n       openyida solution-template enable <TPL_...> --name <appName> [--with-data y|n] [--request-id <id>] [--json]\\n       openyida solution-template status <requestId> [--json]',
+    failed: 'Solution Center template operation stopped: {0}',
+    ai_build_handoff: 'The template supports native AI build. Add customization requirements and submit them in the native builder. This receipt does not mean an app exists.',
+    no_progress_api: 'The platform currently exposes no pollable percentage progress. The request receipt and app-list readback are preserved, but resubmission is still unsafe.',
+  },
   print_template: {
     "description": "Manage native YiDA print templates, generate document layouts, back up, restore and request PDFs",
     "error": "Print template operation failed: {0}",
