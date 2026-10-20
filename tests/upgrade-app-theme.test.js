@@ -68,12 +68,12 @@ test('writes both configs with target identity and verifies configuration only',
   expect(httpPost.mock.calls.slice(-2).map(call => new URLSearchParams(call[2]).get('key')))
     .toEqual(['CREATED_WITH_MODERN_THEME', 'APP_THEME_MODE']);
 });
-test.each(['local', 'cloud', 'qwenwork', ' CLOUD '])('only agent type qualifies: %s', async agentAppType => {
+test.each(['local', 'cloud', 'web_local', 'qwenwork', ' CLOUD ', 'future_channel'])('server AI type qualifies regardless of channel: %s', async agentAppType => {
   httpGet.mockResolvedValue(context({ agentAppType, appTag: 'SPACE', appThemeEnable: 'n', appThemeMode: 'legacy', platformVersion: 'V3' }));
   await expect(upgradeAppTheme(params)).resolves.toMatchObject({ success: true });
   expect(httpGet).toHaveBeenCalledTimes(1); // No gray queries or runtime-mode gate.
 });
-test.each(['none', '', 'unknown'])('non-AI type %s never writes even with theme enabled', async agentAppType => {
+test.each(['none', ' NONE ', '', '  '])('non-AI type %s never writes even with theme enabled', async agentAppType => {
   httpGet.mockResolvedValue(context({ agentAppType, appThemeEnable: 'y', aiApp: 'y' }));
   await expect(upgradeAppTheme(params)).rejects.toMatchObject({ code: 'APP_THEME_AI_APP_REQUIRED' });
   expect(httpPost).not.toHaveBeenCalled();

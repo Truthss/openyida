@@ -62,7 +62,8 @@ const path = require('path');
 // Combined personal workflows, native data cards and cool-card tooling measure
 // 2,552,878 compressed bytes on Node 20; retain less than 32 KiB runtime headroom.
 // Native print templates add seven runtime modules, six reusable scenario samples,
-// and a skill with three guides. Node 26 measures 2,576,762 compressed bytes;
+// and a skill with three guides. With main's AI app helper, Node 26 measures
+// 2,576,926 compressed bytes;
 // keep a small allowance for Node 20's different npm compression output.
 const MAX_TARBALL_BYTES = 2560 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
@@ -147,7 +148,7 @@ const MAX_TARBALL_BYTES = 2560 * 1024;
 // Combined buttons, live-test fixes and report controls (Node 22):
 // 2,573,647 compressed bytes / 9,556,794 unpacked bytes / 743 files.
 // Keep less than 16 KiB compressed headroom and the next 16 KiB unpacked boundary.
-// Print template content measures 9,640,143 bytes / 760 files on Node 26.
+// Print templates plus main's AI app helper measure 9,640,515 bytes / 761 files on Node 26.
 // Keep the next 16 KiB boundary and the existing 512 KiB per-file cap.
 const MAX_UNPACKED_BYTES = 9424 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
@@ -177,7 +178,8 @@ const MAX_UNPACKED_BYTES = 9424 * 1024;
 // The merged workflow and native data-card package contains 733 files.
 // The combined workflow, data-card and cool-card package contains 738 files.
 // Custom buttons and native report zero-value controls add five packaged files.
-const MAX_ENTRY_COUNT = 760;
+// Include the shared AI application eligibility helper merged from main.
+const MAX_ENTRY_COUNT = 761;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -257,6 +259,7 @@ const REQUIRED_PACKAGE_FILES = [
   ...['application-coverage', 'backup-and-restore', 'component-replacement', 'confirmation']
     .map(name => `yida-skills/skills/yida-design/sub_skill/ui-improve/references/${name}.md`),
   'lib/app/upgrade-app-theme.js',
+  'lib/app/agent-app-type.js',
   'lib/app/prepare-app-theme-upgrade.js',
   'yida-skills/skills/yida-upgrade-app-theme/SKILL.md',
   'yida-skills/skills/yida-upgrade-app-theme/references/page-migration.md',
