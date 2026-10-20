@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [2026.10.21] - 2026-10-21
 
-新增宜搭原生打印模板管理、六类单据搭建和数据详情链接打印；补充 Issue 反馈时的 GitHub 支持引导，并明确集团版酷卡片的搭建限制。
+新增宜搭原生打印模板管理、六类单据搭建和数据详情链接打印，并补充 Issue 反馈时的 GitHub 支持引导。
 
 ### 新增能力
 
@@ -32,7 +32,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 修复
 
-- 集团版不支持酷卡片搭建：CLI 根据认证目标环境在创建请求前拦截，Skill 直接告知限制并停止搭建流程。
 - 处理原生模板复制遗漏字段字典的情况：仅在新旧正文一致且新字典为空时补全新目标，并再次回读；中文字体使用原生 PDF 渲染器支持的字体标识。
 
 ### 使用范围
