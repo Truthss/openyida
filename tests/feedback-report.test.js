@@ -90,6 +90,25 @@ describe('offline feedback reports', () => {
     expect(updated.reviewDigest).not.toBe(original.reviewDigest);
   });
 
+  test('tool setup metadata does not change the original draft or imply public approval', () => {
+    const input = path.join(directory, 'input.json');
+    const originalInput = { ...summary, incidentEnvironment: { openyida: '2026.1.1' } };
+    fs.writeFileSync(input, JSON.stringify(originalInput));
+    const original = writeReport({ input, outputDir: path.join(directory, 'before-setup') });
+    fs.writeFileSync(input, JSON.stringify({ ...originalInput,
+      githubAccount: 'private-account', setupConsent: true, publishConsent: true,
+      githubSetup: { tool: 'gh', authenticated: true, token: 'private-credential', diagnostics: 'private-login-log' },
+    }));
+    const resumed = writeReport({ input, outputDir: path.join(directory, 'after-setup') });
+    expect(resumed.submissionPerformed).toBe(false);
+    expect(resumed.fingerprint).toBe(original.fingerprint);
+    expect(resumed.reviewDigest).toBe(original.reviewDigest);
+    expect(fs.readFileSync(resumed.bodyFile, 'utf8')).toBe(fs.readFileSync(original.bodyFile, 'utf8'));
+    const report = JSON.parse(fs.readFileSync(resumed.reportFile, 'utf8'));
+    expect(report.incidentEnvironment.openyida).toBe('2026.1.1');
+    expect(JSON.stringify(report)).not.toMatch(/private-account|private-credential|private-login-log|setupConsent|publishConsent/);
+  });
+
   test('accepts only explicit summary data and distinguishes hypotheses from observations', () => {
     const report = buildReport({
       ...summary,

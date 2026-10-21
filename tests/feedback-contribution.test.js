@@ -111,3 +111,21 @@ test('beginner guidance preserves consent, public-source boundaries and optional
   expect(read('CONTRIBUTING.md')).toContain('<a id="ai-help"></a>');
   expect(read('.github/PULL_REQUEST_TEMPLATE.md').match(/^## /gm)).toHaveLength(4);
 });
+
+test('account setup reference is discoverable from each submission entry and local links resolve', () => {
+  const skillDir = 'yida-skills/skills/yida-feedback';
+  for (const file of ['SKILL.md', 'references/user-interaction.md', 'references/github-contribution.md']) {
+    const content = read(`${skillDir}/${file}`);
+    const links = [...content.matchAll(/\]\(([^)]+)\)/g)].map(match => match[1]);
+    expect(links.some(link => link.endsWith('github-setup.md'))).toBe(true);
+  }
+  const files = ['SKILL.md', ...fs.readdirSync(path.join(root, skillDir, 'references'))
+    .filter(file => file.endsWith('.md')).map(file => `references/${file}`)];
+  for (const file of files) {
+    const content = read(`${skillDir}/${file}`);
+    for (const [, link] of content.matchAll(/\]\(([^)]+)\)/g)) {
+      if (/^https?:\/\//.test(link)) {continue;}
+      expect(fs.existsSync(path.resolve(root, skillDir, path.dirname(file), link.split('#')[0]))).toBe(true);
+    }
+  }
+});

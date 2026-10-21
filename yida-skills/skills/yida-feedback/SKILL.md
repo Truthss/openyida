@@ -36,6 +36,8 @@ openyida feedback report --input summary.json --output-dir feedback-draft-001
 
 ## 按用户条件交付
 
+用户选择 GitHub 后，按 [账号与工具准备](references/github-setup.md) 复用已有工具、引导注册/登录，或在用户同意后协助配置。缺少现成工具时，提 Issue 优先使用可用网页，不把安装工具作为门槛；工具就绪后继续原草稿，公开确认仍按原流程执行。
+
 - **无 GitHub 账号**：先引导用户创建 GitHub 账号，由用户自行完成注册和登录。实在不行，只提示“反馈到AI开发者群”，附上已整理的脱敏报告。不索取群链接或群 ID，不编造入群入口，不替用户发送群消息。离线或暂不愿注册时同样交付报告，明确“材料已生成，尚未提交”。
 - **有 GitHub 账号，提交 Issue**：无需 clone/fork；按 [GitHub 提交](references/github-contribution.md) 查重、提交已确认内容并读回。成功后按交互规范给一次可选 PR 邀请；登录由用户在可信本机流程完成，不索取 Token。
 - **有账号，希望提交修复 PR**：仅适用于公开 OpenYida CLI/skill/docs 的可验证问题。先准备最小修复和验证，再通过用户自己的 Fork 提交到公开上游，详见同一参考。没有源码时由 Agent 在独立目录准备公开源码，不修改 npm 全局安装或用户业务目录。无法定位/验证时如实写入测试对比，优先交付 Issue 草稿；不要承诺未经验证的修复。
@@ -57,3 +59,4 @@ openyida feedback report --input summary.json --output-dir feedback-draft-001
 | [用户交互](references/user-interaction.md) | 进入技能时；含成功后的可选 PR 邀请 |
 | [报告输入](references/report-input.md) | 准备脱敏摘要、环境和测试证据时 |
 | [GitHub 提交](references/github-contribution.md) | 用户选择公开提交或贡献代码时 |
+| [账号与工具准备](references/github-setup.md) | GitHub 路径需要注册、登录、安装或连接工具时 |

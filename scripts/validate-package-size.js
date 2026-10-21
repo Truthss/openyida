@@ -65,7 +65,9 @@ const path = require('path');
 // and a skill with three guides. With main's AI app helper, Node 26 measures
 // 2,576,926 compressed bytes;
 // keep a small allowance for Node 20's different npm compression output.
-const MAX_TARBALL_BYTES = 2560 * 1024;
+// Beginner account/tool guidance: Node 20.18.1 measures 2,627,647 compressed
+// bytes (Node 26 is smaller). Keep the next 16 KiB compression boundary.
+const MAX_TARBALL_BYTES = 2576 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.
@@ -193,7 +195,9 @@ const MAX_UNPACKED_BYTES = 9488 * 1024;
 // Custom buttons and native report zero-value controls add five packaged files.
 // Include the shared AI application eligibility helper merged from main.
 // Dynamic personnel sources add one runtime module and one skill reference.
-const MAX_ENTRY_COUNT = 766;
+// Account/tool onboarding adds one progressively loaded feedback reference.
+// Unpacked and per-file limits remain unchanged.
+const MAX_ENTRY_COUNT = 767;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -246,6 +250,7 @@ const REQUIRED_PACKAGE_FILES = [
   'yida-skills/skills/yida-feedback/SKILL.md',
   'yida-skills/skills/yida-feedback/references/report-input.md',
   'yida-skills/skills/yida-feedback/references/github-contribution.md',
+  'yida-skills/skills/yida-feedback/references/github-setup.md',
   'lib/permission/permission-scope.js',
   'lib/permission/matrix-availability.js',
   'yida-skills/skills/yida-form-permission/references/row-field-access.md',
