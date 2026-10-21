@@ -837,6 +837,11 @@ async function main() {
       await run(args);
       break;
     }
+    case 'print-template': {
+      const { run } = require('../lib/print-template/print-template');
+      await run(args);
+      break;
+    }
     case 'form-view': {
       const { run } = require('../lib/app/form-view');
       await run(args);
@@ -1333,6 +1338,10 @@ async function main() {
     }
 
     case 'feedback': {
+      if (args[0] === 'github') {
+        await require('../lib/feedback/github').run(args.slice(1));
+        break;
+      }
       const { run: runFeedback } = require('../lib/feedback/feedback');
       await runFeedback(args);
       break;

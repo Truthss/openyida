@@ -61,7 +61,11 @@ const path = require('path');
 // 2,517,672 compressed bytes; retain the next 16 KiB boundary.
 // Combined personal workflows, native data cards and cool-card tooling measure
 // 2,552,878 compressed bytes on Node 20; retain less than 32 KiB runtime headroom.
-const MAX_TARBALL_BYTES = 2528 * 1024;
+// Native print templates add seven runtime modules, six reusable scenario samples,
+// and a skill with three guides. With main's AI app helper, Node 26 measures
+// 2,576,926 compressed bytes;
+// keep a small allowance for Node 20's different npm compression output.
+const MAX_TARBALL_BYTES = 2560 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.
@@ -144,7 +148,11 @@ const MAX_TARBALL_BYTES = 2528 * 1024;
 // Combined buttons, live-test fixes and report controls (Node 22):
 // 2,573,647 compressed bytes / 9,556,794 unpacked bytes / 743 files.
 // Keep less than 16 KiB compressed headroom and the next 16 KiB unpacked boundary.
-const MAX_UNPACKED_BYTES = 9344 * 1024;
+// Print templates plus main's AI app helper measure 9,640,515 bytes / 761 files on Node 26.
+// Keep the next 16 KiB boundary and the existing 512 KiB per-file cap.
+// Issue contribution account checks add one runtime module: 9,653,376 unpacked bytes
+// on Node 26 before generated command docs; retain the next 16 KiB boundary.
+const MAX_UNPACKED_BYTES = 9440 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -172,11 +180,29 @@ const MAX_UNPACKED_BYTES = 9344 * 1024;
 // The merged workflow and native data-card package contains 733 files.
 // The combined workflow, data-card and cool-card package contains 738 files.
 // Custom buttons and native report zero-value controls add five packaged files.
-// The shared AI application eligibility helper adds one required runtime module.
-const MAX_ENTRY_COUNT = 744;
+// Include the shared AI application eligibility helper merged from main.
+const MAX_ENTRY_COUNT = 762;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
+  'lib/feedback/github.js',
+  'lib/print-template/builder.js',
+  'lib/print-template/codes.js',
+  'lib/print-template/contract.js',
+  'lib/print-template/detail.js',
+  'lib/print-template/model.js',
+  'lib/print-template/print-template.js',
+  'lib/print-template/scenes.js',
+  'lib/samples/yida-print-template/approval.json',
+  'lib/samples/yida-print-template/codes.json',
+  'lib/samples/yida-print-template/delivery.json',
+  'lib/samples/yida-print-template/order.json',
+  'lib/samples/yida-print-template/quotation.json',
+  'lib/samples/yida-print-template/receipt.json',
+  'yida-skills/skills/yida-print-template/SKILL.md',
+  'yida-skills/skills/yida-print-template/references/detail.md',
+  'yida-skills/skills/yida-print-template/references/guide.md',
+  'yida-skills/skills/yida-print-template/references/scenarios.md',
   'lib/app/custom-button.js',
   'yida-skills/skills/yida-custom-button/SKILL.md',
   'lib/task-center/workflow.js',

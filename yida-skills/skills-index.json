@@ -4,6 +4,19 @@
   "entry": "openyida",
   "skills": [
     {
+      "name": "yida-print-template",
+      "path": "skills/yida-print-template/SKILL.md",
+      "display_name": "原生打印模板",
+      "description": "管理原生富文本打印模板，按真实字段生成订单、报价、交接、凭证、审批、扫码场景；新建、修改、复制、备份恢复与请求PDF。",
+      "category": "yida-skills/form",
+      "tags": ["打印模板", "打印模版", "打印设置", "订单打印", "报价单", "审批单", "打印二维码", "打印条形码", "数据详情打印"],
+      "aliases": ["单据打印", "自定义打印", "print-template"],
+      "positive_signals": ["配置打印模板", "做订单打印单据", "报价单打印", "打印模板编辑器", "复制恢复打印模板", "打印模板配置二维码和条形码", "新建不同场景的打印模板", "修改已有打印模板", "打印这条数据", "打印这个数据详情页", "按详情页链接生成PDF"],
+      "negative_signals": ["Word模板组件", "叮当打印", "浏览器window.print", "物理打印机"],
+      "command_ids": ["print-template", "sample"],
+      "requires_login": true
+    },
+    {
       "name": "yida-custom-button",
       "path": "skills/yida-custom-button/SKILL.md",
       "display_name": "表单自定义按钮",
@@ -40,7 +53,7 @@
       "name": "yida-cool-card",
       "path": "skills/yida-cool-card/SKILL.md",
       "display_name": "宜搭原生酷卡片",
-      "description": "仅在用户明确要求宜搭原生酷卡片（交互卡片、置顶卡片），或继续该上下文时使用。支持创建、读取、查询模板、导出配置和样式设计。样式限于钉钉原生组件，不能运行任意 HTML/CSS/React；超出能力时说明限制并提供替代方案。返回官方编辑器链接，由用户配置保存；CLI 不保存、发布或发送。原生数据卡片、Canvas 展示卡片及泛称卡片不触发。",
+      "description": "仅在用户明确要求宜搭原生酷卡片（交互卡片、置顶卡片），或继续该上下文时使用。集团版不支持酷卡片搭建，先核对认证环境。提供创建、读取、查询模板、导出配置和样式设计。样式限于钉钉原生组件，不能运行任意 HTML/CSS/React；超出能力时说明限制并提供替代方案。返回官方编辑器链接，由用户配置保存；CLI 不保存、发布或发送。原生数据卡片、Canvas 展示卡片及泛称卡片不触发。",
       "category": "yida-skills/integration",
       "tags": [
         "宜搭原生酷卡片",

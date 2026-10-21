@@ -324,6 +324,8 @@ openyida feedback report --input summary.json --output-dir feedback-draft-001
 
 报告摘要由 AI 根据当前证据整理，也可加入用户明确选择的复现截图；PR 附修复前后测试对比。提交前会展示最终正文和图片，确认有无敏感信息或不想公开的内容，允许删改后再提交。输入格式见 [反馈报告说明](yida-skills/skills/yida-feedback/references/report-input.md)。分享前请检查业务信息。有 GitHub 账号时，可授权 AI 帮助提交 Issue；修复公开 OpenYida 代码或技能时，通过你自己的 Fork 提交 PR。无账号时先引导创建 GitHub 账号；实在不行，反馈到AI开发者群。
 
+用户选择向 OpenYida 提交 Issue 时，反馈 Skill 可通过 `openyida feedback github status --json` 检查当前 GitHub 账号的 Star 和个人 Fork 状态。Star/Fork 均为可选项，明确选择后才执行 `feedback github star --confirm` 或 `feedback github fork --confirm`，已有操作直接复用。检查不在安装或自动更新中触发，两项操作都不是提交 Issue 的前提。
+
 <!-- OPENYIDA_COMMANDS_START -->
 <!-- 本节由 `npm run docs:commands` 自动生成，请勿手动编辑命令行。 -->
 
@@ -387,6 +389,7 @@ openyida feedback report --input summary.json --output-dir feedback-draft-001
 | `openyida create-form add-option <appType> <formUuid> <fieldLabel> <option1> [option2] ...` | 更新表单页面 |
 | `openyida list-forms <appType> [--keyword <text>]` | 列出应用下的表单/页面 |
 | `openyida aggregate-table <list\|create-empty\|inspect\|preview\|save\|publish\|status> <appType> ...` | 管理聚合表（virtualView） |
+| `openyida print-template <list\|inspect\|fields\|build\|create\|copy\|save\|restore\|settings\|status\|order\|render\|files> <appType> <formUuid> [templateId] [--config <file>] [--scene <order\|quotation\|delivery\|receipt\|approval\|codes>] [--bindings <file>] [--name <title>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--status START\|STOP] [--instance <id>] [--page <n>] [--size <n>] [--allow-permission-change] [--json] \| print-template <list\|render> --detail-url <url> [--template-id <id>] [--json]` | 管理宜搭原生打印模板、按字段生成多种单据、备份恢复与生成PDF |
 | `openyida form-view <list\|inspect\|save\|create\|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]` | 原生表单视图：查询、检查并配置显示列、列宽、冻结列和筛选 |
 | `openyida custom-button <list\|inspect\|options\|create\|update\|delete> <appType> <formUuid> [buttonUuid] [--config <file>] [--expected-hash <hash>] [--backup <file>] [--yes] [--json]` | 原生自定义按钮：查询、配置填写表单、自动化流及页面跳转 |
 | `openyida get-schema <appType> <formUuid\|--all> [--summary-json\|--field-map-json\|--analysis-json]` | 获取单个或全部表单 Schema |
@@ -506,7 +509,7 @@ openyida feedback report --input summary.json --output-dir feedback-draft-001
 | `openyida formula test <appType> <formUuid> [formula\|file] [--data-file file \| --cases file] [--field fieldId] [--timezone-offset minutes] [--context form\|validation] [--binding platform\|numeric-literals] [--expect JSON] [--json]` | 带入数据在宜搭试算公式并核对结果 |
 | `openyida update` | 检查并更新到最新版本 |
 | `openyida export-conversation [options]` | 导出 AI 对话记录 |
-| `openyida feedback <report\|setup\|url\|dismiss\|status> [options]` | 整理本地问题报告、配置反馈表单与提醒 |
+| `openyida feedback <report\|github\|setup\|url\|dismiss\|status> [options]` | 整理本地问题报告、配置反馈表单与提醒 |
 | `openyida batch <file>\|--commands "cmd1 ; cmd2" [--stop-on-error] [--json]` | 批量执行 OpenYida 命令 |
 | `openyida flash-to-prd --file <path> --name "<project>"` | 闪记 / 会议纪要转 PRD prompt |
 | `openyida ai <text\|image> [options]` | 调用 AI 文生文和识图能力 |
