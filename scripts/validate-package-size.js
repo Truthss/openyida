@@ -154,7 +154,9 @@ const MAX_TARBALL_BYTES = 2560 * 1024;
 // on Node 26 before generated command docs; retain the next 16 KiB boundary.
 // Form-member/self-select runtime and guide: 9,672,548 unpacked bytes / 764 files
 // on Node 22. Retain the next 16 KiB boundary; compressed and per-file caps stay fixed.
-const MAX_UNPACKED_BYTES = 9456 * 1024;
+// PR #619 merged with main: 9,695,540 unpacked bytes on Node 23.
+// Task transfer adds its runtime, guide and 12-locale messages; next 16 KiB boundary.
+const MAX_UNPACKED_BYTES = 9472 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -184,7 +186,8 @@ const MAX_UNPACKED_BYTES = 9456 * 1024;
 // Custom buttons and native report zero-value controls add five packaged files.
 // Include the shared AI application eligibility helper merged from main.
 // Dynamic personnel sources add one runtime module and one skill reference.
-const MAX_ENTRY_COUNT = 764;
+// Administrator task transfer adds exactly one runtime module and one skill guide.
+const MAX_ENTRY_COUNT = 766;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -303,6 +306,8 @@ const REQUIRED_PACKAGE_FILES = [
   'lib/asset/asset-plan.js',
   'lib/asset/attachment-upload.js',
   'lib/process/services/process-actions.js',
+  'lib/process/process-tasks.js',
+  'yida-skills/skills/yida-data-management/references/process-task-transfer.md',
   'lib/process/services/process-field-permissions.js',
   'lib/process/services/process-form-fields.js',
   'lib/process/process-fields.js',
