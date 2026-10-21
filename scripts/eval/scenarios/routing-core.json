@@ -1,5 +1,17 @@
 [
   {
+    "id": "native-custom-button-current-form",
+    "prompt": "给现有客户表单的页面设置加一个自定义分配按钮，点击后只允许改跟进人，并显示在表格视图和详情页。",
+    "expectedSkill": "yida-custom-button",
+    "note": "表单原生按钮定义与显示引用"
+  },
+  {
+    "id": "native-custom-button-automation",
+    "prompt": "在采购审批已结束的数据详情页加个自定义按钮，点击执行已发布的手动触发集成自动化。",
+    "expectedSkill": "yida-custom-button",
+    "note": "按钮绑定已有自动化，不是新建自动化"
+  },
+  {
     "id": "dashboard-vs-report-vs-chart-1",
     "prompt": "帮我做一个公司经营看板/驾驶舱，要能产品化交付给老板看",
     "expectedSkill": "yida-dashboard",
@@ -172,5 +184,29 @@
     "prompt": "已有 renderJsx 页面需要维护 this.dataSourceMap 搜索参数，设计器左侧数据源保持可见。",
     "expectedSkill": "yida-data-source-connectors",
     "note": "历史平台 JSX 设计器数据源维护"
+  },
+  {
+    "id": "data-manage-ui-style",
+    "prompt": "针对当前数据管理页换一种风格，只保留横线。",
+    "expectedSkill": "yida-data-manage-ui",
+    "note": "已有原生数据管理外观，不修改业务记录"
+  },
+  {
+    "id": "data-manage-ui-actions",
+    "prompt": "数据管理页重在操作，需要更突出新增、筛选和行操作。",
+    "expectedSkill": "yida-data-manage-ui",
+    "note": "操作优先的原生管理页 UI"
+  },
+  {
+    "id": "data-manage-ui-custom",
+    "prompt": "用自定义页面实现简单的数据管理，希望卡片和看板差异大一些。",
+    "expectedSkill": "yida-data-manage-ui",
+    "note": "明确自定义数据管理布局"
+  },
+  {
+    "id": "data-manage-ui-column-emphasis",
+    "prompt": "当前数据管理页突出客户名称列，用浅底色和加粗文字，不要左侧竖线；合作状态列改成标签。",
+    "expectedSkill": "yida-data-manage-ui",
+    "note": "列级外观调整，先读取真实字段，不修改业务数据或推断条件颜色"
   }
 ]

@@ -15,7 +15,9 @@ description: Plan 模式的视觉设计分支。基于需求选择视觉方向�
 
 先按[已选风格只确认一次](../../references/theme-selection.md#已选风格只确认一次)读取原始需求、最新补充、视觉参考与已保存选择。已有风格意向直接推演；参考网站或设计图按[视觉 DNA 提取](../../references/reference-visual-dna.md)实际读取后生成设计与 CSS，不再询问主题风格。缺少主题 ID 或设计细节由 AI 补齐。
 
-仅在没有风格意向、视觉参考或可复用选择时，按[设计方向比较](../../references/theme-selection.md#设计方向比较)生成恰好三套完整方向（两个模板方向和一个独立自由创意选项），并按[视觉方向选择](references/visual-theme-selection.md)交给 `yida-app` 按[宿主展示规则](../../references/theme-selection.md#选择时展示名称与效果图)统一呈现（所有环境使用 `ask_human`，用户明确要求时才另行展示效果预览）；用户已委托 AI 决定时内部选定，不反问。候选阶段只读主题索引中的精简风格摘要，不读取候选模板全文；直接推演或获得选择后写入一致的 `visualDirection`、`selectedTheme`、`colorStrategy` 和导航结构，再读取选中的一份完整模板；模板方向的导航明暗由模板 `navTheme` 派生；自由创意按业务独立编写设计决策、导航明暗和 Token，不要求匹配模板。
+用户显式要求“预览效果辅助风格选择”时，先匹配 catalog 中的模板原图，以对话内 HTML 卡片与 `ask_human` 同轮展示；该请求优先于 Fast 内部选型，不能只返回链接或替用户选定。仅查看效果不重新提问。
+
+仅在没有风格意向、视觉参考或可复用选择时，按[设计方向比较](../../references/theme-selection.md#设计方向比较)生成恰好三套完整方向（两个模板方向和一个独立自由创意选项），并按[视觉方向选择](references/visual-theme-selection.md)交给 `yida-app` 按[宿主展示规则](../../references/theme-selection.md#选择时展示名称与效果图)统一呈现（所有环境使用 `ask_human`，用户明确要求时将效果 HTML 卡片与该选择同轮展示）；用户已委托 AI 决定时内部选定，不反问。候选阶段只读主题索引中的精简风格摘要，不读取候选模板全文；直接推演或获得选择后写入一致的 `visualDirection`、`selectedTheme`、`colorStrategy` 和导航结构，再读取选中的一份完整模板；模板方向的导航明暗由模板 `navTheme` 派生；自由创意按业务独立编写设计决策、导航明暗和 Token，不要求匹配模板。
 
 ## 阶段二：完成页面视觉应用
 

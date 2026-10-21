@@ -5,8 +5,49 @@
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  print_template: {
+    "description": "Manage native YiDA print templates, generate document layouts, back up, restore and request PDFs",
+    "error": "Print template operation failed: {0}",
+    "usage": "Usage: openyida print-template <list|inspect|fields|build|create|copy|save|restore|settings|status|order|render|files> <appType> <formUuid> [templateId]. See the print-template skill for action-specific flags and examples."
+},
+  custom_button: {
+    "usage": "Usage: openyida custom-button <list|inspect|options|create|update|delete> <appType> <formUuid> [buttonUuid] [--config <file>] [--expected-hash <hash>] [--backup <file>] [--yes] [--json]",
+    "invalid_config": "잘못된 설정 또는 인수: {0}",
+    "invalid_response": "불완전한 버튼 설정 응답: {0}",
+    "api_error": "버튼 API 실패: {0}. 로그인, 권한 및 버전을 확인하세요.",
+    "not_found": "대상 양식에 버튼이 없습니다: {0}",
+    "conflict": "설정이 변경되었습니다. 다시 조회하세요.",
+    "limit": "양식당 최대 10개의 버튼을 지원합니다.",
+    "readback_mismatch": "저장 내용과 재조회 결과가 다릅니다. 백업을 보관하고 원격 상태를 확인하세요."
+  },
+  dws_external: {"note": "dws is an independent external tool. OpenYida only shows installation instructions; it does not download or install it.", "install_guide": "Show official DingTalk CLI installation instructions"},
+  cool_card: {"unsupported_environment": "Alibaba Group 버전은 쿨 카드 생성을 지원하지 않습니다.", "description": "Create and read native YiDA cool cards (interactive and pinned)", "usage": "Usage: openyida cool-card <list|templates|create|get> <appType> [cardPageCode] [--type im|onebox] [--name <title>] [--page <n>] [--size <n>] [--search <text>] [--out <file>] [--json]", "failed": "Native cool card operation stopped: {0}"},
+  data_card: {"description":"Create, read, save drafts and publish native YiDA data cards","usage":"Usage: openyida data-card <list|create|get|save|publish|probe|release-get|release-save|release-check|release-test|refs> <appType> [cardCode] [--name <title>] [--description <text>] [--schema <file>|--config <file>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--published|--version <version>] [--page <n>] [--size <n>] [--search <text>] [--allow-send] [--json]","failed":"Native data card operation stopped: {0}","conflict":"The draft changed. Read it again before saving or publishing.","mismatch":"Readback does not match the expected schema or published state. Keep the backup and inspect the card before retrying."},
+  app_settings: {"description":"Read theme, frontend/backend, native data card and cool card management links","usage":"Usage: openyida app-settings <appType> [--section theme|basic|data-card|cool-card] [--json]","failed":"Application settings could not be read: {0}"},
+  form_view: {
+    usage: "사용법: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
+    invalid_config: "기본 보기 설정 또는 인수가 잘못되었습니다: %s",
+    target_mismatch: "대상 양식에 속하지 않는 보기입니다: %s",
+    api_error: "기본 보기 API 실패: %s. 권한과 요금제 지원을 확인하고 쓰기를 무조건 재시도하지 마세요.",
+    unsupported: "기본 보기 목록이 반환되지 않았습니다. 양식 유형과 지원 여부를 확인하세요.",
+    conflict: "읽은 후 보기가 변경되었습니다. 저장 전에 다시 확인하세요.",
+    readback_mismatch: "저장 설정이 다시 읽은 결과와 다릅니다. 백업을 보관하고 원격 보기를 확인하세요.",
+  },
+  integration_manage: {"failed": "Automation operation failed: {0}", "usage": "integration <monitor|copy|rename|delete> <appType> ...", "desc_monitor": "Read or save automation error monitors", "desc_copy": "Copy an automation as disabled", "desc_rename": "Rename an automation", "desc_delete": "Delete a disabled automation"},
+  permission_manage: {"failed": "Permission group operation failed: {0}", "usage": "permission-manage <copy|rename|delete> <appType> <formUuid> <packageUuid> [--name name] [--dry-run] [--confirm]", "description": "Copy, rename or delete a permission group"},
+  matrix_manage: {"failed": "Matrix operation failed: {0}", "usage": "matrix <list|detail|references|rows|create|update|delete|upsert-rows|delete-rows> [matrixId] [--file config.json] [--dry-run] [--confirm]", "description": "Manage permission matrix definitions, references and rows"},
+  integration_baseline: {"failed": "Automation update stopped: {0}"},
+  integration_update_v2: {"usage": "integration update <appType> <formUuid> <processCode> --patch patch.json [--dry-run] [--expect fingerprint] [--publish]"},
+
+  conditional_actors: { unavailable: 'Conditional actors are unavailable or could not be verified.', invalid: 'Invalid conditional actors: {0}' },
+  integration_triggers: {
+    invalid: 'Invalid automation trigger: {0}',
+    end_required: '타이머 종료 조건을 선택하세요. 실행 횟수는 schedule.maxCount(1–100), 지정 시간은 schedule.expireDate(종료 시각의 밀리초)를 설정합니다. 장기 실행은 먼 미래의 종료일을 선택하고 설정 요약에 실제 날짜를 표시하세요.',
+  },
+  permission_conditions: { invalid: 'Invalid permission conditions: {0}' },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
+    frontend_nav_required: '페이지 {0}의 탐색 숨김 설정이 확인되지 않았습니다. renderNav=false를 저장하고 다시 조회한 후 독립 프런트 주소를 등록하세요.',
     desc_get: 'Read frontend and management runtime entries',
     desc_set: 'Register application entries with partial update and readback',
     usage: 'Usage: openyida app-entry get <appType> [--json]\n       openyida app-entry set <appType> [--frontend <url>] [--management <url>] [--clear-frontend] [--clear-management] [--json]\nRegister only published, verified runtime URLs for this application. Omitted entries remain unchanged.',
@@ -52,6 +93,7 @@ module.exports = {
     invalidStrategy: "이미지 요구사항은 페이지별 이미지 위치를 나열한 객체로 입력하세요.",
   },
   help: {
+    cmd_custom_button: "사용자 지정 버튼: 양식 편집, 자동화 흐름 및 페이지 링크 설정",
     cmd_check_design: '디자인 문서, 테마 변수 및 PRD 인계 검증',
     subtitle: 'Yida 로우코드 AI 개발 도구',
     usage: '사용법:',
@@ -88,6 +130,7 @@ module.exports = {
     cmd_validate_form: 'Validate form field JSON locally',
     cmd_update_form: '양식 페이지 업데이트',
     cmd_list_forms: 'List forms/pages in an app',
+    cmd_form_view: "양식 보기의 표시 열, 너비, 고정 열 및 필터 관리",
     cmd_aggregate_table: 'Manage aggregate tables (virtualView)',
     cmd_get_schema: '양식 Schema 가져오기',
     cmd_check_prd_completeness: 'Check PRD page/resource count risk',
@@ -143,11 +186,12 @@ module.exports = {
     cmd_connector_more: '더 많은 하위 명령 보기',
     group_integration: '통합 & DingTalk',
     cmd_integration: '통합 자동화 플로우 생성',
-    cmd_integration_update: 'Probe integration update capability (currently blocked without full readback)',
+    cmd_integration_update: 'Patch automation using a verified local dual-definition baseline',
     cmd_integration_list: '통합 자동화 플로우 목록',
     cmd_integration_enable: '통합 자동화 플로우 활성화',
     cmd_integration_disable: '통합 자동화 플로우 비활성화',
     cmd_integration_check: 'Check abnormal integration automation run logs',
+    cmd_integration_detail_log: 'View integration automation run log details',
     cmd_integration_diagnose: 'Diagnose integration automation tickets and common pitfalls',
     cmd_dws: 'DingTalk CLI (연락처/캘린더/할일/승인 등)',
     cmd_dingtalk_link: 'DingTalk AppLink / 기존 dingtalk:// 페이지 링크 생성',
@@ -164,7 +208,7 @@ module.exports = {
     cmd_formula_evaluate: 'Static-check Yida formula syntax and field refs',
     cmd_update: '최신 버전으로 업데이트',
     cmd_export_conversation: 'AI 대화 기록 내보내기',
-    cmd_feedback: '경험 피드백 양식 및 로컬 알림 상태 구성',
+    cmd_feedback: '로컬 문제 보고서, 피드백 양식 및 알림 구성',
     cmd_batch: 'OpenYida 명령 일괄 실행',
     cmd_flash_to_prd: 'Convert flash notes or meeting notes to a PRD prompt',
     cmd_ai: 'Call Yida AI text and image recognition APIs',
@@ -329,7 +373,7 @@ module.exports = {
     forbidden_alias_get_schema_form_uuid_option: '`{0}` takes formUuid as the second positional argument, not `{1}`.',
     nearest_command_suggestion: 'Unknown OpenYida command root "{0}". Did you mean "{1}"?',
     run_help: 'Run openyida --help for usage',
-    integration_help: 'Usage: openyida integration <create|update|list|enable|disable|check|diagnose> ...',
+    integration_help: 'Usage: openyida integration <create|update|list|enable|disable|check|detail-log|diagnose|monitor|copy|rename|delete> ...',
     integration_unknown: '알 수 없는 integration 하위 명령: {0}',
     integration_help_hint: '사용 가능한 하위 명령은 openyida integration --help로 확인하세요',
     integration_list_usage: '사용법: openyida integration list <appType> [--form-uuid <uuid>] [--status y|n] [--key <kw>] [--size <n>] [--json]',
@@ -350,7 +394,7 @@ module.exports = {
     publish_example: 'Example: openyida publish pages/src/home.canvas.jsx APP_XXX FORM-XXX --health-check --auto-nav-order',
     check_prd_completeness_usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     check_prd_completeness_example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
-    formula_usage: 'Usage: openyida formula evaluate <formula|file> [--schema schema.json] [--json] [--strict]',
+    formula_usage: 'Usage: openyida formula <check|evaluate|contracts|functions|types|inspect|test> ...',
     formula_example: `Example: openyida formula evaluate 'IF(GT(#{numberField_total}, 100), "high", "low")' --schema .cache/schema.json`,
     verify_usage: 'Usage: openyida verify-short-url <appType> <formUuid> <url>',
     verify_example: 'Example: openyida verify-short-url APP_XXX FORM-XXX /o/myapp',
@@ -379,9 +423,9 @@ module.exports = {
       '  preview <appType> <processInstanceId> [--output <path>]  Preview process instance (generate visual flowchart)',
     process_preview_usage: 'Usage: openyida process preview <appType> <processInstanceId> [--output <path>]',
     process_preview_example: 'Example: openyida process preview APP_XXX proc-inst-id-xxx',
-    get_permission_usage: 'Usage: openyida get-permission <appType> <formUuid> [--package-uuid <packageUuid>]',
+    get_permission_usage: 'Usage: openyida get-permission <appType> <formUuid> [--package-uuid <packageUuid>] [--package-type <FORM_PACKAGE_VIEW|FORM_PACKAGE_START>]',
     get_permission_example: 'Example: openyida get-permission APP_XXX FORM-XXX',
-    save_permission_usage: 'Usage: openyida save-permission <appType> <formUuid> [--package-uuid <packageUuid>] [--data-permission <json>] [--action-permission <json>]',
+    save_permission_usage: 'Usage: openyida save-permission <appType> <formUuid> [--package-uuid <packageUuid>] [--data-permission <json>] [--action-permission <json>] [--package-type <FORM_PACKAGE_VIEW|FORM_PACKAGE_START>]',
     save_permission_example: `Example: openyida save-permission APP_XXX FORM-XXX --data-permission '{"role":"DEFAULT","dataRange":"SELF"}'`,
     exec_failed: '\n❌ Execution failed: {0}',
     login_usage: 'Usage: openyida login [entryUrl|--public|--alibaba|--intl] [--no-browser] [--check-only] [--json] [--client-id <clientId>]',
@@ -449,6 +493,18 @@ module.exports = {
     current: ', current: {0}',
     excel_exported: 'Excel exported: {0}'
   },
+  integration_detail_log: {
+    usage: "Usage: openyida integration detail-log <appType> <procInstId> [--json] [--include-params] (known secrets are always masked; max 100 pages / 10,000 nodes; business parameters may still be sensitive)",
+    missing_args: "Run log details require appType and procInstId",
+    unknown_option: "Unsupported run log detail option: {0}",
+    params_require_json: "--include-params requires --json; known secrets are always masked, but business parameters may still be sensitive",
+    api_failed: "Failed to query run log details: {0}",
+    invalid_response: "Run log detail response has no valid node list or total count",
+    pagination_failed: "Run log detail pages are inconsistent; incomplete data was not printed",
+    pagination_limit: "Run log details exceed the pagination limit ({0} pages / {1} nodes); incomplete data was not printed",
+    summary: "Run log details: {0} nodes (parameter keys only by default)",
+  },
+
   integration: {
     spec_mixed_structural_flag: '{0} cannot be mixed with --spec. Put the complete node in the spec to prevent silently dropped parameters.',
     spec_message_node_required: 'Notification flags mixed with --spec require an explicit sendMessage node in the spec.',
@@ -484,6 +540,7 @@ module.exports = {
     create_opt_spec: '  --spec <file.json>            Use a structured flow spec for complex automation nodes (dataUpdate/route, etc.)',
     create_opt_data_form_uuid: '  --data-form-uuid <uuid>     Target form UUID for a get-single-data node',
     create_opt_data_condition: '  --data-condition <rule>     Get-data condition: targetField:label:triggerField[:component[:opCode[:valueType]]]',
+    create_opt_trigger_condition: '  --trigger-condition <rule>    조건: field:label:opCode:value[:component[:valueType]]; 우측 필드: processVar, 상수: literal',
     create_opt_get_self: '  --get-self                    Insert a get-self node (process runtime uses pid, designer uses proc_inst_id; ordinary forms use form_inst_id on both sides)',
     create_opt_get_self_field: '  --get-self-field <field>     Override the trigger-side system field, default __masterdata_form_inst_id',
     create_opt_get_self_query_field: '  --get-self-query-field <f>  Override the query-side system field (process: pid runtime / proc_inst_id designer; ordinary: form_inst_id)',
@@ -953,6 +1010,8 @@ module.exports = {
     failed: '  ❌ 폼 페이지 생성 실패: {0}'
   },
   common: {
+    auth_profile_required: '여러 조직의 인증 정보가 저장되어 있습니다. openyida auth profiles 실행 후 openyida auth profile switch <auth_profile> 명령으로 이 프로젝트의 조직을 선택하세요.',
+    auth_profile_not_found: '지정한 조직의 인증 정보를 찾을 수 없습니다. openyida auth profiles 명령으로 저장된 조직을 확인하고 올바른 프로필을 선택하세요.',
     auth_identity_changed: 'Authentication identity changed during preflight; no write was issued.',
     http_status: '  HTTP status: {0}',
     http_response: '  HTTP response: {0}',
@@ -1492,6 +1551,10 @@ module.exports = {
     stdin_closed: '입력 스트림이 닫혔습니다. 조직을 선택할 수 없습니다'
   },
   check_prd_completeness: {
+    application_theme_mismatch: '앱 테마가 선택한 프로젝트 테마와 일치하지 않습니다.',
+    application_theme_not_checked: '앱 테마 설정을 확인할 수 없어 테마 적용이 검증되지 않았습니다.',
+    frontend_navigation_not_checked: '프런트 페이지의 관리 메뉴 숨김이 확인되지 않았습니다: {0}',
+    frontend_navigation_visible: '프런트 페이지가 PC 또는 모바일 관리 메뉴에 표시됩니다: {0}',
     usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
     prd_not_found: 'PRD file not found: {0}',
@@ -1978,6 +2041,19 @@ Object.assign(module.exports.app_permission || (module.exports.app_permission = 
   verify_failed: '앱 관리자 저장 검증 실패',
 });
 
+module.exports.permission_scope = {
+  roles_summary: 'Roles: {0}',
+  options_help: '--owner-field restricts records to those whose top-level member field contains the current user; --roles selects ordinary Yida roles; --field-access is repeatable. Initial custom field access requires --field-default and shorthand updates require --package-uuid. --dry-run previews without writes.',
+  invalid: 'Invalid permission options: {0}. Shorthand updates require --package-uuid; do not mix member scopes or field defaults.',
+  owner_invalid: '--owner-field must identify a real top-level EmployeeField in the target form, not a creator alias, text or subtable field.',
+  field_default_required: 'Initial --field-access requires --field-default view|edit|hidden|encrypt for all other fields; form-dependent behavior cannot be inferred.',
+  overlap_notice: 'Other permission groups or overlapping roles may grant broader access. Saving this group does not verify effective row isolation or field access for all users.',
+  matrix_notice: 'Native matrices use the OA enhancement entitlement package. Available does not prove purchase; unavailable requires an administrator to check or enable entitlement. Business APIs remain authoritative.',
+  matrix_unavailable: 'Matrix usage is unavailable for this app. Ask an administrator to check or enable the OA enhancement entitlement package before retrying. No writes performed.',
+  matrix_unknown: 'Matrix availability could not be established. Resolve the returned account-access or API error first. No writes performed.',
+};
+
+
 Object.assign(module.exports.corp_manager || (module.exports.corp_manager = {}), {
   address_book_verify_failed: '주소록 권한 저장 검증 실패: 예상={0}, 실제={1}',
   admin_verify_failed: '관리자 저장 검증 실패: {0}이/가 {1} 목록에 존재하지 않음',
@@ -2043,6 +2119,11 @@ Object.assign(module.exports.publish || (module.exports.publish = {}), {
 });
 
 Object.assign(module.exports.query_data || (module.exports.query_data = {}), {
+  approver_query_help: '현재 승인자: --current-approver <userId> [--count]. 조회 가능한 모든 페이지에서 중복 인스턴스를 제외하여 집계합니다. 조회 미완료 또는 권한 오류 시 건수를 반환하지 않습니다.',
+  approver_option_invalid: '현재 승인자 조회 옵션이 잘못되었습니다: {0}. 실제 userId를 사용하고 1페이지부터 RUNNING 인스턴스를 조회하세요.',
+  approver_incomplete: '현재 승인자 집계를 완료하지 못했습니다. 전체 건수는 반환되지 않았습니다. 오류 내용, 권한 및 페이지 범위를 확인하세요.',
+  approver_response_invalid: '프로세스 API 응답 구조를 확인할 수 없어 현재 승인자 건수를 확정할 수 없습니다.',
+  approver_scope_note: '서버가 현재 로그인 사용자에게 조회를 허용한 인스턴스만 집계하며, 전체 앱 데이터 권한을 의미하지 않습니다.',
   command_unsupported: '지원하지 않는 데이터 명령입니다: {0} {1}. 실제 기능은 openyida commands --json으로 확인하세요.',
   delete_confirmation_required: '폼 레코드를 삭제하기 전에 대상을 조회하고 요약을 사용자에게 보여 준 뒤 명시적 승인 후에만 --confirm을 추가하세요. 삭제는 실행되지 않았습니다.',
   delete_preflight_failed: '삭제 전 확인을 위해 폼 레코드 {0}을(를) 읽을 수 없습니다. 삭제는 실행되지 않았습니다.',
@@ -2157,3 +2238,188 @@ Object.assign(module.exports.process_tasks || (module.exports.process_tasks = {}
   result_unknown: '이전 결과를 알 수 없습니다. nextStep으로 읽기 조회하세요. 이전을 자동 재시도하지 마세요.',
   unverified: '이전 요청은 수락되었지만 수신자를 재조회로 확인하지 못했습니다. nextStep으로 확인하고 자동 재시도하지 마세요.',
 });
+module.exports.data_manage_style = {
+  'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
+  'data_style_invalid': '잘못된 스타일 인수입니다. 실제 ID와 목록의 스타일을 사용하세요.',
+  'data_style_base': '브랜드 기본색을 포함하는 기존 앱 CSS(20 MB 이하)를 지정하세요.',
+  'data_style_marker': '스타일 마커가 손상되었거나 중복되었습니다. 기준 파일을 확인하세요.',
+  'data_style_output': '새 CSS 파일을 출력 경로로 지정하세요. 기존 파일은 덮어쓸 수 없습니다.',
+  'generated': '스타일 생성 완료: {0}. 아직 게시되지 않았습니다. 백업, 게시 및 실제 화면 검증을 완료하세요.'
+};
+module.exports.help.cmd_data_manage_style_list = '선택 가능한 데이터 관리 스타일 예시 표시';
+module.exports.help.cmd_data_manage_style_generate = '선택한 스타일 예시로 CSS 로컬 생성';
+
+module.exports.help.cmd_data_manage_style_guide = '데이터 관리 UI 개선 방향, 토큰 및 CSS 적용 지침 조회';
+
+// Process fields and submission permission packages.
+Object.assign(module.exports.permission_common || (module.exports.permission_common = {}), {
+  "package_type_invalid": "Use FORM_PACKAGE_VIEW or FORM_PACKAGE_START for --package-type.",
+  "start_scope_invalid": "START supports submission members, fields and OPERATE_CREATE only; configure record data ranges and matrices separately."
+});
+Object.assign(module.exports.process_errors || (module.exports.process_errors = {}), {
+  "field_permissions_invalid": "Field permissions contain invalid or duplicate field IDs or behaviors.",
+  "field_source_failed": "Could not read the form fields. Check the process binding and schema response.",
+  "fields_empty": "The bound form has no readable fields. Check its saved schema.",
+  "designer_fields_missing": "The process designer cannot load all bound form fields. Check its schema and process binding before publishing.",
+  "field_not_found": "A process permission references a field missing from the bound form.",
+  "fields_verified": "Field IDs were checked; browser behavior and runtime permissions remain unverified."
+});
+Object.assign(module.exports.help || (module.exports.help = {}), {
+  "cmd_process_fields": "Check process designer field loading and subtable field paths"
+});
+module.exports.cli.process_usage += '\n  fields <appType> <formUuid> [--json]  Inspect process designer field loading';
+
+// Batch data nodes.
+Object.assign(module.exports.integration, {
+  batch_invalid: 'Invalid batch configuration. Check source, quantity and fields using details.reason.',
+  message_roles_invalid: 'Message roles require a non-empty role ID and NORMAL message type.',
+  message_roles_readback_mismatch: 'Persisted message roles differ from the submitted recipients.',
+  batch_retrieve_name: 'Get multiple records',
+  batch_readback_mismatch: 'Persisted batch node type, source or quantity differs from the submitted configuration.',
+  create_opt_spec: '  --spec <file.json>            Configure batch retrieve/create, updates and branches with a structured spec',
+});
+
+module.exports.formula_v2 = {
+  trigger_formula: 'Use fixed values or fields in event trigger conditions. Put formula checks in a branch after the trigger.',
+  branch_choose: 'Choose conditions or expression for a branch.',
+  branch_formula: 'Use expression for formula-based branch conditions.',
+  expression_required: 'Enter a non-empty formula expression.',
+  failed: 'Invalid formula configuration: {0}',
+  syntax_invalid: 'Invalid or unsupported formula syntax: {0}',
+  bare_identifier: 'Unbound name {0}. Read the field ID from the form and use #{}.',
+  reference_context: 'Use form field references here; node paths are unsupported: {0}',
+  field_missing: 'Field not found in the form: {0}',
+  argument_type: 'Argument {1} of {0} requires {2}.',
+  function_unknown: 'Formula function {0} is not in the selected list. Query metadata and copy an available formula function name exactly.',
+  function_case: 'Copy the formula function name exactly, including case: {0}',
+  context_unknown: 'Availability of {0} in this context is unknown.',
+  function_context: '{0} is not in the function list for {1}.',
+  argument_count: '{0} requires {1} to {2} arguments; received {3}.',
+  same_type: 'These arguments of {0} must use the same type.',
+  operator_invalid: 'Operator {0} is unsupported here. Use GT, GE, LT, LE, EQ or NE for comparisons.',
+  target_type: 'Formula result {0} does not match target field {1}.',
+  target_unknown: 'Unknown target field type: {0}',
+  schema_missing: 'Load the form schema to check field existence and types.',
+  local_pass: 'Local checks passed; platform execution is not verified.',
+  test_blocked: 'Formula was not executed: {0}. Testing accepts only known non-writing functions.',
+  expect_failed: 'Actual result differs from the expected result.',
+  usage: 'Usage: formula types APP [--component NumberField]; formula functions APP [--name IF]; formula inspect APP FORM [--field ID]; formula test APP FORM <formula|file> --data-file file [--expect JSON]. Use formula check for local checks.',
+};
+Object.assign(module.exports.help, {
+  cmd_formula_check: 'Check formula syntax, fields, arguments and types',
+  cmd_formula_functions: 'Read Yida formula functions and signatures',
+  cmd_formula_types: '수식 컴포넌트의 값 유형 조회',
+  cmd_formula_inspect: 'Inspect configured form field formulas',
+  cmd_formula_test: 'Evaluate a non-writing formula in Yida and compare its result',
+});
+
+Object.assign(module.exports.formula_v2, {
+  "config_text": "비어 있지 않은 수식 문자열을 입력하세요. 수동 입력으로 복원하려면 valueType을 custom으로, formula를 빈 문자열로 설정하세요.",
+  "config_conflict": "formula와 complexValue.formula가 다릅니다. 같은 수식으로 맞추거나 formula만 제공하여 CLI가 동기화하도록 하세요.",
+  "config_mode": "수식 설정 시 valueType: formula를 사용하거나 생략하세요. 수동 입력 복원 시 valueType: custom과 formula: \"\"를 사용하세요.",
+  "config_cycle": "순환 참조 발견: {0}. 입력에서 결과 순서로 의존 관계를 설정하고 직접 또는 간접 자기 참조를 피하세요.",
+  "reference_details_unknown": "필드 또는 하위 필드 {0}의 전체 정의와 유형이 확인되지 않았습니다.",
+  "contract_not_supported": "이 검사기는 {0}의 구문과 실행 방식을 지원하지 않습니다. 대상 설정의 검사 기능을 사용하세요.",
+  "consumer_required": "{0}에는 대상 설정의 전처리와 데이터 문맥이 필요합니다. 해당 진입점에서 검사하세요.",
+  "contracts_help": "형식: field-value, validation-rule, business-action, node-expression. dataset-expression과 javascript 검사기는 아직 지원하지 않습니다. 같은 형식을 여러 디자이너에서 사용할 수 있습니다. 자세한 내용은 --json."
+});
+Object.assign(module.exports.help, {"cmd_formula_contracts": "수식 저장 형식 및 검사 범위 보기"});
+
+Object.assign(module.exports.formula_v2, {"parallel_formula": "병렬 분기에는 conditions/rules 또는 all:true를 사용하세요. expression은 현재 route 분기에서만 지원됩니다."});
+
+Object.assign(module.exports.formula_v2, {"conversion_empty":"수식 결과가 대상 필드 변환 후 빈 값이 되었습니다. 날짜에는 TIMESTAMP(날짜 수식)를 사용하고 원래 값과 유형을 확인하세요.","result_missing":"요청은 완료되었지만 대상 필드 값이 없습니다. 날짜에는 일반적으로 TIMESTAMP(날짜 수식)가 필요합니다.","conversion_partial":"숫자가 일부만 변환되었거나 유한수가 아닙니다. 완전한 숫자나 밀리초 타임스탬프를 반환하세요.","target_branches":"반환 유형 {0} 중 일부는 {1}과 맞지 않습니다. 각 분기를 시험하세요.","date_timestamp":"날짜 객체와 저장 값은 다릅니다. 일반적으로 TIMESTAMP(날짜 수식)로 밀리초를 반환하세요.","numeric_result_text":"결과가 텍스트일 수 있습니다. --field로 각 분기의 빈 값과 부분 숫자 변환을 확인하세요."});
+
+module.exports.feedback_report = {
+  comparison: 'Test pass/fail requires a command, actual result and evidence.',
+  screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
+  text: 'Feedback text fields must be strings of at most 12000 characters.',
+  list: 'Feedback lists must contain at most 40 text items.',
+  object: 'Feedback input must be a JSON object.',
+  required: 'Feedback input requires title and actual.',
+  count: 'occurrenceCount must be a positive integer when known.',
+  cause: 'cause must be an object.',
+  confirmed: 'A confirmed cause requires a summary and evidence.',
+  usage: 'Usage: openyida feedback report --input <summary.json> --output-dir <new-directory>',
+  duplicate: 'Duplicate feedback report option.',
+  options: 'Both --input and --output-dir are required.',
+  file: 'Feedback input must be a JSON file of at most 1 MiB.',
+  json: 'Feedback input is not valid JSON.',
+  help: 'report prepares local review drafts without login, a source checkout or network submission.',
+  login_hint: 'Ask your AI to prepare local feedback with yida-feedback; no GitHub account or source checkout is required.',
+};
+
+module.exports.task_center = {
+  'invalid_spec': 'Invalid task center configuration: {0}',
+  'confirmation_required': 'Custom task pages require an explicit user request or an affirmative ask_human choice. Record customPage.source (explicit-user-request or ask_human) and confirmed=true for this application.',
+  'page_title': 'Task center',
+  'kind_todo': 'To do',
+  'kind_created': 'Created by me',
+  'kind_done': 'Processed by me',
+  'kind_cc': 'Copied to me',
+  'time_todo': 'Arrived at',
+  'time_created': 'Submitted at',
+  'time_done': 'Processed at',
+  'time_cc': 'Copied at',
+  'status_running': 'In progress',
+  'status_completed': 'Completed',
+  'status_terminated': 'Terminated',
+  'status_agree': 'Agreed',
+  'status_disagree': 'Rejected',
+  'title': 'Title',
+  'originator': 'Initiator',
+  'status': 'Process status',
+  'result': 'Task result',
+  'action': 'Action',
+  'handle': 'Handle',
+  'view': 'View',
+  'detail': 'Details',
+  'untitled': 'Untitled',
+  'search': 'Search title',
+  'refresh': 'Refresh',
+  'retry': 'Retry',
+  'empty': 'No matching tasks',
+  'unavailable': 'Task data is unavailable',
+  'previous': 'Previous',
+  'next': 'Next',
+  'total': 'Matching total',
+  'totalUnknown': 'Total unavailable',
+  'apiUnavailable': 'Your tasks are temporarily unavailable. Please sign in again or contact the application administrator.',
+  'loginRequired': 'Sign in to view your tasks.',
+  'invalidResponse': 'Task data could not be verified. Please retry.',
+  'requestFailed': 'Tasks could not be loaded. Please retry.',
+  'missingDetail': 'Required details are missing; this item cannot be opened.',
+  'stale': 'Showing the last successful result; it may not match the current filters.',
+  'updated': 'Updated',
+  'unknown': 'Unknown',
+  'progress': 'Approval progress',
+  'instanceRequired': 'Provide the linked process instance to view its progress',
+  'processResult': 'Final process result',
+  'submittedAt': 'Initiated at',
+  'processFinishedAt': 'Process ended at',
+  'progressUnknown': 'Current step information is unavailable',
+  'taskResult': 'Selected task result',
+  'historyUnavailable': 'Approval history could not be fully loaded. Process details are retained; please retry.',
+  'noHistory': 'No approval operations',
+  'summary': 'Summary',
+  'status_error': 'Error',
+  'status_unknown': 'Unknown',
+  'filter_originators': 'Initiator',
+  'filter_processCodes': 'Process or form',
+  'filter_instanceStatus': 'Process status',
+  'filter_instanceCreateFrom': 'Initiated from',
+  'filter_instanceCreateTo': 'Initiated to',
+  'filter_taskCreateFrom': 'Arrived from',
+  'filter_taskCreateTo': 'Arrived to',
+  'filter_taskFinishFrom': 'Processed from',
+  'filter_taskFinishTo': 'Processed to',
+  'filter_carbonCreateFrom': 'Copied from',
+  'filter_carbonCreateTo': 'Copied to'
+};
+
+module.exports.feedback_github = {
+  usage: 'Usage: openyida feedback github <status|star|fork> [--confirm] [--json]',
+  confirmation: 'Star or Fork requires the user to explicitly choose that action before --confirm. Neither is required to submit an Issue.',
+  failed: 'The GitHub action could not be verified. Inspect its status before retrying; this does not block Issue submission.',
+};
+
+module.exports.process_dynamic_actors = { invalid: "프로세스 담당자 설정이 잘못되었습니다. details.reason, 선택 범위 및 실제 구성원 필드를 확인하세요." };

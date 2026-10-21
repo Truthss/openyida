@@ -11,6 +11,7 @@ tokens:
         "--pod-app-root-bg-image": "none" # 仅作用于根节点；本主题不使用背景图
         "--pod-page-bg-color": "#FFFFFF" # neutral-gray；白色内容画布
         "--pod-card-bg-color": "#FFFFFF" # neutral-gray；一级内容表面
+        "--pod-card-border": "1px solid var(--color-line1-1)"
         "--pod-table-cell-color": "var(--pod-card-bg-color)" # 表格正文跟随卡片表面
         "--pod-shell-padding": "0px"
       navigation:
@@ -112,8 +113,8 @@ tokens:
       "--corner-3": 2px # 气泡、浮层、弹窗外轮廓
       "--corner-4": 2px # 小型嵌入摘要与内部组合容器
       "--corner-5": 2px # 卡片、独立面板与抽屉外轮廓
-      "--corner-circle": "var(--corner-2)" # 等宽高头像、图例圆点
-      "--corner-semicircle": 2px # 胶囊按钮、计数标记、进度条圆头
+      "--corner-circle": 999px # 等宽高头像、图例圆点
+      "--corner-semicircle": "var(--corner-2)" # 胶囊按钮、计数标记、进度条圆头
     shadow:
       "--shadow-1": "0px 2px 4px 0px rgba(0, 0, 0, 0.12)"
       "--shadow-2": "0px 4px 20px -1px rgba(0, 0, 0, 0.16)"

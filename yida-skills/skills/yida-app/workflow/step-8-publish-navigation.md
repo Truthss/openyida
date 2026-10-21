@@ -25,8 +25,10 @@ PRD 的应用工作区导航 `execution.appConfig.navigationType=custom` 时，�
 1. 对本轮各页面执行 `use_skill("yida-publish-page", "发布已完成页面")`；`<source>` 使用本轮修改过的源码，`<displayPageFormUuid>` 使用该页真实 ID。逐页发布不触发导航排序：
 
 ```text
-openyida publish <source> <appType> <displayPageFormUuid> --canvas --health-check
+openyida publish <source> <appType> <displayPageFormUuid> --canvas --strict-theme --health-check
 ```
+
+完整搭建使用 `--strict-theme` 检查可静态识别的 antd 品牌色硬覆盖；发现问题时回到应用主题变量和 CanvasThemeProvider 接入，不自动追加放行参数。该检查不覆盖所有局部 CSS、图片或动态样式，更不负责保存应用主题；Step 9 仍核验应用设置及真实页面。
 
 2. 主流程核对本轮全部页面已开发完成并发布成功、表单/流程等导航目标已创建。仍有任务未完成或失败时，继续处理对应任务，暂不排序。
 3. 全部页面与资源汇合后，仅需配置平台导航时，根据 PRD 选择下列一个分支；只使用自定义导航的入口继续做页面排序验收，不调用平台排序命令：
@@ -48,10 +50,10 @@ openyida nav-group auto-order <appType>
 此分支只执行一次 `auto-order`，不再执行显式 `order`。完整应用逐页发布均不带 `--auto-nav-order`；存量平台 JSX 页面发布去掉 `--canvas`。
 
 4. 同一搭建 Run 不得同时执行显式排序与自动排序，不生成逐项 `move` 的 Bash/Python 循环。
-5. 逐入口落实任务顺序与默认页：平台菜单消费 entryRecommendation 派生的 navigationOrder；自定义菜单消费该入口的 menu 和 defaultMenuKey。前台首页不自动进入后台，frontend-only 仍需完成前台菜单排序。
+5. 前后台场景先执行结构化交接 `navigationVisibility` 的前台专用页面隐藏任务（Fast 按相同用途列出）。使用真实 ID 调用 `nav-group hide`，再 `nav-group list --flat` 核对每项 `hidden=true`、`mobileHidden=true`；已正确则不重复写入。共享表单与明确用于后台的页面保留。排序不会隐藏未列出的前台项，页面 `renderNav=false` 也不能代替此项。随后逐入口落实任务顺序与默认页：平台菜单消费 entryRecommendation 派生的 navigationOrder；自定义菜单消费该入口的 menu 和 defaultMenuKey。frontend-only 不追加后台菜单任务。
 6. 从本轮交付的每个业务入口检查实际菜单顺序、默认页面、具体视图和首屏内容。平台排序 `readbackVerified=true` 不证明首页已正确；根入口仍打开错误任务时，继续处理平台支持的默认页配置，能力未验证时交付明确任务链接并标记根入口待验证。平台导航管理页只保留一套跨模块导航，重复时修正页面源码。
 7. 本步骤配置宜搭平台导航，不要求页面源码实现侧边栏或顶部应用导航；只有 PRD 已规划该入口自己的菜单时才实现，不因平台排序再回头补导航壳。
-7. 本轮已明确的前台自定义页面默认按 `entryMode=standalone` 处理；不能因 PRD 漏写字段而跳过。Step 6 在取得页面 ID 后隐藏页面导航；发布和健康检查通过后核对 `publish.navigationVerification`，必要时执行 `openyida get-form-config <appType> <displayPageFormUuid> --json`。配置缺失或变化时才执行 `openyida update-form-config <appType> <displayPageFormUuid> false "<页面标题>"` 并再次回读。只有回读明确为 `renderNav=false` 时，才将 CLI 返回的 `standaloneUrl` 交给 Step 9，格式为干净的 `{base_url}/{appType}/custom/{displayPageFormUuid}`；配置失败或结果未知时标记“前台入口未完成”，不能用工作台入口替代交付，也不用 `?isRenderNav=false` 猜测成功。
+7. 本轮已明确的前台自定义页面默认按 `entryMode=standalone` 处理；不能因 PRD 漏写字段而跳过。用户明确保留平台导航时沿用 `platform-shell` 和已验证的 `workbenchUrl`，不执行本项隐藏步骤。Step 6 在取得页面 ID 后隐藏页面导航；发布和健康检查通过后核对 `publish.navigationVerification`，必要时执行 `openyida get-form-config <appType> <displayPageFormUuid> --json`。配置缺失或变化时才执行 `openyida update-form-config <appType> <displayPageFormUuid> false "<页面标题>"` 并再次回读。只有回读明确为 `renderNav=false` 时，才将 CLI 返回的 `standaloneUrl` 交给 Step 9，格式为干净的 `{base_url}/{appType}/custom/{displayPageFormUuid}`；配置失败或结果未知时标记“前台入口未完成”，不能用工作台入口替代交付，也不用 `?isRenderNav=false` 猜测成功。
 8. 非前台页面明确采用 `entryMode=platform-shell`，或缺少入口用途依据时，不修改页面导航配置。用户已明确保留平台导航的要求优先；用途与规划冲突时先核对，不覆盖明确选择。
 
 ## 无自定义页面的管理端
@@ -87,3 +89,8 @@ openyida nav-group auto-order <appType>
 ## 下一步
 
 → [Step 9：输出与收尾](step-9-output-finish.md)
+
+
+## 交付前保存业务访问地址
+
+完成发布和导航验证后，按 [登记应用访问入口](step-9-output-finish.md#登记应用访问入口) 默认执行 `app-entry get/set`，把本轮完整应用实际包含的业务前台和后台写入“访问地址设置”并回读，再生成终态链接卡片。以各入口的 `sceneKey/defaultMenuKey` 对应的真实资源为准，不复用最后一次 publish 的 URL，也不拿开发者 `/admin` 当业务后台。单页局部修改保留原入口；不在范围的另一端不新增。保存失败或回读不一致时标记入口未完成，不能先宣布交付完成再补配置。

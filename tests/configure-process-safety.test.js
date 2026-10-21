@@ -89,6 +89,37 @@ describe('configure-process replacement and verification safety', () => {
     jest.dontMock('../lib/core/chalk');
   });
 
+  test('rejects the Issue 651 guessed enum before any API call', async () => {
+    const h = loadSubject({ definition: { nodes: [{ type: 'operator', executor: {
+      approvalType: 'ext_target_approval_field', approvals: [['employeeField_owner']],
+    } }] } });
+    try {
+      await expect(h.subject.run(['APP_TEST', 'FORM_TEST', h.definitionFile], { suppressOutput: true }))
+        .rejects.toMatchObject({ code: 'PROCESS_DYNAMIC_ACTOR_INVALID', details: { remoteWrites: 0, approvalType: 'ext_target_approval_field' } });
+      expect(h.mockGet).not.toHaveBeenCalled();
+      expect(h.mockGetOnce).not.toHaveBeenCalled();
+      expect(h.mockPostForm).not.toHaveBeenCalled();
+      expect(h.mockPostFormOnce).not.toHaveBeenCalled();
+    } finally { fs.rmSync(h.tempDir, { recursive: true, force: true }); }
+  });
+
+  test('validates actor fields even without any field-permission config', async () => {
+    const h = loadSubject({ definition: { nodes: [{ type: 'operator', executor: {
+      kind: 'formField', fieldId: 'textField_owner',
+    } }] } });
+    h.mockGet.mockResolvedValueOnce({ success: true, content: { appType: 'APP_TEST', formUuid: 'FORM_TEST', procCode: '' } })
+      .mockResolvedValueOnce({ success: true, content: { pages: [{ layout: {
+        componentName: 'TextField', props: { fieldId: 'textField_owner' },
+      } }] } });
+    try {
+      await expect(h.subject.run(['APP_TEST', 'FORM_TEST', h.definitionFile], { suppressOutput: true }))
+        .rejects.toMatchObject({ code: 'PROCESS_DYNAMIC_ACTOR_INVALID', details: { remoteWrites: 0, fieldId: 'textField_owner' } });
+      expect(h.mockGet).toHaveBeenCalledTimes(2);
+      expect(h.mockPostForm).not.toHaveBeenCalled();
+      expect(h.mockPostFormOnce).not.toHaveBeenCalled();
+    } finally { fs.rmSync(h.tempDir, { recursive: true, force: true }); }
+  });
+
   test('parses explicit --replace without treating it as processCode', () => {
     const harness = loadSubject();
     expect(harness.subject.parseArgs([
@@ -218,6 +249,40 @@ describe('configure-process replacement and verification safety', () => {
     fs.rmSync(harness.tempDir, { recursive: true, force: true });
   });
 
+  test.each(['missing-designer-field', 'unknown-configured-field', 'readonly-parent'])(
+    'refuses %s before any draft or publish write', async (scenario) => {
+      const harness = loadSubject({ definition: { nodes: [{
+        type: 'operator', approver: 'originator', formConfig: { behaviorList: [
+          { fieldId: scenario === 'unknown-configured-field' ? 'numberField_other' : 'numberField_cost', fieldBehavior: 'NORMAL' },
+          ...(scenario === 'readonly-parent' ? [{ fieldId: 'tableField_lines', fieldBehavior: 'READONLY' }] : []),
+        ] },
+      }] } });
+      const schema = { pages: [{ layout: { componentName: 'FormContainer', children: [{
+        componentName: 'TableField', props: { fieldId: 'tableField_lines' }, children: [{
+          componentName: 'NumberField', props: { fieldId: 'numberField_cost' },
+        }],
+      }] } }] };
+      harness.mockGet
+        .mockResolvedValueOnce({ success: true, content: { appType: 'APP_TEST', formUuid: 'FORM_TEST', procCode: 'TPROC_TEST' } })
+        .mockResolvedValueOnce({ success: true, content: schema })
+        .mockResolvedValueOnce({ success: true, content: scenario === 'missing-designer-field' ? { pages: [] } : schema });
+      try {
+        await expect(harness.subject.run([
+          'APP_TEST', 'FORM_TEST', harness.definitionFile, 'TPROC_TEST', '--replace',
+        ])).rejects.toMatchObject({ code: {
+          'missing-designer-field': 'PROCESS_DESIGNER_FIELDS_MISSING',
+          'unknown-configured-field': 'PROCESS_PERMISSION_FIELD_NOT_FOUND',
+          'readonly-parent': 'PROCESS_PERMISSION_CONTAINER_CONFLICT',
+        }[scenario], details: expect.objectContaining({ remoteWrites: 0 }) });
+        expect(harness.mockPostFormOnce).not.toHaveBeenCalled();
+        expect(harness.mockPostForm).not.toHaveBeenCalled();
+        expect(harness.mockGet).toHaveBeenCalledTimes(3);
+      } finally {
+        fs.rmSync(harness.tempDir, { recursive: true, force: true });
+      }
+    }
+  );
+
   test('uses one-shot draft/save/publish and verifies the exact published platform view', async () => {
     const harness = loadSubject();
     queueExistingProcess(harness);
@@ -250,6 +315,51 @@ describe('configure-process replacement and verification safety', () => {
     });
     expect(result).not.toHaveProperty('processJsonVerified');
     fs.rmSync(harness.tempDir, { recursive: true, force: true });
+  });
+
+  test('saves editable subtable permissions in runtime JSON and verifies their published view', async () => {
+    const harness = loadSubject({ definition: { nodes: [{
+      type: 'operator', name: '采购报价', approver: 'originator', formConfig: {
+        behaviorList: [{ fieldId: 'numberField_cost', fieldBehavior: 'NORMAL' }],
+      },
+    }] } });
+    const schema = { pages: [{ layout: { children: [{ componentName: 'TableField',
+      props: { fieldId: 'tableField_lines' }, children: [{ componentName: 'NumberField',
+        props: { fieldId: 'numberField_cost' } }],
+    }] } }] };
+    harness.mockGet
+      .mockResolvedValueOnce({ success: true, content: { appType: 'APP_TEST', formUuid: 'FORM_TEST', procCode: 'TPROC_TEST' } })
+      .mockResolvedValueOnce({ success: true, content: schema })
+      .mockResolvedValueOnce({ success: true, content: schema })
+      .mockResolvedValueOnce({ success: true, content: { data: [{ id: 100, version: '2' }] } })
+      .mockResolvedValueOnce({ success: true, content: { data: [] } });
+    let saved;
+    harness.mockPostFormOnce.mockImplementation(async (requestPath, buildBody) => {
+      if (requestPath.endsWith('/newDraftProcess.json')) {
+        return { success: true, content: { processId: 101, processVersion: 3 } };
+      }
+      if (requestPath.endsWith('/saveProcessById.json')) { saved = buildBody({ csrfToken: 'csrf' }); }
+      return { success: true };
+    });
+    harness.mockGetOnce
+      .mockResolvedValueOnce({ success: true, content: { data: [{ id: 101, version: '3', status: 'PUBLISHED' }] } })
+      .mockImplementationOnce(async () => ({ success: true, content: saved.viewJson }));
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+    try {
+      const result = await harness.subject.run([
+        'APP_TEST', 'FORM_TEST', harness.definitionFile, 'TPROC_TEST', '--replace',
+      ]);
+      const runtime = JSON.parse(saved.json);
+      const node = runtime.nodes.find(item => item.props && item.props.formConfig);
+      expect(runtime.flowConfig[node.nodeId]).toEqual(expect.arrayContaining([
+        { fieldId: 'tableField_lines', fieldBehavior: 'NORMAL' },
+        { fieldId: 'numberField_cost', fieldBehavior: 'NORMAL' },
+      ]));
+      expect(result.platformViewVerified).toBe(true);
+      expect(harness.mockPostFormOnce).toHaveBeenCalledTimes(3);
+    } finally {
+      fs.rmSync(harness.tempDir, { recursive: true, force: true });
+    }
   });
 
   test('recovers a success-without-id draft only from one exact new SAVED identity', async () => {

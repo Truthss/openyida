@@ -20,6 +20,8 @@
 2. 按 [模式路由](../../yida-design/references/design-mode.md) 确定执行方式，沿用用户最后一次明确选择。
 3. AI 根据有效功能、`userTasks` 与 `entryRecommendation`，按 [导航决策](../../yida-design/references/navigation-decision.md) 规划各入口的页面和菜单，补齐稳定 `pageScenes` 与主题映射。新增建议标记来源，范围遵守 explicitScope。
 
+待办中心默认复用原生能力。只有用户明确要求用自定义页面开发，或对该建议通过 ask_human 明确同意后，才规划自定义待办中心或审批任务区块并交接 `yida-task-center`。问题说明采用自定义页面、沿用应用风格、办理打开原生审批页，提供“采用自定义页面 / 保留原生待办中心”选择。未回答、拒绝或含糊答复时不创建该自定义页；Fast、通用搭建确认、已有 Canvas 和“你决定”不能代替这项选择。记录真实选择与应用范围供装配使用；受管本地 Run 按总入口使用 `agent ask-human`，其余使用宿主 ask_human。
+
 进入视觉阶段前，先按[已选风格只确认一次](../../yida-design/references/theme-selection.md#已选风格只确认一次)复用用户已选结果；补充设计细节不重新选型。
 
 Fast / Plan 先按[已选风格只确认一次](../../yida-design/references/theme-selection.md#已选风格只确认一次)检查用户原始需求、最新补充与视觉参考：已有风格意向就直接推演，参考网站或设计图按[视觉 DNA 提取](../../yida-design/references/reference-visual-dna.md)读取后设计，不再询问主题风格。将结果和来源写回 brief，后续复用；缺少 themeId、色值或 Token 由 AI 补齐。仅没有风格意向、视觉参考或可复用选择时，按[设计方向比较](../../yida-design/references/theme-selection.md#设计方向比较)生成三套方向：Fast 内部选定；Plan 未获 AI 决策委托时按[宿主展示规则](../../yida-design/references/theme-selection.md#选择时展示名称与效果图)收集选择，用户明确要求时才展示预览。
@@ -40,6 +42,8 @@ Fast / Plan 先按[已选风格只确认一次](../../yida-design/references/the
 - Plan：执行 [Plan 编排](plan/workflow.md)，用户确认当前方案后，按返回的 `assetTasks` 启动素材任务，同时进入 Step 3 创建应用。
 
 Plan 分支从已加载 `yida-app` 的 Available Files 读取精确路径 `workflow/plan/workflow.md`；不要把当前文件名当目录拼成 `workflow/step-2-design/plan/workflow.md`，也不要用 Glob 猜路径。
+
+用户显式要求“预览效果辅助风格选择”时，先匹配 catalog 中的模板原图，以对话内 HTML 卡片与 `ask_human` 同轮展示；该请求优先于 Fast 内部选型，不能只返回链接或替用户选定。仅查看效果不重新提问。
 
 共享需求只整理一次。创建出的资源 ID 写入执行上下文；用户需求或范围实质变化时再更新需求与相关规划。需求文件与实施文档供内部执行，Plan 的 HTML 用于用户查看和确认方案。
 
@@ -93,3 +97,6 @@ Fast 设计就绪后按 [素材调度](parallel-work.md#素材与页面同时推
 ## 下一步
 
 → [Step 3：创建或复用应用](step-3-create-or-reuse-app.md)
+
+
+分前后台时，把 [前台返回业务后台](../references/entry-navigation.md#前台返回业务后台设计建议) 作为默认设计考虑：在现有页面操作说明中交接入口位置、可见身份和管理端目标。已有等效入口直接复用；单前台不额外创建后台。该建议不增加必填字段或确认轮次，不作为发布门禁。

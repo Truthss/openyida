@@ -84,6 +84,7 @@ describe('integration create command', () => {
     exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => { throw new Error('__exit__'); });
     integrationApi.createLogicflow.mockReset();
     integrationApi.getFormSchema.mockReset();
+    integrationApi.getFormSchema.mockResolvedValue([]);
     integrationApi.saveProcess.mockReset();
     fetchFormPageList.mockReset();
     integrationReadback.verifyLogicflowFinalState.mockResolvedValue({
@@ -107,6 +108,90 @@ describe('integration create command', () => {
     logSpy.mockRestore();
     exitSpy.mockRestore();
     tempDirs.forEach((dir) => fs.rmSync(dir, { recursive: true, force: true }));
+  });
+
+  test.each([
+    [':processVar', 'numberField_minStock', 'processVar', 'processVar', 'numberField_minStock'],
+    ['', 'numberField_minStock', 'literal', 'value', 'numberField_minStock'],
+    [':literal', '0', 'literal', 'value', 0],
+  ])('saves trigger RHS %s %s with matching runtime and designer semantics', async (suffix, rhs, valueType, extValue, expectedValue) => {
+    integrationApi.createLogicflow.mockResolvedValue('LPROC-TEST');
+    integrationApi.saveProcess.mockResolvedValue({ success: true });
+
+    await run([
+      'APP_TEST', 'FORM-A', '库存不足通知', '--receivers', 'user-1',
+      '--events', 'insert,update',
+      '--trigger-condition', `numberField_stock:当前库存:LessThan:${rhs}:NumberField${suffix}`,
+    ]);
+
+    expect(integrationApi.saveProcess).toHaveBeenCalledTimes(1);
+    const saved = integrationApi.saveProcess.mock.calls[0][1];
+    const runtime = saved.processJson.nodes.find(node => node.type === 'trigger').props.inputs;
+    const designer = saved.viewJson.schema.children.find(node => node.componentName === 'StartNode').props.start;
+    const expectedRule = {
+      id: 'numberField_stock', componentType: 'NumberField', opCode: 'LessThan',
+      value: expectedValue, ruleValue: expectedValue, valueType, extValue,
+    };
+    expect(runtime.conditions.rules).toEqual([expect.objectContaining(expectedRule)]);
+    expect(designer.conditions.rules).toEqual([expect.objectContaining(expectedRule)]);
+    expect(designer.dataFilterType).toBe('byRule');
+  });
+
+  test('rejects malformed message roles before authentication or remote writes', async () => {
+    const specPath = writeTempSpec({ nodes: [{ type: 'sendMessage', content: 'test', toRoles: [{}] }] });
+    await expect(run(['APP_TEST', 'FORM-A', 'invalid role', '--spec', specPath]))
+      .rejects.toMatchObject({ code: 'INTEGRATION_SPEC_INVALID' });
+    expect(require('../lib/core/utils').loadAuthData).not.toHaveBeenCalled();
+    expect(integrationApi.createLogicflow).not.toHaveBeenCalled();
+    expect(integrationApi.saveProcess).not.toHaveBeenCalled();
+  });
+
+  test('asks for a repeating timer end condition before authentication or remote operations', async () => {
+    const specPath = writeTempSpec({
+      schedule: { startDate: '2026-10-20 09:30:00', repeat: 'DAILY' },
+      nodes: [{ type: 'sendMessage', content: 'test', receivers: ['user-1'] }],
+    });
+    await expect(run(['APP_TEST', 'FORM-A', 'timer notice', '--spec', specPath]))
+      .rejects.toMatchObject({ code: 'INTEGRATION_SPEC_INVALID', message: expect.stringMatching(/maxCount.*expireDate/) });
+    expect(require('../lib/core/utils').loadAuthData).not.toHaveBeenCalled();
+    expect(require('../lib/core/utils').triggerLogin).not.toHaveBeenCalled();
+    expect(fetchFormPageList).not.toHaveBeenCalled();
+    expect(integrationApi.getFormSchema).not.toHaveBeenCalled();
+    expect(integrationApi.createLogicflow).not.toHaveBeenCalled();
+    expect(integrationApi.saveProcess).not.toHaveBeenCalled();
+  });
+
+  test.each([
+    [{ maxCount: 100 }, { maxCount: 100 }, { overTimeType: 'count', overCount: 100 }],
+    [{ expireDate: Date.parse('2036-10-20T09:30:00+08:00') },
+      { expireDate: Date.parse('2036-10-20T09:30:00+08:00') },
+      { overTimeType: 'time', overTime: Date.parse('2036-10-20T09:30:00+08:00') }],
+  ])('creates a scheduled binding and saves the selected end condition: %j', async (end, runtime, designer) => {
+    const specPath = writeTempSpec({
+      schedule: { startDate: '2026-10-20 09:30:00', repeat: 'DAILY', ...end },
+      nodes: [{ type: 'sendMessage', content: 'test', receivers: ['user-1'] }],
+    });
+    integrationApi.createLogicflow.mockResolvedValue('LPROC-TEST');
+    integrationApi.saveProcess.mockResolvedValue({ success: true });
+    await run(['APP_TEST', 'FORM-A', 'timer notice', '--spec', specPath]);
+    expect(integrationApi.createLogicflow).toHaveBeenCalledWith(expect.any(Object),
+      expect.objectContaining({ type: '3' }));
+    const saved = integrationApi.saveProcess.mock.calls[0][1];
+    expect(saved.processJson.nodes[0].props).toMatchObject({ triggerType: 'TimerEvent', inputs: { end: runtime } });
+    expect(saved.viewJson.schema.children[0].props.start).toMatchObject(designer);
+  });
+
+  test('publishes role-only notifications with exact role readback requested', async () => {
+    const roles = [{ roleCode: 'ROLE-FINANCE', roleName: '财务' }];
+    const specPath = writeTempSpec({ nodes: [{ type: 'sendMessage', content: 'test', toRoles: roles }] });
+    integrationApi.createLogicflow.mockResolvedValue('LPROC-TEST');
+    integrationApi.saveProcess.mockResolvedValue({ success: true });
+    await run(['APP_TEST', 'FORM-A', 'role notice', '--spec', specPath, '--publish']);
+    expect(integrationApi.saveProcess).toHaveBeenCalledTimes(2);
+    const saved = integrationApi.saveProcess.mock.calls[0][1];
+    expect(saved.processJson.nodes.find(node => node.type === 'sendMessage').props.toRoles).toEqual(roles);
+    expect(integrationReadback.verifyLogicflowFinalState).toHaveBeenCalledWith(expect.any(Object),
+      expect.objectContaining({ expectedMessageRoles: [{ nodeId: expect.any(String), roles }] }));
   });
 
   test('preflights the complete spec before creating a remote logic-flow binding', async () => {
@@ -279,7 +364,7 @@ describe('integration create command', () => {
       specPath,
     ])).rejects.toThrow(/Unknown integration spec node alias: node_typo/);
 
-    expect(integrationApi.getFormSchema).not.toHaveBeenCalled();
+    expect(integrationApi.getFormSchema).toHaveBeenCalledWith(expect.any(Object), { appType: 'APP_TEST', formUuid: 'FORM-B' });
     expect(integrationApi.createLogicflow).not.toHaveBeenCalled();
     expect(integrationApi.saveProcess).not.toHaveBeenCalled();
   });
@@ -697,6 +782,7 @@ describe('integration create command', () => {
       appType: 'APP_TEST',
       formUuid: 'FORM-A',
       flowName: 'A完成后创建B',
+      type: '1',
     });
     expect(integrationApi.getFormSchema).toHaveBeenCalledWith(expect.any(Object), {
       appType: 'APP_TEST',
@@ -1286,7 +1372,7 @@ describe('integration create command', () => {
       specPath,
     ])).rejects.toThrow(/Unknown integration spec node alias: node_typo/);
 
-    expect(integrationApi.getFormSchema).not.toHaveBeenCalled();
+    expect(integrationApi.getFormSchema).toHaveBeenCalledWith(expect.any(Object), { appType: 'APP_TEST', formUuid: 'FORM-B' });
     expect(integrationApi.createLogicflow).not.toHaveBeenCalled();
     expect(integrationApi.saveProcess).not.toHaveBeenCalled();
   });
@@ -1607,6 +1693,9 @@ describe('integration create command', () => {
   });
 
   test('uses source form metadata for structured process getSelf on insert/update events', async () => {
+    integrationApi.getFormSchema.mockResolvedValue([
+      { componentName: 'NumberField', props: { fieldId: 'numberField_amount', label: { zh_CN: '金额' } } },
+    ]);
     const specPath = writeTempSpec({
       events: ['insert', 'update'],
       nodes: [{ id: 'self', type: 'getSelf' }],
@@ -1636,6 +1725,7 @@ describe('integration create command', () => {
       originalType: 'process_form',
       condition: { rules: [{ id: 'proc_inst_id', name: '流程实例ID' }] },
       targetItem: { formItem: { formType: 'process', title: '流程来源表单' } },
+      outputs: [{ value: 'numberField_amount', text: '金额', componentName: 'NumberField' }],
     });
   });
 });

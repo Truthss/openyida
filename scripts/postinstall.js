@@ -308,6 +308,8 @@ openyida copy
 ## 子技能目录
 
 已有流程的当前任务查询、流程审批转交或管理员转交，直接加载 \`yida-data-management\`，使用 \`data query process-tasks\` 和 \`data transfer task\`，并回读实际处理人。修改流程中的转交操作权限才使用 \`yida-process-rule\`。
+原生酷卡片仅在用户明确指定宜搭原生酷卡片（交互/置顶卡片）或继续已明确上下文时加载 \`yida-cool-card\`。它用 cardPageCode/cardTemplateId；CARD 资源和 dataCardDesigner 属于 \`yida-data-card\`，Canvas 展示卡片归页面。酷卡片 CLI 负责创建、读取与模板查询，返回官方入口由用户配置保存，再由 CLI 回读；不代替编辑器保存、发布或发送，不修改权益或官方卡片开关。
+原生数据卡片仅在用户显式指定宜搭原生数据卡片，或继续已明确的原生卡片操作时加载 \`yida-data-card\`。泛称卡片、指标卡、看板、投放或数据播报不触发；完整应用搭建也不自动添加该资源。自定义页面内的卡片随页面发布；页面虽有 CARD 引用，只改外层仍属页面任务，明确修改源卡片才进入原生卡片技能。
 
 根据用户意图先命中一个大类目录，再选择最匹配的子技能。支持 \`use_skill\` / \`search_skills\` 的宿主中，必须调用 \`use_skill("<技能名>", "<本次目的>")\` 加载子技能；不要用 Read / read_file / cat 读取 SKILL.md 路径，也不要猜测 .skills、插件缓存或 workspace/project/.skills。\`skills-index.json\` 的 \`route_groups\` 与下表一致，供 yida-agent 或同构宿主做机器路由。机器路由推荐顺序：先用 \`route_groups[].signals\` 命中 \`yida-skills/<area>\` 大类，只在该 \`category\` 下用 skill 的 description/tags/signals 精排，再调用 \`use_skill\`。完全没有 \`use_skill\` 的本地工具，才允许按根技能路由表选定技能，并按 \`skills/<技能名>/SKILL.md\` 定位当前阶段唯一必要的 SKILL.md，禁止并发批量读取多个 SKILL.md。
 
@@ -319,11 +321,15 @@ openyida copy
 | \`yida-skills/form\` | 表单字段、公式、校验、业务规则、批量录入、数据记录、日期为空、日期区间筛选 | \`yida-create-form-page\`, \`yida-formula\`, \`yida-formula-evaluate\`, \`yida-business-rule\`, \`yida-canvas-table-form\`, \`yida-table-form\`, \`yida-data-management\` |
 | \`yida-skills/process\` | 审批、流程表单、流程规则、代理人 | \`yida-create-process\`, \`yida-process-rule\`, \`yida-agent-center\` |
 | \`yida-skills/page\` | 自定义展示页、YidaCodeCanvas 组件、dataBinding、DataBridge、轮询刷新列表或 KPI、历史平台 JSX 组件页面维护、发布、导航壳、PPT | \`yida-create-page\`, \`yida-canvas-custom-page\`, \`yida-custom-page\`, \`yida-canvas-data-binding\`, \`yida-canvas-upgrade\`, \`yida-publish-page\`, \`yida-openyida-publish-guard\`, \`yida-density\`, \`yida-nav-shell\`, \`yida-ppt-slider\` |
-| \`yida-skills/analytics\` | 报表、统计、图表、Recharts、ECharts、看板、驾驶舱 | \`yida-report\`, \`yida-rechart\`, \`yida-chart\`, \`yida-dashboard\` |
-| \`yida-skills/integration\` | 连接器、钉钉开放平台、外部 API、数据源、集成自动化 | \`yida-integration\`, \`yida-dingtalk-openapi\`, \`yida-connector\`, \`yida-connector-safe-actions\`, \`yida-data-source-connectors\` |
+| \`yida-skills/analytics\` | 用户显式指定宜搭原生数据卡片；报表、统计、图表、Recharts、ECharts、看板、驾驶舱 | \`yida-data-card\`, \`yida-report\`, \`yida-rechart\`, \`yida-chart\`, \`yida-dashboard\` |
+| \`yida-skills/integration\` | 明确指定宜搭原生酷卡片；连接器、钉钉开放平台、外部 API、数据源、集成自动化 | \`yida-cool-card\`, \`yida-integration\`, \`yida-dingtalk-openapi\`, \`yida-connector\`, \`yida-connector-safe-actions\`, \`yida-data-source-connectors\` |
 | \`yida-skills/access\` | 平台/应用/表单/页面权限、公开访问、分享 | \`yida-corp-manager\`, \`yida-app-permission\`, \`yida-form-permission\`, \`yida-page-config\` |
-| \`yida-skills/ops\` | Sequence、VOC | \`yida-db-seq-fix\`, \`yida-voc\` |
+| \`yida-skills/ops\` | Sequence、VOC、OpenYida 故障、Issue/Fork PR | \`yida-db-seq-fix\`, \`yida-voc\`, \`yida-feedback\` |
 | \`yida-skills/agent\` | 导出对话、读取钉钉文档/听记、会议纪要/闪记转 PRD | \`yida-export-conversation\`, \`yida-document-markdown\`, \`yida-tingji\`, \`yida-flash-note-to-prd\` |
+
+## 本地使用问题反馈
+
+OpenYida 反复报错、不会提 Issue/PR、没有 GitHub 账号或源码时加载 \`yida-feedback\`，先整理脱敏本地报告；外部提交按用户授权执行，修复贡献通过个人 Fork。普通宜搭 VOC 清单用 \`yida-voc\`。
 
 ## 执行规则
 

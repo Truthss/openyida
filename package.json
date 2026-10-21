@@ -1,6 +1,6 @@
 {
   "name": "openyida",
-  "version": "2026.10.14-1",
+  "version": "2026.10.21-1",
   "description": "OpenYida CLI - 宜搭低代码 AI 开发工具（安装即用，零配置）",
   "bin": {
     "openyida": "bin/yida.js",
@@ -88,6 +88,7 @@
   "homepage": "https://github.com/openyida/openyida#readme",
   "dependencies": {
     "@babel/standalone": "^7.15.1",
+    "esprima": "4.0.1",
     "globals": "^17.11.0",
     "js-yaml": "^4.3.2",
     "uglify-js": "^3.19.3"
@@ -95,7 +96,8 @@
   "devDependencies": {
     "eslint": "^8.50.0",
     "eslint-plugin-import": "^2.32.0",
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "ws": "8.22.0"
   },
   "jest": {
     "testMatch": [
@@ -113,9 +115,9 @@
     "endpoint": "https://www.aliwork.com/openyida/agent-api"
   },
   "optionalDependencies": {
-    "@openyida/local-agent-runtime-darwin-arm64": "0.1.1",
-    "@openyida/local-agent-runtime-darwin-x64": "0.1.1",
-    "@openyida/local-agent-runtime-win32-x64": "0.1.1",
-    "@openyida/local-agent-runtime-win32-arm64": "0.1.1"
+    "@openyida/local-agent-runtime-darwin-arm64": "0.1.4",
+    "@openyida/local-agent-runtime-darwin-x64": "0.1.4",
+    "@openyida/local-agent-runtime-win32-x64": "0.1.4",
+    "@openyida/local-agent-runtime-win32-arm64": "0.1.4"
   }
 }

@@ -66,7 +66,9 @@ const navigationContext = { appType: APP_TYPE };
 
 ## 管理员返回业务工作台
 
-当前访问者具有应用管理权限时，可在独立前台页头操作区展示次级按钮“业务工作台”。沿用当前主题，不作为普通访客菜单，不跳应用设计器、应用设置或开发后台。先从 PRD 的管理端入口及资源回读确定真实业务管理页，不把当前前台页或任意第一个菜单当作工作台。
+前后台场景默认考虑按 [前台返回业务后台](../../yida-app/references/entry-navigation.md#前台返回业务后台设计建议) 为相应管理身份提供次级入口；已有等效入口直接复用。这是设计建议，不是按钮存在性校验或发布门禁。
+
+下面的 `canvas-admin-entry` 专用于应用管理员身份，不是通用业务角色判断器。当前访问者具有应用管理权限时，可在独立前台页头操作区、头像菜单或现有导航中展示次级按钮“业务工作台”。沿用当前主题，不作为普通访客菜单，不跳应用设计器、应用设置或开发后台。先从 PRD 的管理端入口、`app-entry` 回读的 `urls.management` 及资源映射确定真实业务管理页，不把当前前台页或任意第一个菜单当作工作台。
 
 ```bash
 openyida sample openyida-page-template canvas-admin-entry --output .cache/samples/canvas-admin-entry.jsx

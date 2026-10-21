@@ -27,6 +27,8 @@ function cliEnv() {
     USERPROFILE: tempHome,
     OPENYIDA_LANG: 'zh',
     CI: '1',
+    // Keep Node runtime diagnostics separate from the CLI JSON error contract.
+    NODE_NO_WARNINGS: '1',
     // 清除可能从父进程继承的 AI 工具环境变量，避免干扰测试
     QODER_IDE: '',
     QODER_AGENT: '',
@@ -115,6 +117,12 @@ function runAnyWithEnv(args, extraEnv, cwd = ROOT, options = {}) {
       .replace(/^\(Use `node --trace-warnings \.\.\.` to show where the warning was created\)\n?/gm, ''),
   };
 }
+
+test('integration help includes detail-log in an extra locale', () => {
+  const result = runAnyWithEnv(['integration', '--help'], { OPENYIDA_LANG: 'ja' });
+  expect(result.status).toBe(0);
+  expect(result.output).toContain('integration <create|update|list|enable|disable|check|detail-log|diagnose|monitor|copy|rename|delete>');
+});
 
 function createCodexWorkspace() {
   const workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'openyida-codex-login-'));
@@ -472,12 +480,17 @@ describe('CLI offline smoke', () => {
       expect(entry).toBeDefined();
       const documented = [...new Set(entry.usage.match(/--[a-z][a-z-]*/g))].sort();
       const registered = entry.args.filter(arg => arg.source === 'option').flatMap(arg => arg.builder_options).sort();
-      expect({ id, options: registered }).toEqual({ id, options: documented });
+      // The README keeps the legacy inline summary; typed file input is documented in argument metadata.
+      const expected = id === 'design-plan.patch' ? [...documented, '--set-file'].sort() : documented;
+      expect({ id, options: registered }).toEqual({ id, options: expected });
       expect(entry.permission).toMatchObject({ mode: 'allow', effect: 'write' });
       expect(entry.side_effect.kind).toBe(id === 'create-form.batch' ? 'remote_write' : 'local_write');
     }
     expect(entries['create-form.batch'].side_effect.mutates_local).toBe(true);
-    expect(entries['design-plan.patch'].args.find(arg => arg.name === 'set')).toMatchObject({ required: true, repeatable: true });
+    const setArgument = entries['design-plan.patch'].args.find(arg => arg.name === 'set');
+    expect(setArgument).toMatchObject({ repeatable: true });
+    expect(Boolean(setArgument.required)).toBe(false);
+    expect(entries['design-plan.patch'].args.find(arg => arg.name === 'setFile')).toMatchObject({ type: 'file', source: 'option', builder_options: ['--set-file'] });
     expect(entries.sample.args.find(arg => arg.name === 'var')).toMatchObject({ repeatable: true });
     expect(entries['create-form.batch'].args.find(arg => arg.name === 'concurrency')).toMatchObject({ type: 'integer', default: 3 });
   });
@@ -623,6 +636,7 @@ describe('CLI offline smoke', () => {
       'app-offline',
       'connector.delete',
       'connector.delete-action',
+      'integration.delete',
     ]);
     expect(parsed.summary.core_workflows.full_app_build).toMatchObject({
       mode: 'unified_build',
@@ -755,11 +769,11 @@ describe('CLI offline smoke', () => {
     });
     expect(parsed.commands.find(entry => entry.id === 'integration.create').usage).toContain('--spec file.json');
     expect(parsed.commands.find(entry => entry.id === 'integration.update')).toMatchObject({
-      usage: 'openyida integration update <appType> <formUuid> <processCode> --spec <desired-spec.json> [--publish]',
+      usage: 'openyida integration update <appType> <formUuid> <processCode> --patch <patch.json> [--dry-run] [--expect <fingerprint>] [--publish]',
       output: 'json',
-      requires_login: false,
-      side_effect: { kind: 'local_write', mutates_yida: false, mutates_local: true },
-      permission: { mode: 'allow', effect: 'write' },
+      requires_login: true,
+      side_effect: { kind: 'mixed', mutates_yida: true, mutates_local: true },
+      permission: { mode: 'allow', effect: 'unknown' },
     });
     expect(parsed.commands.find(entry => entry.id === 'externalize-form')).toMatchObject({
       usage: 'openyida externalize-form <appType> <formUuid> [--schema-file file]',
@@ -1730,6 +1744,7 @@ describe('CLI offline smoke', () => {
       'app-offline',
       'connector.delete',
       'connector.delete-action',
+      'integration.delete',
     ]);
     expect(parsed.commands.read_only_command_ids).toContain('agent-capabilities');
     expect(parsed.commands.core_workflows.full_app_build).toMatchObject({
@@ -2725,7 +2740,7 @@ test('plain user-facing guidance is available from manifest and both agent capab
   expect(selection.qwenwork.prepareCommand).toBe('openyida sample yida-design theme-selector --json');
   expect(selection.qwenwork.widgetPathSource).toContain('relative to the host skills root');
   expect(selection.interactionOrder).toMatchObject({
-    sequence: ['prepare_known_candidates', 'optional_requested_preview', 'batched_ask_human_if_needed', 'confirm_plan_if_required'],
+    sequence: ['prepare_known_candidates_and_requested_html', 'present_requested_html_with_batched_ask_human_if_needed', 'confirm_plan_if_required'],
     maxPendingInteractions: 1,
     batchStyleWithOtherQuestions: true,
   });

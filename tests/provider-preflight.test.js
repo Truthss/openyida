@@ -209,7 +209,7 @@ describe('cross-platform provider preflight', () => {
     if (process.platform !== 'win32') { return; }
     const cmd = file('中文 folder/qodercli.cmd');
     fs.writeFileSync(cmd, '@echo off\r\nexit /b 99\r\n');
-    fs.writeFileSync(cmd.replace(/\.cmd$/, '.ps1'), "Write-Output 'fixture-version'\n");
+    fs.writeFileSync(cmd.replace(/\.cmd$/, '.ps1'), "Write-Output 'fixture-version'\nexit 0\n");
     expect(await probe(cmd, ['--version'], null, { timeoutMs: 45000 })).toMatchObject({ status: 'passed', output: expect.stringContaining('fixture-version') });
   }, 60000);
 
@@ -230,8 +230,8 @@ describe('cross-platform provider preflight', () => {
     file("中文 folder/quote's/qodercli.ps1");
     const result = probeCommand(cmd, ['login', "literal'value;$x"], 'win32', { SystemRoot: 'C:\\Windows' });
     expect(result.args).toEqual([
-      '-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command',
-      `& '${cmd.replace(/\.cmd$/, '.ps1').replace(/'/g, "''")}' 'login' 'literal''value;$x'`,
+      '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File',
+      cmd.replace(/\.cmd$/, '.ps1'), 'login', "literal'value;$x",
     ]);
     expect(() => probeCommand(file('bare.cmd'), ['--version'], 'win32')).toThrow();
   });
@@ -264,4 +264,26 @@ describe('cross-platform provider preflight', () => {
     const result = await probe(process.execPath, ['-e', code], 'qoder', { timeoutMs: 3000 });
     expect(result.status).toBe('passed');
   });
+});
+
+
+test('connect inventories every CLI without duplicating runtime auth/model probes',async()=>{
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'all-providers-'));
+  try {
+    fs.mkdirSync(path.join(root,'.local/bin'),{recursive:true});
+    for(const name of ['codex','qodercli']) {fs.writeFileSync(path.join(root,'.local/bin',name),'fixture',{mode:0o700});}
+    const execute=jest.fn(async()=>({status:'passed'}));
+    const result=await preflight({command:'connect'},{platform:'linux',homedir:root,env:{PATH:''},probe:execute});
+    expect(result.providers.filter(p=>p.registrable).map(p=>p.provider).sort()).toEqual(['codex','qoder']);
+    expect(result.providers.every(p=>p.authKnown===false && p.protocolProbe==='not_run')).toBe(true);
+    expect(execute.mock.calls.map(call=>call[1])).toEqual([['--version'],['--version']]);
+    execute.mockClear();
+    await preflight({command:'doctor'},{platform:'linux',homedir:root,env:{PATH:''},probe:execute});
+    expect(execute).toHaveBeenCalledTimes(6);
+  } finally {fs.rmSync(root,{recursive:true,force:true});}
+});
+
+test.each([['Qoder CLI 1.1.60','Qoder CLI 1.1.60'],['codex-cli 0.114.0','codex-cli 0.114.0'],['secret banner',undefined]])('only recognized version output is reused: %s',async(output,version)=>{
+  const result=await preflight({command:'connect',provider:'codex',providerPath:process.execPath},{probe:async()=>({status:'passed',output})});
+  expect(result.providers[0].version).toBe(version);
 });

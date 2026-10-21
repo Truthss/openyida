@@ -1,12 +1,54 @@
 'use strict';
 
+
 /**
  * Traditional Chinese optional locale pack
  * Missing keys are completed from the core fallback language so optional packs stay schema-compatible.
  */
 module.exports = {
+  print_template: {
+    "description": "Manage native YiDA print templates, generate document layouts, back up, restore and request PDFs",
+    "error": "Print template operation failed: {0}",
+    "usage": "Usage: openyida print-template <list|inspect|fields|build|create|copy|save|restore|settings|status|order|render|files> <appType> <formUuid> [templateId]. See the print-template skill for action-specific flags and examples."
+},
+  custom_button: {
+    "usage": "Usage: openyida custom-button <list|inspect|options|create|update|delete> <appType> <formUuid> [buttonUuid] [--config <file>] [--expected-hash <hash>] [--backup <file>] [--yes] [--json]",
+    "invalid_config": "配置或參數無效：{0}",
+    "invalid_response": "平台傳回的按鈕配置不完整：{0}",
+    "api_error": "自訂按鈕接口失敗：{0}。請檢查登入、權限和版本支援。",
+    "not_found": "目標表單中沒有此按鈕：{0}",
+    "conflict": "配置已變更，請重新查詢後再儲存。",
+    "limit": "每個表單最多支援 10 個自訂按鈕。",
+    "readback_mismatch": "儲存配置與回讀不一致，請保留備份並檢查遠端狀態。"
+  },
+  dws_external: {"note": "dws is an independent external tool. OpenYida only shows installation instructions; it does not download or install it.", "install_guide": "Show official DingTalk CLI installation instructions"},
+  cool_card: {"unsupported_environment": "集團版不支援酷卡片搭建。", "description": "Create and read native YiDA cool cards (interactive and pinned)", "usage": "Usage: openyida cool-card <list|templates|create|get> <appType> [cardPageCode] [--type im|onebox] [--name <title>] [--page <n>] [--size <n>] [--search <text>] [--out <file>] [--json]", "failed": "Native cool card operation stopped: {0}"},
+  data_card: {"description":"创建、读取、保存草稿和发布宜搭原生数据卡片","usage":"用法： openyida data-card <list|create|get|save|publish|probe|release-get|release-save|release-check|release-test|refs> <appType> [cardCode] [--name <title>] [--description <text>] [--schema <file>|--config <file>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--published|--version <version>] [--page <n>] [--size <n>] [--search <text>] [--allow-send] [--json]","failed":"原生数据卡片操作已停止：{0}","conflict":"卡片草稿已发生变化，请重新读取后再保存或发布。","mismatch":"回读配置或发布状态与预期不一致，请保留备份并检查卡片后再重试。"},
+  app_settings: {"description":"获取主题、业务前后台、原生数据卡片和酷卡片管理入口","usage":"用法： openyida app-settings <appType> [--section theme|basic|data-card|cool-card] [--json]","failed":"无法读取应用设置：{0}"},
+  form_view: {
+    usage: "用法: openyida form-view <list|inspect|save|create|order> <appType> <formUuid> [viewUuid] [--config <file>] [--name <title>] [--with-config] [--expected-hash <hash>] [--backup <file>] [--replace] [--json]",
+    invalid_config: "原生檢視設定或參數無效：%s",
+    target_mismatch: "檢視不屬於目標表單：%s",
+    api_error: "原生檢視介面失敗：%s。請檢查平台權限與版本支援，不要盲目重試寫入。",
+    unsupported: "平台未返回原生多檢視清單，請檢查表單類型及平台支援。",
+    conflict: "檢視在讀取後已變更，請重新檢查再儲存。",
+    readback_mismatch: "儲存設定與回讀結果不一致，請保留備份並核對遠端檢視。",
+  },
+  integration_manage: {"failed": "Automation operation failed: {0}", "usage": "integration <monitor|copy|rename|delete> <appType> ...", "desc_monitor": "Read or save automation error monitors", "desc_copy": "Copy an automation as disabled", "desc_rename": "Rename an automation", "desc_delete": "Delete a disabled automation"},
+  permission_manage: {"failed": "Permission group operation failed: {0}", "usage": "permission-manage <copy|rename|delete> <appType> <formUuid> <packageUuid> [--name name] [--dry-run] [--confirm]", "description": "Copy, rename or delete a permission group"},
+  matrix_manage: {"failed": "Matrix operation failed: {0}", "usage": "matrix <list|detail|references|rows|create|update|delete|upsert-rows|delete-rows> [matrixId] [--file config.json] [--dry-run] [--confirm]", "description": "Manage permission matrix definitions, references and rows"},
+  integration_baseline: {"failed": "Automation update stopped: {0}"},
+  integration_update_v2: {"usage": "integration update <appType> <formUuid> <processCode> --patch patch.json [--dry-run] [--expect fingerprint] [--publish]"},
+
+  conditional_actors: { unavailable: 'Conditional actors are unavailable or could not be verified.', invalid: 'Invalid conditional actors: {0}' },
+  integration_triggers: {
+    invalid: 'Invalid automation trigger: {0}',
+    end_required: '請選擇定時任務的結束條件：觸發次數填寫 schedule.maxCount（1–100），指定時間填寫 schedule.expireDate（截止時間的毫秒時間戳）。長期執行可選擇較遠的截止日期，並在設定摘要中展示實際日期。',
+  },
+  permission_conditions: { invalid: 'Invalid permission conditions: {0}' },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
+    frontend_nav_required: '頁面 {0} 尚未確認隱藏平台導覽；請先儲存 renderNav=false 並讀回，再登記獨立前台地址。',
     desc_get: 'Read frontend and management runtime entries',
     desc_set: 'Register application entries with partial update and readback',
     usage: 'Usage: openyida app-entry get <appType> [--json]\n       openyida app-entry set <appType> [--frontend <url>] [--management <url>] [--clear-frontend] [--clear-management] [--json]\nRegister only published, verified runtime URLs for this application. Omitted entries remain unchanged.',
@@ -52,6 +94,7 @@ module.exports = {
     invalidStrategy: "圖片要求應填寫為物件，按頁面列出圖片位置。",
   },
   help: {
+    cmd_custom_button: "原生自訂按鈕：查詢與配置表單、流程和頁面跳轉",
     cmd_check_design: '檢查設計文件、主題變數與 PRD 交接',
     subtitle: '宜搭低程式碼 AI 開發工具',
     usage: '用法:',
@@ -88,6 +131,7 @@ module.exports = {
     cmd_validate_form: '本機校驗表單欄位 JSON',
     cmd_update_form: '更新表單頁面',
     cmd_list_forms: '列出應用程式下的表單/頁面',
+    cmd_form_view: "原生表單檢視：顯示欄、欄寬、凍結欄與篩選設定",
     cmd_aggregate_table: '管理聚合表（virtualView）',
     cmd_get_schema: '取得表單 Schema',
     cmd_check_prd_completeness: 'Check PRD page/resource count risk',
@@ -144,11 +188,12 @@ module.exports = {
     cmd_connector_more: '查看更多子命令',
     group_integration: '整合 & 釘釘',
     cmd_integration: '建立整合自動化邏輯流',
-    cmd_integration_update: 'Probe integration update capability (currently blocked without full readback)',
+    cmd_integration_update: 'Patch automation using a verified local dual-definition baseline',
     cmd_integration_list: '列出整合自動化邏輯流',
     cmd_integration_enable: '啟用整合自動化邏輯流',
     cmd_integration_disable: '停用整合自動化邏輯流',
     cmd_integration_check: '檢查整合自動化異常執行日誌',
+    cmd_integration_detail_log: 'View integration automation run log details',
     cmd_integration_diagnose: '诊断集成自动化故障文本和常见配置坑',
     cmd_dws: '釘釘 CLI（通訊錄/日曆/待辦/審批等）',
     cmd_dingtalk_link: '生成釘釘 AppLink / 相容 dingtalk:// 跳轉連結',
@@ -165,7 +210,7 @@ module.exports = {
     cmd_formula_evaluate: '静态检查宜搭公式语法和字段引用',
     cmd_update: '檢查並更新到最新版本',
     cmd_export_conversation: '匯出 AI 對話記錄',
-    cmd_feedback: '設定體驗回饋表單和本地提醒狀態',
+    cmd_feedback: '整理本機問題報告、設定回饋表單與提醒',
     cmd_batch: '批量執行 OpenYida 命令',
     cmd_flash_to_prd: '閃記 / 會議紀要轉 PRD prompt',
     cmd_ai: '調用宜搭 AI 文生文和識圖能力',
@@ -315,7 +360,7 @@ module.exports = {
     forbidden_alias_get_schema_form_uuid_option: '`{0}` 使用第二個位置參數傳入 formUuid，不使用 `{1}`。',
     nearest_command_suggestion: '未知 OpenYida 指令根「{0}」。你是不是想用「{1}」？',
     run_help: '執行 openyida --help 查看說明',
-    integration_help: 'Usage: openyida integration <create|update|list|enable|disable|check|diagnose> ...',
+    integration_help: 'Usage: openyida integration <create|update|list|enable|disable|check|detail-log|diagnose|monitor|copy|rename|delete> ...',
     integration_unknown: '未知的 integration 子指令：{0}',
     integration_help_hint: '執行 openyida integration --help 查看可用子指令',
     integration_list_usage: '用法：openyida integration list <appType> [--form-uuid <uuid>] [--status y|n] [--key <kw>] [--size <n>] [--json]',
@@ -336,7 +381,7 @@ module.exports = {
     publish_example: '範例：openyida publish pages/src/home.canvas.jsx APP_XXX FORM-XXX --health-check --auto-nav-order',
     check_prd_completeness_usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     check_prd_completeness_example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
-    formula_usage: '用法: openyida formula evaluate <公式或文件> [--schema schema.json] [--json] [--strict]',
+    formula_usage: 'Usage: openyida formula <check|evaluate|contracts|functions|types|inspect|test> ...',
     formula_example: `示例: openyida formula evaluate 'IF(GT(#{numberField_total}, 100), "高", "低")' --schema .cache/schema.json`,
     verify_usage: '用法：openyida verify-short-url <appType> <formUuid> <url>',
     verify_example: '範例：openyida verify-short-url APP_XXX FORM-XXX /o/myapp',
@@ -362,9 +407,9 @@ module.exports = {
     process_usage: '用法：openyida process <子指令>\n\n子指令：\n  preview <appType> <processInstanceId> [--output <path>]  預覽流程實例（產生視覺化流程圖）',
     process_preview_usage: '用法：openyida process preview <appType> <processInstanceId> [--output <path>]',
     process_preview_example: '範例：openyida process preview APP_XXX proc-inst-id-xxx',
-    get_permission_usage: '用法：openyida get-permission <appType> <formUuid> [--package-uuid <packageUuid>]',
+    get_permission_usage: '用法：openyida get-permission <appType> <formUuid> [--package-uuid <packageUuid>] [--package-type <FORM_PACKAGE_VIEW|FORM_PACKAGE_START>]',
     get_permission_example: '範例：openyida get-permission APP_XXX FORM-XXX',
-    save_permission_usage: '用法：openyida save-permission <appType> <formUuid> [--package-uuid <packageUuid>] [--data-permission <json>] [--action-permission <json>]',
+    save_permission_usage: '用法：openyida save-permission <appType> <formUuid> [--package-uuid <packageUuid>] [--data-permission <json>] [--action-permission <json>] [--package-type <FORM_PACKAGE_VIEW|FORM_PACKAGE_START>]',
     save_permission_example: `範例：openyida save-permission APP_XXX FORM-XXX --data-permission '{"role":"DEFAULT","dataRange":"SELF"}'`,
     exec_failed: '\n❌ 執行失敗：{0}',
     login_usage: '用法：openyida login [entryUrl|--public|--alibaba|--intl] [--no-browser] [--check-only] [--json] [--client-id <clientId>]',
@@ -426,6 +471,18 @@ module.exports = {
     current: '，目前：{0}',
     excel_exported: 'Excel 已匯出：{0}'
   },
+  integration_detail_log: {
+    usage: "Usage: openyida integration detail-log <appType> <procInstId> [--json] [--include-params] (known secrets are always masked; max 100 pages / 10,000 nodes; business parameters may still be sensitive)",
+    missing_args: "Run log details require appType and procInstId",
+    unknown_option: "Unsupported run log detail option: {0}",
+    params_require_json: "--include-params requires --json; known secrets are always masked, but business parameters may still be sensitive",
+    api_failed: "Failed to query run log details: {0}",
+    invalid_response: "Run log detail response has no valid node list or total count",
+    pagination_failed: "Run log detail pages are inconsistent; incomplete data was not printed",
+    pagination_limit: "Run log details exceed the pagination limit ({0} pages / {1} nodes); incomplete data was not printed",
+    summary: "Run log details: {0} nodes (parameter keys only by default)",
+  },
+
   integration: {
     spec_mixed_structural_flag: '{0} cannot be mixed with --spec. Put the complete node in the spec to prevent silently dropped parameters.',
     spec_message_node_required: 'Notification flags mixed with --spec require an explicit sendMessage node in the spec.',
@@ -461,6 +518,7 @@ module.exports = {
     create_opt_spec: '  --spec <file.json>            使用结构化编排文件创建复杂自动化（dataUpdate/route 等）',
     create_opt_data_form_uuid: '  --data-form-uuid <uuid>     插入获取单条数据节点的目标表单 UUID',
     create_opt_data_condition: '  --data-condition <rule>     获取数据过滤条件：目标字段:字段名:触发字段[:组件[:操作符[:值类型]]]',
+    create_opt_trigger_condition: '  --trigger-condition <rule>    觸發條件：欄位:名稱:運算子:值[:元件[:值類型]]；右側欄位用 processVar，固定值用 literal',
     create_opt_get_self: '  --get-self                    自動插入取得自身節點（流程表單運行態使用 pid、設計器使用 proc_inst_id；普通表單兩側使用 form_inst_id）',
     create_opt_get_self_field: '  --get-self-field <field>     覆盖右侧触发事件系统字段，默认 __masterdata_form_inst_id',
     create_opt_get_self_query_field: '  --get-self-query-field <f>  覆蓋左側查詢系統欄位（流程表單預設 pid，普通表單預設 form_inst_id）',
@@ -904,6 +962,8 @@ module.exports = {
     data_check_failed: '  ⚠️  資料量檢查失敗，繼續執行修改'
   },
   common: {
+    auth_profile_required: '已有多個組織的登入憑證，請執行 openyida auth profiles，並用 openyida auth profile switch <auth_profile> 選擇本專案的組織。',
+    auth_profile_not_found: '找不到指定組織的登入憑證，請執行 openyida auth profiles 核對已有組織，再選擇正確的登入憑證。',
     auth_identity_changed: 'Authentication identity changed during preflight; no write was issued.',
     http_status: '  HTTP 狀態碼：{0}',
     http_response: '  HTTP 回應：{0}',
@@ -1430,6 +1490,10 @@ module.exports = {
     stdin_closed: '輸入串流已關閉，無法選擇組織'
   },
   check_prd_completeness: {
+    application_theme_mismatch: '應用主題與已選項目主題不一致，尚未完成統一換膚。',
+    application_theme_not_checked: '應用主題配置未能核驗，不能確認已完成統一換膚。',
+    frontend_navigation_not_checked: '前台頁面的後台選單隱藏尚未核驗：{0}',
+    frontend_navigation_visible: '前台頁面仍出現在後台電腦或流動端選單：{0}',
     usage: 'Usage: openyida check-prd-completeness <prd.md> --app-type <appType> [--build-manifest <file>] [--json]',
     example: 'Example: openyida check-prd-completeness prd/order-management/prd.md --app-type APP_XXX --build-manifest prd/order-management/build-manifest.json --json',
     prd_not_found: 'PRD file not found: {0}',
@@ -1853,6 +1917,19 @@ Object.assign(module.exports.app_permission || (module.exports.app_permission = 
   verify_failed: '應用管理員保存後驗證失敗',
 });
 
+module.exports.permission_scope = {
+  roles_summary: '角色: {0}',
+  options_help: '--owner-field 將資料範圍限制為主表成員欄位包含目前登入者的記錄；--roles 指定普通宜搭角色；--field-access 可重複。首次自訂欄位權限必須明確指定 --field-default，使用簡寫更新必須指定 --package-uuid；--dry-run 只預覽，不寫入。',
+  invalid: '权限配置参数不正确：{0}。更新简写配置必须指定 --package-uuid；成员范围和字段默认权限请勿混用。',
+  owner_invalid: '--owner-field 必须是目标表单主表中的真实成员字段，不能使用创建人简写、文本或子表字段。',
+  field_default_required: '首次使用 --field-access 时必须提供 --field-default view|edit|hidden|encrypt，明确其他字段的权限；不能自动替代“跟随表单”。',
+  overlap_notice: '权限组可能叠加放大权限。请检查其他权限组及角色重叠；本次保存不证明所有账号的数据隔离或字段隐藏已生效。',
+  matrix_notice: '原生权限矩阵涉及 OA 增强权益包。available 只表示当前查询允许使用，不证明已购买；unavailable 时请管理员确认或开通对应权益。最终仍以业务接口校验为准。',
+  matrix_unavailable: '当前应用的权限矩阵能力不可用，请管理员确认或开通 OA 增强权益包后重试；未写入配置。',
+  matrix_unknown: '无法确认当前应用的权限矩阵可用性；请先排查查询返回的账号权限或接口错误，未写入配置。',
+};
+
+
 Object.assign(module.exports.corp_manager || (module.exports.corp_manager = {}), {
   address_book_verify_failed: '保存通訊錄權限後驗證失敗：expected={0}, actual={1}',
   admin_verify_failed: '管理員保存後驗證失敗：{0} 未出現在 {1} 列表中',
@@ -1918,6 +1995,11 @@ Object.assign(module.exports.publish || (module.exports.publish = {}), {
 });
 
 Object.assign(module.exports.query_data || (module.exports.query_data = {}), {
+  approver_query_help: '流程目前審批人：--current-approver <userId> [--count]，完整分頁並按實例去重；結果僅限目前登入者可見範圍，不完整或無權限會報錯。',
+  approver_option_invalid: '目前審批人查詢參數無效：{0}。請使用真實 userId，並從第1頁查詢執行中的實例。',
+  approver_incomplete: '無法完成目前審批人統計，未返回完整數量。請檢查錯誤詳情、權限及分頁範圍。',
+  approver_response_invalid: '無法確認流程介面返回結構，不能據此統計目前審批人數量。',
+  approver_scope_note: '僅統計目前登入者經平台服務端授權可見的實例，不代表擁有全應用資料權限。',
   command_unsupported: '不支援的資料命令：{0} {1}。請執行 openyida commands --json 查詢實際能力。',
   delete_confirmation_required: '刪除表單實例前，必須先查詢並向使用者展示目標摘要；只有取得明確確認後才可加入 --confirm。未執行刪除。',
   delete_preflight_failed: '無法讀取表單實例 {0} 完成刪除前檢查，未執行刪除。',
@@ -2108,3 +2190,188 @@ Object.assign(module.exports.process_tasks || (module.exports.process_tasks = {}
   result_unknown: '管理員轉交結果未知，請依 nextStep 唯讀查詢，禁止自動重試轉交。',
   unverified: '轉交請求已接受，但回讀未能確認接收人，請依 nextStep 唯讀查詢，禁止自動重試轉交。',
 });
+module.exports.data_manage_style = {
+  'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
+  'data_style_invalid': '資料管理樣式參數無效，請使用真實 ID 和目錄中的樣式。',
+  'data_style_base': '請提供含品牌主色且不超過 20 MB 的現有應用 CSS。',
+  'data_style_marker': '樣式標記損壞或重複，請核對基線檔案。',
+  'data_style_output': '輸出須為新 CSS 檔案，不可覆蓋輸入或已有檔案。',
+  'generated': '樣式已產生：{0}。尚未發佈，請完成備份、發佈及實際頁面驗證。'
+};
+module.exports.help.cmd_data_manage_style_list = '列出可選的資料管理樣式配方參考';
+module.exports.help.cmd_data_manage_style_generate = '按可選配方產生資料管理 CSS（僅本機）';
+
+module.exports.help.cmd_data_manage_style_guide = '查詢資料管理 UI 改造方向、token 與 CSS 定位方法';
+
+// Process fields and submission permission packages.
+Object.assign(module.exports.permission_common || (module.exports.permission_common = {}), {
+  "package_type_invalid": "Use FORM_PACKAGE_VIEW or FORM_PACKAGE_START for --package-type.",
+  "start_scope_invalid": "START supports submission members, fields and OPERATE_CREATE only; configure record data ranges and matrices separately."
+});
+Object.assign(module.exports.process_errors || (module.exports.process_errors = {}), {
+  "field_permissions_invalid": "Field permissions contain invalid or duplicate field IDs or behaviors.",
+  "field_source_failed": "Could not read the form fields. Check the process binding and schema response.",
+  "fields_empty": "The bound form has no readable fields. Check its saved schema.",
+  "designer_fields_missing": "The process designer cannot load all bound form fields. Check its schema and process binding before publishing.",
+  "field_not_found": "A process permission references a field missing from the bound form.",
+  "fields_verified": "Field IDs were checked; browser behavior and runtime permissions remain unverified."
+});
+Object.assign(module.exports.help || (module.exports.help = {}), {
+  "cmd_process_fields": "Check process designer field loading and subtable field paths"
+});
+module.exports.cli.process_usage += '\n  fields <appType> <formUuid> [--json]  Inspect process designer field loading';
+
+// Batch data nodes.
+Object.assign(module.exports.integration, {
+  batch_invalid: 'Invalid batch configuration. Check source, quantity and fields using details.reason.',
+  message_roles_invalid: 'Message roles require a non-empty role ID and NORMAL message type.',
+  message_roles_readback_mismatch: 'Persisted message roles differ from the submitted recipients.',
+  batch_retrieve_name: 'Get multiple records',
+  batch_readback_mismatch: 'Persisted batch node type, source or quantity differs from the submitted configuration.',
+  create_opt_spec: '  --spec <file.json>            Configure batch retrieve/create, updates and branches with a structured spec',
+});
+
+module.exports.formula_v2 = {
+  trigger_formula: 'Use fixed values or fields in event trigger conditions. Put formula checks in a branch after the trigger.',
+  branch_choose: 'Choose conditions or expression for a branch.',
+  branch_formula: 'Use expression for formula-based branch conditions.',
+  expression_required: 'Enter a non-empty formula expression.',
+  failed: 'Invalid formula configuration: {0}',
+  syntax_invalid: 'Invalid or unsupported formula syntax: {0}',
+  bare_identifier: 'Unbound name {0}. Read the field ID from the form and use #{}.',
+  reference_context: 'Use form field references here; node paths are unsupported: {0}',
+  field_missing: 'Field not found in the form: {0}',
+  argument_type: 'Argument {1} of {0} requires {2}.',
+  function_unknown: 'Formula function {0} is not in the selected list. Query metadata and copy an available formula function name exactly.',
+  function_case: 'Copy the formula function name exactly, including case: {0}',
+  context_unknown: 'Availability of {0} in this context is unknown.',
+  function_context: '{0} is not in the function list for {1}.',
+  argument_count: '{0} requires {1} to {2} arguments; received {3}.',
+  same_type: 'These arguments of {0} must use the same type.',
+  operator_invalid: 'Operator {0} is unsupported here. Use GT, GE, LT, LE, EQ or NE for comparisons.',
+  target_type: 'Formula result {0} does not match target field {1}.',
+  target_unknown: 'Unknown target field type: {0}',
+  schema_missing: 'Load the form schema to check field existence and types.',
+  local_pass: 'Local checks passed; platform execution is not verified.',
+  test_blocked: 'Formula was not executed: {0}. Testing accepts only known non-writing functions.',
+  expect_failed: 'Actual result differs from the expected result.',
+  usage: 'Usage: formula types APP [--component NumberField]; formula functions APP [--name IF]; formula inspect APP FORM [--field ID]; formula test APP FORM <formula|file> --data-file file [--expect JSON]. Use formula check for local checks.',
+};
+Object.assign(module.exports.help, {
+  cmd_formula_check: 'Check formula syntax, fields, arguments and types',
+  cmd_formula_functions: 'Read Yida formula functions and signatures',
+  cmd_formula_types: '查詢公式元件支援的值類型',
+  cmd_formula_inspect: 'Inspect configured form field formulas',
+  cmd_formula_test: 'Evaluate a non-writing formula in Yida and compare its result',
+});
+
+Object.assign(module.exports.formula_v2, {
+  "config_text": "請填寫非空的公式文字。恢復手動輸入時，將 valueType 設為 custom，formula 設為空字串。",
+  "config_conflict": "formula 與 complexValue.formula 內容不同。將兩處改為相同公式，或只提供 formula，由 CLI 同步儲存。",
+  "config_mode": "設定公式時，將 valueType 設為 formula 或省略此項。恢復手動輸入使用 valueType: custom 和 formula: \"\"。",
+  "config_cycle": "發現循環引用：{0}。請讓計算由輸入欄位依序指向結果欄位，避免直接或間接引用自身。",
+  "reference_details_unknown": "尚未確認欄位或子屬性 {0} 的完整定義和類型。",
+  "contract_not_supported": "此檢查器尚未支援 {0} 的語法和執行方式；請使用目標設定的檢查入口。",
+  "consumer_required": "{0} 需要目標設定的預處理和資料上下文，請在對應入口檢查。",
+  "contracts_help": "設定方式：field-value 欄位取值；validation-rule 原生驗證；business-action 業務動作；node-expression 節點運算式。dataset-expression 和 javascript 尚未接入檢查器。相同方式可用於不同設計器；詳情加 --json。"
+});
+Object.assign(module.exports.help, {"cmd_formula_contracts": "查看公式儲存方式和檢查範圍"});
+
+Object.assign(module.exports.formula_v2, {"parallel_formula": "並行分支使用 conditions/rules 或 all:true；expression 目前只適用於 route 分支。"});
+
+Object.assign(module.exports.formula_v2, {"conversion_empty":"公式結果轉成目標欄位後為空。日期請用 TIMESTAMP(日期公式)，並核對原值與欄位類型。","result_missing":"平台完成請求，但沒有返回目標欄位值。日期通常需要 TIMESTAMP(日期公式)。","conversion_partial":"結果只轉出部分數字或不是有限數值。請返回完整數字或毫秒時間戳。","target_branches":"公式可能返回 {0}，部分結果與 {1} 不相容；請逐一試算各分支。","date_timestamp":"日期物件與欄位保存值不同。通常用 TIMESTAMP(日期公式) 返回毫秒時間戳。","numeric_result_text":"公式可能返回文字；請用 --field 試算，核對是否轉成空值或部分數字。"});
+
+module.exports.feedback_report = {
+  comparison: 'Test pass/fail requires a command, actual result and evidence.',
+  screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
+  text: 'Feedback text fields must be strings of at most 12000 characters.',
+  list: 'Feedback lists must contain at most 40 text items.',
+  object: 'Feedback input must be a JSON object.',
+  required: 'Feedback input requires title and actual.',
+  count: 'occurrenceCount must be a positive integer when known.',
+  cause: 'cause must be an object.',
+  confirmed: 'A confirmed cause requires a summary and evidence.',
+  usage: 'Usage: openyida feedback report --input <summary.json> --output-dir <new-directory>',
+  duplicate: 'Duplicate feedback report option.',
+  options: 'Both --input and --output-dir are required.',
+  file: 'Feedback input must be a JSON file of at most 1 MiB.',
+  json: 'Feedback input is not valid JSON.',
+  help: 'report prepares local review drafts without login, a source checkout or network submission.',
+  login_hint: 'Ask your AI to prepare local feedback with yida-feedback; no GitHub account or source checkout is required.',
+};
+
+module.exports.task_center = {
+  'invalid_spec': 'Invalid task center configuration: {0}',
+  'confirmation_required': 'Custom task pages require an explicit user request or an affirmative ask_human choice. Record customPage.source (explicit-user-request or ask_human) and confirmed=true for this application.',
+  'page_title': 'Task center',
+  'kind_todo': 'To do',
+  'kind_created': 'Created by me',
+  'kind_done': 'Processed by me',
+  'kind_cc': 'Copied to me',
+  'time_todo': 'Arrived at',
+  'time_created': 'Submitted at',
+  'time_done': 'Processed at',
+  'time_cc': 'Copied at',
+  'status_running': 'In progress',
+  'status_completed': 'Completed',
+  'status_terminated': 'Terminated',
+  'status_agree': 'Agreed',
+  'status_disagree': 'Rejected',
+  'title': 'Title',
+  'originator': 'Initiator',
+  'status': 'Process status',
+  'result': 'Task result',
+  'action': 'Action',
+  'handle': 'Handle',
+  'view': 'View',
+  'detail': 'Details',
+  'untitled': 'Untitled',
+  'search': 'Search title',
+  'refresh': 'Refresh',
+  'retry': 'Retry',
+  'empty': 'No matching tasks',
+  'unavailable': 'Task data is unavailable',
+  'previous': 'Previous',
+  'next': 'Next',
+  'total': 'Matching total',
+  'totalUnknown': 'Total unavailable',
+  'apiUnavailable': 'Your tasks are temporarily unavailable. Please sign in again or contact the application administrator.',
+  'loginRequired': 'Sign in to view your tasks.',
+  'invalidResponse': 'Task data could not be verified. Please retry.',
+  'requestFailed': 'Tasks could not be loaded. Please retry.',
+  'missingDetail': 'Required details are missing; this item cannot be opened.',
+  'stale': 'Showing the last successful result; it may not match the current filters.',
+  'updated': 'Updated',
+  'unknown': 'Unknown',
+  'progress': 'Approval progress',
+  'instanceRequired': 'Provide the linked process instance to view its progress',
+  'processResult': 'Final process result',
+  'submittedAt': 'Initiated at',
+  'processFinishedAt': 'Process ended at',
+  'progressUnknown': 'Current step information is unavailable',
+  'taskResult': 'Selected task result',
+  'historyUnavailable': 'Approval history could not be fully loaded. Process details are retained; please retry.',
+  'noHistory': 'No approval operations',
+  'summary': 'Summary',
+  'status_error': 'Error',
+  'status_unknown': 'Unknown',
+  'filter_originators': 'Initiator',
+  'filter_processCodes': 'Process or form',
+  'filter_instanceStatus': 'Process status',
+  'filter_instanceCreateFrom': 'Initiated from',
+  'filter_instanceCreateTo': 'Initiated to',
+  'filter_taskCreateFrom': 'Arrived from',
+  'filter_taskCreateTo': 'Arrived to',
+  'filter_taskFinishFrom': 'Processed from',
+  'filter_taskFinishTo': 'Processed to',
+  'filter_carbonCreateFrom': 'Copied from',
+  'filter_carbonCreateTo': 'Copied to'
+};
+
+module.exports.feedback_github = {
+  usage: 'Usage: openyida feedback github <status|star|fork> [--confirm] [--json]',
+  confirmation: 'Star or Fork requires the user to explicitly choose that action before --confirm. Neither is required to submit an Issue.',
+  failed: 'The GitHub action could not be verified. Inspect its status before retrying; this does not block Issue submission.',
+};
+
+module.exports.process_dynamic_actors = { invalid: "流程人員來源配置無效，請按 details.reason 檢查來源、範圍及真實成員欄位。" };

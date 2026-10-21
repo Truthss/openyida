@@ -848,7 +848,9 @@ describe('OpenYida skill contracts', () => {
     expect(manifest).toContain('include one concise verified delivery manifest in that description');
     expect(manifest).toContain('every resource count, seed-record count, and completed/verified claim');
     expect(manifest).toContain('never one artifact or link card per form, process, report');
-    expect(manifest).toContain('when PRD entryMode=standalone');
+    expect(manifest).toContain('infer standalone when entryMode is missing');
+    expect(manifest).toContain('preserve an explicit platform-shell choice and its verified workbenchUrl');
+    expect(manifest).toContain('only for standalone pages when get-form-config readback confirms renderNav=false');
     expect(manifest).toContain('application_entry_policy.entries.admin=include');
     expect(manifest).toContain('{base_url}/{appType}/workbench');
     expect(byName.get('yida-app').description).toContain('表单/流程先于自定义页面');
@@ -1479,12 +1481,40 @@ describe('OpenYida skill contracts', () => {
     expect(integration).toContain('| 创建新自动化 | 使用 `integration create`，由 CLI 生成 `processCode` |');
     expect(integration).toContain('`integration create ... --process-code <code> --replace`');
     expect(integration).toContain('CLI 无法读取原有节点定义；本次将整体覆盖，原节点不保留');
-    expect(integration).toContain('| 更新已有自动化 | 使用 `integration update` 获取 capability 结果，并按结果报告当前状态 |');
+    expect(integration).toContain('[修改已有自动化](references/operations.md#修改已有自动化)');
+    const update = readSkill('yida-skills/skills/yida-integration/references/operations.md');
+    expect(update).toContain('没有可靠运行基线');
+    expect(update).toContain('不能把只含设计图');
     expect(integration).toContain('不得把 `integration update` 的 fail-closed 结果降级为 `integration create --process-code --replace`');
     expect(integration).toContain('`INTEGRATION_FULL_REPLACEMENT_REQUIRES_REPLACE`');
     expect(integration).toContain('已获得整图替换确认时，补 `--replace` 重试一次');
     expect(integration).toContain('--process-code LPROC-XXX');
     expect(integration).toContain('--replace');
+  });
+
+  test('workflow skills route by task and keep related configuration together', () => {
+    const integration = readSkill('yida-skills/skills/yida-integration/SKILL.md');
+    const common = readSkill('yida-skills/skills/yida-flow-node-config/SKILL.md');
+    const process = readSkill('yida-skills/skills/yida-process-rule/SKILL.md');
+    const actors = readSkill('yida-skills/skills/yida-flow-node-config/references/actors.md');
+    const control = readSkill('yida-skills/skills/yida-flow-node-config/references/control.md');
+    const access = readSkill('yida-skills/skills/yida-form-permission/references/row-field-access.md');
+    const triggers = readSkill('yida-skills/skills/yida-integration/references/triggers.md');
+    expect(integration).not.toContain('本版本新增入口');
+    expect(integration).toContain('[触发设置](references/triggers.md)');
+    expect(integration).toContain('[维护与运行排查](references/operations.md)');
+    expect(common).toContain('[人员选择](references/actors.md)');
+    expect(process).toContain('actors.md#按条件选人');
+    expect(actors).toContain('## 按条件选人');
+    expect(actors).toContain('kind: conditional');
+    expect(actors).not.toContain('当前 CLI 尚无完整的条件选人简化 DSL');
+    expect(control).toContain('## 自动化并行与循环');
+    expect(control).not.toContain('| 当前未封装 |');
+    expect(access).toContain('--conditions-file');
+    expect(access).not.toContain('尚无任意自定义条件');
+    expect(triggers).toContain('processFinish');
+    expect(triggers).toContain('changedFields');
+    expect(triggers).toContain('schedule');
   });
 
   test('page visual lessons are codified in yida-design, chart, and report skills', () => {
@@ -1742,7 +1772,7 @@ describe('OpenYida skill contracts', () => {
     expect(chartSpec).toContain('大屏不等于暗色');
   });
 
-  test('custom pages do not build page-level navigation by default', () => {
+  test('backend pages preserve platform navigation while standalone frontends own their menus', () => {
     const pageUiux = readSkill('yida-skills/skills/yida-design/SKILL.md');
     const navStep = readSkill('yida-skills/skills/yida-prd/workflow/step-2-information-architecture.md');
     const navigationDesign = readSkill('yida-skills/skills/yida-design/references/navigation-decision.md');
@@ -1752,8 +1782,10 @@ describe('OpenYida skill contracts', () => {
     const createPage = readSkill('yida-skills/skills/yida-create-page/SKILL.md');
     const navShell = readSkill('yida-skills/skills/yida-nav-shell/SKILL.md');
 
-    expect(pageUiux).toContain('默认保留平台应用导航');
-    expect(pageUiux).toContain('普通自定义页、页面内 tab、分段、筛选和快捷入口都不触发 `yida-nav-shell`');
+    expect(pageUiux).toContain('后台工作区默认保留平台导航');
+    expect(pageUiux).toContain('普通后台自定义页、页面内 tab、分段、筛选和快捷入口都不触发 `yida-nav-shell`');
+    expect(pageUiux).toContain('独立前台默认在自定义页内实现自己的菜单');
+    expect(pageUiux).toContain('只隐藏该页的平台导航，保留后台应用导航');
     expect(pageUiux).toContain("写 `appBlueprint.hideAppNav: 'y'` 并交给 `yida-nav-shell`");
     expect(pageUiux).toContain('同应用页面优先放入平台导航或导航分组');
     expect(navStep).toContain('沿用 brief 的导航决策');
@@ -2127,4 +2159,28 @@ describe('OpenYida skill contracts', () => {
     expect(dataSources).toContain('`YidaCodeCanvas` 组件没有平台 JSX 组件页面实例 `this`，也没有 `dataSourceMap`');
     expect(dataSources).toContain('use_skill("yida-canvas-data-binding"');
   });
+});
+
+
+test('explicit portfolio preview choice overrides Fast defaults and attaches catalog cards', () => {
+  const shared = fs.readFileSync(path.join(__dirname, '../yida-skills/skills/yida-design/references/theme-selection.md'), 'utf8');
+  const interaction = fs.readFileSync(path.join(__dirname, '../yida-skills/skills/yida-design/references/ask-human-interaction-contract.md'), 'utf8');
+  expect(shared).toContain('显式预览选型优先于模式默认行为');
+  expect(shared).toContain('先匹配模板，再取原图');
+  expect(shared).toContain('在对话内展示 HTML 卡片，并与 `ask_human` 同轮出现');
+  expect(interaction).toContain('result.attachment.path');
+  expect(interaction).toContain('只要求看效果时不创建问题');
+});
+
+
+test('complete applications persist scoped business entries before emitting role-specific links', () => {
+  const finish = fs.readFileSync(path.join(__dirname, '../yida-skills/skills/yida-app/workflow/step-9-output-finish.md'), 'utf8');
+  const publish = fs.readFileSync(path.join(__dirname, '../yida-skills/skills/yida-app/workflow/step-8-publish-navigation.md'), 'utf8');
+  expect(finish).toContain('完整应用交付前默认必须登记并回读');
+  expect(finish).toContain('urls.frontend');
+  expect(finish).toContain('urls.management');
+  expect(finish).toContain('不能混用、交换或拿最后发布的页面覆盖两端');
+  expect(publish).toContain('不能先宣布交付完成再补配置');
+  const manifest = require('../lib/core/command-manifest').flattenCommandManifest();
+  expect(manifest.find(command => command.id === 'app-entry.set').notes.join(' ')).toContain('live hidden-navigation readback');
 });

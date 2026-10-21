@@ -84,6 +84,55 @@ test('scope and mutation receipts consume the same app policy', () => {
   expect(run('create-form', ['list-icons'])).not.toBeNull();
 });
 
+test('native report configuration is app-bound with no dry-run mutation receipt', () => {
+  const args = ['configure', 'APP_BOUND', 'REPORT_1', 'cid_1', '--hide-zero-values', 'true', '--json'];
+  expect(run('report', args)).toMatchObject({ appType: 'APP_BOUND' });
+  expect(classifyManagedMutation('report', args)).toEqual({ operation: 'update_report', formUuid: 'REPORT_1' });
+  expect(classifyManagedMutation('report', [...args, '--dry-run'])).toBeNull();
+  expect(() => run('report', ['configure', 'APP_OTHER', 'REPORT_1', 'cid_1', '--hide-zero-values', 'true']))
+    .toThrow(expect.objectContaining({ code: 'MANAGED_APP_MISMATCH' }));
+  expect(() => run('report', [...args, '--corp-id', 'other']))
+    .toThrow(expect.objectContaining({ code: 'MANAGED_OVERRIDE_FORBIDDEN' }));
+});
+
+test('native form views stay in the bound app and classify only actual mutation actions', () => {
+  for (const action of ['list', 'inspect', 'save', 'create', 'order']) {
+    expect(run('form-view', [action, 'APP_BOUND', 'FORM-x', 'VIEW-x'])).toMatchObject({ appType: 'APP_BOUND' });
+    expect(() => run('form-view', [action, 'APP_OTHER', 'FORM-x'])).toThrow(expect.objectContaining({ code: 'MANAGED_APP_MISMATCH' }));
+    expect(classifyManagedMutation('form-view', [action, 'APP_BOUND', 'FORM-x'])).toEqual(
+      ['list', 'inspect'].includes(action) ? null : { operation: 'update_form', formUuid: 'FORM-x' }
+    );
+  }
+  expect(() => run('form-view', ['delete', 'APP_BOUND', 'FORM-x'])).toThrow(expect.objectContaining({ code: 'MANAGED_COMMAND_UNSUPPORTED' }));
+});
+
+test('native custom buttons stay within the bound app and classify only mutations', () => {
+  for (const action of ['list', 'inspect', 'options', 'create', 'update', 'delete']) {
+    expect(run('custom-button', [action, 'APP_BOUND', 'FORM-x', 'BUTTON-x'])).toMatchObject({ appType: 'APP_BOUND' });
+    expect(() => run('custom-button', [action, 'APP_OTHER', 'FORM-x']))
+      .toThrow(expect.objectContaining({ code: 'MANAGED_APP_MISMATCH' }));
+    expect(classifyManagedMutation('custom-button', [action, 'APP_BOUND', 'FORM-x'])).toEqual(
+      ['list', 'inspect', 'options'].includes(action) ? null : { operation: 'update_form', formUuid: 'FORM-x' }
+    );
+  }
+  expect(() => run('custom-button', ['execute', 'APP_BOUND', 'FORM-x']))
+    .toThrow(expect.objectContaining({ code: 'MANAGED_COMMAND_UNSUPPORTED' }));
+});
+
+test('native cards and settings enforce the bound app with app-level mutation receipts', () => {
+  for (const action of ['list', 'get', 'probe', 'create', 'save', 'publish', 'release-get', 'release-check', 'refs', 'release-save']) {
+    expect(run('data-card', [action, 'APP_BOUND', 'CARD-x'])).toMatchObject({ appType: 'APP_BOUND' });
+    expect(() => run('data-card', [action, 'APP_OTHER', 'CARD-x'])).toThrow(expect.objectContaining({ code: 'MANAGED_APP_MISMATCH' }));
+    expect(classifyManagedMutation('data-card', [action, 'APP_BOUND', 'CARD-x'])).toEqual(
+      ['list', 'get', 'probe', 'release-check', 'refs'].includes(action) ? null : { operation: 'update_app_setting' }
+    );
+  }
+  expect(() => run('data-card', ['release-test', 'APP_BOUND', 'CARD-x', '--allow-send'])).toThrow(expect.objectContaining({ code: 'MANAGED_COMMAND_UNSUPPORTED' }));
+  expect(() => run('data-card', ['delete', 'APP_BOUND', 'CARD-x'])).toThrow(expect.objectContaining({ code: 'MANAGED_COMMAND_UNSUPPORTED' }));
+  expect(run('app-settings', ['APP_BOUND', '--section', 'theme'])).toMatchObject({ appType: 'APP_BOUND' });
+  expect(() => run('app-settings', ['APP_OTHER'])).toThrow(expect.objectContaining({ code: 'MANAGED_APP_MISMATCH' }));
+});
+
 test('blocked command diagnostics name its declaration without logging arguments or grants', () => {
   let failure;
   try {run('auth', ['status', 'private-value']);} catch (error) {failure = error;}
@@ -172,4 +221,28 @@ test('nested unknown actions and duplicate app options remain blocked', () => {
   expect(classifyManagedMutation('upgrade-app-theme', ['APP_BOUND', '--confirm'])).toEqual({ operation: 'update_app' });
   expect(classifyManagedMutation('app-theme', ['restore', 'APP_BOUND', '--check'])).toBeNull();
   expect(classifyManagedMutation('create-form', ['batch', 'APP_BOUND', 'plan.json', '--check'])).toBeNull();
+});
+
+
+test('column emphasis flags remain local managed generation with no mutation receipt', () => {
+  const args = ['generate', '--app', 'APP_BOUND', '--form', 'FORM-DEMO', '--style', 'rose',
+    '--base-css', 'before.css', '--output', 'after.css', '--emphasize-field', 'textField_name',
+    '--emphasize-field', 'numberField_amount', '--tag-field', 'selectField_status'];
+  expect(run('data-manage-style', args)).toMatchObject({ appType: 'APP_BOUND' });
+  expect(classifyManagedMutation('data-manage-style', args)).toBeNull();
+});
+
+test('data-management authoring guide is a read-only local managed action', () => {
+  expect(run('data-manage-style', ['guide', '--json'])).toMatchObject({ appType: 'APP_BOUND' });
+  expect(classifyManagedMutation('data-manage-style', ['guide', '--json'])).toBeNull();
+  expect(() => run('data-manage-style', ['guide', '--output', 'out.css'])).toThrow();
+});
+
+
+test('managed feedback permits only offline report preparation, with no cloud mutation receipt', () => {
+  expect(() => run('feedback', ['report', '--input', 'summary.json', '--output-dir', 'draft'])).not.toThrow();
+  expect(classifyManagedMutation('feedback', ['report', '--input', 'summary.json', '--output-dir', 'draft'])).toBeNull();
+  for (const action of ['setup', 'url', 'submit', 'github', 'future-action']) {
+    expect(() => run('feedback', [action])).toThrow();
+  }
 });

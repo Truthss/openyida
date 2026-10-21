@@ -13,6 +13,7 @@ const {
   getLogicflowDetail,
   listFormLogicflows,
   listLogicflowLogs,
+  listLogicflowDetailLogs,
 } = require('../lib/integration/integration-api');
 
 jest.mock('../lib/core/yida-client', () => ({
@@ -32,6 +33,18 @@ describe('integration api', () => {
         return httpGet(auth.baseUrl, path, resolvedQuery, options);
       }),
     });
+  });
+
+  test('timer switching uses its verified native binding type instead of form-event type', async () => {
+    const get = jest.fn(async () => ({ success: true, content: { data: [
+      { processCode: 'TIMER', formUuid: 'FORM', eventType: 3 },
+    ] } }));
+    const postForm = jest.fn(async () => ({ success: true, content: { status: 'n' } }));
+    createYidaClient.mockReturnValue({ get, postForm });
+    await require('../lib/integration/integration-api').switchLogicflow({}, {
+      appType: 'APP', formUuid: 'FORM', processCode: 'TIMER', enable: false,
+    });
+    expect(postForm.mock.calls[0][1]).toMatchObject({ type: '3', enable: 'n', processCode: 'TIMER' });
   });
 
   test('listLogicflowLogs sends the frontend status filter for exception logs', async () => {
@@ -65,6 +78,48 @@ describe('integration api', () => {
       dateType: 'modifyTime',
     });
     expect(options).toEqual({ silentStatus: true });
+  });
+
+  test('listLogicflowDetailLogs calls the read-only node detail endpoint with run ID and pagination', async () => {
+    httpGet.mockResolvedValue({
+      success: true,
+      content: { currentPage: 2, data: [{ name: 'node' }], totalCount: 101, hasMore: false },
+    });
+    const result = await listLogicflowDetailLogs({ baseUrl: 'https://example.com' }, {
+      appType: 'APP_TEST', procInstId: 'run-1', pageIndex: 2, pageSize: 100,
+    });
+    expect(result.totalCount).toBe(101);
+    const [, path, query, options] = httpGet.mock.calls[0];
+    expect(path).toBe('/alibaba/web/APP_TEST/query/formLogicflowBinding/listDetailLog.json');
+    expect(query).toMatchObject({
+      _api: 'Connector.listDetailLog', procInstId: 'run-1', pageIndex: '2', pageSize: '100',
+    });
+    expect(query).not.toHaveProperty('processCode');
+    expect(options).toEqual({ silentStatus: true });
+  });
+
+  test.each([null, undefined])('listLogicflowDetailLogs accepts zero records with data %s', async (data) => {
+    const content = { totalCount: 0, data };
+    httpGet.mockResolvedValue({ success: true, content });
+    await expect(listLogicflowDetailLogs({}, {
+      appType: 'APP_TEST', procInstId: 'run-1', pageIndex: 1, pageSize: 100,
+    })).resolves.toEqual({ totalCount: 0, data: [] });
+    expect(content.data).toBe(data);
+  });
+
+  test.each([{ totalCount: 1, data: null }, { totalCount: 0, data: {} }])(
+    'listLogicflowDetailLogs rejects missing nonempty or malformed lists %#', async (content) => {
+      httpGet.mockResolvedValue({ success: true, content });
+      await expect(listLogicflowDetailLogs({}, {
+        appType: 'APP_TEST', procInstId: 'run-1', pageIndex: 1, pageSize: 100,
+      })).rejects.toThrow();
+    });
+
+  test('listLogicflowDetailLogs rejects malformed successful responses', async () => {
+    httpGet.mockResolvedValue({ success: true, content: { data: [], totalCount: '0' } });
+    await expect(listLogicflowDetailLogs({}, {
+      appType: 'APP_TEST', procInstId: 'run-1', pageIndex: 1, pageSize: 100,
+    })).rejects.toThrow();
   });
 
   test('listFormLogicflows uses the form binding endpoint for grouped load-more flows', async () => {

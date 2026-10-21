@@ -5,7 +5,11 @@ description: 宜搭自定义页面开发规范，使用 `YidaCodeCanvas` 组件�
 
 # 自定义页面开发
 
+本页的“数据卡片、指标卡、统计卡”通常是页面内展示组件，配置归页面源码并随页面发布，不自动创建宜搭原生 `CARD-xxx` 资源。已有页面引用原生 CARD 时，外层布局或引用配置仍归页面任务；只有用户明确要求修改源卡片自身配置，才转 `yida-data-card`。原生卡片内的 FORM 数据源引用也不表示它是自定义页面；先核对配置归属。仅改外观继续遵守下方 UI 改造流程。
+
 ## 编码前必读（MUST）
+
+待办中心或审批任务区块只有在用户明确要求自定义实现，或经 ask_human 明确同意后才交接 `yida-task-center`；已有 Canvas、普通工作台需求或 Fast 模式不构成选择。未选择时保留原生能力，不直接手写任务中心。
 
 布局实现读取 [共享响应式规则](../yida-design/references/responsive-layout.md)：按实际容器宽度重排筛选栏和主辅面板，统一同组控件尺寸，宽屏按需等高、窄屏自然增长，宽表格局部滚动。断点变化保留原组件状态与业务行为，发布前按该文档验收。
 
@@ -33,7 +37,7 @@ description: 宜搭自定义页面开发规范，使用 `YidaCodeCanvas` 组件�
 
 ## 运行时事实
 
-- 独立前台需向应用管理员提供业务工作台入口时，按 [管理员入口](references/navigation-and-entry-guide.md#管理员返回业务工作台) 提取 `canvas-admin-entry`。核对当前应用 loginUser.isAppAdmin 的明确允许值，未知时隐藏；目标来自真实管理页资源，不从访客菜单或 CLI 登录身份推断。
+- 分前后台时默认考虑按当前访问者身份展示“进入后台”次级入口，见 [设计建议](../yida-app/references/entry-navigation.md#前台返回业务后台设计建议)，不新增强校验。独立前台向应用管理员提供业务工作台入口时，按 [管理员入口](references/navigation-and-entry-guide.md#管理员返回业务工作台) 提取 `canvas-admin-entry`。核对当前应用 loginUser.isAppAdmin 的明确允许值，未知时隐藏；目标来自真实管理页资源，不从访客菜单或 CLI 登录身份推断。
 - 使用 `YidaCodeCanvas` 组件实现的源码写成 `.canvas.jsx` / `.canvas.tsx`，`openyida publish` 会自动写入 `YidaCodeCanvas` Schema。
 - 页面源码路径按 Bash cwd 选择：从工作区根执行命令时用 `project/pages/src/...`；cwd 已是 `<workspace>/project` 时用 `pages/src/...`。
 - `runtimeCode` 在运行页面真实 `window` 中执行，入口必须返回 `YidaComp` / `YidaComp.default` / 组件函数。
@@ -55,6 +59,10 @@ description: 宜搭自定义页面开发规范，使用 `YidaCodeCanvas` 组件�
 | 需要成员、部门、附件上传、图片上传 | 使用本技能，按“宜搭组件桥”接入并归一化值 |
 | 需要字段结构、公式、联动、权限、报表、流程 | 使用对应配置型技能完成配置，自定义页面展示结果并分发页面事件 |
 | 新建页面需要字段、表单入口、成员/部门/上传或数据源 | 使用本技能，用数据桥、连接器或运行态组件桥实现 |
+
+## 页面中的计算
+
+页面涉及自动计算或校验时，先通过 `use_skill` 加载 `yida-formula`，查看“写配置前先处理这些易错点”。Canvas 源码和回调按 JavaScript 计算，原生组件提供的公式属性按其保存方式配置；需要表单联动或提交校验时交给对应配置入口。明确结果是展示值还是持久化业务值，保留数字零、空值、日期单位及成员对象/数组，避免统一转成文本后再计算。
 
 ## 两类特殊组件场景
 
@@ -142,6 +150,8 @@ function setNavigationTitle(title) {
 20. **同色页面与卡片要有边界**：白色或近白背景上的白色独立卡片、面板、表格外壳，使用细边框或清晰柔和的投影区分层级；浅灰或浅彩色背景上的白卡默认无边框，利用底色对比形成层级。边框使用主题中性分割线 token，投影沿用应用已确认的阴影规则，不默认叠加边框和投影。无框内容区不强行卡片化，iframe 外层不加卡片。实现及验收见 [同色表面的卡片边界](references/canvas-style-implementation-guide.md#同色表面的卡片边界)。
 
 ## 主题实现入口
+
+主题由应用统一提供：已选红色等品牌主色应先写入项目 design.md，由应用主题 CSS 同步到原生导航与表单；自定义页消费同一份变量。不能只写 `const BRAND = '#...'`、复制整套基础色盘或依靠 fallback 形成另一套页面主题。缺少应用主题时回到完整应用的主题同步任务，不自行选一个页面默认色掩盖；纯 DOM 使用 CSS 变量，antd 同时接入下述 Provider。
 
 纯 DOM 页面直接消费平台 CSS 变量，不必引入 antd 或 Provider。按 [共用主题规则](../yida-design/references/application-theme-consistency.md) 引用画布、卡片、文字与特色角色；风格缺项回写设计源，不在页面根复制固定色盘。
 

@@ -53,6 +53,7 @@ test('get-permission accepts the common --json output flag', () => {
     appType: 'APP-1',
     formUuid: 'FORM-1',
     packageUuid: null,
+    packageType: 'FORM_PACKAGE_VIEW',
   });
   expect(parseGetPermissionArgs([
     'APP-1', 'FORM-1', '--package-uuid', 'pkg-1', '--json',
@@ -60,6 +61,7 @@ test('get-permission accepts the common --json output flag', () => {
     appType: 'APP-1',
     formUuid: 'FORM-1',
     packageUuid: 'pkg-1',
+    packageType: 'FORM_PACKAGE_VIEW',
   });
 });
 

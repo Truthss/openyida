@@ -733,6 +733,12 @@ describe('compileCanvasLocal', () => {
     ['this.utils.yida.searchFormDatas', 'this.utils.yida.searchFormDatas({})'],
     ['this.dataSourceMap.orders.load', 'this.dataSourceMap.orders.load()'],
     ['this.$', 'this.$("textField_x")'],
+    ['this["$"]', 'this["$"]("textField_x")'],
+    ['this["utils"]["yida"]', 'this["utils"]["yida"].searchFormDatas({})'],
+    ['props["utils"]["getDataList"]', 'props["utils"]["getDataList"]({})'],
+    ['this["dataSourceMap"]', 'this["dataSourceMap"].orders.load()'],
+    ['this?.$', 'this?.$("textField_x")'],
+    ['this?.["utils"]?.["yida"]', 'this?.["utils"]?.["yida"]?.searchFormDatas({})'],
   ])('rejects unavailable Canvas instance API %s', (_label, expression) => {
     const source = `
       import React from 'react';
@@ -764,6 +770,34 @@ describe('compileCanvasLocal', () => {
     `;
 
     expect(() => compileCanvasLocal(source)).not.toThrow();
+  });
+
+  test.each(['$', 'dataSourceMap', 'utils', 'yida', 'getDataList'])(
+    'preserves dynamic property access with local identifier %s', (key) => {
+      const source = `
+        import React from 'react';
+        function read(${key}) { return this[${key}]; }
+        function optionalRead(${key}) { return this?.[${key}]; }
+        export default function App() {
+          return <div>{read.call({ value: 'dynamic works' }, 'value')}{optionalRead.call({ value: 'optional works' }, 'value')}</div>;
+        }
+      `;
+      const compiled = compileCanvasLocal(source);
+      const win = stubReactWindow();
+      const App = assembleRuntime(compiled.runtimeCode, win);
+      expect(App().children).toEqual(['dynamic works', 'optional works']);
+    }
+  );
+
+  test('allows computed owner and nested properties that only resemble instance APIs', () => {
+    expect(() => compileCanvasLocal(`
+      import React from 'react';
+      export default function App(props) {
+        const utils = 'format', yida = 'label', getDataList = 'label';
+        function read() { return this[utils].yida + this.utils[yida]; }
+        return <div>{props[utils].getDataList}{props.utils[getDataList]}{String(read)}</div>;
+      }
+    `)).not.toThrow();
   });
 
   test('maps lucide-react named icons to LucideReact and DynamicIcon to its runtime global', () => {

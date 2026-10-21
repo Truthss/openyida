@@ -97,6 +97,8 @@ openyida create-process <appType> --formUuid <formUuid> <processDefinitionFile> 
 
 `processDefinitionFile` 只描述发起和结束之间的业务节点。OpenYida 编译器会自动注入发起节点和结束节点，`nodes` 数组里不要手写任何 start/end 节点。
 
+节点参数按需加载 `use_skill("yida-flow-node-config", "流程；所需节点类别或配置项")`。发起页字段权限用顶层 `startFormConfig`；谁能发起用表单 START 权限组。保存发布和整图替换仍遵循 `yida-process-rule`，不必为简单人员配置加载全部高级节点。
+
 合法基础节点类型只使用这些值：
 
 | 节点意图 | `type` 写法 |
@@ -199,7 +201,7 @@ openyida create-process "APP_XXX" --formUuid "FORM-YYY" .cache/openyida/order/pr
 1. **🔐 字段权限**：当字段 ≥ 3 且审批节点 ≥ 2 时，每个节点只允许编辑相关字段
 2. **🔄 跳转规则**：存在回退/循环语义时，自动配置 `routeRules`
 3. **🔀 并行/办理/高级组件**：需要并行会审、办理节点或连接器/数据/消息等官方组件节点时，流程定义格式直接参考 `yida-process-rule`
-4. **加签/转交操作权限**：用户要求开启时，按 [操作权限配置](../yida-process-rule/references/approval-actions.md) 生成 `nodes[].actions.normalActions/appendActions`；未要求时保持默认关闭。`create-process` 与 `configure-process` 共用编译器，无需新增命令或手写运行字段。禁止仅修改 `hidden` 后提交原始运行 JSON。
+4. **加签/转交操作权限**：用户要求开启时，加载 `use_skill("yida-flow-node-config", "操作按钮")`，生成 `nodes[].actions.normalActions/appendActions`；未要求时保持默认关闭。`create-process` 与 `configure-process` 共用编译器，无需新增命令或手写运行字段。禁止仅修改 `hidden` 后提交原始运行 JSON。
 
 需要流程规则细节时，调用 `use_skill("yida-process-rule", "配置已有流程节点、分支和字段权限")`。
 

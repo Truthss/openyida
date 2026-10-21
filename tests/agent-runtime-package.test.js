@@ -4,7 +4,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const crypto = require('crypto');
-const { resolveRuntime } = require('../lib/agent/runtime-package');
+const { resolveRuntime, canonicalPath } = require('../lib/agent/runtime-package');
 
 describe('explicit agent runtime package', () => {
   let root;
@@ -30,7 +30,7 @@ describe('explicit agent runtime package', () => {
     expect(() => resolveRuntime({ platform: 'darwin', arch: 'x64', catalog: { schemaVersion: 1, keys: {}, releases: [] }, env: { OPENYIDA_AGENT_RUNTIME_PATH: executable, OPENYIDA_AGENT_RUNTIME_MANIFEST: manifestPath, OPENYIDA_DEVELOPMENT_RUNTIME: '1' } })).toThrow(expect.objectContaining({ code: 'AGENT_RUNTIME_NOT_CONFIGURED' }));
   });
   test('checks explicit content without executing or PATH lookup', () => {
-    expect(resolve()).toMatchObject({ executable: fs.realpathSync(executable), sha256: manifest.binary.sha256 });
+    expect(resolve()).toMatchObject({ executable: canonicalPath(executable), sha256: manifest.binary.sha256 });
   });
   test('keeps Linux available only for an explicit development runtime', () => {
     manifest.platform = 'linux';

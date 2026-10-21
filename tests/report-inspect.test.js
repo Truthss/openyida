@@ -91,6 +91,9 @@ describe('report inspect', () => {
         filterKeys: ['filter-1'],
         cubeCodes: ['FORM_1'],
         fields: [],
+        hideZeroValues: false,
+        hideZeroCategories: false,
+        hideZeroLegends: false,
       }],
       layout: [{ i: 'field_1', x: 0, y: 0, w: 3, h: 22, moved: false, static: false }],
     });
@@ -121,5 +124,13 @@ describe('report inspect', () => {
       domainCode: 'tEXDRG',
     });
     expect(JSON.parse(logSpy.mock.calls[0][0])).toEqual(result);
+  });
+
+  test('custom return-data code has unknown zero-hiding state rather than a false claim', () => {
+    const schema = schemaFixture();
+    schema.pages[0].componentsTree[0].children[0].children[0].props.afterFetch = {
+      type: 'js', source: 'function custom(data) { return data; }',
+    };
+    expect(summarizeReportSchema(schema).components[0].hideZeroValues).toBeNull();
   });
 });

@@ -761,6 +761,23 @@ async function main() {
       break;
     }
 
+    case 'cool-card': {
+      const { run } = require('../lib/app/cool-card');
+      await run(args);
+      break;
+    }
+    case 'data-card': {
+      const { run } = require('../lib/app/data-card');
+      await run(args);
+      break;
+    }
+
+    case 'app-settings': {
+      const { run } = require('../lib/app/app-settings');
+      await run(args);
+      break;
+    }
+
     case 'app-entry': {
       const { run } = require('../lib/app/app-entry');
       await run(args);
@@ -815,6 +832,21 @@ async function main() {
       break;
     }
 
+    case 'custom-button': {
+      const { run } = require('../lib/app/custom-button');
+      await run(args);
+      break;
+    }
+    case 'print-template': {
+      const { run } = require('../lib/print-template/print-template');
+      await run(args);
+      break;
+    }
+    case 'form-view': {
+      const { run } = require('../lib/app/form-view');
+      await run(args);
+      break;
+    }
     case 'aggregate-table': {
       const { run } = require('../lib/aggregate-table/aggregate-table');
       await run(args);
@@ -851,6 +883,8 @@ async function main() {
       if (subCommand === 'evaluate' || subCommand === 'check') {
         const { run } = require('../lib/formula/evaluate');
         await run(subArgs);
+      } else if (['contracts', 'functions', 'types', 'inspect', 'test'].includes(subCommand)) {
+        await require('../lib/formula/commands').run(subCommand, subArgs);
       } else {
         throwCliUsage(t('cli.formula_usage'), t('cli.formula_example'));
       }
@@ -939,6 +973,11 @@ async function main() {
       }
       const { run: runUpdateApp } = require('../lib/app/update-app');
       await runUpdateApp(args);
+      break;
+    }
+
+    case 'data-manage-style': {
+      await require('../lib/style/data-manage-style').run(args);
       break;
     }
 
@@ -1077,7 +1116,9 @@ async function main() {
       const subCommand = args[0];
       const subArgs = args.slice(1);
 
-      if (subCommand === 'preview') {
+      if (subCommand === 'fields') {
+        await require('../lib/process/process-fields').run(subArgs);
+      } else if (subCommand === 'preview') {
         if (subArgs.length < 2) {
           throwCliUsage(t('cli.process_preview_usage'), t('cli.process_preview_example'));
         }
@@ -1103,10 +1144,11 @@ async function main() {
 
     case 'report': {
       const subCommand = args[0];
-      if (subCommand !== 'inspect') {
-        throwCliUsage('用法: openyida report inspect <appType> <reportId> --json');
+      if (!['inspect', 'configure'].includes(subCommand)) {
+        throwCliUsage('用法: openyida report <inspect|configure> ... --json');
       }
-      const { run } = require('../lib/report/inspect');
+      const { run } = subCommand === 'inspect'
+        ? require('../lib/report/inspect') : require('../lib/report/configure');
       await run(args.slice(1));
       break;
     }
@@ -1215,6 +1257,14 @@ async function main() {
       break;
     }
 
+    case 'permission-manage': {
+      await require('../lib/permission/permission-manage').run(args);
+      break;
+    }
+    case 'matrix': {
+      await require('../lib/permission/matrix-manage').run(args);
+      break;
+    }
     case 'integration': {
       const subCommand = args[0];
       const subArgs = args.slice(1);  // 路由层消费 subCommand，传递剩余参数
@@ -1230,6 +1280,8 @@ async function main() {
       } else if (subCommand === 'update') {
         const { run: runIntegrationUpdate } = require('../lib/integration/integration-update');
         await runIntegrationUpdate(subArgs);
+      } else if (['monitor', 'copy', 'rename', 'delete'].includes(subCommand)) {
+        await require('../lib/integration/integration-manage').run(subCommand, subArgs);
       } else if (subCommand === 'list') {
         const { runList } = require('../lib/integration/integration-list');
         await runList(subArgs);
@@ -1242,6 +1294,9 @@ async function main() {
       } else if (subCommand === 'check') {
         const { run: runIntegrationCheck } = require('../lib/integration/integration-check');
         await runIntegrationCheck(subArgs);
+      } else if (subCommand === 'detail-log') {
+        const { run: runIntegrationDetailLog } = require('../lib/integration/integration-detail-log');
+        await runIntegrationDetailLog(subArgs);
       } else if (subCommand === 'diagnose' || subCommand === 'doctor') {
         const { run: runIntegrationDiagnose } = require('../lib/integration/integration-diagnose');
         await runIntegrationDiagnose(subArgs);
@@ -1283,6 +1338,10 @@ async function main() {
     }
 
     case 'feedback': {
+      if (args[0] === 'github') {
+        await require('../lib/feedback/github').run(args.slice(1));
+        break;
+      }
       const { run: runFeedback } = require('../lib/feedback/feedback');
       await runFeedback(args);
       break;
