@@ -34,6 +34,7 @@ module.exports = {
     "limit": "Mỗi biểu mẫu hỗ trợ tối đa 10 nút tùy chỉnh.",
     "readback_mismatch": "Dữ liệu đọc lại không khớp. Giữ bản sao lưu và kiểm tra trạng thái từ xa."
   },
+  form_message: {"usage":"Usage: openyida form-message <list|inspect|options|create|update|delete> <appType> <formUuid> [messageId] [--config <file>] [--expected-hash <hash>] [--backup <file>] [--yes] [--json]","invalid_config":"Invalid form message configuration or argument: {0}","invalid_response":"Incomplete platform form-message response: {0}","api_error":"Form message API failed: {0}. Check login, permissions and edition availability.","not_found":"The message notification does not exist in the target form: {0}","conflict":"The notification changed. Inspect again before saving.","unsupported_trigger":"Writes are not verified for this trigger: {0}.","unsupported_form":"Writes are not verified for this form type: {0}.","readback_mismatch":"Saved notification does not match readback. Keep the backup and inspect remote state."},
   dws_external: {"note": "dws is an independent external tool. OpenYida only shows installation instructions; it does not download or install it.", "install_guide": "Show official DingTalk CLI installation instructions"},
   cool_card: {"unsupported_environment": "Phiên bản Alibaba Group không hỗ trợ tạo thẻ Cool Card.", "description": "Create and read native YiDA cool cards (interactive and pinned)", "usage": "Usage: openyida cool-card <list|templates|create|get> <appType> [cardPageCode] [--type im|onebox] [--name <title>] [--page <n>] [--size <n>] [--search <text>] [--out <file>] [--json]", "failed": "Native cool card operation stopped: {0}"},
   data_card: {"description":"Create, read, save drafts and publish native YiDA data cards","usage":"Usage: openyida data-card <list|create|get|save|publish|probe|release-get|release-save|release-check|release-test|refs> <appType> [cardCode] [--name <title>] [--description <text>] [--schema <file>|--config <file>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--published|--version <version>] [--page <n>] [--size <n>] [--search <text>] [--allow-send] [--json]","failed":"Native data card operation stopped: {0}","conflict":"The draft changed. Read it again before saving or publishing.","mismatch":"Readback does not match the expected schema or published state. Keep the backup and inspect the card before retrying."},
@@ -108,6 +109,7 @@ module.exports = {
   },
   help: {
     cmd_custom_button: "Nút tùy chỉnh: biểu mẫu, luồng tự động và liên kết trang",
+    cmd_form_message: "Native form notifications: triggers, recipients and templates",
     cmd_check_design: 'Xác thực tài liệu thiết kế, biến giao diện và bàn giao PRD',
     subtitle: 'Công cụ phát triển AI low-code cho Yida',
     usage: 'Cách dùng:',
@@ -1447,6 +1449,10 @@ module.exports = {
     lint_setstate_non_timestamp: 'this.setState ghi một trường không phải timestamp. Trạng thái nghiệp vụ của trang tùy chỉnh nên nằm trong _customState và được cập nhật qua forceUpdate()/setCustomState(); this.setState chỉ nên chứa trường hợp đồng timestamp',
     lint_self_binding_missing: 'renderJsx dùng this mà không khai báo var self = this;. Thêm var self = this; ở đầu renderJsx và dùng self trong closure/callback để tránh mất this',
     lint_echarts_dom_ready: 'echarts.init chưa được bọc trong setTimeout; container có thể chưa mount nên biểu đồ có thể không render. Dùng setTimeout(function(){ /* echarts.init */ }, 300)',
+    lint_resize_observer_cleanup: 'ResizeObserver thiếu dọn dẹp disconnect()/unobserve(). Hãy giải phóng khi unmount.',
+    lint_responsive_viewport_only: 'Bố cục chỉ đổi theo viewport nên sidebar, drawer hoặc iframe hẹp có thể không hạ cấp. Dùng @container hoặc ResizeObserver có dọn dẹp. Thêm openyida-responsive-viewport-ok nếu đây là chủ ý.',
+    lint_responsive_fixed_width: 'Chiều rộng cố định %spx có thể tràn trong container hẹp. Dùng max-width, minmax(0, 1fr) hoặc cuộn cục bộ. Với canvas cố định, thêm openyida-responsive-fixed-width-ok.',
+    lint_responsive_page_scale: 'Phát hiện scale/zoom toàn trang. Hãy sắp xếp lại nội dung và giữ chữ cùng vùng bấm dễ dùng. Với trực quan cục bộ, thêm openyida-responsive-scale-ok.',
     lint_yida_api_catch: 'Lệnh gọi API this.utils.yida chưa phát hiện .catch(); hãy thêm xử lý lỗi và toast cho người dùng',
     lint_echarts_legacy_map_china: 'ECharts 5 không còn hỗ trợ echarts/map/js/china.js. Hãy tải DataV GeoJSON và gọi echarts.registerMap("china", geoJson) thay thế',
     lint_echarts_rich_label_formatter: 'Template rich text trả về từ ECharts label.formatter không ổn định trong trang tùy chỉnh Yida; nên dùng chuỗi formatter đơn giản hoặc text nhãn tính sẵn',
@@ -2343,6 +2349,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "Dùng conditions/
 Object.assign(module.exports.formula_v2, {"conversion_empty":"Chuyển đổi sang trường đích tạo ra giá trị rỗng. Với ngày, dùng TIMESTAMP(công thức ngày) và kiểm tra giá trị gốc cùng kiểu dữ liệu.","result_missing":"Yêu cầu đã hoàn tất nhưng thiếu giá trị trường đích. Trường ngày thường cần TIMESTAMP(công thức ngày).","conversion_partial":"Giá trị chỉ được chuyển một phần thành số hoặc không hữu hạn. Hãy trả về số đầy đủ hoặc mili giây.","target_branches":"Một số kiểu kết quả {0} không phù hợp với {1}. Hãy thử từng nhánh.","date_timestamp":"Đối tượng ngày khác với giá trị lưu. Thường dùng TIMESTAMP(công thức ngày) để trả về mili giây.","numeric_result_text":"Kết quả có thể là văn bản. Dùng --field thử từng nhánh để phát hiện chuyển đổi rỗng hoặc chỉ một phần."});
 
 module.exports.feedback_report = {
+  body: {
+    summary: 'Mục tiêu của bạn',
+    actual: 'Điều đã xảy ra',
+    expected: 'Kết quả mong đợi',
+    incident: 'Môi trường khi xảy ra vấn đề',
+    command: 'Thao tác liên quan',
+    steps: 'Cách tái hiện',
+    impact: 'Ảnh hưởng',
+    evidence: 'Bằng chứng quan sát được',
+    attempts: 'Các cách đã thử và kết quả',
+    cause: 'Nguyên nhân và mức độ chắc chắn',
+    cause_evidence: 'Căn cứ đánh giá',
+    next: 'Kiểm tra tiếp theo',
+    screenshots: 'Ảnh chụp màn hình',
+    review_image: 'Kiểm tra ảnh trước khi chia sẻ',
+    limitations: 'Phạm vi chưa kiểm chứng',
+    generator: 'Môi trường tạo báo cáo (không phải môi trường xảy ra vấn đề)',
+    unknown: 'Không rõ / chưa xác minh',
+    draft: 'Bản nháp cục bộ, chưa gửi. Kiểm tra văn bản và ảnh để loại bỏ dữ liệu khách hàng, thông tin đăng nhập và thông tin nội bộ trước khi chia sẻ.',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',

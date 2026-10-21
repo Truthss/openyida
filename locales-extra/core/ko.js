@@ -34,6 +34,7 @@ module.exports = {
     "limit": "양식당 최대 10개의 버튼을 지원합니다.",
     "readback_mismatch": "저장 내용과 재조회 결과가 다릅니다. 백업을 보관하고 원격 상태를 확인하세요."
   },
+  form_message: {"usage":"Usage: openyida form-message <list|inspect|options|create|update|delete> <appType> <formUuid> [messageId] [--config <file>] [--expected-hash <hash>] [--backup <file>] [--yes] [--json]","invalid_config":"Invalid form message configuration or argument: {0}","invalid_response":"Incomplete platform form-message response: {0}","api_error":"Form message API failed: {0}. Check login, permissions and edition availability.","not_found":"The message notification does not exist in the target form: {0}","conflict":"The notification changed. Inspect again before saving.","unsupported_trigger":"Writes are not verified for this trigger: {0}.","unsupported_form":"Writes are not verified for this form type: {0}.","readback_mismatch":"Saved notification does not match readback. Keep the backup and inspect remote state."},
   dws_external: {"note": "dws is an independent external tool. OpenYida only shows installation instructions; it does not download or install it.", "install_guide": "Show official DingTalk CLI installation instructions"},
   cool_card: {"unsupported_environment": "Alibaba Group 버전은 쿨 카드 생성을 지원하지 않습니다.", "description": "Create and read native YiDA cool cards (interactive and pinned)", "usage": "Usage: openyida cool-card <list|templates|create|get> <appType> [cardPageCode] [--type im|onebox] [--name <title>] [--page <n>] [--size <n>] [--search <text>] [--out <file>] [--json]", "failed": "Native cool card operation stopped: {0}"},
   data_card: {"description":"Create, read, save drafts and publish native YiDA data cards","usage":"Usage: openyida data-card <list|create|get|save|publish|probe|release-get|release-save|release-check|release-test|refs> <appType> [cardCode] [--name <title>] [--description <text>] [--schema <file>|--config <file>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--published|--version <version>] [--page <n>] [--size <n>] [--search <text>] [--allow-send] [--json]","failed":"Native data card operation stopped: {0}","conflict":"The draft changed. Read it again before saving or publishing.","mismatch":"Readback does not match the expected schema or published state. Keep the backup and inspect the card before retrying."},
@@ -108,6 +109,7 @@ module.exports = {
   },
   help: {
     cmd_custom_button: "사용자 지정 버튼: 양식 편집, 자동화 흐름 및 페이지 링크 설정",
+    cmd_form_message: "Native form notifications: triggers, recipients and templates",
     cmd_check_design: '디자인 문서, 테마 변수 및 PRD 인계 검증',
     subtitle: 'Yida 로우코드 AI 개발 도구',
     usage: '사용법:',
@@ -1448,6 +1450,10 @@ module.exports = {
     lint_setstate_non_timestamp: 'this.setState가 timestamp가 아닌 필드를 씁니다. 사용자 정의 페이지의 비즈니스 상태는 _customState에 두고 forceUpdate()/setCustomState()로 업데이트해야 합니다. this.setState는 timestamp 계약 필드만 담아야 합니다',
     lint_self_binding_missing: 'renderJsx가 var self = this; 선언 없이 this를 사용합니다. renderJsx 상단에 var self = this;를 추가하고 closures/callbacks 안에서는 self를 사용해 this 손실을 피하세요',
     lint_echarts_dom_ready: 'echarts.init이 setTimeout으로 감싸져 있지 않습니다. 컨테이너가 아직 마운트되지 않아 차트가 렌더링되지 않을 수 있습니다. setTimeout(function(){ /* echarts.init */ }, 300)을 사용하세요',
+    lint_resize_observer_cleanup: 'ResizeObserver에 disconnect()/unobserve() 정리가 없습니다. 언마운트 정리에서 observer를 해제하세요.',
+    lint_responsive_viewport_only: '레이아웃이 뷰포트 너비만 따르므로 좁은 사이드바, 드로어 또는 iframe에서 축소되지 않을 수 있습니다. @container 또는 정리되는 ResizeObserver를 사용하세요. 의도된 경우 openyida-responsive-viewport-ok를 추가하세요.',
+    lint_responsive_fixed_width: '%spx 고정 너비는 좁은 컨테이너에서 넘칠 수 있습니다. max-width, minmax(0, 1fr) 또는 로컬 스크롤을 사용하세요. 고정 캔버스라면 openyida-responsive-fixed-width-ok를 추가하세요.',
+    lint_responsive_page_scale: '페이지 전체 scale/zoom이 감지되었습니다. 글자와 클릭 영역을 유지하며 재배치하세요. 로컬 시각화라면 openyida-responsive-scale-ok를 추가하세요.',
     lint_yida_api_catch: 'this.utils.yida API 호출에 .catch()가 감지되지 않았습니다. 오류 처리를 추가하고 사용자에게 toast를 표시하세요',
     lint_echarts_legacy_map_china: 'ECharts 5는 더 이상 echarts/map/js/china.js를 지원하지 않습니다. 대신 DataV GeoJSON을 로드하고 echarts.registerMap("china", geoJson)을 호출하세요',
     lint_echarts_rich_label_formatter: 'ECharts label.formatter가 반환하는 rich text 템플릿은 Yida 사용자 정의 페이지에서 불안정합니다. 일반 formatter 문자열이나 미리 계산한 라벨 텍스트를 권장합니다',
@@ -2344,6 +2350,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "병렬 분기에�
 Object.assign(module.exports.formula_v2, {"conversion_empty":"수식 결과가 대상 필드 변환 후 빈 값이 되었습니다. 날짜에는 TIMESTAMP(날짜 수식)를 사용하고 원래 값과 유형을 확인하세요.","result_missing":"요청은 완료되었지만 대상 필드 값이 없습니다. 날짜에는 일반적으로 TIMESTAMP(날짜 수식)가 필요합니다.","conversion_partial":"숫자가 일부만 변환되었거나 유한수가 아닙니다. 완전한 숫자나 밀리초 타임스탬프를 반환하세요.","target_branches":"반환 유형 {0} 중 일부는 {1}과 맞지 않습니다. 각 분기를 시험하세요.","date_timestamp":"날짜 객체와 저장 값은 다릅니다. 일반적으로 TIMESTAMP(날짜 수식)로 밀리초를 반환하세요.","numeric_result_text":"결과가 텍스트일 수 있습니다. --field로 각 분기의 빈 값과 부분 숫자 변환을 확인하세요."});
 
 module.exports.feedback_report = {
+  body: {
+    summary: '하려던 작업',
+    actual: '실제로 발생한 일',
+    expected: '기대하는 결과',
+    incident: '문제 발생 당시 환경',
+    command: '관련 작업',
+    steps: '재현 방법',
+    impact: '영향',
+    evidence: '관찰한 증거',
+    attempts: '시도한 방법과 결과',
+    cause: '원인과 확신 수준',
+    cause_evidence: '판단 근거',
+    next: '다음 확인',
+    screenshots: '스크린샷',
+    review_image: '공유 전에 이미지를 확인하세요',
+    limitations: '미검증 범위',
+    generator: '보고서 생성 환경(문제 발생 당시 환경이 아님)',
+    unknown: '알 수 없음 / 미확인',
+    draft: '로컬 초안이며 아직 제출되지 않았습니다. 공개 전에 글과 이미지에서 고객 데이터, 인증 정보 및 내부 정보를 확인하세요.',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',

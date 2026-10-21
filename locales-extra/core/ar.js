@@ -34,6 +34,7 @@ module.exports = {
     "limit": "يدعم النموذج 10 أزرار مخصصة كحد أقصى.",
     "readback_mismatch": "الإعداد المحفوظ لا يطابق القراءة. احتفظ بالنسخة الاحتياطية وافحص الحالة البعيدة."
   },
+  form_message: {"usage":"Usage: openyida form-message <list|inspect|options|create|update|delete> <appType> <formUuid> [messageId] [--config <file>] [--expected-hash <hash>] [--backup <file>] [--yes] [--json]","invalid_config":"Invalid form message configuration or argument: {0}","invalid_response":"Incomplete platform form-message response: {0}","api_error":"Form message API failed: {0}. Check login, permissions and edition availability.","not_found":"The message notification does not exist in the target form: {0}","conflict":"The notification changed. Inspect again before saving.","unsupported_trigger":"Writes are not verified for this trigger: {0}.","unsupported_form":"Writes are not verified for this form type: {0}.","readback_mismatch":"Saved notification does not match readback. Keep the backup and inspect remote state."},
   dws_external: {"note": "dws is an independent external tool. OpenYida only shows installation instructions; it does not download or install it.", "install_guide": "Show official DingTalk CLI installation instructions"},
   cool_card: {"unsupported_environment": "إصدار مجموعة علي بابا لا يدعم إنشاء البطاقات التفاعلية.", "description": "Create and read native YiDA cool cards (interactive and pinned)", "usage": "Usage: openyida cool-card <list|templates|create|get> <appType> [cardPageCode] [--type im|onebox] [--name <title>] [--page <n>] [--size <n>] [--search <text>] [--out <file>] [--json]", "failed": "Native cool card operation stopped: {0}"},
   data_card: {"description":"Create, read, save drafts and publish native YiDA data cards","usage":"Usage: openyida data-card <list|create|get|save|publish|probe|release-get|release-save|release-check|release-test|refs> <appType> [cardCode] [--name <title>] [--description <text>] [--schema <file>|--config <file>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--published|--version <version>] [--page <n>] [--size <n>] [--search <text>] [--allow-send] [--json]","failed":"Native data card operation stopped: {0}","conflict":"The draft changed. Read it again before saving or publishing.","mismatch":"Readback does not match the expected schema or published state. Keep the backup and inspect the card before retrying."},
@@ -108,6 +109,7 @@ module.exports = {
   },
   help: {
     cmd_custom_button: "أزرار مخصصة: تعديل النماذج والأتمتة وروابط الصفحات",
+    cmd_form_message: "Native form notifications: triggers, recipients and templates",
     cmd_check_design: 'التحقق من مستندات التصميم ومتغيرات السمة وتسليم PRD',
     subtitle: 'أداة تطوير الذكاء الاصطناعي منخفضة الكود لـ Yida',
     usage: 'الاستخدام:',
@@ -1447,6 +1449,10 @@ module.exports = {
     lint_setstate_non_timestamp: 'this.setState يكتب حقلا غير timestamp. يجب أن تبقى حالة الأعمال في الصفحة المخصصة داخل _customState ويتم تحديثها عبر forceUpdate()/setCustomState(); يجب أن يحمل this.setState حقل العقد timestamp فقط',
     lint_self_binding_missing: 'renderJsx يستخدم this دون تعريف var self = this;. أضف var self = this; في بداية renderJsx واستخدم self داخل closures/callbacks لتجنب فقدان this',
     lint_echarts_dom_ready: 'echarts.init غير ملفوف داخل setTimeout؛ قد لا يكون الحاوي مركبا بعد، لذلك قد لا يتم عرض المخطط. استخدم setTimeout(function(){ /* echarts.init */ }, 300)',
+    lint_resize_observer_cleanup: 'لا يحتوي ResizeObserver على تنظيف disconnect()/unobserve(). حرره عند إزالة المكون.',
+    lint_responsive_viewport_only: 'يتغير التخطيط حسب عرض النافذة فقط، لذلك قد لا يتكيف الشريط الجانبي أو الدرج أو iframe الضيق. استخدم @container أو ResizeObserver مع تنظيف. أضف openyida-responsive-viewport-ok إذا كان ذلك مقصودا.',
+    lint_responsive_fixed_width: 'قد يؤدي العرض الثابت %spx إلى تجاوز الحاوي الضيق. استخدم max-width أو minmax(0, 1fr) أو تمريرا محليا. للوحة الثابتة أضف openyida-responsive-fixed-width-ok.',
+    lint_responsive_page_scale: 'تم اكتشاف scale/zoom للصفحة كاملة. أعد توزيع المحتوى مع الحفاظ على النص والأهداف المقروءة. للتصور المحلي أضف openyida-responsive-scale-ok.',
     lint_yida_api_catch: 'لم يتم اكتشاف .catch() لاستدعاء API this.utils.yida؛ أضف معالجة أخطاء واعرض toast للمستخدم',
     lint_echarts_legacy_map_china: 'لم يعد ECharts 5 يدعم echarts/map/js/china.js. حمّل DataV GeoJSON واستدع echarts.registerMap("china", geoJson) بدلا من ذلك',
     lint_echarts_rich_label_formatter: 'قوالب rich text التي يعيدها ECharts label.formatter غير مستقرة في صفحات Yida المخصصة؛ يفضل استخدام formatter strings بسيطة أو نصوص تسميات محسوبة مسبقا',
@@ -2345,6 +2351,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "استخدم cond
 Object.assign(module.exports.formula_v2, {"conversion_empty":"أصبح الناتج فارغًا بعد تحويله إلى الحقل الهدف. للتواريخ استخدم TIMESTAMP(صيغة التاريخ) وتحقق من القيمة الأصلية والنوع.","result_missing":"اكتمل الطلب دون قيمة للحقل الهدف. تحتاج التواريخ عادة إلى TIMESTAMP(صيغة التاريخ).","conversion_partial":"تم تحويل جزء من القيمة فقط أو أنها ليست عددًا محدودًا. أرجع عددًا كاملًا أو طابعًا زمنيًا بالمللي ثانية.","target_branches":"بعض أنواع النتائج {0} لا تتوافق مع {1}. اختبر كل فرع.","date_timestamp":"كائن التاريخ يختلف عن القيمة المخزنة. استخدم عادة TIMESTAMP(صيغة التاريخ) للمللي ثانية.","numeric_result_text":"قد تكون النتيجة نصًا. اختبر كل فرع باستخدام --field للكشف عن التحويل الفارغ أو الجزئي."});
 
 module.exports.feedback_report = {
+  body: {
+    summary: 'هدفك',
+    actual: 'ما الذي حدث',
+    expected: 'النتيجة المتوقعة',
+    incident: 'البيئة وقت حدوث المشكلة',
+    command: 'العملية ذات الصلة',
+    steps: 'خطوات إعادة الإنتاج',
+    impact: 'التأثير',
+    evidence: 'الأدلة المرصودة',
+    attempts: 'المحاولات والنتائج',
+    cause: 'السبب ودرجة اليقين',
+    cause_evidence: 'أدلة التقييم',
+    next: 'التحقق التالي',
+    screenshots: 'لقطات الشاشة',
+    review_image: 'راجع الصورة قبل مشاركتها',
+    limitations: 'نطاق الاختبارات غير المنفذة',
+    generator: 'بيئة إنشاء التقرير (وليست بيئة حدوث المشكلة)',
+    unknown: 'غير معروف / غير مؤكد',
+    draft: 'مسودة محلية لم تُرسل بعد. راجع النصوص والصور للتأكد من خلوها من بيانات العملاء وبيانات الاعتماد والمعلومات الخاصة قبل النشر.',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',

@@ -34,6 +34,7 @@ module.exports = {
     "limit": "एक फ़ॉर्म में अधिकतम 10 कस्टम बटन समर्थित हैं।",
     "readback_mismatch": "सहेजा गया डेटा दोबारा पढ़ने से मेल नहीं खाता। बैकअप रखें और दूरस्थ स्थिति जाँचें।"
   },
+  form_message: {"usage":"Usage: openyida form-message <list|inspect|options|create|update|delete> <appType> <formUuid> [messageId] [--config <file>] [--expected-hash <hash>] [--backup <file>] [--yes] [--json]","invalid_config":"Invalid form message configuration or argument: {0}","invalid_response":"Incomplete platform form-message response: {0}","api_error":"Form message API failed: {0}. Check login, permissions and edition availability.","not_found":"The message notification does not exist in the target form: {0}","conflict":"The notification changed. Inspect again before saving.","unsupported_trigger":"Writes are not verified for this trigger: {0}.","unsupported_form":"Writes are not verified for this form type: {0}.","readback_mismatch":"Saved notification does not match readback. Keep the backup and inspect remote state."},
   dws_external: {"note": "dws is an independent external tool. OpenYida only shows installation instructions; it does not download or install it.", "install_guide": "Show official DingTalk CLI installation instructions"},
   cool_card: {"unsupported_environment": "Alibaba Group संस्करण में कूल कार्ड बनाना समर्थित नहीं है।", "description": "Create and read native YiDA cool cards (interactive and pinned)", "usage": "Usage: openyida cool-card <list|templates|create|get> <appType> [cardPageCode] [--type im|onebox] [--name <title>] [--page <n>] [--size <n>] [--search <text>] [--out <file>] [--json]", "failed": "Native cool card operation stopped: {0}"},
   data_card: {"description":"Create, read, save drafts and publish native YiDA data cards","usage":"Usage: openyida data-card <list|create|get|save|publish|probe|release-get|release-save|release-check|release-test|refs> <appType> [cardCode] [--name <title>] [--description <text>] [--schema <file>|--config <file>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--published|--version <version>] [--page <n>] [--size <n>] [--search <text>] [--allow-send] [--json]","failed":"Native data card operation stopped: {0}","conflict":"The draft changed. Read it again before saving or publishing.","mismatch":"Readback does not match the expected schema or published state. Keep the backup and inspect the card before retrying."},
@@ -108,6 +109,7 @@ module.exports = {
   },
   help: {
     cmd_custom_button: "कस्टम बटन: फ़ॉर्म संपादन, स्वचालन और पेज लिंक",
+    cmd_form_message: "Native form notifications: triggers, recipients and templates",
     cmd_check_design: 'डिज़ाइन दस्तावेज़, थीम चर और PRD हस्तांतरण सत्यापित करें',
     subtitle: 'Yida के लिए AI-संचालित लो-कोड विकास उपकरण',
     usage: 'उपयोग:',
@@ -1447,6 +1449,10 @@ module.exports = {
     lint_setstate_non_timestamp: 'this.setState non-timestamp field लिखता है। Custom page business state _customState में होना चाहिए और forceUpdate()/setCustomState() से update होना चाहिए; this.setState में केवल timestamp contract field होना चाहिए',
     lint_self_binding_missing: 'renderJsx var self = this; घोषित किए बिना this का उपयोग करता है। renderJsx के शीर्ष पर var self = this; जोड़ें और this खोने से बचने के लिए closures/callbacks में self उपयोग करें',
     lint_echarts_dom_ready: 'echarts.init setTimeout में wrapped नहीं है; container अभी mounted न हो तो chart render नहीं हो सकता। setTimeout(function(){ /* echarts.init */ }, 300) उपयोग करें',
+    lint_resize_observer_cleanup: 'ResizeObserver में disconnect()/unobserve() cleanup नहीं है। unmount पर observer release करें।',
+    lint_responsive_viewport_only: 'Layout केवल viewport width से बदलता है; संकरा sidebar, drawer या iframe degrade नहीं हो सकता। @container या cleanup वाला ResizeObserver उपयोग करें। जानबूझकर हो तो openyida-responsive-viewport-ok जोड़ें।',
+    lint_responsive_fixed_width: '%spx fixed width संकरे container में overflow कर सकती है। max-width, minmax(0, 1fr) या local scroll उपयोग करें। fixed canvas के लिए openyida-responsive-fixed-width-ok जोड़ें।',
+    lint_responsive_page_scale: 'पूरे page का scale/zoom मिला। readable text और targets रखते हुए content reflow करें। local visualization के लिए openyida-responsive-scale-ok जोड़ें।',
     lint_yida_api_catch: 'this.utils.yida API call में .catch() नहीं मिला; error handling जोड़ें और user को toast दिखाएँ',
     lint_echarts_legacy_map_china: 'ECharts 5 अब echarts/map/js/china.js support नहीं करता। इसके बजाय DataV GeoJSON load करें और echarts.registerMap("china", geoJson) call करें',
     lint_echarts_rich_label_formatter: 'ECharts label.formatter से लौटे rich text templates Yida custom pages में unstable हैं; plain formatter strings या precomputed label text बेहतर हैं',
@@ -2343,6 +2349,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "समाना�
 Object.assign(module.exports.formula_v2, {"conversion_empty":"लक्ष्य फ़ील्ड में बदलने के बाद परिणाम खाली है। तारीख के लिए TIMESTAMP(तारीख सूत्र) का उपयोग करके मूल मान और प्रकार जाँचें।","result_missing":"अनुरोध पूरा हुआ लेकिन लक्ष्य फ़ील्ड का मान नहीं मिला। तारीख के लिए सामान्यतः TIMESTAMP(तारीख सूत्र) चाहिए।","conversion_partial":"मान का केवल कुछ भाग संख्या बना या वह सीमित संख्या नहीं है। पूरी संख्या या मिलीसेकंड टाइमस्टैम्प लौटाएँ।","target_branches":"परिणाम के कुछ प्रकार {0}, {1} से मेल नहीं खाते। हर शाखा का परीक्षण करें।","date_timestamp":"तारीख ऑब्जेक्ट और सहेजा गया मान अलग हैं। सामान्यतः TIMESTAMP(तारीख सूत्र) से मिलीसेकंड लौटाएँ।","numeric_result_text":"परिणाम टेक्स्ट हो सकता है। खाली या आंशिक संख्या रूपांतरण पहचानने के लिए हर शाखा को --field से जाँचें।"});
 
 module.exports.feedback_report = {
+  body: {
+    summary: 'आपका लक्ष्य',
+    actual: 'क्या हुआ',
+    expected: 'अपेक्षित परिणाम',
+    incident: 'समस्या होने के समय का परिवेश',
+    command: 'संबंधित कार्य',
+    steps: 'समस्या दोहराने के चरण',
+    impact: 'प्रभाव',
+    evidence: 'देखे गए प्रमाण',
+    attempts: 'प्रयास और परिणाम',
+    cause: 'कारण और विश्वास का स्तर',
+    cause_evidence: 'आकलन के प्रमाण',
+    next: 'अगली जाँच',
+    screenshots: 'स्क्रीनशॉट',
+    review_image: 'साझा करने से पहले चित्र जाँचें',
+    limitations: 'जाँच की सीमाएँ',
+    generator: 'रिपोर्ट बनाने का परिवेश (समस्या के समय का नहीं)',
+    unknown: 'अज्ञात / अपुष्ट',
+    draft: 'स्थानीय मसौदा, अभी भेजा नहीं गया। साझा करने से पहले पाठ और चित्रों में ग्राहक डेटा, क्रेडेंशियल और निजी जानकारी की जाँच करें।',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',

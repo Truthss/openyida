@@ -34,6 +34,7 @@ module.exports = {
     "limit": "Ein Formular unterstützt höchstens 10 Schaltflächen.",
     "readback_mismatch": "Gespeicherte Konfiguration stimmt nicht mit Rücklesung überein. Sicherung behalten und Remotezustand prüfen."
   },
+  form_message: {"usage":"Usage: openyida form-message <list|inspect|options|create|update|delete> <appType> <formUuid> [messageId] [--config <file>] [--expected-hash <hash>] [--backup <file>] [--yes] [--json]","invalid_config":"Invalid form message configuration or argument: {0}","invalid_response":"Incomplete platform form-message response: {0}","api_error":"Form message API failed: {0}. Check login, permissions and edition availability.","not_found":"The message notification does not exist in the target form: {0}","conflict":"The notification changed. Inspect again before saving.","unsupported_trigger":"Writes are not verified for this trigger: {0}.","unsupported_form":"Writes are not verified for this form type: {0}.","readback_mismatch":"Saved notification does not match readback. Keep the backup and inspect remote state."},
   dws_external: {"note": "dws is an independent external tool. OpenYida only shows installation instructions; it does not download or install it.", "install_guide": "Show official DingTalk CLI installation instructions"},
   cool_card: {"unsupported_environment": "Die Alibaba-Group-Edition unterstützt das Erstellen von Cool Cards nicht.", "description": "Create and read native YiDA cool cards (interactive and pinned)", "usage": "Usage: openyida cool-card <list|templates|create|get> <appType> [cardPageCode] [--type im|onebox] [--name <title>] [--page <n>] [--size <n>] [--search <text>] [--out <file>] [--json]", "failed": "Native cool card operation stopped: {0}"},
   data_card: {"description":"Create, read, save drafts and publish native YiDA data cards","usage":"Usage: openyida data-card <list|create|get|save|publish|probe|release-get|release-save|release-check|release-test|refs> <appType> [cardCode] [--name <title>] [--description <text>] [--schema <file>|--config <file>] [--expected-hash <hash>] [--backup <file>] [--out <file>] [--published|--version <version>] [--page <n>] [--size <n>] [--search <text>] [--allow-send] [--json]","failed":"Native data card operation stopped: {0}","conflict":"The draft changed. Read it again before saving or publishing.","mismatch":"Readback does not match the expected schema or published state. Keep the backup and inspect the card before retrying."},
@@ -108,6 +109,7 @@ module.exports = {
   },
   help: {
     cmd_custom_button: "Benutzerdefinierte Schaltflächen: Formulare, Automatisierung und Links",
+    cmd_form_message: "Native form notifications: triggers, recipients and templates",
     cmd_check_design: 'Designdokumente, Theme-Variablen und PRD-Übergabe prüfen',
     subtitle: 'KI-gestütztes Low-Code-Entwicklungstool für Yida',
     usage: 'Verwendung:',
@@ -1447,6 +1449,10 @@ module.exports = {
     lint_setstate_non_timestamp: 'this.setState schreibt ein Nicht-timestamp-Feld. Fachlicher Zustand benutzerdefinierter Seiten sollte in _customState liegen und über forceUpdate()/setCustomState() aktualisiert werden; this.setState sollte nur das Vertragsfeld timestamp tragen',
     lint_self_binding_missing: 'renderJsx verwendet this, ohne var self = this; zu deklarieren. Fügen Sie var self = this; am Anfang von renderJsx hinzu und verwenden Sie self in Closures/Callbacks, um den Verlust von this zu vermeiden',
     lint_echarts_dom_ready: 'echarts.init ist nicht in setTimeout gekapselt; der Container ist möglicherweise noch nicht gemountet, sodass das Diagramm nicht gerendert wird. Verwenden Sie setTimeout(function(){ /* echarts.init */ }, 300)',
+    lint_resize_observer_cleanup: 'ResizeObserver hat kein disconnect()/unobserve()-Cleanup. Geben Sie ihn beim Unmount frei.',
+    lint_responsive_viewport_only: 'Das Layout reagiert nur auf die Viewportbreite; schmale Seitenleisten, Drawer oder iframes können nicht umbrechen. Verwenden Sie @container oder einen bereinigten ResizeObserver. Bei Absicht openyida-responsive-viewport-ok ergänzen.',
+    lint_responsive_fixed_width: 'Die feste Breite %spx kann in schmalen Containern überlaufen. Verwenden Sie max-width, minmax(0, 1fr) oder lokales Scrollen. Für feste Flächen openyida-responsive-fixed-width-ok ergänzen.',
+    lint_responsive_page_scale: 'Ganzseitiges scale/zoom wurde erkannt. Ordnen Sie Inhalte bei lesbarer Schrift und Bedienfläche neu an. Für lokale Visualisierungen openyida-responsive-scale-ok ergänzen.',
     lint_yida_api_catch: 'Für den API-Aufruf this.utils.yida wurde kein .catch() erkannt; fügen Sie Fehlerbehandlung hinzu und zeigen Sie dem Benutzer einen Toast',
     lint_echarts_legacy_map_china: 'ECharts 5 unterstützt echarts/map/js/china.js nicht mehr. Laden Sie DataV GeoJSON und rufen Sie stattdessen echarts.registerMap("china", geoJson) auf',
     lint_echarts_rich_label_formatter: 'Von ECharts label.formatter zurückgegebene Rich-Text-Templates sind in Yida-Benutzerdefinierten Seiten instabil; bevorzugen Sie einfache formatter-Strings oder vorab berechneten Label-Text',
@@ -2343,6 +2349,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "Verwenden Sie con
 Object.assign(module.exports.formula_v2, {"conversion_empty":"Die Umwandlung in das Zielfeld ergibt einen leeren Wert. Für Datumswerte TIMESTAMP(Datumsformel) verwenden und Rohwert sowie Typ prüfen.","result_missing":"Die Anfrage ist abgeschlossen, aber der Zielfeldwert fehlt. Datumsfelder benötigen meist TIMESTAMP(Datumsformel).","conversion_partial":"Der Wert wurde nur teilweise als Zahl gelesen oder ist nicht endlich. Eine vollständige Zahl oder Millisekunden zurückgeben.","target_branches":"Einige Ergebnistypen {0} passen nicht zu {1}. Jeden Zweig testen.","date_timestamp":"Ein Datumsobjekt ist nicht der gespeicherte Feldwert. Meist mit TIMESTAMP(Datumsformel) Millisekunden zurückgeben.","numeric_result_text":"Das Ergebnis kann Text sein. Mit --field jeden Zweig auf leere oder teilweise Zahlenumwandlung prüfen."});
 
 module.exports.feedback_report = {
+  body: {
+    summary: 'Ihr Ziel',
+    actual: 'Was passiert ist',
+    expected: 'Erwartetes Ergebnis',
+    incident: 'Umgebung beim Auftreten des Problems',
+    command: 'Betroffener Vorgang',
+    steps: 'Schritte zur Reproduktion',
+    impact: 'Auswirkungen',
+    evidence: 'Beobachtete Belege',
+    attempts: 'Versuche und Ergebnisse',
+    cause: 'Ursache und Gewissheit',
+    cause_evidence: 'Belege zur Einschätzung',
+    next: 'Nächste Prüfung',
+    screenshots: 'Screenshots',
+    review_image: 'Bild vor dem Teilen prüfen',
+    limitations: 'Nicht geprüfte Bereiche',
+    generator: 'Umgebung der Berichtserstellung (nicht die Problemumgebung)',
+    unknown: 'Unbekannt / nicht geprüft',
+    draft: 'Lokaler Entwurf, noch nicht eingereicht. Prüfen Sie Text und Bilder vor dem Teilen auf Kundendaten, Zugangsdaten und private Informationen.',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',
