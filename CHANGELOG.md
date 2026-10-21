@@ -36,6 +36,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 修复
 
 - 修正工作通知示例的变量格式为 `$!{serialNo}`，首个示例直接发送给发起人，便于按步骤配置和测试。
+- 按 Node 20 CI 的实际压缩结果对齐合并后的 npm 包体积预算，兼容不同 Node/npm 打包结果；保留解压体积、文件数和单文件限制。
 
 ### 使用范围
 

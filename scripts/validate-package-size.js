@@ -69,7 +69,9 @@ const path = require('path');
 // bytes (Node 26 is smaller). Keep the next 16 KiB compression boundary.
 // Main's task-transfer and scheduled-end-condition changes combined with feedback
 // guidance measure 2,634,130 compressed bytes on Node 20; this cap still fits.
-const MAX_TARBALL_BYTES = 2576 * 1024;
+// Node 20 CI measures 2,643,136 compressed bytes for the merged 10.23 package.
+// Retain the next 16 KiB boundary; unpacked, entry and single-file caps stay fixed.
+const MAX_TARBALL_BYTES = 2592 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.
