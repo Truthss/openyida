@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - **容器响应式模板**：新增 `openyida sample openyida-page-template canvas-responsive-layout`，提供筛选排列、主辅布局、局部滚动和容器查询等独立片段，按当前业务需要复用；图表等组件需要实际宽度时，再使用带清理和帧合并的测量 Hook。断点切换保持原业务组件状态。
 - **响应式源码诊断**：Canvas `compile --json` 与普通页面 `check-page` 会提示仅依赖视口宽度、未清理 `ResizeObserver`、大固定宽度及整页 `scale/zoom` 等高风险写法；诊断为非阻断 warning，并支持对确有必要的视口级或固定画布场景作显式说明。
+- **流程任务查询与管理员转交**：同步主干的流程任务查询和管理员转交能力，复用已有数据命令；转交前核对实例、表单、运行任务及接收人，提交后回读实际处理人，多任务时由用户明确选择。
 
 ### 改进
 
@@ -31,6 +32,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Skill 与提示词统一为直白、清晰、偏正向的操作说明；布局优先使用 CSS，模板片段按需复用。已有页面继续遵守方案确认、备份、业务行为保留和真实验收边界。
 - 响应式与密度 Skill 明确 `@media` / `matchMedia` 和 `@container` / `ResizeObserver` 的职责，补充 360、600、768、1024、1280、1600px 及实际断点前后的验收矩阵。
 - 观察器在卸载时断开，测量更新避免无变化写入；筛选、分页、选择和草稿状态继续由业务组件持有，不因布局断点变化丢失。
+
+### 修复
+
+- 同步主干的定时自动化结束条件修复：单次触发按一次结束，重复触发需指定结束次数（1–100 次）或结束日期，避免提交平台不支持的永久执行配置。
+- 修复 GitHub Actions 中 npm 包体积校验失败：以 Node 20 的实际打包结果对齐合并后的体积与文件数量预算，保留单文件上限和超限拦截。
 
 ### 开发验证
 

@@ -41,7 +41,10 @@ module.exports = {
   integration_update_v2: {"usage": "integration update <appType> <formUuid> <processCode> --patch patch.json [--dry-run] [--expect fingerprint] [--publish]"},
 
   conditional_actors: { unavailable: 'Conditional actors are unavailable or could not be verified.', invalid: 'Invalid conditional actors: {0}' },
-  integration_triggers: { invalid: 'Invalid automation trigger: {0}' },
+  integration_triggers: {
+    invalid: 'Invalid automation trigger: {0}',
+    end_required: '請選擇定時任務的結束條件：觸發次數填寫 schedule.maxCount（1–100），指定時間填寫 schedule.expireDate（截止時間的毫秒時間戳）。長期執行可選擇較遠的截止日期，並在設定摘要中展示實際日期。',
+  },
   permission_conditions: { invalid: 'Invalid permission conditions: {0}' },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
@@ -2181,6 +2184,16 @@ module.exports.app_theme = require('../../lib/core/locales/en').app_theme;
 module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en').help.cmd_app_theme_snapshot;
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
+Object.assign(module.exports.process_tasks || (module.exports.process_tasks = {}), {
+  arguments_invalid: '參數無效：查詢需要 appType 和 --process-inst-id；轉交還需要 --form-uuid、--to-user-id、--expect-form-name 和 --expect-form-type process。taskId 必須為正整數，不支援未知參數。',
+  query_failed: '流程任務查詢失敗，未執行轉交。',
+  response_invalid: '流程任務回應結構、任務 ID 或實例歸屬無法驗證。',
+  not_running: '指定任務不屬於目標流程的執行中任務，或沒有執行中任務，未執行轉交。',
+  ambiguous: '流程有多個執行中任務，請查詢清單並指定 --task-id，未執行轉交。',
+  rejected: '平台拒絕管理員轉交請求，請核對權限與任務狀態。',
+  result_unknown: '管理員轉交結果未知，請依 nextStep 唯讀查詢，禁止自動重試轉交。',
+  unverified: '轉交請求已接受，但回讀未能確認接收人，請依 nextStep 唯讀查詢，禁止自動重試轉交。',
+});
 module.exports.data_manage_style = {
   'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': '資料管理樣式參數無效，請使用真實 ID 和目錄中的樣式。',

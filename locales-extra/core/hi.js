@@ -40,7 +40,10 @@ module.exports = {
   integration_update_v2: {"usage": "integration update <appType> <formUuid> <processCode> --patch patch.json [--dry-run] [--expect fingerprint] [--publish]"},
 
   conditional_actors: { unavailable: 'Conditional actors are unavailable or could not be verified.', invalid: 'Invalid conditional actors: {0}' },
-  integration_triggers: { invalid: 'Invalid automation trigger: {0}' },
+  integration_triggers: {
+    invalid: 'Invalid automation trigger: {0}',
+    end_required: 'टाइमर की समाप्ति शर्त चुनें: निष्पादन गिनती के लिए schedule.maxCount (1–100) या निश्चित समय के लिए schedule.expireDate (समाप्ति का मिलीसेकंड टाइमस्टैम्प) सेट करें। लंबे समय तक चलाने के लिए दूर की समाप्ति तारीख चुनें और सारांश में वास्तविक तारीख दिखाएँ।',
+  },
   permission_conditions: { invalid: 'Invalid permission conditions: {0}' },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
@@ -2228,6 +2231,16 @@ module.exports.app_theme = require('../../lib/core/locales/en').app_theme;
 module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en').help.cmd_app_theme_snapshot;
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
+Object.assign(module.exports.process_tasks || (module.exports.process_tasks = {}), {
+  arguments_invalid: 'अमान्य तर्क: query के लिए appType और --process-inst-id आवश्यक हैं; transfer के लिए --form-uuid, --to-user-id, --expect-form-name और --expect-form-type process भी आवश्यक हैं। taskId धनात्मक पूर्णांक होना चाहिए; अज्ञात विकल्प समर्थित नहीं हैं।',
+  query_failed: 'प्रक्रिया कार्यों की क्वेरी विफल हुई; हस्तांतरण नहीं किया गया।',
+  response_invalid: 'कार्य प्रतिक्रिया की संरचना, ID या प्रक्रिया से संबंध सत्यापित नहीं हो सका।',
+  not_running: 'लक्षित प्रक्रिया में निर्दिष्ट चालू कार्य नहीं है; हस्तांतरण नहीं किया गया।',
+  ambiguous: 'कई कार्य चल रहे हैं। सूची देखें और --task-id दें; हस्तांतरण नहीं किया गया।',
+  rejected: 'प्लेटफ़ॉर्म ने व्यवस्थापक हस्तांतरण अस्वीकार किया। अनुमतियाँ और कार्य स्थिति जाँचें।',
+  result_unknown: 'हस्तांतरण परिणाम अज्ञात है। nextStep से कार्य पढ़ें; हस्तांतरण स्वतः दोबारा न करें।',
+  unverified: 'हस्तांतरण स्वीकार हुआ, लेकिन दोबारा पढ़ने पर प्राप्तकर्ता सत्यापित नहीं हुआ। nextStep देखें; स्वतः दोबारा न करें।',
+});
 module.exports.data_manage_style = {
   'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': 'शैली के पैरामीटर अमान्य हैं। वास्तविक ID और सूची की शैली उपयोग करें।',

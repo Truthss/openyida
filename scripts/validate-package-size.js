@@ -67,6 +67,8 @@ const path = require('path');
 // keep a small allowance for Node 20's different npm compression output.
 // Beginner account/tool guidance: Node 20.18.1 measures 2,627,647 compressed
 // bytes (Node 26 is smaller). Keep the next 16 KiB compression boundary.
+// Main's task-transfer and scheduled-end-condition changes combined with feedback
+// guidance measure 2,634,130 compressed bytes on Node 20; this cap still fits.
 const MAX_TARBALL_BYTES = 2576 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
@@ -165,7 +167,11 @@ const MAX_TARBALL_BYTES = 2576 * 1024;
 // 9,694,016 unpacked bytes / 766 files on Node 26; next 16 KiB boundary.
 // Beginner feedback guidance and localized incident context: 9,701,569 bytes,
 // still 766 files. Keep the next 16 KiB boundary; other budgets stay unchanged.
-const MAX_UNPACKED_BYTES = 9488 * 1024;
+// PR #619 merged with main: 9,695,540 unpacked bytes on Node 23.
+// Task transfer adds its runtime, guide and 12-locale messages; next 16 KiB boundary.
+// Combined responsive/feedback and main package: 9,733,108 bytes / 769 files
+// on Node 20. Keep the next 16 KiB boundary and the existing single-file cap.
+const MAX_UNPACKED_BYTES = 9520 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -197,7 +203,8 @@ const MAX_UNPACKED_BYTES = 9488 * 1024;
 // Dynamic personnel sources add one runtime module and one skill reference.
 // Account/tool onboarding adds one progressively loaded feedback reference.
 // Unpacked and per-file limits remain unchanged.
-const MAX_ENTRY_COUNT = 767;
+// Administrator task transfer adds exactly one runtime module and one skill guide.
+const MAX_ENTRY_COUNT = 769;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -317,6 +324,8 @@ const REQUIRED_PACKAGE_FILES = [
   'lib/asset/asset-plan.js',
   'lib/asset/attachment-upload.js',
   'lib/process/services/process-actions.js',
+  'lib/process/process-tasks.js',
+  'yida-skills/skills/yida-data-management/references/process-task-transfer.md',
   'lib/process/services/process-field-permissions.js',
   'lib/process/services/process-form-fields.js',
   'lib/process/process-fields.js',
