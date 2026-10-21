@@ -65,7 +65,9 @@ const path = require('path');
 // and a skill with three guides. With main's AI app helper, Node 26 measures
 // 2,576,926 compressed bytes;
 // keep a small allowance for Node 20's different npm compression output.
-const MAX_TARBALL_BYTES = 2560 * 1024;
+// Combined main and Solution Center templates measure 2,622,928 compressed
+// bytes on Node 22; retain the next 16 KiB boundary across packaging runtimes.
+const MAX_TARBALL_BYTES = 2576 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.
@@ -156,7 +158,11 @@ const MAX_TARBALL_BYTES = 2560 * 1024;
 // Node 26 measures 9,680,243 unpacked bytes / 764 files; retain the next 16 KiB boundary.
 // Template preparation and bounded failure recovery: Node 26 measures 9,692,651
 // unpacked bytes. Round up one 16 KiB block; file and tarball caps stay unchanged.
-const MAX_UNPACKED_BYTES = 9472 * 1024;
+// Form-member/self-select runtime and guide: 9,672,548 unpacked bytes / 764 files
+// on Node 22. Retain the next 16 KiB boundary; compressed and per-file caps stay fixed.
+// Combined templates, dynamic actors and refreshed release notes (Node 26):
+// 9,711,827 unpacked bytes / 766 files. Retain the next 16 KiB boundary.
+const MAX_UNPACKED_BYTES = 9488 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -185,7 +191,8 @@ const MAX_UNPACKED_BYTES = 9472 * 1024;
 // The combined workflow, data-card and cool-card package contains 738 files.
 // Custom buttons and native report zero-value controls add five packaged files.
 // Include the shared AI application eligibility helper merged from main.
-const MAX_ENTRY_COUNT = 764;
+// Dynamic personnel sources add one runtime module and one skill reference.
+const MAX_ENTRY_COUNT = 766;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [

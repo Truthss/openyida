@@ -2421,3 +2421,5 @@ module.exports.feedback_github = {
   confirmation: 'Star or Fork requires the user to explicitly choose that action before --confirm. Neither is required to submit an Issue.',
   failed: 'The GitHub action could not be verified. Inspect its status before retrying; this does not block Issue submission.',
 };
+
+module.exports.process_dynamic_actors = { invalid: "Cấu hình người xử lý không hợp lệ. Kiểm tra details.reason, phạm vi chọn và trường thành viên thực tế." };
