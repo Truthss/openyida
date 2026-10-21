@@ -54,7 +54,10 @@ module.exports = {
   integration_update_v2: {"usage": "integration update <appType> <formUuid> <processCode> --patch patch.json [--dry-run] [--expect fingerprint] [--publish]"},
 
   conditional_actors: { unavailable: 'Conditional actors are unavailable or could not be verified.', invalid: 'Invalid conditional actors: {0}' },
-  integration_triggers: { invalid: 'Invalid automation trigger: {0}' },
+  integration_triggers: {
+    invalid: 'Invalid automation trigger: {0}',
+    end_required: 'Escolha o término do temporizador: schedule.maxCount (1–100) para o número de execuções ou schedule.expireDate (término em milissegundos) para uma data específica. Para longa duração, escolha uma data distante e mostre-a no resumo.',
+  },
   permission_conditions: { invalid: 'Invalid permission conditions: {0}' },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
@@ -2240,6 +2243,16 @@ module.exports.app_theme = require('../../lib/core/locales/en').app_theme;
 module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en').help.cmd_app_theme_snapshot;
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
+Object.assign(module.exports.process_tasks || (module.exports.process_tasks = {}), {
+  arguments_invalid: 'Argumentos inválidos: query exige appType e --process-inst-id; transfer também exige --form-uuid, --to-user-id, --expect-form-name e --expect-form-type process. taskId deve ser um inteiro positivo; opções desconhecidas não são aceitas.',
+  query_failed: 'A consulta de tarefas falhou; nenhuma transferência foi realizada.',
+  response_invalid: 'Não foi possível verificar a estrutura, o ID ou o vínculo da tarefa com o processo.',
+  not_running: 'A tarefa indicada não está em execução no processo de destino, ou não há tarefas ativas; nenhuma transferência realizada.',
+  ambiguous: 'Há várias tarefas ativas. Consulte a lista e informe --task-id; nenhuma transferência realizada.',
+  rejected: 'A plataforma rejeitou a transferência do administrador. Verifique permissões e estado.',
+  result_unknown: 'Resultado da transferência desconhecido. Consulte as tarefas via nextStep; não tente transferir novamente automaticamente.',
+  unverified: 'Transferência aceita, mas o destinatário não foi confirmado na leitura. Use nextStep; não repita automaticamente.',
+});
 module.exports.data_manage_style = {
   'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': 'Parâmetros de estilo inválidos. Use IDs reais e um estilo do catálogo.',

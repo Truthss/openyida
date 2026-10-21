@@ -54,7 +54,10 @@ module.exports = {
   integration_update_v2: {"usage": "integration update <appType> <formUuid> <processCode> --patch patch.json [--dry-run] [--expect fingerprint] [--publish]"},
 
   conditional_actors: { unavailable: 'Conditional actors are unavailable or could not be verified.', invalid: 'Invalid conditional actors: {0}' },
-  integration_triggers: { invalid: 'Invalid automation trigger: {0}' },
+  integration_triggers: {
+    invalid: 'Invalid automation trigger: {0}',
+    end_required: '타이머 종료 조건을 선택하세요. 실행 횟수는 schedule.maxCount(1–100), 지정 시간은 schedule.expireDate(종료 시각의 밀리초)를 설정합니다. 장기 실행은 먼 미래의 종료일을 선택하고 설정 요약에 실제 날짜를 표시하세요.',
+  },
   permission_conditions: { invalid: 'Invalid permission conditions: {0}' },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
@@ -2239,6 +2242,16 @@ module.exports.app_theme = require('../../lib/core/locales/en').app_theme;
 module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en').help.cmd_app_theme_snapshot;
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
+Object.assign(module.exports.process_tasks || (module.exports.process_tasks = {}), {
+  arguments_invalid: '잘못된 인수입니다. query에는 appType과 --process-inst-id가, transfer에는 --form-uuid, --to-user-id, --expect-form-name, --expect-form-type process가 추가로 필요합니다. taskId는 양의 정수여야 하며 알 수 없는 옵션은 지원하지 않습니다.',
+  query_failed: '프로세스 작업 조회에 실패했습니다. 이전은 실행되지 않았습니다.',
+  response_invalid: '작업 응답 구조, 작업 ID 또는 프로세스 소속을 확인할 수 없습니다.',
+  not_running: '대상 프로세스에 지정된 실행 중 작업이 없습니다. 이전은 실행되지 않았습니다.',
+  ambiguous: '실행 중인 작업이 여러 개입니다. 목록을 조회하고 --task-id를 지정하세요. 이전은 실행되지 않았습니다.',
+  rejected: '플랫폼이 관리자 이전을 거부했습니다. 권한과 작업 상태를 확인하세요.',
+  result_unknown: '이전 결과를 알 수 없습니다. nextStep으로 읽기 조회하세요. 이전을 자동 재시도하지 마세요.',
+  unverified: '이전 요청은 수락되었지만 수신자를 재조회로 확인하지 못했습니다. nextStep으로 확인하고 자동 재시도하지 마세요.',
+});
 module.exports.data_manage_style = {
   'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': '잘못된 스타일 인수입니다. 실제 ID와 목록의 스타일을 사용하세요.',

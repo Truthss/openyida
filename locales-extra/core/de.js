@@ -54,7 +54,10 @@ module.exports = {
   integration_update_v2: {"usage": "integration update <appType> <formUuid> <processCode> --patch patch.json [--dry-run] [--expect fingerprint] [--publish]"},
 
   conditional_actors: { unavailable: 'Conditional actors are unavailable or could not be verified.', invalid: 'Invalid conditional actors: {0}' },
-  integration_triggers: { invalid: 'Invalid automation trigger: {0}' },
+  integration_triggers: {
+    invalid: 'Invalid automation trigger: {0}',
+    end_required: 'Wählen Sie die Endbedingung: schedule.maxCount (1–100) für die Ausführungsanzahl oder schedule.expireDate (Ablaufzeit in Millisekunden) für einen festen Zeitpunkt. Wählen Sie für lange Laufzeiten ein fernes Ablaufdatum und zeigen Sie es in der Konfigurationsübersicht an.',
+  },
   permission_conditions: { invalid: 'Invalid permission conditions: {0}' },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
@@ -2238,6 +2241,16 @@ module.exports.app_theme = require('../../lib/core/locales/en').app_theme;
 module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en').help.cmd_app_theme_snapshot;
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
+Object.assign(module.exports.process_tasks || (module.exports.process_tasks = {}), {
+  arguments_invalid: 'Ungültige Argumente: query benötigt appType und --process-inst-id; transfer zusätzlich --form-uuid, --to-user-id, --expect-form-name und --expect-form-type process. taskId muss eine positive Ganzzahl sein; unbekannte Optionen sind nicht zulässig.',
+  query_failed: 'Die Aufgabenabfrage ist fehlgeschlagen; keine Übertragung ausgeführt.',
+  response_invalid: 'Antwortstruktur, Aufgaben-ID oder Prozesszugehörigkeit konnte nicht geprüft werden.',
+  not_running: 'Die angegebene Aufgabe läuft nicht im Zielprozess, oder es gibt keine laufende Aufgabe; keine Übertragung ausgeführt.',
+  ambiguous: 'Mehrere Aufgaben laufen. Liste abfragen und --task-id angeben; keine Übertragung ausgeführt.',
+  rejected: 'Die Plattform hat die Übertragung durch den Administrator abgelehnt. Berechtigungen und Aufgabenstatus prüfen.',
+  result_unknown: 'Übertragungsergebnis unbekannt. Aufgaben über nextStep lesen; Übertragung nicht automatisch wiederholen.',
+  unverified: 'Übertragung angenommen, Empfänger beim erneuten Lesen aber nicht bestätigt. nextStep verwenden; nicht automatisch wiederholen.',
+});
 module.exports.data_manage_style = {
   'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': 'Ungültige Stilparameter. Verwenden Sie echte IDs und einen Katalogstil.',

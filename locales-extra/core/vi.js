@@ -54,7 +54,10 @@ module.exports = {
   integration_update_v2: {"usage": "integration update <appType> <formUuid> <processCode> --patch patch.json [--dry-run] [--expect fingerprint] [--publish]"},
 
   conditional_actors: { unavailable: 'Conditional actors are unavailable or could not be verified.', invalid: 'Invalid conditional actors: {0}' },
-  integration_triggers: { invalid: 'Invalid automation trigger: {0}' },
+  integration_triggers: {
+    invalid: 'Invalid automation trigger: {0}',
+    end_required: 'Chọn điều kiện kết thúc: schedule.maxCount (1–100) cho số lần chạy hoặc schedule.expireDate (thời điểm hết hạn tính bằng mili giây) cho thời gian cụ thể. Với lịch chạy lâu dài, chọn ngày kết thúc xa và hiển thị ngày thực tế trong bản tóm tắt.',
+  },
   permission_conditions: { invalid: 'Invalid permission conditions: {0}' },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
@@ -2238,6 +2241,16 @@ module.exports.app_theme = require('../../lib/core/locales/en').app_theme;
 module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en').help.cmd_app_theme_snapshot;
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
+Object.assign(module.exports.process_tasks || (module.exports.process_tasks = {}), {
+  arguments_invalid: 'Tham số không hợp lệ: query cần appType và --process-inst-id; transfer còn cần --form-uuid, --to-user-id, --expect-form-name và --expect-form-type process. taskId phải là số nguyên dương; không hỗ trợ tùy chọn không xác định.',
+  query_failed: 'Truy vấn tác vụ thất bại; chưa thực hiện chuyển giao.',
+  response_invalid: 'Không thể xác minh cấu trúc phản hồi, ID tác vụ hoặc tác vụ thuộc quy trình.',
+  not_running: 'Tác vụ được chỉ định không đang chạy trong quy trình đích, hoặc không có tác vụ đang chạy; chưa chuyển giao.',
+  ambiguous: 'Có nhiều tác vụ đang chạy. Truy vấn danh sách và chỉ định --task-id; chưa chuyển giao.',
+  rejected: 'Nền tảng từ chối chuyển giao của quản trị viên. Kiểm tra quyền và trạng thái.',
+  result_unknown: 'Chưa rõ kết quả chuyển giao. Đọc tác vụ bằng nextStep; không tự động thử chuyển giao lại.',
+  unverified: 'Yêu cầu chuyển giao đã được chấp nhận nhưng chưa xác minh được người nhận khi đọc lại. Dùng nextStep; không tự động thử lại.',
+});
 module.exports.data_manage_style = {
   'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': 'Tham số kiểu không hợp lệ. Dùng ID thực và kiểu trong danh mục.',
