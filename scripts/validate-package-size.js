@@ -155,9 +155,10 @@ const MAX_TARBALL_BYTES = 2560 * 1024;
 // Container-aware responsive diagnostics and the reusable Canvas scaffold add
 // two published files. Keep a small byte margin for npm metadata variance.
 // Native form-message management adds one runtime module plus its skill and reference:
-// Node 26 measures 9,701,121 unpacked bytes / 767 files. Keep the next 16 KiB
-// boundary; compressed and per-file caps remain unchanged.
-const MAX_UNPACKED_BYTES = 9488 * 1024;
+// Merged main's dynamic personnel sources and clarified message skills measure
+// 9,721,774 unpacked bytes / 769 files. Keep the next 16 KiB boundary;
+// compressed, entry-count and per-file caps remain unchanged.
+const MAX_UNPACKED_BYTES = 9504 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.

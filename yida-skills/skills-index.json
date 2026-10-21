@@ -53,7 +53,7 @@
       "name": "yida-form-message",
       "path": "skills/yida-form-message/SKILL.md",
       "display_name": "表单消息通知",
-      "description": "查询和维护页面设置中的原生表单消息通知触发、接收对象与消息模板；不发送测试消息。",
+      "description": "配置普通表单新增、编辑、删除或评论后的消息通知，选择接收人和七种消息样式；保存后核对配置，按用户要求执行真实发送测试。",
       "category": "yida-skills/form",
       "tags": ["消息通知", "表单通知", "工作通知", "消息卡片", "群置顶卡片"],
       "aliases": ["表单消息", "页面消息通知", "form-message"],
