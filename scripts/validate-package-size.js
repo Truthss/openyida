@@ -154,7 +154,9 @@ const MAX_TARBALL_BYTES = 2560 * 1024;
 // on Node 26 before generated command docs; retain the next 16 KiB boundary.
 // Solution Center templates add one runtime module and one focused skill:
 // Node 26 measures 9,680,243 unpacked bytes / 764 files; retain the next 16 KiB boundary.
-const MAX_UNPACKED_BYTES = 9456 * 1024;
+// Template preparation and bounded failure recovery: Node 26 measures 9,692,651
+// unpacked bytes. Round up one 16 KiB block; file and tarball caps stay unchanged.
+const MAX_UNPACKED_BYTES = 9472 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
