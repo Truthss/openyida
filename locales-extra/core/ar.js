@@ -40,7 +40,10 @@ module.exports = {
   integration_update_v2: {"usage": "integration update <appType> <formUuid> <processCode> --patch patch.json [--dry-run] [--expect fingerprint] [--publish]"},
 
   conditional_actors: { unavailable: 'Conditional actors are unavailable or could not be verified.', invalid: 'Invalid conditional actors: {0}' },
-  integration_triggers: { invalid: 'Invalid automation trigger: {0}' },
+  integration_triggers: {
+    invalid: 'Invalid automation trigger: {0}',
+    end_required: 'اختر شرط انتهاء المؤقت: schedule.maxCount من 1 إلى 100 لعدد مرات التنفيذ أو schedule.expireDate لوقت الانتهاء بالمللي ثانية. للتشغيل طويل المدى اختر تاريخ انتهاء بعيدًا واعرض التاريخ الفعلي في ملخص الإعداد.',
+  },
   permission_conditions: { invalid: 'Invalid permission conditions: {0}' },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
