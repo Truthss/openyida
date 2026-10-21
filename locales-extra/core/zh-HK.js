@@ -42,7 +42,10 @@ module.exports = {
   integration_update_v2: {"usage": "integration update <appType> <formUuid> <processCode> --patch patch.json [--dry-run] [--expect fingerprint] [--publish]"},
 
   conditional_actors: { unavailable: 'Conditional actors are unavailable or could not be verified.', invalid: 'Invalid conditional actors: {0}' },
-  integration_triggers: { invalid: 'Invalid automation trigger: {0}' },
+  integration_triggers: {
+    invalid: 'Invalid automation trigger: {0}',
+    end_required: '請選擇定時任務的結束條件：觸發次數填寫 schedule.maxCount（1–100），指定時間填寫 schedule.expireDate（截止時間的毫秒時間戳）。長期執行可選擇較遠的截止日期，並在設定摘要中展示實際日期。',
+  },
   permission_conditions: { invalid: 'Invalid permission conditions: {0}' },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
@@ -2183,6 +2186,16 @@ module.exports.app_theme = require('../../lib/core/locales/en').app_theme;
 module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en').help.cmd_app_theme_snapshot;
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
+Object.assign(module.exports.process_tasks || (module.exports.process_tasks = {}), {
+  arguments_invalid: '參數無效：查詢需要 appType 和 --process-inst-id；轉交還需要 --form-uuid、--to-user-id、--expect-form-name 和 --expect-form-type process。taskId 必須為正整數，不支援未知參數。',
+  query_failed: '流程任務查詢失敗，未執行轉交。',
+  response_invalid: '流程任務回應結構、任務 ID 或實例歸屬無法驗證。',
+  not_running: '指定任務不屬於目標流程的執行中任務，或沒有執行中任務，未執行轉交。',
+  ambiguous: '流程有多個執行中任務，請查詢清單並指定 --task-id，未執行轉交。',
+  rejected: '平台拒絕管理員轉交請求，請核對權限與任務狀態。',
+  result_unknown: '管理員轉交結果未知，請依 nextStep 唯讀查詢，禁止自動重試轉交。',
+  unverified: '轉交請求已接受，但回讀未能確認接收人，請依 nextStep 唯讀查詢，禁止自動重試轉交。',
+});
 module.exports.data_manage_style = {
   'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': '資料管理樣式參數無效，請使用真實 ID 和目錄中的樣式。',
@@ -2275,6 +2288,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "並行分支使�
 Object.assign(module.exports.formula_v2, {"conversion_empty":"公式結果轉成目標欄位後為空。日期請用 TIMESTAMP(日期公式)，並核對原值與欄位類型。","result_missing":"平台完成請求，但沒有返回目標欄位值。日期通常需要 TIMESTAMP(日期公式)。","conversion_partial":"結果只轉出部分數字或不是有限數值。請返回完整數字或毫秒時間戳。","target_branches":"公式可能返回 {0}，部分結果與 {1} 不相容；請逐一試算各分支。","date_timestamp":"日期物件與欄位保存值不同。通常用 TIMESTAMP(日期公式) 返回毫秒時間戳。","numeric_result_text":"公式可能返回文字；請用 --field 試算，核對是否轉成空值或部分數字。"});
 
 module.exports.feedback_report = {
+  body: {
+    summary: '想完成甚麼',
+    actual: '實際發生了甚麼',
+    expected: '希望看到甚麼結果',
+    incident: '問題發生時的環境',
+    command: '相關操作',
+    steps: '怎樣重現',
+    impact: '影響',
+    evidence: '已觀察的證據',
+    attempts: '嘗試過的方法與結果',
+    cause: '可能原因及確認程度',
+    cause_evidence: '判斷依據',
+    next: '下一步驗證',
+    screenshots: '問題截圖',
+    review_image: '公開前請檢查圖片',
+    limitations: '尚未驗證的範圍',
+    generator: '報告產生環境（不代表問題發生時）',
+    unknown: '未知 / 尚未確認',
+    draft: '本機草稿，尚未提交。請檢查文字和截圖，確認沒有客戶資料、憑證或內部資訊後再公開。',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',

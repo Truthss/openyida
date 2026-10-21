@@ -41,7 +41,10 @@ module.exports = {
   integration_update_v2: {"usage": "integration update <appType> <formUuid> <processCode> --patch patch.json [--dry-run] [--expect fingerprint] [--publish]"},
 
   conditional_actors: { unavailable: 'Conditional actors are unavailable or could not be verified.', invalid: 'Invalid conditional actors: {0}' },
-  integration_triggers: { invalid: 'Invalid automation trigger: {0}' },
+  integration_triggers: {
+    invalid: 'Invalid automation trigger: {0}',
+    end_required: 'Chọn điều kiện kết thúc: schedule.maxCount (1–100) cho số lần chạy hoặc schedule.expireDate (thời điểm hết hạn tính bằng mili giây) cho thời gian cụ thể. Với lịch chạy lâu dài, chọn ngày kết thúc xa và hiển thị ngày thực tế trong bản tóm tắt.',
+  },
   permission_conditions: { invalid: 'Invalid permission conditions: {0}' },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
@@ -2230,6 +2233,16 @@ module.exports.app_theme = require('../../lib/core/locales/en').app_theme;
 module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en').help.cmd_app_theme_snapshot;
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
+Object.assign(module.exports.process_tasks || (module.exports.process_tasks = {}), {
+  arguments_invalid: 'Tham số không hợp lệ: query cần appType và --process-inst-id; transfer còn cần --form-uuid, --to-user-id, --expect-form-name và --expect-form-type process. taskId phải là số nguyên dương; không hỗ trợ tùy chọn không xác định.',
+  query_failed: 'Truy vấn tác vụ thất bại; chưa thực hiện chuyển giao.',
+  response_invalid: 'Không thể xác minh cấu trúc phản hồi, ID tác vụ hoặc tác vụ thuộc quy trình.',
+  not_running: 'Tác vụ được chỉ định không đang chạy trong quy trình đích, hoặc không có tác vụ đang chạy; chưa chuyển giao.',
+  ambiguous: 'Có nhiều tác vụ đang chạy. Truy vấn danh sách và chỉ định --task-id; chưa chuyển giao.',
+  rejected: 'Nền tảng từ chối chuyển giao của quản trị viên. Kiểm tra quyền và trạng thái.',
+  result_unknown: 'Chưa rõ kết quả chuyển giao. Đọc tác vụ bằng nextStep; không tự động thử chuyển giao lại.',
+  unverified: 'Yêu cầu chuyển giao đã được chấp nhận nhưng chưa xác minh được người nhận khi đọc lại. Dùng nextStep; không tự động thử lại.',
+});
 module.exports.data_manage_style = {
   'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': 'Tham số kiểu không hợp lệ. Dùng ID thực và kiểu trong danh mục.',
@@ -2322,6 +2335,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "Dùng conditions/
 Object.assign(module.exports.formula_v2, {"conversion_empty":"Chuyển đổi sang trường đích tạo ra giá trị rỗng. Với ngày, dùng TIMESTAMP(công thức ngày) và kiểm tra giá trị gốc cùng kiểu dữ liệu.","result_missing":"Yêu cầu đã hoàn tất nhưng thiếu giá trị trường đích. Trường ngày thường cần TIMESTAMP(công thức ngày).","conversion_partial":"Giá trị chỉ được chuyển một phần thành số hoặc không hữu hạn. Hãy trả về số đầy đủ hoặc mili giây.","target_branches":"Một số kiểu kết quả {0} không phù hợp với {1}. Hãy thử từng nhánh.","date_timestamp":"Đối tượng ngày khác với giá trị lưu. Thường dùng TIMESTAMP(công thức ngày) để trả về mili giây.","numeric_result_text":"Kết quả có thể là văn bản. Dùng --field thử từng nhánh để phát hiện chuyển đổi rỗng hoặc chỉ một phần."});
 
 module.exports.feedback_report = {
+  body: {
+    summary: 'Mục tiêu của bạn',
+    actual: 'Điều đã xảy ra',
+    expected: 'Kết quả mong đợi',
+    incident: 'Môi trường khi xảy ra vấn đề',
+    command: 'Thao tác liên quan',
+    steps: 'Cách tái hiện',
+    impact: 'Ảnh hưởng',
+    evidence: 'Bằng chứng quan sát được',
+    attempts: 'Các cách đã thử và kết quả',
+    cause: 'Nguyên nhân và mức độ chắc chắn',
+    cause_evidence: 'Căn cứ đánh giá',
+    next: 'Kiểm tra tiếp theo',
+    screenshots: 'Ảnh chụp màn hình',
+    review_image: 'Kiểm tra ảnh trước khi chia sẻ',
+    limitations: 'Phạm vi chưa kiểm chứng',
+    generator: 'Môi trường tạo báo cáo (không phải môi trường xảy ra vấn đề)',
+    unknown: 'Không rõ / chưa xác minh',
+    draft: 'Bản nháp cục bộ, chưa gửi. Kiểm tra văn bản và ảnh để loại bỏ dữ liệu khách hàng, thông tin đăng nhập và thông tin nội bộ trước khi chia sẻ.',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',

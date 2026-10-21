@@ -41,7 +41,10 @@ module.exports = {
   integration_update_v2: {"usage": "integration update <appType> <formUuid> <processCode> --patch patch.json [--dry-run] [--expect fingerprint] [--publish]"},
 
   conditional_actors: { unavailable: 'Conditional actors are unavailable or could not be verified.', invalid: 'Invalid conditional actors: {0}' },
-  integration_triggers: { invalid: 'Invalid automation trigger: {0}' },
+  integration_triggers: {
+    invalid: 'Invalid automation trigger: {0}',
+    end_required: 'टाइमर की समाप्ति शर्त चुनें: निष्पादन गिनती के लिए schedule.maxCount (1–100) या निश्चित समय के लिए schedule.expireDate (समाप्ति का मिलीसेकंड टाइमस्टैम्प) सेट करें। लंबे समय तक चलाने के लिए दूर की समाप्ति तारीख चुनें और सारांश में वास्तविक तारीख दिखाएँ।',
+  },
   permission_conditions: { invalid: 'Invalid permission conditions: {0}' },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
@@ -2230,6 +2233,16 @@ module.exports.app_theme = require('../../lib/core/locales/en').app_theme;
 module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en').help.cmd_app_theme_snapshot;
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
+Object.assign(module.exports.process_tasks || (module.exports.process_tasks = {}), {
+  arguments_invalid: 'अमान्य तर्क: query के लिए appType और --process-inst-id आवश्यक हैं; transfer के लिए --form-uuid, --to-user-id, --expect-form-name और --expect-form-type process भी आवश्यक हैं। taskId धनात्मक पूर्णांक होना चाहिए; अज्ञात विकल्प समर्थित नहीं हैं।',
+  query_failed: 'प्रक्रिया कार्यों की क्वेरी विफल हुई; हस्तांतरण नहीं किया गया।',
+  response_invalid: 'कार्य प्रतिक्रिया की संरचना, ID या प्रक्रिया से संबंध सत्यापित नहीं हो सका।',
+  not_running: 'लक्षित प्रक्रिया में निर्दिष्ट चालू कार्य नहीं है; हस्तांतरण नहीं किया गया।',
+  ambiguous: 'कई कार्य चल रहे हैं। सूची देखें और --task-id दें; हस्तांतरण नहीं किया गया।',
+  rejected: 'प्लेटफ़ॉर्म ने व्यवस्थापक हस्तांतरण अस्वीकार किया। अनुमतियाँ और कार्य स्थिति जाँचें।',
+  result_unknown: 'हस्तांतरण परिणाम अज्ञात है। nextStep से कार्य पढ़ें; हस्तांतरण स्वतः दोबारा न करें।',
+  unverified: 'हस्तांतरण स्वीकार हुआ, लेकिन दोबारा पढ़ने पर प्राप्तकर्ता सत्यापित नहीं हुआ। nextStep देखें; स्वतः दोबारा न करें।',
+});
 module.exports.data_manage_style = {
   'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': 'शैली के पैरामीटर अमान्य हैं। वास्तविक ID और सूची की शैली उपयोग करें।',
@@ -2322,6 +2335,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "समाना�
 Object.assign(module.exports.formula_v2, {"conversion_empty":"लक्ष्य फ़ील्ड में बदलने के बाद परिणाम खाली है। तारीख के लिए TIMESTAMP(तारीख सूत्र) का उपयोग करके मूल मान और प्रकार जाँचें।","result_missing":"अनुरोध पूरा हुआ लेकिन लक्ष्य फ़ील्ड का मान नहीं मिला। तारीख के लिए सामान्यतः TIMESTAMP(तारीख सूत्र) चाहिए।","conversion_partial":"मान का केवल कुछ भाग संख्या बना या वह सीमित संख्या नहीं है। पूरी संख्या या मिलीसेकंड टाइमस्टैम्प लौटाएँ।","target_branches":"परिणाम के कुछ प्रकार {0}, {1} से मेल नहीं खाते। हर शाखा का परीक्षण करें।","date_timestamp":"तारीख ऑब्जेक्ट और सहेजा गया मान अलग हैं। सामान्यतः TIMESTAMP(तारीख सूत्र) से मिलीसेकंड लौटाएँ।","numeric_result_text":"परिणाम टेक्स्ट हो सकता है। खाली या आंशिक संख्या रूपांतरण पहचानने के लिए हर शाखा को --field से जाँचें।"});
 
 module.exports.feedback_report = {
+  body: {
+    summary: 'आपका लक्ष्य',
+    actual: 'क्या हुआ',
+    expected: 'अपेक्षित परिणाम',
+    incident: 'समस्या होने के समय का परिवेश',
+    command: 'संबंधित कार्य',
+    steps: 'समस्या दोहराने के चरण',
+    impact: 'प्रभाव',
+    evidence: 'देखे गए प्रमाण',
+    attempts: 'प्रयास और परिणाम',
+    cause: 'कारण और विश्वास का स्तर',
+    cause_evidence: 'आकलन के प्रमाण',
+    next: 'अगली जाँच',
+    screenshots: 'स्क्रीनशॉट',
+    review_image: 'साझा करने से पहले चित्र जाँचें',
+    limitations: 'जाँच की सीमाएँ',
+    generator: 'रिपोर्ट बनाने का परिवेश (समस्या के समय का नहीं)',
+    unknown: 'अज्ञात / अपुष्ट',
+    draft: 'स्थानीय मसौदा, अभी भेजा नहीं गया। साझा करने से पहले पाठ और चित्रों में ग्राहक डेटा, क्रेडेंशियल और निजी जानकारी की जाँच करें।',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',

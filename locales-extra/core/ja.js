@@ -41,7 +41,10 @@ module.exports = {
   integration_update_v2: {"usage": "integration update <appType> <formUuid> <processCode> --patch patch.json [--dry-run] [--expect fingerprint] [--publish]"},
 
   conditional_actors: { unavailable: 'Conditional actors are unavailable or could not be verified.', invalid: 'Invalid conditional actors: {0}' },
-  integration_triggers: { invalid: 'Invalid automation trigger: {0}' },
+  integration_triggers: {
+    invalid: 'Invalid automation trigger: {0}',
+    end_required: 'タイマーの終了条件を選んでください。実行回数は schedule.maxCount（1–100）、指定時刻は schedule.expireDate（終了時刻のミリ秒）を設定します。長期実行では遠い終了日を選び、設定概要に実際の日付を表示してください。',
+  },
   permission_conditions: { invalid: 'Invalid permission conditions: {0}' },
   theme_source: { conflict: 'The theme source differs from the existing CSS or cannot be verified. Generate to a new output path, review and migrate project customizations before replacing the original file.' },
   app_entry: {
@@ -2157,6 +2160,16 @@ module.exports.app_theme = require('../../lib/core/locales/en').app_theme;
 module.exports.help.cmd_app_theme_snapshot = require('../../lib/core/locales/en').help.cmd_app_theme_snapshot;
 module.exports.help.cmd_app_theme_restore = require('../../lib/core/locales/en').help.cmd_app_theme_restore;
 
+Object.assign(module.exports.process_tasks || (module.exports.process_tasks = {}), {
+  arguments_invalid: '引数が無効です。query には appType と --process-inst-id、transfer にはさらに --form-uuid、--to-user-id、--expect-form-name、--expect-form-type process が必要です。taskId は正の整数で、未対応の引数は使用できません。',
+  query_failed: 'プロセスタスクの取得に失敗しました。転送は実行されていません。',
+  response_invalid: 'タスク応答の構造、ID、プロセスへの所属を確認できません。',
+  not_running: '対象プロセスに実行中の指定タスクがありません。転送は実行されていません。',
+  ambiguous: '実行中のタスクが複数あります。一覧を取得して --task-id を指定してください。転送は実行されていません。',
+  rejected: '管理者による転送が拒否されました。権限とタスクの状態を確認してください。',
+  result_unknown: '転送結果は不明です。nextStep で読み取り確認してください。転送を自動再試行しないでください。',
+  unverified: '転送は受理されましたが、受信者を再取得で確認できません。nextStep で確認し、転送を自動再試行しないでください。',
+});
 module.exports.data_manage_style = {
   'usage': 'openyida data-manage-style guide [--json]\nopenyida data-manage-style list [--json]\nopenyida data-manage-style generate --app APP_ID --form FORM-ID --style <id> --base-css <snapshot/theme.css> --output <new.css> [--focus balanced|actions] [--field-id <actualId>]... [--emphasize-field <actualId>]... [--tag-field <selectFieldId>]... [--follow-shell] [--json]',
   'data_style_invalid': 'スタイル引数が無効です。実際の ID と一覧のスタイルを使用してください。',
@@ -2249,6 +2262,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "並列分岐に�
 Object.assign(module.exports.formula_v2, {"conversion_empty":"式の結果が対象フィールドへの変換で空になりました。日付は TIMESTAMP(日付式) を使い、元の値と型を確認してください。","result_missing":"リクエストは完了しましたが、対象フィールドの値がありません。日付には通常 TIMESTAMP(日付式) が必要です。","conversion_partial":"数値の一部だけが解析されたか、有限数ではありません。完全な数値またはミリ秒タイムスタンプを返してください。","target_branches":"結果の型 {0} の一部は {1} に適合しません。各分岐を試算してください。","date_timestamp":"日付オブジェクトと保存値は異なります。通常は TIMESTAMP(日付式) でミリ秒を返します。","numeric_result_text":"結果が文字列になる場合があります。--field で各分岐を試算し、空値や部分的な数値変換を確認してください。"});
 
 module.exports.feedback_report = {
+  body: {
+    summary: '実現したいこと',
+    actual: '実際に起きたこと',
+    expected: '期待する結果',
+    incident: '問題発生時の環境',
+    command: '関連する操作',
+    steps: '再現手順',
+    impact: '影響',
+    evidence: '観測した証拠',
+    attempts: '試した方法と結果',
+    cause: '原因と確信度',
+    cause_evidence: '判断の根拠',
+    next: '次の確認',
+    screenshots: 'スクリーンショット',
+    review_image: '共有前に画像を確認してください',
+    limitations: '未検証の範囲',
+    generator: 'レポート生成環境（問題発生時の環境ではありません）',
+    unknown: '不明 / 未確認',
+    draft: 'ローカルの下書きです。未送信です。公開前に文章と画像から顧客データ、認証情報、内部情報を除いてください。',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',

@@ -16,7 +16,7 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 
 ## 本地使用问题与贡献反馈
 
-用户遇到反复报错、不会提 Issue/PR、没有 GitHub 账号或没有 OpenYida 源码，先加载 `yida-feedback`。
+用户反馈 OpenYida 使用问题或体验建议、想贡献改进、不会提 Issue/PR，先加载 `yida-feedback`；没有 GitHub 账号或源码也可先整理材料。
 它负责基于当前证据分析根因、生成脱敏本地材料，并按用户授权提交 Issue 或个人 Fork PR。无账号先引导注册，实在不行提示“反馈到AI开发者群”。
 自动发现重复失败只建议并整理本地草稿，不自动公开提交。网页关联本地 Agent 异常先按下节诊断，需要反馈时再进入此技能。普通宜搭产品 VOC 清单仍用 `yida-voc`。
 
@@ -159,7 +159,7 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 | --- | --- |
 | 从零搭一个完整应用/系统 | `yida-app`；先分析需求并完成首次搭建确认，再规划与搭建 |
 | 已有 app 但没有任何页面，需要补成完整系统 | `yida-app`；属于首次搭建，同样先询问搭建方式，复用已有 `appType` 补齐资源 |
-| OpenYida 反复报错、不会提 Issue/PR、没有账号或源码 | `yida-feedback`；先脱敏本地报告，个人 Fork 仅贡献公开 OpenYida 修复 |
+| OpenYida 使用问题、体验建议、希望贡献改进或不会提 Issue/PR | `yida-feedback`；先整理脱敏材料，成功提交 Issue 后可选邀请 PR，贡献代码使用个人 Fork |
 | 读取钉钉在线文档正文 | `yida-document-markdown`，使用登录态接口获取 Markdown |
 | 按 taskUuid 读取钉钉听记 | `yida-tingji`，将听记任务 ID 原样传入命令 |
 | 将钉钉开放平台官方 API 接入宜搭或 Canvas | `yida-dingtalk-openapi`；密钥不进聊天，账号由用户在宜搭或本机 TTY 配置 |
@@ -180,6 +180,7 @@ Fast / Plan 选定的主题和主色属于整个应用：导航、原生页、�
 | 流程设计器字段列表空白 | `yida-process-rule`，先用 `process fields` 检查字段来源 |
 | 查字段 ID / 保存 Schema 证据 | `yida-get-schema`；凡涉及 fieldId 的数据、流程、公式、页面代码先取证 |
 | 改表单数据记录 | `yida-data-management`，不是 `yida-create-form-page` |
+| 查询流程当前任务、管理员转交已有流程任务 | `yida-data-management`；先查询 process-tasks，再 transfer task 并回读实际处理人 |
 | 查询指定应用/流程表单中当前审批人为某人的实例或条数 | `yida-data-management`；`data query process --current-approver <userId> [--count]`，仅统计当前登录人经服务端授权可见的实例 |
 | 配置或修改公式、字段计算、提交校验、节点筛选、报表计算 | 共用 `yida-formula`，按实际保存内容读取说明；查看字段公式、查参数和检查用 `yida-formula-evaluate` |
 | 提交后跨表写入/更新/删除 | 默认 `yida-integration`；用户明确要业务关联规则/高级函数时用 `yida-business-rule` |

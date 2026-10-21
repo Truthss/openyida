@@ -65,7 +65,11 @@ const path = require('path');
 // and a skill with three guides. With main's AI app helper, Node 26 measures
 // 2,576,926 compressed bytes;
 // keep a small allowance for Node 20's different npm compression output.
-const MAX_TARBALL_BYTES = 2560 * 1024;
+// Beginner account/tool guidance: Node 20.18.1 measures 2,627,647 compressed
+// bytes (Node 26 is smaller). Keep the next 16 KiB compression boundary.
+// Main's task-transfer and scheduled-end-condition changes combined with feedback
+// guidance measure 2,634,130 compressed bytes on Node 20; this cap still fits.
+const MAX_TARBALL_BYTES = 2576 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.
@@ -154,11 +158,22 @@ const MAX_TARBALL_BYTES = 2560 * 1024;
 // on Node 26 before generated command docs; retain the next 16 KiB boundary.
 // Container-aware responsive diagnostics and the reusable Canvas scaffold add
 // two published files. Keep a small byte margin for npm metadata variance.
-// Native form-message management adds one runtime module plus its skill and reference:
-// Merged main's dynamic personnel sources and clarified message skills measure
-// 9,721,774 unpacked bytes / 769 files. Keep the next 16 KiB boundary;
-// compressed, entry-count and per-file caps remain unchanged.
-const MAX_UNPACKED_BYTES = 9504 * 1024;
+// Task-driven responsive guidance measures 9,676,524 unpacked bytes at 12b8b0d0;
+// the wording cleanup measures 9,676,590 bytes / 764 files on Node 26.
+// Retain the next 16 KiB boundary; compressed, entry and per-file caps stay fixed.
+// Form-member/self-select runtime and guide: 9,672,548 unpacked bytes / 764 files
+// on Node 22. Retain the next 16 KiB boundary; compressed and per-file caps stay fixed.
+// Responsive guidance combined with main's dynamic personnel sources measures
+// 9,694,016 unpacked bytes / 766 files on Node 26; next 16 KiB boundary.
+// Beginner feedback guidance and localized incident context: 9,701,569 bytes,
+// still 766 files. Keep the next 16 KiB boundary; other budgets stay unchanged.
+// PR #619 merged with main: 9,695,540 unpacked bytes on Node 23.
+// Task transfer adds its runtime, guide and 12-locale messages; next 16 KiB boundary.
+// Combined responsive/feedback and main package: 9,733,108 bytes / 769 files
+// on Node 20. Keep the next 16 KiB boundary and the existing single-file cap.
+// Combined with native form-message management and settings-link delivery:
+// Node 26 measures 9,768,800 unpacked bytes / 772 files. Next 16 KiB boundary.
+const MAX_UNPACKED_BYTES = 9552 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -188,7 +203,11 @@ const MAX_UNPACKED_BYTES = 9504 * 1024;
 // Custom buttons and native report zero-value controls add five packaged files.
 // Include the shared AI application eligibility helper merged from main.
 // Native form-message management adds exactly three packaged files; retain two entries of headroom.
-const MAX_ENTRY_COUNT = 769;
+// Dynamic personnel sources add one runtime module and one skill reference.
+// Account/tool onboarding adds one progressively loaded feedback reference.
+// Unpacked and per-file limits remain unchanged.
+// Administrator task transfer adds exactly one runtime module and one skill guide.
+const MAX_ENTRY_COUNT = 772;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -244,6 +263,7 @@ const REQUIRED_PACKAGE_FILES = [
   'yida-skills/skills/yida-feedback/SKILL.md',
   'yida-skills/skills/yida-feedback/references/report-input.md',
   'yida-skills/skills/yida-feedback/references/github-contribution.md',
+  'yida-skills/skills/yida-feedback/references/github-setup.md',
   'lib/permission/permission-scope.js',
   'lib/permission/matrix-availability.js',
   'yida-skills/skills/yida-form-permission/references/row-field-access.md',
@@ -310,6 +330,8 @@ const REQUIRED_PACKAGE_FILES = [
   'lib/asset/asset-plan.js',
   'lib/asset/attachment-upload.js',
   'lib/process/services/process-actions.js',
+  'lib/process/process-tasks.js',
+  'yida-skills/skills/yida-data-management/references/process-task-transfer.md',
   'lib/process/services/process-field-permissions.js',
   'lib/process/services/process-form-fields.js',
   'lib/process/process-fields.js',
