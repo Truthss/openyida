@@ -2407,3 +2407,5 @@ module.exports.feedback_github = {
   confirmation: 'Star or Fork requires the user to explicitly choose that action before --confirm. Neither is required to submit an Issue.',
   failed: 'The GitHub action could not be verified. Inspect its status before retrying; this does not block Issue submission.',
 };
+
+module.exports.process_dynamic_actors = { invalid: "प्रक्रिया सदस्य कॉन्फ़िगरेशन अमान्य है। details.reason, चयन सीमा और वास्तविक सदस्य फ़ील्ड जाँचें।" };

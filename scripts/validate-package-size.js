@@ -152,7 +152,9 @@ const MAX_TARBALL_BYTES = 2560 * 1024;
 // Keep the next 16 KiB boundary and the existing 512 KiB per-file cap.
 // Issue contribution account checks add one runtime module: 9,653,376 unpacked bytes
 // on Node 26 before generated command docs; retain the next 16 KiB boundary.
-const MAX_UNPACKED_BYTES = 9440 * 1024;
+// Form-member/self-select runtime and guide: 9,672,548 unpacked bytes / 764 files
+// on Node 22. Retain the next 16 KiB boundary; compressed and per-file caps stay fixed.
+const MAX_UNPACKED_BYTES = 9456 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -181,7 +183,8 @@ const MAX_UNPACKED_BYTES = 9440 * 1024;
 // The combined workflow, data-card and cool-card package contains 738 files.
 // Custom buttons and native report zero-value controls add five packaged files.
 // Include the shared AI application eligibility helper merged from main.
-const MAX_ENTRY_COUNT = 762;
+// Dynamic personnel sources add one runtime module and one skill reference.
+const MAX_ENTRY_COUNT = 764;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [

@@ -2334,3 +2334,5 @@ module.exports.feedback_github = {
   confirmation: 'Star or Fork requires the user to explicitly choose that action before --confirm. Neither is required to submit an Issue.',
   failed: 'The GitHub action could not be verified. Inspect its status before retrying; this does not block Issue submission.',
 };
+
+module.exports.process_dynamic_actors = { invalid: "処理担当者の設定が無効です。details.reason、選択範囲と実際のメンバーフィールドを確認してください。" };
