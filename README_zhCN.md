@@ -324,7 +324,9 @@ openyida feedback report --input summary.json --output-dir feedback-draft-001
 
 报告摘要由 AI 根据当前证据整理，也可加入用户明确选择的复现截图；PR 附修复前后测试对比。提交前会展示最终正文和图片，确认有无敏感信息或不想公开的内容，允许删改后再提交。输入格式见 [反馈报告说明](yida-skills/skills/yida-feedback/references/report-input.md)。分享前请检查业务信息。有 GitHub 账号时，可授权 AI 帮助提交 Issue；修复公开 OpenYida 代码或技能时，通过你自己的 Fork 提交 PR。无账号时先引导创建 GitHub 账号；实在不行，反馈到AI开发者群。
 
-用户选择向 OpenYida 提交 Issue 时，反馈 Skill 可通过 `openyida feedback github status --json` 检查当前 GitHub 账号的 Star 和个人 Fork 状态。Star/Fork 均为可选项，明确选择后才执行 `feedback github star --confirm` 或 `feedback github fork --confirm`，已有操作直接复用。检查不在安装或自动更新中触发，两项操作都不是提交 Issue 的前提。
+需要配置提交工具时，AI 可先执行 `openyida feedback github setup --json`，检测 gh 和当前账号；用户同意安装计划后再执行 `openyida feedback github setup --install --confirm --json`。macOS/Linux 复用已有 Homebrew，Windows 复用已有 WinGet；没有支持的包管理器时提供官方说明或网页方式。安装后单独引导用户在浏览器授权，不自动登录、不获取密码或 Token，安装同意也不代替公开内容确认。工具就绪后继续原草稿，详见[账号与工具准备](yida-skills/skills/yida-feedback/references/github-setup.md)。
+
+准备 PR 需核实个人 Fork，或用户主动询问支持项目时，反馈 Skill 可通过 `openyida feedback github status --json` 检查当前账号的 Star 和个人 Fork 状态。Star/Fork 均为可选项，明确选择后才执行 `feedback github star --confirm` 或 `feedback github fork --confirm`，已有操作直接复用。检查不在安装或自动更新中触发，两项操作都不是提交 Issue 的前提。
 
 <!-- OPENYIDA_COMMANDS_START -->
 <!-- 本节由 `npm run docs:commands` 自动生成，请勿手动编辑命令行。 -->

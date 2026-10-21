@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 新增能力
 
+- **GitHub 工具配置引导**：`feedback github setup` 只读检测 gh 和当前账号；经用户同意后，通过已有 Homebrew（macOS/Linux）或 WinGet（Windows）安装，再单独引导浏览器授权。无可用包管理器时提供官方说明或网页路径，不自动提权、登录或公开提交；原草稿、环境信息与公开确认边界保持不变。
 - **容器响应式模板**：新增 `openyida sample openyida-page-template canvas-responsive-layout`，提供筛选排列、主辅布局、局部滚动和容器查询等独立片段，按当前业务需要复用；图表等组件需要实际宽度时，再使用带清理和帧合并的测量 Hook。断点切换保持原业务组件状态。
 - **响应式源码诊断**：Canvas `compile --json` 与普通页面 `check-page` 会提示仅依赖视口宽度、未清理 `ResizeObserver`、大固定宽度及整页 `scale/zoom` 等高风险写法；诊断为非阻断 warning，并支持对确有必要的视口级或固定画布场景作显式说明。
 

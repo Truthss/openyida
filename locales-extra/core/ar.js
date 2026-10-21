@@ -2442,7 +2442,16 @@ module.exports.task_center = {
 };
 
 module.exports.feedback_github = {
-  usage: 'Usage: openyida feedback github <status|star|fork> [--confirm] [--json]',
+  setup_inspect_installation: 'لم يتم التحقق من التثبيت. افحص gh --version وحالة مدير الحزم أو أعد فتح الطرفية قبل تقرير إعادة المحاولة؛ احتفظ بالمسودة.',
+  setup_check_execution: 'تعذر تشغيل gh. افحص أذونات التنفيذ والبيئة المحلية؛ لا تعد التثبيت أو تبدل الحساب تلقائياً.',
+  setup_confirm_install: 'يمكن تثبيت GitHub CLI. اشرح الخطة واحصل على الموافقة قبل openyida feedback github setup --install --confirm --json؛ يظل خيار الويب متاحاً.',
+  setup_manual_install: 'التثبيت التلقائي غير متاح. استخدم التعليمات الرسمية أو موصلاً موجوداً أو الويب؛ احتفظ بالمسودة.',
+  setup_ready: 'تم التحقق من GitHub CLI والحساب الحالي. تابع المسودة؛ أكد المحتوى العام والأذونات المطلوبة قبل الإرسال.',
+  setup_browser_login: 'GitHub CLI متاح ويحتاج إلى تسجيل الدخول. بعد الموافقة، وجّه التفويض في المتصفح ثم تحقق باستخدام setup --json.',
+  setup_check_account: 'GitHub CLI متاح لكن الحساب لم يتم التحقق منه. افحص الشبكة والتفويض وحدود الطلبات؛ لا تفترض غياب الحساب ولا تعد التثبيت.',
+  setup_consent: 'استخدم --install --confirm فقط بعد الموافقة على تثبيت GitHub CLI وتبعياته المطلوبة في الموقع الافتراضي لمدير الحزم. يقبل Windows اتفاقيات مصدر WinGet والبرنامج وقد يحتاج إلى موافقة المستخدم على أذونات النظام. لا تثبيت تلقائي لمدير الحزم أو رفع للصلاحيات أو تسجيل دخول.',
+  setup_privacy: 'الموافقة على التثبيت ليست موافقة على النشر. يفوض المستخدم عبر المتصفح؛ لا تطلب كلمات مرور أو رموزاً أو Token. إذا تعذر التخزين الآمن لبيانات الاعتماد في gh، استخدم الويب أو موصلاً آمناً. لا تضع تشخيص الحساب والأداة في تقرير الملاحظات.',
+  usage: 'Usage: openyida feedback github setup [--install --confirm] [--json]; openyida feedback github <status|star|fork> [--confirm] [--json]',
   confirmation: 'Star or Fork requires the user to explicitly choose that action before --confirm. Neither is required to submit an Issue.',
   failed: 'The GitHub action could not be verified. Inspect its status before retrying; this does not block Issue submission.',
 };

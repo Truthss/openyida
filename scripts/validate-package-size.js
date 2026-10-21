@@ -69,7 +69,9 @@ const path = require('path');
 // bytes (Node 26 is smaller). Keep the next 16 KiB compression boundary.
 // Main's task-transfer and scheduled-end-condition changes combined with feedback
 // guidance measure 2,634,130 compressed bytes on Node 20; this cap still fits.
-const MAX_TARBALL_BYTES = 2576 * 1024;
+// Consent-based GitHub setup adds one runtime module and user guidance:
+// Node 20.18.1 measures 2,637,999 compressed bytes; next 16 KiB boundary.
+const MAX_TARBALL_BYTES = 2592 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
 // Measured 8,678,362 bytes / 654 entries; retain less than 32 KiB headroom.
@@ -204,11 +206,13 @@ const MAX_UNPACKED_BYTES = 9520 * 1024;
 // Account/tool onboarding adds one progressively loaded feedback reference.
 // Unpacked and per-file limits remain unchanged.
 // Administrator task transfer adds exactly one runtime module and one skill guide.
-const MAX_ENTRY_COUNT = 769;
+// GitHub setup keeps installation/detection separate from account actions.
+const MAX_ENTRY_COUNT = 770;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
   'lib/feedback/github.js',
+  'lib/feedback/github-setup.js',
   'lib/print-template/builder.js',
   'lib/print-template/codes.js',
   'lib/print-template/contract.js',

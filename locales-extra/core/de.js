@@ -2440,7 +2440,16 @@ module.exports.task_center = {
 };
 
 module.exports.feedback_github = {
-  usage: 'Usage: openyida feedback github <status|star|fork> [--confirm] [--json]',
+  setup_inspect_installation: 'Installation nicht verifiziert. Prüfen Sie gh --version, den Paketmanager oder öffnen Sie das Terminal erneut, bevor Sie einen neuen Versuch wählen. Entwurf behalten.',
+  setup_check_execution: 'gh konnte nicht ausgeführt werden. Ausführungsrechte und lokale Umgebung prüfen; nicht automatisch neu installieren oder Konten wechseln.',
+  setup_confirm_install: 'GitHub CLI kann installiert werden. Plan erläutern und Zustimmung einholen, dann openyida feedback github setup --install --confirm --json ausführen. Die Weboption bleibt verfügbar.',
+  setup_manual_install: 'Automatische Installation nicht verfügbar. Offizielle Anleitung, vorhandenen Connector oder Web verwenden; Entwurf behalten.',
+  setup_ready: 'GitHub CLI und aktuelles Konto sind verifiziert. Entwurf fortsetzen; vor dem Senden öffentliche Inhalte und Berechtigungen bestätigen.',
+  setup_browser_login: 'GitHub CLI ist verfügbar; Anmeldung erforderlich. Nach Zustimmung durch die Browserautorisierung führen und mit setup --json erneut prüfen.',
+  setup_check_account: 'GitHub CLI ist verfügbar, das Konto jedoch nicht verifiziert. Netzwerk, Autorisierung oder Limits prüfen; kein fehlendes Konto unterstellen oder neu installieren.',
+  setup_consent: '--install --confirm erst nach Zustimmung zur Installation von GitHub CLI und notwendigen Abhängigkeiten im Standardverzeichnis des Paketmanagers nutzen. Windows akzeptiert WinGet-Quellen- und Softwarevereinbarungen und kann Systemfreigaben durch den Nutzer benötigen. Keine automatische Managerinstallation, Rechteerhöhung oder Anmeldung.',
+  setup_privacy: 'Installation ist keine Zustimmung zur Veröffentlichung. Der Nutzer autorisiert im Browser; keine Passwörter, Codes oder Token anfordern. Kann gh Zugangsdaten nicht sicher speichern, Web oder sicheren Connector verwenden. Konto- und Tooldiagnosen nicht in den Bericht aufnehmen.',
+  usage: 'Usage: openyida feedback github setup [--install --confirm] [--json]; openyida feedback github <status|star|fork> [--confirm] [--json]',
   confirmation: 'Star or Fork requires the user to explicitly choose that action before --confirm. Neither is required to submit an Issue.',
   failed: 'The GitHub action could not be verified. Inspect its status before retrying; this does not block Issue submission.',
 };
