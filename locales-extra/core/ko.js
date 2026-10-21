@@ -2321,6 +2321,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "병렬 분기에�
 Object.assign(module.exports.formula_v2, {"conversion_empty":"수식 결과가 대상 필드 변환 후 빈 값이 되었습니다. 날짜에는 TIMESTAMP(날짜 수식)를 사용하고 원래 값과 유형을 확인하세요.","result_missing":"요청은 완료되었지만 대상 필드 값이 없습니다. 날짜에는 일반적으로 TIMESTAMP(날짜 수식)가 필요합니다.","conversion_partial":"숫자가 일부만 변환되었거나 유한수가 아닙니다. 완전한 숫자나 밀리초 타임스탬프를 반환하세요.","target_branches":"반환 유형 {0} 중 일부는 {1}과 맞지 않습니다. 각 분기를 시험하세요.","date_timestamp":"날짜 객체와 저장 값은 다릅니다. 일반적으로 TIMESTAMP(날짜 수식)로 밀리초를 반환하세요.","numeric_result_text":"결과가 텍스트일 수 있습니다. --field로 각 분기의 빈 값과 부분 숫자 변환을 확인하세요."});
 
 module.exports.feedback_report = {
+  body: {
+    summary: '하려던 작업',
+    actual: '실제로 발생한 일',
+    expected: '기대하는 결과',
+    incident: '문제 발생 당시 환경',
+    command: '관련 작업',
+    steps: '재현 방법',
+    impact: '영향',
+    evidence: '관찰한 증거',
+    attempts: '시도한 방법과 결과',
+    cause: '원인과 확신 수준',
+    cause_evidence: '판단 근거',
+    next: '다음 확인',
+    screenshots: '스크린샷',
+    review_image: '공유 전에 이미지를 확인하세요',
+    limitations: '미검증 범위',
+    generator: '보고서 생성 환경(문제 발생 당시 환경이 아님)',
+    unknown: '알 수 없음 / 미확인',
+    draft: '로컬 초안이며 아직 제출되지 않았습니다. 공개 전에 글과 이미지에서 고객 데이터, 인증 정보 및 내부 정보를 확인하세요.',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',

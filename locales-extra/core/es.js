@@ -2322,6 +2322,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "Use conditions/ru
 Object.assign(module.exports.formula_v2, {"conversion_empty":"La conversión al campo destino produjo un valor vacío. Para fechas, use TIMESTAMP(fórmula de fecha) y revise el valor original y el tipo.","result_missing":"La solicitud terminó sin un valor para el campo destino. Las fechas suelen necesitar TIMESTAMP(fórmula de fecha).","conversion_partial":"El valor se convirtió parcialmente o no es finito. Devuelva un número completo o milisegundos.","target_branches":"Algunos tipos de resultado {0} no coinciden con {1}. Pruebe cada rama.","date_timestamp":"Un objeto de fecha difiere del valor guardado. Use normalmente TIMESTAMP(fórmula de fecha) para obtener milisegundos.","numeric_result_text":"El resultado puede ser texto. Pruebe cada rama con --field para detectar valores vacíos o conversiones parciales."});
 
 module.exports.feedback_report = {
+  body: {
+    summary: 'Tu objetivo',
+    actual: 'Qué ocurrió',
+    expected: 'Resultado esperado',
+    incident: 'Entorno cuando ocurrió el problema',
+    command: 'Operación relacionada',
+    steps: 'Cómo reproducirlo',
+    impact: 'Impacto',
+    evidence: 'Evidencias observadas',
+    attempts: 'Intentos y resultados',
+    cause: 'Causa y grado de certeza',
+    cause_evidence: 'Evidencias del diagnóstico',
+    next: 'Próxima comprobación',
+    screenshots: 'Capturas de pantalla',
+    review_image: 'Revisar la imagen antes de compartir',
+    limitations: 'Limitaciones de las pruebas',
+    generator: 'Entorno de generación del informe (no el del incidente)',
+    unknown: 'Desconocido / sin verificar',
+    draft: 'Borrador local, aún no enviado. Revisa el texto y las imágenes para eliminar datos de clientes, credenciales e información privada antes de compartir.',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',

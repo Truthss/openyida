@@ -2322,6 +2322,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "استخدم cond
 Object.assign(module.exports.formula_v2, {"conversion_empty":"أصبح الناتج فارغًا بعد تحويله إلى الحقل الهدف. للتواريخ استخدم TIMESTAMP(صيغة التاريخ) وتحقق من القيمة الأصلية والنوع.","result_missing":"اكتمل الطلب دون قيمة للحقل الهدف. تحتاج التواريخ عادة إلى TIMESTAMP(صيغة التاريخ).","conversion_partial":"تم تحويل جزء من القيمة فقط أو أنها ليست عددًا محدودًا. أرجع عددًا كاملًا أو طابعًا زمنيًا بالمللي ثانية.","target_branches":"بعض أنواع النتائج {0} لا تتوافق مع {1}. اختبر كل فرع.","date_timestamp":"كائن التاريخ يختلف عن القيمة المخزنة. استخدم عادة TIMESTAMP(صيغة التاريخ) للمللي ثانية.","numeric_result_text":"قد تكون النتيجة نصًا. اختبر كل فرع باستخدام --field للكشف عن التحويل الفارغ أو الجزئي."});
 
 module.exports.feedback_report = {
+  body: {
+    summary: 'هدفك',
+    actual: 'ما الذي حدث',
+    expected: 'النتيجة المتوقعة',
+    incident: 'البيئة وقت حدوث المشكلة',
+    command: 'العملية ذات الصلة',
+    steps: 'خطوات إعادة الإنتاج',
+    impact: 'التأثير',
+    evidence: 'الأدلة المرصودة',
+    attempts: 'المحاولات والنتائج',
+    cause: 'السبب ودرجة اليقين',
+    cause_evidence: 'أدلة التقييم',
+    next: 'التحقق التالي',
+    screenshots: 'لقطات الشاشة',
+    review_image: 'راجع الصورة قبل مشاركتها',
+    limitations: 'نطاق الاختبارات غير المنفذة',
+    generator: 'بيئة إنشاء التقرير (وليست بيئة حدوث المشكلة)',
+    unknown: 'غير معروف / غير مؤكد',
+    draft: 'مسودة محلية لم تُرسل بعد. راجع النصوص والصور للتأكد من خلوها من بيانات العملاء وبيانات الاعتماد والمعلومات الخاصة قبل النشر.',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',

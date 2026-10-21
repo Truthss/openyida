@@ -2320,6 +2320,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "Dùng conditions/
 Object.assign(module.exports.formula_v2, {"conversion_empty":"Chuyển đổi sang trường đích tạo ra giá trị rỗng. Với ngày, dùng TIMESTAMP(công thức ngày) và kiểm tra giá trị gốc cùng kiểu dữ liệu.","result_missing":"Yêu cầu đã hoàn tất nhưng thiếu giá trị trường đích. Trường ngày thường cần TIMESTAMP(công thức ngày).","conversion_partial":"Giá trị chỉ được chuyển một phần thành số hoặc không hữu hạn. Hãy trả về số đầy đủ hoặc mili giây.","target_branches":"Một số kiểu kết quả {0} không phù hợp với {1}. Hãy thử từng nhánh.","date_timestamp":"Đối tượng ngày khác với giá trị lưu. Thường dùng TIMESTAMP(công thức ngày) để trả về mili giây.","numeric_result_text":"Kết quả có thể là văn bản. Dùng --field thử từng nhánh để phát hiện chuyển đổi rỗng hoặc chỉ một phần."});
 
 module.exports.feedback_report = {
+  body: {
+    summary: 'Mục tiêu của bạn',
+    actual: 'Điều đã xảy ra',
+    expected: 'Kết quả mong đợi',
+    incident: 'Môi trường khi xảy ra vấn đề',
+    command: 'Thao tác liên quan',
+    steps: 'Cách tái hiện',
+    impact: 'Ảnh hưởng',
+    evidence: 'Bằng chứng quan sát được',
+    attempts: 'Các cách đã thử và kết quả',
+    cause: 'Nguyên nhân và mức độ chắc chắn',
+    cause_evidence: 'Căn cứ đánh giá',
+    next: 'Kiểm tra tiếp theo',
+    screenshots: 'Ảnh chụp màn hình',
+    review_image: 'Kiểm tra ảnh trước khi chia sẻ',
+    limitations: 'Phạm vi chưa kiểm chứng',
+    generator: 'Môi trường tạo báo cáo (không phải môi trường xảy ra vấn đề)',
+    unknown: 'Không rõ / chưa xác minh',
+    draft: 'Bản nháp cục bộ, chưa gửi. Kiểm tra văn bản và ảnh để loại bỏ dữ liệu khách hàng, thông tin đăng nhập và thông tin nội bộ trước khi chia sẻ.',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',

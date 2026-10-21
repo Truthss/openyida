@@ -2320,6 +2320,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "समाना�
 Object.assign(module.exports.formula_v2, {"conversion_empty":"लक्ष्य फ़ील्ड में बदलने के बाद परिणाम खाली है। तारीख के लिए TIMESTAMP(तारीख सूत्र) का उपयोग करके मूल मान और प्रकार जाँचें।","result_missing":"अनुरोध पूरा हुआ लेकिन लक्ष्य फ़ील्ड का मान नहीं मिला। तारीख के लिए सामान्यतः TIMESTAMP(तारीख सूत्र) चाहिए।","conversion_partial":"मान का केवल कुछ भाग संख्या बना या वह सीमित संख्या नहीं है। पूरी संख्या या मिलीसेकंड टाइमस्टैम्प लौटाएँ।","target_branches":"परिणाम के कुछ प्रकार {0}, {1} से मेल नहीं खाते। हर शाखा का परीक्षण करें।","date_timestamp":"तारीख ऑब्जेक्ट और सहेजा गया मान अलग हैं। सामान्यतः TIMESTAMP(तारीख सूत्र) से मिलीसेकंड लौटाएँ।","numeric_result_text":"परिणाम टेक्स्ट हो सकता है। खाली या आंशिक संख्या रूपांतरण पहचानने के लिए हर शाखा को --field से जाँचें।"});
 
 module.exports.feedback_report = {
+  body: {
+    summary: 'आपका लक्ष्य',
+    actual: 'क्या हुआ',
+    expected: 'अपेक्षित परिणाम',
+    incident: 'समस्या होने के समय का परिवेश',
+    command: 'संबंधित कार्य',
+    steps: 'समस्या दोहराने के चरण',
+    impact: 'प्रभाव',
+    evidence: 'देखे गए प्रमाण',
+    attempts: 'प्रयास और परिणाम',
+    cause: 'कारण और विश्वास का स्तर',
+    cause_evidence: 'आकलन के प्रमाण',
+    next: 'अगली जाँच',
+    screenshots: 'स्क्रीनशॉट',
+    review_image: 'साझा करने से पहले चित्र जाँचें',
+    limitations: 'जाँच की सीमाएँ',
+    generator: 'रिपोर्ट बनाने का परिवेश (समस्या के समय का नहीं)',
+    unknown: 'अज्ञात / अपुष्ट',
+    draft: 'स्थानीय मसौदा, अभी भेजा नहीं गया। साझा करने से पहले पाठ और चित्रों में ग्राहक डेटा, क्रेडेंशियल और निजी जानकारी की जाँच करें।',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',

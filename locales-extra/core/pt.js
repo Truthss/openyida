@@ -2322,6 +2322,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "Use conditions/ru
 Object.assign(module.exports.formula_v2, {"conversion_empty":"A conversão para o campo de destino produziu um valor vazio. Para datas, use TIMESTAMP(fórmula de data) e confira o valor original e o tipo.","result_missing":"A solicitação terminou sem valor para o campo de destino. Datas geralmente precisam de TIMESTAMP(fórmula de data).","conversion_partial":"O valor foi convertido parcialmente ou não é finito. Retorne um número completo ou milissegundos.","target_branches":"Alguns tipos de resultado {0} não correspondem a {1}. Teste cada ramo.","date_timestamp":"Um objeto de data difere do valor salvo. Use normalmente TIMESTAMP(fórmula de data) para milissegundos.","numeric_result_text":"O resultado pode ser texto. Teste cada ramo com --field para detectar conversões vazias ou parciais."});
 
 module.exports.feedback_report = {
+  body: {
+    summary: 'Seu objetivo',
+    actual: 'O que aconteceu',
+    expected: 'Resultado esperado',
+    incident: 'Ambiente quando o problema ocorreu',
+    command: 'Operação relacionada',
+    steps: 'Como reproduzir',
+    impact: 'Impacto',
+    evidence: 'Evidências observadas',
+    attempts: 'Tentativas e resultados',
+    cause: 'Causa e grau de certeza',
+    cause_evidence: 'Evidências do diagnóstico',
+    next: 'Próxima verificação',
+    screenshots: 'Capturas de tela',
+    review_image: 'Revise a imagem antes de compartilhar',
+    limitations: 'Limitações dos testes',
+    generator: 'Ambiente de geração do relatório (não o do incidente)',
+    unknown: 'Desconhecido / não verificado',
+    draft: 'Rascunho local, ainda não enviado. Revise texto e imagens para remover dados de clientes, credenciais e informações privadas antes de compartilhar.',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',

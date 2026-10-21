@@ -2273,6 +2273,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "並行分支使�
 Object.assign(module.exports.formula_v2, {"conversion_empty":"公式結果轉成目標欄位後為空。日期請用 TIMESTAMP(日期公式)，並核對原值與欄位類型。","result_missing":"平台完成請求，但沒有返回目標欄位值。日期通常需要 TIMESTAMP(日期公式)。","conversion_partial":"結果只轉出部分數字或不是有限數值。請返回完整數字或毫秒時間戳。","target_branches":"公式可能返回 {0}，部分結果與 {1} 不相容；請逐一試算各分支。","date_timestamp":"日期物件與欄位保存值不同。通常用 TIMESTAMP(日期公式) 返回毫秒時間戳。","numeric_result_text":"公式可能返回文字；請用 --field 試算，核對是否轉成空值或部分數字。"});
 
 module.exports.feedback_report = {
+  body: {
+    summary: '想完成甚麼',
+    actual: '實際發生了甚麼',
+    expected: '希望看到甚麼結果',
+    incident: '問題發生時的環境',
+    command: '相關操作',
+    steps: '怎樣重現',
+    impact: '影響',
+    evidence: '已觀察的證據',
+    attempts: '嘗試過的方法與結果',
+    cause: '可能原因及確認程度',
+    cause_evidence: '判斷依據',
+    next: '下一步驗證',
+    screenshots: '問題截圖',
+    review_image: '公開前請檢查圖片',
+    limitations: '尚未驗證的範圍',
+    generator: '報告產生環境（不代表問題發生時）',
+    unknown: '未知 / 尚未確認',
+    draft: '本機草稿，尚未提交。請檢查文字和截圖，確認沒有客戶資料、憑證或內部資訊後再公開。',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',

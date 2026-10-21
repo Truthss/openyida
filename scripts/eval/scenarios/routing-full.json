@@ -804,5 +804,17 @@
     "yida-feedback"
   ],
   "type": "negative"
+},
+{
+  "id": "feedback-experience-suggestion",
+  "prompt": "OpenYida 报错时我看不懂，希望提示能更好理解。我不会写代码，可以帮我整理成建议吗？",
+  "expectedSkill": "yida-feedback",
+  "type": "positive"
+},
+{
+  "id": "feedback-issue-to-pr",
+  "prompt": "OpenYida 的 Issue 已提交，我想让 AI 试着改进这个问题，但不懂 Git，请先让我看需要改什么。",
+  "expectedSkill": "yida-feedback",
+  "type": "positive"
 }
 ]

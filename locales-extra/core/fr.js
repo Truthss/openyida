@@ -2322,6 +2322,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "Utilisez conditio
 Object.assign(module.exports.formula_v2, {"conversion_empty":"La conversion vers le champ cible donne une valeur vide. Pour une date, utilisez TIMESTAMP(formule de date) et vérifiez la valeur brute et le type.","result_missing":"La requête est terminée, mais la valeur du champ cible manque. Une date nécessite généralement TIMESTAMP(formule de date).","conversion_partial":"La valeur est partiellement numérique ou non finie. Renvoyez un nombre complet ou un horodatage en millisecondes.","target_branches":"Certains types de résultat {0} ne correspondent pas à {1}. Testez chaque branche.","date_timestamp":"Un objet date diffère de la valeur stockée. Utilisez généralement TIMESTAMP(formule de date) pour les millisecondes.","numeric_result_text":"Le résultat peut être du texte. Testez chaque branche avec --field pour détecter une conversion vide ou partielle."});
 
 module.exports.feedback_report = {
+  body: {
+    summary: 'Votre objectif',
+    actual: 'Ce qui s’est passé',
+    expected: 'Résultat attendu',
+    incident: 'Environnement au moment du problème',
+    command: 'Opération concernée',
+    steps: 'Comment reproduire',
+    impact: 'Impact',
+    evidence: 'Preuves observées',
+    attempts: 'Essais et résultats',
+    cause: 'Cause et degré de certitude',
+    cause_evidence: 'Éléments de diagnostic',
+    next: 'Prochaine vérification',
+    screenshots: 'Captures d’écran',
+    review_image: 'Vérifier l’image avant partage',
+    limitations: 'Limites des tests',
+    generator: 'Environnement de génération du rapport (pas celui de l’incident)',
+    unknown: 'Inconnu / non vérifié',
+    draft: 'Brouillon local, non soumis. Vérifiez les textes et images avant partage : données clients, identifiants et informations privées.',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',

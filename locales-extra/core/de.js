@@ -2320,6 +2320,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "Verwenden Sie con
 Object.assign(module.exports.formula_v2, {"conversion_empty":"Die Umwandlung in das Zielfeld ergibt einen leeren Wert. Für Datumswerte TIMESTAMP(Datumsformel) verwenden und Rohwert sowie Typ prüfen.","result_missing":"Die Anfrage ist abgeschlossen, aber der Zielfeldwert fehlt. Datumsfelder benötigen meist TIMESTAMP(Datumsformel).","conversion_partial":"Der Wert wurde nur teilweise als Zahl gelesen oder ist nicht endlich. Eine vollständige Zahl oder Millisekunden zurückgeben.","target_branches":"Einige Ergebnistypen {0} passen nicht zu {1}. Jeden Zweig testen.","date_timestamp":"Ein Datumsobjekt ist nicht der gespeicherte Feldwert. Meist mit TIMESTAMP(Datumsformel) Millisekunden zurückgeben.","numeric_result_text":"Das Ergebnis kann Text sein. Mit --field jeden Zweig auf leere oder teilweise Zahlenumwandlung prüfen."});
 
 module.exports.feedback_report = {
+  body: {
+    summary: 'Ihr Ziel',
+    actual: 'Was passiert ist',
+    expected: 'Erwartetes Ergebnis',
+    incident: 'Umgebung beim Auftreten des Problems',
+    command: 'Betroffener Vorgang',
+    steps: 'Schritte zur Reproduktion',
+    impact: 'Auswirkungen',
+    evidence: 'Beobachtete Belege',
+    attempts: 'Versuche und Ergebnisse',
+    cause: 'Ursache und Gewissheit',
+    cause_evidence: 'Belege zur Einschätzung',
+    next: 'Nächste Prüfung',
+    screenshots: 'Screenshots',
+    review_image: 'Bild vor dem Teilen prüfen',
+    limitations: 'Nicht geprüfte Bereiche',
+    generator: 'Umgebung der Berichtserstellung (nicht die Problemumgebung)',
+    unknown: 'Unbekannt / nicht geprüft',
+    draft: 'Lokaler Entwurf, noch nicht eingereicht. Prüfen Sie Text und Bilder vor dem Teilen auf Kundendaten, Zugangsdaten und private Informationen.',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',

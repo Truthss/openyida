@@ -161,7 +161,9 @@ const MAX_TARBALL_BYTES = 2560 * 1024;
 // on Node 22. Retain the next 16 KiB boundary; compressed and per-file caps stay fixed.
 // Responsive guidance combined with main's dynamic personnel sources measures
 // 9,694,016 unpacked bytes / 766 files on Node 26; next 16 KiB boundary.
-const MAX_UNPACKED_BYTES = 9472 * 1024;
+// Beginner feedback guidance and localized incident context: 9,701,569 bytes,
+// still 766 files. Keep the next 16 KiB boundary; other budgets stay unchanged.
+const MAX_UNPACKED_BYTES = 9488 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
