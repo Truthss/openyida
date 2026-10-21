@@ -30,6 +30,7 @@ beforeEach(() => {
   formType = 'receipt';
   rows = [native()];
   client = {
+    getAuthRef: jest.fn(() => ({ baseUrl: 'https://xmtrf1.aliwork.com' })),
     get: jest.fn(async endpoint => {
       if (endpoint.endsWith('listFormMessageBind.json')) {return { success: true, content: clone(rows) };}
       if (endpoint.endsWith('getFormAndAppInfo.json')) {return { success: true, content: { formDatas: { values: [{
@@ -60,6 +61,19 @@ test('list and inspect normalize the native binding without writes', async () =>
   expect(inspect.configHash).toMatch(/^[a-f0-9]{64}$/);
   expect(inspect.configHash).toBe(hash(editable(normalize(rows[0]))));
   expect(client.postFormOnce).not.toHaveBeenCalled();
+});
+
+test.each(['https://xmtrf1.aliwork.com/', 'https://private.example.test:8443/'])('settings link uses the authenticated environment for every action: %s', async baseUrl => {
+  client.getAuthRef.mockReturnValue({ baseUrl });
+  const expected = new URL('/APP_TEST/admin/FORM_TEST/settings/messageSetting', baseUrl).href;
+  const assertLink = async args => expect((await execute(args, client)).configUrl).toBe(expected);
+  await assertLink(parsed('list'));
+  await assertLink(parsed('options'));
+  await assertLink(parsed('inspect', ['101']));
+  await assertLink(parsed('create', ['--config', config(workNotice())]));
+  await assertLink(parsed('update', ['101', '--config', config({ template: { content: '更新通知内容' } })]));
+  await assertLink(parsed('update', ['101', '--config', config({ template: { content: '更新通知内容' } })]));
+  await assertLink(parsed('delete', ['101', '--yes', '--expected-hash', hash(editable(normalize(rows[0])))]));
 });
 
 test('options reports supported write triggers, all seven templates and target fields', async () => {

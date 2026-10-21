@@ -20,7 +20,9 @@ description: 为已有普通表单配置消息通知，选择新增、编辑、�
 
 1. 查询现有通知和可用选项，核实目标表单、字段、接收人和模板。
 2. 按用户要求准备配置文件，再创建或修改通知。首次配置可从[发送给发起人的示例](references/guide.md)开始。
-3. 核对保存结果中的 `readbackVerified: true`，交付通知 ID、触发时机和接收对象。用户要求真实测试时，按已指定的对象和范围执行并确认送达；已有明确授权可直接沿用。
+3. 核对保存结果中的 `readbackVerified: true`，交付可点击的消息通知配置链接（CLI 返回的 `configUrl`），附上通知 ID、标题、触发时机和接收对象。完整应用搭建和单点新增、修改通知均按此要求交付。用户要求真实测试时，按已指定的对象和范围执行并确认送达；已有明确授权可直接沿用。
+
+`configUrl` 指向该表单的消息通知列表，地址为 `<当前认证环境域名>/<appType>/admin/<formUuid>/settings/messageSetting`。使用返回的真实域名与标识；用户打开后可按通知标题找到本次配置。
 
 ```bash
 openyida form-message list <appType> <formUuid> --json
