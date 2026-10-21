@@ -157,7 +157,11 @@ const MAX_TARBALL_BYTES = 2560 * 1024;
 // Task-driven responsive guidance measures 9,676,524 unpacked bytes at 12b8b0d0;
 // the wording cleanup measures 9,676,590 bytes / 764 files on Node 26.
 // Retain the next 16 KiB boundary; compressed, entry and per-file caps stay fixed.
-const MAX_UNPACKED_BYTES = 9456 * 1024;
+// Form-member/self-select runtime and guide: 9,672,548 unpacked bytes / 764 files
+// on Node 22. Retain the next 16 KiB boundary; compressed and per-file caps stay fixed.
+// Responsive guidance combined with main's dynamic personnel sources measures
+// 9,694,016 unpacked bytes / 766 files on Node 26; next 16 KiB boundary.
+const MAX_UNPACKED_BYTES = 9472 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -186,7 +190,8 @@ const MAX_UNPACKED_BYTES = 9456 * 1024;
 // The combined workflow, data-card and cool-card package contains 738 files.
 // Custom buttons and native report zero-value controls add five packaged files.
 // Include the shared AI application eligibility helper merged from main.
-const MAX_ENTRY_COUNT = 764;
+// Dynamic personnel sources add one runtime module and one skill reference.
+const MAX_ENTRY_COUNT = 766;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [

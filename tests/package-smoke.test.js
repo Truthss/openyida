@@ -37,6 +37,10 @@ describe('npm package smoke', () => {
     expect(getPackageBudgetErrors({ size: 2588870, unpackedSize: 9676590, entryCount: 764 })).toEqual([]);
   });
 
+  test('package budget covers responsive guidance merged with dynamic personnel sources', () => {
+    expect(getPackageBudgetErrors({ size: 2594266, unpackedSize: 9694016, entryCount: 766 })).toEqual([]);
+  });
+
   test.each([
     ['original PR 638', { size: 2444722, unpackedSize: 9113751, entryCount: 707 }],
     ['PR 638 merged with main', { size: 2496932, unpackedSize: 9278325, entryCount: 721 }],

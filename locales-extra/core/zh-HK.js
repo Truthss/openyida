@@ -2364,3 +2364,5 @@ module.exports.feedback_github = {
   confirmation: 'Star or Fork requires the user to explicitly choose that action before --confirm. Neither is required to submit an Issue.',
   failed: 'The GitHub action could not be verified. Inspect its status before retrying; this does not block Issue submission.',
 };
+
+module.exports.process_dynamic_actors = { invalid: "流程人員來源配置無效，請按 details.reason 檢查來源、範圍及真實成員欄位。" };

@@ -2413,3 +2413,5 @@ module.exports.feedback_github = {
   confirmation: 'Star or Fork requires the user to explicitly choose that action before --confirm. Neither is required to submit an Issue.',
   failed: 'The GitHub action could not be verified. Inspect its status before retrying; this does not block Issue submission.',
 };
+
+module.exports.process_dynamic_actors = { invalid: "Configuração de responsáveis inválida. Verifique details.reason, o intervalo e os campos de membros reais." };
