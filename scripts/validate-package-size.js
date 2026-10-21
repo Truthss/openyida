@@ -71,6 +71,8 @@ const path = require('path');
 // guidance measure 2,634,130 compressed bytes on Node 20; this cap still fits.
 // Node 20 CI measures 2,643,136 compressed bytes for the merged 10.23 package.
 // Retain the next 16 KiB boundary; unpacked, entry and single-file caps stay fixed.
+// Consent-based GitHub setup adds one runtime module and user guidance:
+// Node 20.18.1 measures 2,637,999 compressed bytes; next 16 KiB boundary.
 const MAX_TARBALL_BYTES = 2592 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
@@ -175,7 +177,9 @@ const MAX_TARBALL_BYTES = 2592 * 1024;
 // on Node 20. Keep the next 16 KiB boundary and the existing single-file cap.
 // Combined with native form-message management and settings-link delivery:
 // Node 26 measures 9,768,800 unpacked bytes / 772 files. Next 16 KiB boundary.
-const MAX_UNPACKED_BYTES = 9552 * 1024;
+// GitHub setup merged into 10.23: 9,781,786 unpacked bytes / 773 files on Node 26.
+// Retain the next 16 KiB boundary; compressed and per-file caps stay fixed.
+const MAX_UNPACKED_BYTES = 9568 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -209,11 +213,13 @@ const MAX_UNPACKED_BYTES = 9552 * 1024;
 // Account/tool onboarding adds one progressively loaded feedback reference.
 // Unpacked and per-file limits remain unchanged.
 // Administrator task transfer adds exactly one runtime module and one skill guide.
-const MAX_ENTRY_COUNT = 772;
+// GitHub setup keeps installation/detection separate from account actions.
+const MAX_ENTRY_COUNT = 773;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
   'lib/feedback/github.js',
+  'lib/feedback/github-setup.js',
   'lib/print-template/builder.js',
   'lib/print-template/codes.js',
   'lib/print-template/contract.js',

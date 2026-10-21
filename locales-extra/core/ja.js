@@ -2369,7 +2369,16 @@ module.exports.task_center = {
 };
 
 module.exports.feedback_github = {
-  usage: 'Usage: openyida feedback github <status|star|fork> [--confirm] [--json]',
+  setup_inspect_installation: 'インストール結果は未確認です。gh --version、パッケージ管理状態、または端末の再起動後に確認してから再試行を判断し、下書きを保持します。',
+  setup_check_execution: 'gh を実行できません。実行権限やローカル環境を確認し、自動で再インストールやアカウント切替をしないでください。',
+  setup_confirm_install: 'GitHub CLI をインストールできます。計画を説明し同意を得てから openyida feedback github setup --install --confirm --json を実行します。Web も利用できます。',
+  setup_manual_install: '自動インストールは利用できません。公式手順、既存のコネクター、または Web を使い、下書きを保持します。',
+  setup_ready: 'GitHub CLI と現在のアカウントを確認しました。下書きを再開し、送信前に公開内容と必要な権限を確認します。',
+  setup_browser_login: 'GitHub CLI は利用可能ですがログインが必要です。同意後にブラウザー認証を案内し、setup --json で再確認します。',
+  setup_check_account: 'GitHub CLI は利用可能ですがアカウントは未確認です。ネットワーク、認証、レート制限を調べ、アカウント不在と決めつけたり再インストールしないでください。',
+  setup_consent: 'GitHub CLI と必要な依存関係をパッケージ管理の既定の場所にインストールする同意後のみ --install --confirm を使います。Windows では WinGet のソースとソフトウェアの規約に同意し、ユーザーによるシステム権限承認が必要な場合があります。管理ツール導入、権限昇格、ログインは自動で行いません。',
+  setup_privacy: 'インストール同意は公開同意ではありません。認証はユーザーがブラウザーで行い、パスワード、コード、Token を求めません。gh が資格情報を安全に保存できない場合は Web や安全なコネクターを使い、アカウントやツールの診断を報告に含めません。',
+  usage: 'Usage: openyida feedback github setup [--install --confirm] [--json]; openyida feedback github <status|star|fork> [--confirm] [--json]',
   confirmation: 'Star or Fork requires the user to explicitly choose that action before --confirm. Neither is required to submit an Issue.',
   failed: 'The GitHub action could not be verified. Inspect its status before retrying; this does not block Issue submission.',
 };

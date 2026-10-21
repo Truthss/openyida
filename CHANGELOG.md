@@ -29,6 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - 消息通知 CLI 成功结果统一返回 `configUrl`，根据当前认证环境、应用 ID 和表单 ID 生成配置页链接；Skill 在完整应用和单点配置交付时均提供该链接及通知摘要。
 - 响应式布局按页面任务安排必要信息、主操作、筛选收纳、面板重排和局部滚动；Fast、Plan 与单页设计沿用同一套说明，模板片段按需复用，补充本地生成评测与浏览器检查入口。
 - 反馈流程支持新用户逐步说明问题，复用已有 GitHub 连接与工具，并按授权协助配置；完善 Issue、贡献指南和 PR 引导，保留脱敏与公开确认。
+- 新增 `feedback github setup`，检测 GitHub CLI 和账号状态；经用户同意后使用已有 Homebrew 或 WinGet 安装工具，并单独引导浏览器授权，继续原反馈草稿。
 - 写入前备份并二次核对完整绑定列表，更新和删除可使用当前配置哈希防止覆盖并发修改；写请求不自动重放，写后严格回读。
 - 日期字段定时和流程节点等已有通知支持查询；这些规则的修改使用宜搭页面。移除通知使用删除操作，平台当前没有独立启停接口。
 - 真实测试沿用用户已明确的接收对象和测试授权，分别核对配置保存、表单事件和接收端送达结果；测试结束后按用户要求保留或清理配置和数据。
@@ -49,6 +50,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 新增能力
 
+- **GitHub 工具配置引导**：`feedback github setup` 只读检测 gh 和当前账号；经用户同意后，通过已有 Homebrew（macOS/Linux）或 WinGet（Windows）安装，再单独引导浏览器授权。无可用包管理器时提供官方说明或网页路径，不自动提权、登录或公开提交；原草稿、环境信息与公开确认边界保持不变。
 - **容器响应式模板**：新增 `openyida sample openyida-page-template canvas-responsive-layout`，提供筛选排列、主辅布局、局部滚动和容器查询等独立片段，按当前业务需要复用；图表等组件需要实际宽度时，再使用带清理和帧合并的测量 Hook。断点切换保持原业务组件状态。
 - **响应式源码诊断**：Canvas `compile --json` 与普通页面 `check-page` 会提示仅依赖视口宽度、未清理 `ResizeObserver`、大固定宽度及整页 `scale/zoom` 等高风险写法；诊断为非阻断 warning，并支持对确有必要的视口级或固定画布场景作显式说明。
 
