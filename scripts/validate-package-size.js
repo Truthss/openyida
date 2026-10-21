@@ -154,7 +154,10 @@ const MAX_TARBALL_BYTES = 2560 * 1024;
 // on Node 26 before generated command docs; retain the next 16 KiB boundary.
 // Container-aware responsive diagnostics and the reusable Canvas scaffold add
 // two published files. Keep a small byte margin for npm metadata variance.
-const MAX_UNPACKED_BYTES = 9444 * 1024;
+// Task-driven responsive guidance measures 9,676,524 unpacked bytes at 12b8b0d0;
+// the wording cleanup measures 9,676,590 bytes / 764 files on Node 26.
+// Retain the next 16 KiB boundary; compressed, entry and per-file caps stay fixed.
+const MAX_UNPACKED_BYTES = 9456 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
