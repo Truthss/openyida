@@ -193,6 +193,8 @@ const MAX_TARBALL_BYTES = 2608 * 1024;
 // on Node 20. Keep the next 16 KiB boundary and the existing single-file cap.
 // Combined with native form-message management and settings-link delivery:
 // Node 26 measures 9,768,800 unpacked bytes / 772 files. Next 16 KiB boundary.
+// GitHub setup merged into 10.23: 9,781,786 unpacked bytes / 773 files on Node 26.
+// The stacked 10.25 budget below includes Solution Center templates as well.
 // Combined stacked 10.25 package measures 9,808,079 unpacked bytes on Node 20.
 // Retain the next 16 KiB boundary without changing the single-file limit.
 // Templates/message features plus main's GitHub setup (Node 20.18.1):
