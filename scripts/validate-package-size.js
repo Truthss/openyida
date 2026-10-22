@@ -75,6 +75,8 @@ const path = require('path');
 // Retain the next 16 KiB boundary; unpacked, entry and single-file caps stay fixed.
 // Stacked 10.25 templates plus 10.23 message/responsive features (Node 20.18.1):
 // 2,654,371 compressed bytes; next 16 KiB boundary retains CI npm headroom.
+// Consent-based GitHub setup adds one runtime module and user guidance:
+// Node 20.18.1 measures 2,637,999 compressed bytes; next 16 KiB boundary.
 const MAX_TARBALL_BYTES = 2608 * 1024;
 // Round unpacked content to the next 16 KiB boundary.
 // Data-management UI adds 3 runtime/catalog files and 3 skill/reference files.
@@ -193,7 +195,9 @@ const MAX_TARBALL_BYTES = 2608 * 1024;
 // Node 26 measures 9,768,800 unpacked bytes / 772 files. Next 16 KiB boundary.
 // Combined stacked 10.25 package measures 9,808,079 unpacked bytes on Node 20.
 // Retain the next 16 KiB boundary without changing the single-file limit.
-const MAX_UNPACKED_BYTES = 9584 * 1024;
+// Templates/message features plus main's GitHub setup (Node 20.18.1):
+// 9,821,065 unpacked bytes / 775 files; next 16 KiB boundary, gzip cap unchanged.
+const MAX_UNPACKED_BYTES = 9600 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -228,13 +232,15 @@ const MAX_UNPACKED_BYTES = 9584 * 1024;
 // Unpacked and per-file limits remain unchanged.
 // Administrator task transfer adds exactly one runtime module and one skill guide.
 // Solution Center templates add their runtime and skill to the stacked release.
-const MAX_ENTRY_COUNT = 774;
+// GitHub setup keeps installation/detection separate from account actions.
+const MAX_ENTRY_COUNT = 775;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
   'lib/solution-template/solution-template.js',
   'yida-skills/skills/yida-solution-template/SKILL.md',
   'lib/feedback/github.js',
+  'lib/feedback/github-setup.js',
   'lib/print-template/builder.js',
   'lib/print-template/codes.js',
   'lib/print-template/contract.js',

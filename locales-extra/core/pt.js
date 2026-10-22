@@ -2458,7 +2458,16 @@ module.exports.task_center = {
 };
 
 module.exports.feedback_github = {
-  usage: 'Usage: openyida feedback github <status|star|fork> [--confirm] [--json]',
+  setup_inspect_installation: 'Instalação não verificada. Confira gh --version, o gerenciador de pacotes ou reabra o terminal antes de decidir tentar novamente; preserve o rascunho.',
+  setup_check_execution: 'Não foi possível executar gh. Verifique permissões e ambiente local; não reinstale nem troque de conta automaticamente.',
+  setup_confirm_install: 'É possível instalar GitHub CLI. Explique o plano e obtenha consentimento antes de openyida feedback github setup --install --confirm --json; a opção web continua disponível.',
+  setup_manual_install: 'Instalação automática indisponível. Use as instruções oficiais, um conector existente ou a web; preserve o rascunho.',
+  setup_ready: 'GitHub CLI e a conta atual foram verificados. Retome o rascunho; confirme conteúdo público e permissões antes do envio.',
+  setup_browser_login: 'GitHub CLI está disponível e requer login. Com consentimento, oriente a autorização no navegador e confira com setup --json.',
+  setup_check_account: 'GitHub CLI está disponível, mas a conta não foi verificada. Confira rede, autorização ou limites; não presuma ausência de conta nem reinstale.',
+  setup_consent: 'Use --install --confirm apenas após consentimento para instalar GitHub CLI e dependências necessárias no local padrão do gerenciador. O Windows aceita os acordos de fonte e software do WinGet e pode exigir aprovação de permissões do sistema pelo usuário. Sem instalação de gerenciadores, elevação de privilégios ou login automáticos.',
+  setup_privacy: 'Instalar não autoriza publicar. O usuário autoriza no navegador; não solicite senhas, códigos ou Token. Se gh não puder guardar credenciais com segurança, use a web ou um conector seguro. Não inclua diagnósticos de conta e ferramenta no relatório.',
+  usage: 'Usage: openyida feedback github setup [--install --confirm] [--json]; openyida feedback github <status|star|fork> [--confirm] [--json]',
   confirmation: 'Star or Fork requires the user to explicitly choose that action before --confirm. Neither is required to submit an Issue.',
   failed: 'The GitHub action could not be verified. Inspect its status before retrying; this does not block Issue submission.',
 };

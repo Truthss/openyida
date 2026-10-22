@@ -36,7 +36,7 @@ openyida feedback report --input summary.json --output-dir feedback-draft-001
 
 ## 按用户条件交付
 
-用户选择 GitHub 后，按 [账号与工具准备](references/github-setup.md) 复用已有工具、引导注册/登录，或在用户同意后协助配置。缺少现成工具时，提 Issue 优先使用可用网页，不把安装工具作为门槛；工具就绪后继续原草稿，公开确认仍按原流程执行。
+用户选择 GitHub 后，按 [账号与工具准备](references/github-setup.md) 复用已有工具、引导注册/登录。缺少工具且宿主支持终端时，推荐用 `openyida feedback github setup --json` 检测，再经用户同意安装 gh、单独引导浏览器授权；不愿安装时可用网页，不把安装作为反馈门槛。工具就绪后继续原草稿，公开确认仍按原流程执行。
 
 - **无 GitHub 账号**：先引导用户创建 GitHub 账号，由用户自行完成注册和登录。实在不行，只提示“反馈到AI开发者群”，附上已整理的脱敏报告。不索取群链接或群 ID，不编造入群入口，不替用户发送群消息。离线或暂不愿注册时同样交付报告，明确“材料已生成，尚未提交”。
 - **有 GitHub 账号，提交 Issue**：无需 clone/fork；按 [GitHub 提交](references/github-contribution.md) 查重、提交已确认内容并读回。成功后按交互规范给一次可选 PR 邀请；登录由用户在可信本机流程完成，不索取 Token。

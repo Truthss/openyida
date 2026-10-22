@@ -53,6 +53,14 @@ describe('npm package smoke', () => {
     expect(getPackageBudgetErrors({ size: 2654371, unpackedSize: 9808079, entryCount: 774 })).toEqual([]);
   });
 
+  test('package budget covers consent-based GitHub setup on Node 20', () => {
+    expect(getPackageBudgetErrors({ size: 2637999, unpackedSize: 9746094, entryCount: 770 })).toEqual([]);
+  });
+
+  test('package budget covers templates and messages merged with GitHub setup on Node 20', () => {
+    expect(getPackageBudgetErrors({ size: 2659151, unpackedSize: 9821065, entryCount: 775 })).toEqual([]);
+  });
+
   test.each([
     ['original PR 638', { size: 2444722, unpackedSize: 9113751, entryCount: 707 }],
     ['PR 638 merged with main', { size: 2496932, unpackedSize: 9278325, entryCount: 721 }],

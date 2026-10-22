@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 改进
 
+- **GitHub 反馈准备**：通过 `feedback github setup` 检查工具和账号状态；确认后可使用已有 Homebrew 或 WinGet 安装 GitHub CLI。账号登录和公开提交分别确认，没有可用包管理器时提供官方说明或网页入口。
 - **失败恢复**：平台明确拒绝后保留原因并结束本次尝试；用户再次要求提交时，通过 `--retry` 开始新尝试并接受平台鉴权。超时、响应不完整或多候选结果保留原请求，通过 `status` 查询或核对应用身份。
 - **有界等待**：启用默认等待 10 秒，状态查询默认执行一次，支持 `--wait 0-60` 设置只读等待预算；等待期间逐步放缓查询，命令结束后停止查询。
 - **结果识别**：分别提供平台受理、本次应用可见性和历史验证信息；应用查询失败时保留请求与平台原因，使用原请求号继续查询，避免重复创建。
@@ -40,7 +41,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - 使用当前登录组织提交，登录、组织权限、版本权益、AI 额度和模板可用性均由平台判断；模板存在复制源表示可进入复制流程，启用资格仍由平台裁决。
 - 进度按已受理、待确认和已查到应用等实际状态展示。AI 入口准备完成与应用创建分别确认；应用列表查询确认资源身份，页面、数据和运行时权限通过实际使用验收。
-- 真实环境验证覆盖模板目录、详情和 AI 入口；直接启用的实际创建与业务可用性仍需在独立授权目标中验收。
 
 ## [2026.10.23] - 2026-10-23
 
@@ -79,6 +79,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 新增能力
 
+- **GitHub 工具配置引导**：`feedback github setup` 只读检测 gh 和当前账号；经用户同意后，通过已有 Homebrew（macOS/Linux）或 WinGet（Windows）安装，再单独引导浏览器授权。无可用包管理器时提供官方说明或网页路径，不自动提权、登录或公开提交；原草稿、环境信息与公开确认边界保持不变。
 - **容器响应式模板**：新增 `openyida sample openyida-page-template canvas-responsive-layout`，提供筛选排列、主辅布局、局部滚动和容器查询等独立片段，按当前业务需要复用；图表等组件需要实际宽度时，再使用带清理和帧合并的测量 Hook。断点切换保持原业务组件状态。
 - **响应式源码诊断**：Canvas `compile --json` 与普通页面 `check-page` 会提示仅依赖视口宽度、未清理 `ResizeObserver`、大固定宽度及整页 `scale/zoom` 等高风险写法；诊断为非阻断 warning，并支持对确有必要的视口级或固定画布场景作显式说明。
 

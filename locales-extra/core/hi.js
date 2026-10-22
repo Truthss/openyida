@@ -2456,7 +2456,16 @@ module.exports.task_center = {
 };
 
 module.exports.feedback_github = {
-  usage: 'Usage: openyida feedback github <status|star|fork> [--confirm] [--json]',
+  setup_inspect_installation: 'इंस्टॉलेशन की पुष्टि नहीं हुई। दोबारा प्रयास तय करने से पहले gh --version, पैकेज मैनेजर की स्थिति या टर्मिनल फिर खोलकर जाँचें; ड्राफ्ट सुरक्षित रखें।',
+  setup_check_execution: 'gh नहीं चल सका। निष्पादन अनुमति या स्थानीय परिवेश जाँचें; अपने-आप फिर इंस्टॉल या खाता न बदलें।',
+  setup_confirm_install: 'GitHub CLI इंस्टॉल किया जा सकता है। योजना समझाकर सहमति लें, फिर openyida feedback github setup --install --confirm --json चलाएँ; वेब विकल्प भी उपलब्ध है।',
+  setup_manual_install: 'स्वचालित इंस्टॉलेशन उपलब्ध नहीं है। आधिकारिक निर्देश, मौजूदा कनेक्टर या वेब इस्तेमाल करें; ड्राफ्ट सुरक्षित रखें।',
+  setup_ready: 'GitHub CLI और वर्तमान खाते की पुष्टि हुई। मूल ड्राफ्ट जारी रखें; भेजने से पहले सार्वजनिक सामग्री और आवश्यक अनुमतियाँ पक्की करें।',
+  setup_browser_login: 'GitHub CLI उपलब्ध है और लॉगिन चाहिए। सहमति मिलने पर ब्राउज़र में अनुमति का मार्गदर्शन दें, फिर setup --json से जाँचें।',
+  setup_check_account: 'GitHub CLI उपलब्ध है, पर खाता सत्यापित नहीं है। नेटवर्क, अनुमति या दर सीमा जाँचें; खाता नहीं होने का अनुमान या पुनः इंस्टॉलेशन न करें।',
+  setup_consent: 'पैकेज मैनेजर के डिफ़ॉल्ट स्थान पर GitHub CLI और आवश्यक निर्भरताएँ इंस्टॉल करने की सहमति के बाद ही --install --confirm उपयोग करें। Windows में WinGet स्रोत और सॉफ्टवेयर समझौते स्वीकार होंगे और उपयोगकर्ता की सिस्टम अनुमति लग सकती है। मैनेजर इंस्टॉलेशन, अधिकार बढ़ाना या लॉगिन अपने-आप नहीं होगा।',
+  setup_privacy: 'इंस्टॉल करने की सहमति सार्वजनिक करने की सहमति नहीं है। उपयोगकर्ता ब्राउज़र में अनुमति देता है; पासवर्ड, कोड या Token न माँगें। gh सुरक्षित रूप से क्रेडेंशियल न रख सके तो वेब या सुरक्षित कनेक्टर लें। खाते और टूल के निदान रिपोर्ट में न डालें।',
+  usage: 'Usage: openyida feedback github setup [--install --confirm] [--json]; openyida feedback github <status|star|fork> [--confirm] [--json]',
   confirmation: 'Star or Fork requires the user to explicitly choose that action before --confirm. Neither is required to submit an Issue.',
   failed: 'The GitHub action could not be verified. Inspect its status before retrying; this does not block Issue submission.',
 };

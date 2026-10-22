@@ -2409,7 +2409,16 @@ module.exports.task_center = {
 };
 
 module.exports.feedback_github = {
-  usage: 'Usage: openyida feedback github <status|star|fork> [--confirm] [--json]',
+  setup_inspect_installation: '安裝結果尚未核實。先檢查 gh --version、套件管理器狀態或重新開啟終端，再決定是否重試；保留草稿。',
+  setup_check_execution: 'gh 暫時無法執行。請檢查執行權限或本機環境；不要重複安裝或更換帳戶。',
+  setup_confirm_install: '可以安裝 GitHub CLI。先說明計劃並取得同意，再執行 openyida feedback github setup --install --confirm --json；也可使用網頁。',
+  setup_manual_install: '目前沒有可用的自動安裝方式。可查看官方安裝說明、使用已有連接器或網頁，並保留草稿。',
+  setup_ready: 'GitHub CLI 與目前帳戶已核實。繼續原草稿，提交前仍需確認公開內容與所需權限。',
+  setup_browser_login: 'GitHub CLI 已可用，需要登入。取得同意後引導瀏覽器授權，完成後再次執行 setup --json 核實。',
+  setup_check_account: 'GitHub CLI 已可用，但帳戶尚未核實。先檢查網絡、授權或限流；不要判斷為沒有帳戶或要求重新安裝。',
+  setup_consent: '只有使用者同意在套件管理器預設位置安裝 GitHub CLI 及必要依賴後，才使用 --install --confirm。Windows 會接受 WinGet 來源與軟件協議，可能需要使用者批准系統權限。不自動安裝管理器、提升權限或登入。',
+  setup_privacy: '安裝不代表同意公開提交。瀏覽器授權由使用者完成；不索取密碼、驗證碼或 Token。若 gh 無法安全儲存憑證，改用網頁或安全連接器；帳戶與工具診斷不寫入回饋報告。',
+  usage: 'Usage: openyida feedback github setup [--install --confirm] [--json]; openyida feedback github <status|star|fork> [--confirm] [--json]',
   confirmation: 'Star or Fork requires the user to explicitly choose that action before --confirm. Neither is required to submit an Issue.',
   failed: 'The GitHub action could not be verified. Inspect its status before retrying; this does not block Issue submission.',
 };
