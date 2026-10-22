@@ -1433,6 +1433,10 @@ module.exports = {
     lint_setstate_non_timestamp: 'this.setState non-timestamp field लिखता है। Custom page business state _customState में होना चाहिए और forceUpdate()/setCustomState() से update होना चाहिए; this.setState में केवल timestamp contract field होना चाहिए',
     lint_self_binding_missing: 'renderJsx var self = this; घोषित किए बिना this का उपयोग करता है। renderJsx के शीर्ष पर var self = this; जोड़ें और this खोने से बचने के लिए closures/callbacks में self उपयोग करें',
     lint_echarts_dom_ready: 'echarts.init setTimeout में wrapped नहीं है; container अभी mounted न हो तो chart render नहीं हो सकता। setTimeout(function(){ /* echarts.init */ }, 300) उपयोग करें',
+    lint_resize_observer_cleanup: 'ResizeObserver में disconnect()/unobserve() cleanup नहीं है। unmount पर observer release करें।',
+    lint_responsive_viewport_only: 'Layout केवल viewport width से बदलता है; संकरा sidebar, drawer या iframe degrade नहीं हो सकता। @container या cleanup वाला ResizeObserver उपयोग करें। जानबूझकर हो तो openyida-responsive-viewport-ok जोड़ें।',
+    lint_responsive_fixed_width: '%spx fixed width संकरे container में overflow कर सकती है। max-width, minmax(0, 1fr) या local scroll उपयोग करें। fixed canvas के लिए openyida-responsive-fixed-width-ok जोड़ें।',
+    lint_responsive_page_scale: 'पूरे page का scale/zoom मिला। readable text और targets रखते हुए content reflow करें। local visualization के लिए openyida-responsive-scale-ok जोड़ें।',
     lint_yida_api_catch: 'this.utils.yida API call में .catch() नहीं मिला; error handling जोड़ें और user को toast दिखाएँ',
     lint_echarts_legacy_map_china: 'ECharts 5 अब echarts/map/js/china.js support नहीं करता। इसके बजाय DataV GeoJSON load करें और echarts.registerMap("china", geoJson) call करें',
     lint_echarts_rich_label_formatter: 'ECharts label.formatter से लौटे rich text templates Yida custom pages में unstable हैं; plain formatter strings या precomputed label text बेहतर हैं',
@@ -2329,6 +2333,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "समाना�
 Object.assign(module.exports.formula_v2, {"conversion_empty":"लक्ष्य फ़ील्ड में बदलने के बाद परिणाम खाली है। तारीख के लिए TIMESTAMP(तारीख सूत्र) का उपयोग करके मूल मान और प्रकार जाँचें।","result_missing":"अनुरोध पूरा हुआ लेकिन लक्ष्य फ़ील्ड का मान नहीं मिला। तारीख के लिए सामान्यतः TIMESTAMP(तारीख सूत्र) चाहिए।","conversion_partial":"मान का केवल कुछ भाग संख्या बना या वह सीमित संख्या नहीं है। पूरी संख्या या मिलीसेकंड टाइमस्टैम्प लौटाएँ।","target_branches":"परिणाम के कुछ प्रकार {0}, {1} से मेल नहीं खाते। हर शाखा का परीक्षण करें।","date_timestamp":"तारीख ऑब्जेक्ट और सहेजा गया मान अलग हैं। सामान्यतः TIMESTAMP(तारीख सूत्र) से मिलीसेकंड लौटाएँ।","numeric_result_text":"परिणाम टेक्स्ट हो सकता है। खाली या आंशिक संख्या रूपांतरण पहचानने के लिए हर शाखा को --field से जाँचें।"});
 
 module.exports.feedback_report = {
+  body: {
+    summary: 'आपका लक्ष्य',
+    actual: 'क्या हुआ',
+    expected: 'अपेक्षित परिणाम',
+    incident: 'समस्या होने के समय का परिवेश',
+    command: 'संबंधित कार्य',
+    steps: 'समस्या दोहराने के चरण',
+    impact: 'प्रभाव',
+    evidence: 'देखे गए प्रमाण',
+    attempts: 'प्रयास और परिणाम',
+    cause: 'कारण और विश्वास का स्तर',
+    cause_evidence: 'आकलन के प्रमाण',
+    next: 'अगली जाँच',
+    screenshots: 'स्क्रीनशॉट',
+    review_image: 'साझा करने से पहले चित्र जाँचें',
+    limitations: 'जाँच की सीमाएँ',
+    generator: 'रिपोर्ट बनाने का परिवेश (समस्या के समय का नहीं)',
+    unknown: 'अज्ञात / अपुष्ट',
+    draft: 'स्थानीय मसौदा, अभी भेजा नहीं गया। साझा करने से पहले पाठ और चित्रों में ग्राहक डेटा, क्रेडेंशियल और निजी जानकारी की जाँच करें।',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',
@@ -2416,7 +2440,16 @@ module.exports.task_center = {
 };
 
 module.exports.feedback_github = {
-  usage: 'Usage: openyida feedback github <status|star|fork> [--confirm] [--json]',
+  setup_inspect_installation: 'इंस्टॉलेशन की पुष्टि नहीं हुई। दोबारा प्रयास तय करने से पहले gh --version, पैकेज मैनेजर की स्थिति या टर्मिनल फिर खोलकर जाँचें; ड्राफ्ट सुरक्षित रखें।',
+  setup_check_execution: 'gh नहीं चल सका। निष्पादन अनुमति या स्थानीय परिवेश जाँचें; अपने-आप फिर इंस्टॉल या खाता न बदलें।',
+  setup_confirm_install: 'GitHub CLI इंस्टॉल किया जा सकता है। योजना समझाकर सहमति लें, फिर openyida feedback github setup --install --confirm --json चलाएँ; वेब विकल्प भी उपलब्ध है।',
+  setup_manual_install: 'स्वचालित इंस्टॉलेशन उपलब्ध नहीं है। आधिकारिक निर्देश, मौजूदा कनेक्टर या वेब इस्तेमाल करें; ड्राफ्ट सुरक्षित रखें।',
+  setup_ready: 'GitHub CLI और वर्तमान खाते की पुष्टि हुई। मूल ड्राफ्ट जारी रखें; भेजने से पहले सार्वजनिक सामग्री और आवश्यक अनुमतियाँ पक्की करें।',
+  setup_browser_login: 'GitHub CLI उपलब्ध है और लॉगिन चाहिए। सहमति मिलने पर ब्राउज़र में अनुमति का मार्गदर्शन दें, फिर setup --json से जाँचें।',
+  setup_check_account: 'GitHub CLI उपलब्ध है, पर खाता सत्यापित नहीं है। नेटवर्क, अनुमति या दर सीमा जाँचें; खाता नहीं होने का अनुमान या पुनः इंस्टॉलेशन न करें।',
+  setup_consent: 'पैकेज मैनेजर के डिफ़ॉल्ट स्थान पर GitHub CLI और आवश्यक निर्भरताएँ इंस्टॉल करने की सहमति के बाद ही --install --confirm उपयोग करें। Windows में WinGet स्रोत और सॉफ्टवेयर समझौते स्वीकार होंगे और उपयोगकर्ता की सिस्टम अनुमति लग सकती है। मैनेजर इंस्टॉलेशन, अधिकार बढ़ाना या लॉगिन अपने-आप नहीं होगा।',
+  setup_privacy: 'इंस्टॉल करने की सहमति सार्वजनिक करने की सहमति नहीं है। उपयोगकर्ता ब्राउज़र में अनुमति देता है; पासवर्ड, कोड या Token न माँगें। gh सुरक्षित रूप से क्रेडेंशियल न रख सके तो वेब या सुरक्षित कनेक्टर लें। खाते और टूल के निदान रिपोर्ट में न डालें।',
+  usage: 'Usage: openyida feedback github setup [--install --confirm] [--json]; openyida feedback github <status|star|fork> [--confirm] [--json]',
   confirmation: 'Star or Fork requires the user to explicitly choose that action before --confirm. Neither is required to submit an Issue.',
   failed: 'The GitHub action could not be verified. Inspect its status before retrying; this does not block Issue submission.',
 };

@@ -1433,6 +1433,10 @@ module.exports = {
     lint_setstate_non_timestamp: 'this.setState schreibt ein Nicht-timestamp-Feld. Fachlicher Zustand benutzerdefinierter Seiten sollte in _customState liegen und über forceUpdate()/setCustomState() aktualisiert werden; this.setState sollte nur das Vertragsfeld timestamp tragen',
     lint_self_binding_missing: 'renderJsx verwendet this, ohne var self = this; zu deklarieren. Fügen Sie var self = this; am Anfang von renderJsx hinzu und verwenden Sie self in Closures/Callbacks, um den Verlust von this zu vermeiden',
     lint_echarts_dom_ready: 'echarts.init ist nicht in setTimeout gekapselt; der Container ist möglicherweise noch nicht gemountet, sodass das Diagramm nicht gerendert wird. Verwenden Sie setTimeout(function(){ /* echarts.init */ }, 300)',
+    lint_resize_observer_cleanup: 'ResizeObserver hat kein disconnect()/unobserve()-Cleanup. Geben Sie ihn beim Unmount frei.',
+    lint_responsive_viewport_only: 'Das Layout reagiert nur auf die Viewportbreite; schmale Seitenleisten, Drawer oder iframes können nicht umbrechen. Verwenden Sie @container oder einen bereinigten ResizeObserver. Bei Absicht openyida-responsive-viewport-ok ergänzen.',
+    lint_responsive_fixed_width: 'Die feste Breite %spx kann in schmalen Containern überlaufen. Verwenden Sie max-width, minmax(0, 1fr) oder lokales Scrollen. Für feste Flächen openyida-responsive-fixed-width-ok ergänzen.',
+    lint_responsive_page_scale: 'Ganzseitiges scale/zoom wurde erkannt. Ordnen Sie Inhalte bei lesbarer Schrift und Bedienfläche neu an. Für lokale Visualisierungen openyida-responsive-scale-ok ergänzen.',
     lint_yida_api_catch: 'Für den API-Aufruf this.utils.yida wurde kein .catch() erkannt; fügen Sie Fehlerbehandlung hinzu und zeigen Sie dem Benutzer einen Toast',
     lint_echarts_legacy_map_china: 'ECharts 5 unterstützt echarts/map/js/china.js nicht mehr. Laden Sie DataV GeoJSON und rufen Sie stattdessen echarts.registerMap("china", geoJson) auf',
     lint_echarts_rich_label_formatter: 'Von ECharts label.formatter zurückgegebene Rich-Text-Templates sind in Yida-Benutzerdefinierten Seiten instabil; bevorzugen Sie einfache formatter-Strings oder vorab berechneten Label-Text',
@@ -2329,6 +2333,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "Verwenden Sie con
 Object.assign(module.exports.formula_v2, {"conversion_empty":"Die Umwandlung in das Zielfeld ergibt einen leeren Wert. Für Datumswerte TIMESTAMP(Datumsformel) verwenden und Rohwert sowie Typ prüfen.","result_missing":"Die Anfrage ist abgeschlossen, aber der Zielfeldwert fehlt. Datumsfelder benötigen meist TIMESTAMP(Datumsformel).","conversion_partial":"Der Wert wurde nur teilweise als Zahl gelesen oder ist nicht endlich. Eine vollständige Zahl oder Millisekunden zurückgeben.","target_branches":"Einige Ergebnistypen {0} passen nicht zu {1}. Jeden Zweig testen.","date_timestamp":"Ein Datumsobjekt ist nicht der gespeicherte Feldwert. Meist mit TIMESTAMP(Datumsformel) Millisekunden zurückgeben.","numeric_result_text":"Das Ergebnis kann Text sein. Mit --field jeden Zweig auf leere oder teilweise Zahlenumwandlung prüfen."});
 
 module.exports.feedback_report = {
+  body: {
+    summary: 'Ihr Ziel',
+    actual: 'Was passiert ist',
+    expected: 'Erwartetes Ergebnis',
+    incident: 'Umgebung beim Auftreten des Problems',
+    command: 'Betroffener Vorgang',
+    steps: 'Schritte zur Reproduktion',
+    impact: 'Auswirkungen',
+    evidence: 'Beobachtete Belege',
+    attempts: 'Versuche und Ergebnisse',
+    cause: 'Ursache und Gewissheit',
+    cause_evidence: 'Belege zur Einschätzung',
+    next: 'Nächste Prüfung',
+    screenshots: 'Screenshots',
+    review_image: 'Bild vor dem Teilen prüfen',
+    limitations: 'Nicht geprüfte Bereiche',
+    generator: 'Umgebung der Berichtserstellung (nicht die Problemumgebung)',
+    unknown: 'Unbekannt / nicht geprüft',
+    draft: 'Lokaler Entwurf, noch nicht eingereicht. Prüfen Sie Text und Bilder vor dem Teilen auf Kundendaten, Zugangsdaten und private Informationen.',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',
@@ -2416,7 +2440,16 @@ module.exports.task_center = {
 };
 
 module.exports.feedback_github = {
-  usage: 'Usage: openyida feedback github <status|star|fork> [--confirm] [--json]',
+  setup_inspect_installation: 'Installation nicht verifiziert. Prüfen Sie gh --version, den Paketmanager oder öffnen Sie das Terminal erneut, bevor Sie einen neuen Versuch wählen. Entwurf behalten.',
+  setup_check_execution: 'gh konnte nicht ausgeführt werden. Ausführungsrechte und lokale Umgebung prüfen; nicht automatisch neu installieren oder Konten wechseln.',
+  setup_confirm_install: 'GitHub CLI kann installiert werden. Plan erläutern und Zustimmung einholen, dann openyida feedback github setup --install --confirm --json ausführen. Die Weboption bleibt verfügbar.',
+  setup_manual_install: 'Automatische Installation nicht verfügbar. Offizielle Anleitung, vorhandenen Connector oder Web verwenden; Entwurf behalten.',
+  setup_ready: 'GitHub CLI und aktuelles Konto sind verifiziert. Entwurf fortsetzen; vor dem Senden öffentliche Inhalte und Berechtigungen bestätigen.',
+  setup_browser_login: 'GitHub CLI ist verfügbar; Anmeldung erforderlich. Nach Zustimmung durch die Browserautorisierung führen und mit setup --json erneut prüfen.',
+  setup_check_account: 'GitHub CLI ist verfügbar, das Konto jedoch nicht verifiziert. Netzwerk, Autorisierung oder Limits prüfen; kein fehlendes Konto unterstellen oder neu installieren.',
+  setup_consent: '--install --confirm erst nach Zustimmung zur Installation von GitHub CLI und notwendigen Abhängigkeiten im Standardverzeichnis des Paketmanagers nutzen. Windows akzeptiert WinGet-Quellen- und Softwarevereinbarungen und kann Systemfreigaben durch den Nutzer benötigen. Keine automatische Managerinstallation, Rechteerhöhung oder Anmeldung.',
+  setup_privacy: 'Installation ist keine Zustimmung zur Veröffentlichung. Der Nutzer autorisiert im Browser; keine Passwörter, Codes oder Token anfordern. Kann gh Zugangsdaten nicht sicher speichern, Web oder sicheren Connector verwenden. Konto- und Tooldiagnosen nicht in den Bericht aufnehmen.',
+  usage: 'Usage: openyida feedback github setup [--install --confirm] [--json]; openyida feedback github <status|star|fork> [--confirm] [--json]',
   confirmation: 'Star or Fork requires the user to explicitly choose that action before --confirm. Neither is required to submit an Issue.',
   failed: 'The GitHub action could not be verified. Inspect its status before retrying; this does not block Issue submission.',
 };

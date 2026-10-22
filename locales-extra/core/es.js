@@ -1435,6 +1435,10 @@ module.exports = {
     lint_setstate_non_timestamp: 'this.setState escribe un campo distinto de timestamp. El estado de negocio de una página personalizada debe vivir en _customState y actualizarse con forceUpdate()/setCustomState(); this.setState solo debe llevar el campo contractual timestamp',
     lint_self_binding_missing: 'renderJsx usa this sin declarar var self = this;. Agregue var self = this; al inicio de renderJsx y use self dentro de closures/callbacks para evitar perder this',
     lint_echarts_dom_ready: 'echarts.init no está envuelto en setTimeout; puede que el contenedor aún no esté montado y el gráfico no se renderice. Use setTimeout(function(){ /* echarts.init */ }, 300)',
+    lint_resize_observer_cleanup: 'ResizeObserver no tiene limpieza disconnect()/unobserve(). Libérelo al desmontar.',
+    lint_responsive_viewport_only: 'El diseño cambia solo con la ventana; una barra lateral, panel o iframe estrecho puede no adaptarse. Use @container o un ResizeObserver con limpieza. Añada openyida-responsive-viewport-ok si es intencionado.',
+    lint_responsive_fixed_width: 'El ancho fijo %spx puede desbordar un contenedor estrecho. Use max-width, minmax(0, 1fr) o desplazamiento local. Para un lienzo fijo, añada openyida-responsive-fixed-width-ok.',
+    lint_responsive_page_scale: 'Se detectó scale/zoom de página completa. Redistribuya el contenido conservando texto y objetivos legibles. Para una visualización local, añada openyida-responsive-scale-ok.',
     lint_yida_api_catch: 'La llamada API this.utils.yida no tiene un .catch() detectado; agregue manejo de errores y muestre un toast al usuario',
     lint_echarts_legacy_map_china: 'ECharts 5 ya no admite echarts/map/js/china.js. Cargue el GeoJSON de DataV y llame a echarts.registerMap("china", geoJson) en su lugar',
     lint_echarts_rich_label_formatter: 'Las plantillas rich text devueltas por ECharts label.formatter son inestables en páginas personalizadas de Yida; prefiera cadenas formatter simples o texto de etiqueta precalculado',
@@ -2331,6 +2335,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "Use conditions/ru
 Object.assign(module.exports.formula_v2, {"conversion_empty":"La conversión al campo destino produjo un valor vacío. Para fechas, use TIMESTAMP(fórmula de fecha) y revise el valor original y el tipo.","result_missing":"La solicitud terminó sin un valor para el campo destino. Las fechas suelen necesitar TIMESTAMP(fórmula de fecha).","conversion_partial":"El valor se convirtió parcialmente o no es finito. Devuelva un número completo o milisegundos.","target_branches":"Algunos tipos de resultado {0} no coinciden con {1}. Pruebe cada rama.","date_timestamp":"Un objeto de fecha difiere del valor guardado. Use normalmente TIMESTAMP(fórmula de fecha) para obtener milisegundos.","numeric_result_text":"El resultado puede ser texto. Pruebe cada rama con --field para detectar valores vacíos o conversiones parciales."});
 
 module.exports.feedback_report = {
+  body: {
+    summary: 'Tu objetivo',
+    actual: 'Qué ocurrió',
+    expected: 'Resultado esperado',
+    incident: 'Entorno cuando ocurrió el problema',
+    command: 'Operación relacionada',
+    steps: 'Cómo reproducirlo',
+    impact: 'Impacto',
+    evidence: 'Evidencias observadas',
+    attempts: 'Intentos y resultados',
+    cause: 'Causa y grado de certeza',
+    cause_evidence: 'Evidencias del diagnóstico',
+    next: 'Próxima comprobación',
+    screenshots: 'Capturas de pantalla',
+    review_image: 'Revisar la imagen antes de compartir',
+    limitations: 'Limitaciones de las pruebas',
+    generator: 'Entorno de generación del informe (no el del incidente)',
+    unknown: 'Desconocido / sin verificar',
+    draft: 'Borrador local, aún no enviado. Revisa el texto y las imágenes para eliminar datos de clientes, credenciales e información privada antes de compartir.',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',
@@ -2418,7 +2442,16 @@ module.exports.task_center = {
 };
 
 module.exports.feedback_github = {
-  usage: 'Usage: openyida feedback github <status|star|fork> [--confirm] [--json]',
+  setup_inspect_installation: 'Instalación sin verificar. Comprueba gh --version, el gestor de paquetes o reabre el terminal antes de decidir si reintentar; conserva el borrador.',
+  setup_check_execution: 'No se pudo ejecutar gh. Comprueba permisos y entorno local; no reinstales ni cambies de cuenta automáticamente.',
+  setup_confirm_install: 'Se puede instalar GitHub CLI. Explica el plan y obtén consentimiento antes de openyida feedback github setup --install --confirm --json; también puedes usar la web.',
+  setup_manual_install: 'Instalación automática no disponible. Usa las instrucciones oficiales, un conector existente o la web; conserva el borrador.',
+  setup_ready: 'GitHub CLI y la cuenta actual están verificados. Retoma el borrador; confirma contenido público y permisos antes de enviar.',
+  setup_browser_login: 'GitHub CLI está disponible y requiere iniciar sesión. Con consentimiento, guía la autorización en el navegador y verifica con setup --json.',
+  setup_check_account: 'GitHub CLI está disponible, pero la cuenta no está verificada. Comprueba red, autorización o límites; no deduzcas que falta una cuenta ni reinstales.',
+  setup_consent: 'Usa --install --confirm solo tras consentir instalar GitHub CLI y dependencias necesarias en la ubicación predeterminada del gestor. Windows acepta los acuerdos de fuente y software de WinGet y puede requerir permisos del sistema aprobados por el usuario. No instala gestores, eleva privilegios ni inicia sesión automáticamente.',
+  setup_privacy: 'Instalar no autoriza publicar. El usuario autoriza en el navegador; no solicites contraseñas, códigos ni Token. Si gh no puede guardar credenciales de forma segura, usa la web o un conector seguro. Excluye diagnósticos de cuenta y herramientas del informe.',
+  usage: 'Usage: openyida feedback github setup [--install --confirm] [--json]; openyida feedback github <status|star|fork> [--confirm] [--json]',
   confirmation: 'Star or Fork requires the user to explicitly choose that action before --confirm. Neither is required to submit an Issue.',
   failed: 'The GitHub action could not be verified. Inspect its status before retrying; this does not block Issue submission.',
 };

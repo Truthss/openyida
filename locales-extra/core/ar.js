@@ -1433,6 +1433,10 @@ module.exports = {
     lint_setstate_non_timestamp: 'this.setState يكتب حقلا غير timestamp. يجب أن تبقى حالة الأعمال في الصفحة المخصصة داخل _customState ويتم تحديثها عبر forceUpdate()/setCustomState(); يجب أن يحمل this.setState حقل العقد timestamp فقط',
     lint_self_binding_missing: 'renderJsx يستخدم this دون تعريف var self = this;. أضف var self = this; في بداية renderJsx واستخدم self داخل closures/callbacks لتجنب فقدان this',
     lint_echarts_dom_ready: 'echarts.init غير ملفوف داخل setTimeout؛ قد لا يكون الحاوي مركبا بعد، لذلك قد لا يتم عرض المخطط. استخدم setTimeout(function(){ /* echarts.init */ }, 300)',
+    lint_resize_observer_cleanup: 'لا يحتوي ResizeObserver على تنظيف disconnect()/unobserve(). حرره عند إزالة المكون.',
+    lint_responsive_viewport_only: 'يتغير التخطيط حسب عرض النافذة فقط، لذلك قد لا يتكيف الشريط الجانبي أو الدرج أو iframe الضيق. استخدم @container أو ResizeObserver مع تنظيف. أضف openyida-responsive-viewport-ok إذا كان ذلك مقصودا.',
+    lint_responsive_fixed_width: 'قد يؤدي العرض الثابت %spx إلى تجاوز الحاوي الضيق. استخدم max-width أو minmax(0, 1fr) أو تمريرا محليا. للوحة الثابتة أضف openyida-responsive-fixed-width-ok.',
+    lint_responsive_page_scale: 'تم اكتشاف scale/zoom للصفحة كاملة. أعد توزيع المحتوى مع الحفاظ على النص والأهداف المقروءة. للتصور المحلي أضف openyida-responsive-scale-ok.',
     lint_yida_api_catch: 'لم يتم اكتشاف .catch() لاستدعاء API this.utils.yida؛ أضف معالجة أخطاء واعرض toast للمستخدم',
     lint_echarts_legacy_map_china: 'لم يعد ECharts 5 يدعم echarts/map/js/china.js. حمّل DataV GeoJSON واستدع echarts.registerMap("china", geoJson) بدلا من ذلك',
     lint_echarts_rich_label_formatter: 'قوالب rich text التي يعيدها ECharts label.formatter غير مستقرة في صفحات Yida المخصصة؛ يفضل استخدام formatter strings بسيطة أو نصوص تسميات محسوبة مسبقا',
@@ -2331,6 +2335,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "استخدم cond
 Object.assign(module.exports.formula_v2, {"conversion_empty":"أصبح الناتج فارغًا بعد تحويله إلى الحقل الهدف. للتواريخ استخدم TIMESTAMP(صيغة التاريخ) وتحقق من القيمة الأصلية والنوع.","result_missing":"اكتمل الطلب دون قيمة للحقل الهدف. تحتاج التواريخ عادة إلى TIMESTAMP(صيغة التاريخ).","conversion_partial":"تم تحويل جزء من القيمة فقط أو أنها ليست عددًا محدودًا. أرجع عددًا كاملًا أو طابعًا زمنيًا بالمللي ثانية.","target_branches":"بعض أنواع النتائج {0} لا تتوافق مع {1}. اختبر كل فرع.","date_timestamp":"كائن التاريخ يختلف عن القيمة المخزنة. استخدم عادة TIMESTAMP(صيغة التاريخ) للمللي ثانية.","numeric_result_text":"قد تكون النتيجة نصًا. اختبر كل فرع باستخدام --field للكشف عن التحويل الفارغ أو الجزئي."});
 
 module.exports.feedback_report = {
+  body: {
+    summary: 'هدفك',
+    actual: 'ما الذي حدث',
+    expected: 'النتيجة المتوقعة',
+    incident: 'البيئة وقت حدوث المشكلة',
+    command: 'العملية ذات الصلة',
+    steps: 'خطوات إعادة الإنتاج',
+    impact: 'التأثير',
+    evidence: 'الأدلة المرصودة',
+    attempts: 'المحاولات والنتائج',
+    cause: 'السبب ودرجة اليقين',
+    cause_evidence: 'أدلة التقييم',
+    next: 'التحقق التالي',
+    screenshots: 'لقطات الشاشة',
+    review_image: 'راجع الصورة قبل مشاركتها',
+    limitations: 'نطاق الاختبارات غير المنفذة',
+    generator: 'بيئة إنشاء التقرير (وليست بيئة حدوث المشكلة)',
+    unknown: 'غير معروف / غير مؤكد',
+    draft: 'مسودة محلية لم تُرسل بعد. راجع النصوص والصور للتأكد من خلوها من بيانات العملاء وبيانات الاعتماد والمعلومات الخاصة قبل النشر.',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',
@@ -2418,7 +2442,16 @@ module.exports.task_center = {
 };
 
 module.exports.feedback_github = {
-  usage: 'Usage: openyida feedback github <status|star|fork> [--confirm] [--json]',
+  setup_inspect_installation: 'لم يتم التحقق من التثبيت. افحص gh --version وحالة مدير الحزم أو أعد فتح الطرفية قبل تقرير إعادة المحاولة؛ احتفظ بالمسودة.',
+  setup_check_execution: 'تعذر تشغيل gh. افحص أذونات التنفيذ والبيئة المحلية؛ لا تعد التثبيت أو تبدل الحساب تلقائياً.',
+  setup_confirm_install: 'يمكن تثبيت GitHub CLI. اشرح الخطة واحصل على الموافقة قبل openyida feedback github setup --install --confirm --json؛ يظل خيار الويب متاحاً.',
+  setup_manual_install: 'التثبيت التلقائي غير متاح. استخدم التعليمات الرسمية أو موصلاً موجوداً أو الويب؛ احتفظ بالمسودة.',
+  setup_ready: 'تم التحقق من GitHub CLI والحساب الحالي. تابع المسودة؛ أكد المحتوى العام والأذونات المطلوبة قبل الإرسال.',
+  setup_browser_login: 'GitHub CLI متاح ويحتاج إلى تسجيل الدخول. بعد الموافقة، وجّه التفويض في المتصفح ثم تحقق باستخدام setup --json.',
+  setup_check_account: 'GitHub CLI متاح لكن الحساب لم يتم التحقق منه. افحص الشبكة والتفويض وحدود الطلبات؛ لا تفترض غياب الحساب ولا تعد التثبيت.',
+  setup_consent: 'استخدم --install --confirm فقط بعد الموافقة على تثبيت GitHub CLI وتبعياته المطلوبة في الموقع الافتراضي لمدير الحزم. يقبل Windows اتفاقيات مصدر WinGet والبرنامج وقد يحتاج إلى موافقة المستخدم على أذونات النظام. لا تثبيت تلقائي لمدير الحزم أو رفع للصلاحيات أو تسجيل دخول.',
+  setup_privacy: 'الموافقة على التثبيت ليست موافقة على النشر. يفوض المستخدم عبر المتصفح؛ لا تطلب كلمات مرور أو رموزاً أو Token. إذا تعذر التخزين الآمن لبيانات الاعتماد في gh، استخدم الويب أو موصلاً آمناً. لا تضع تشخيص الحساب والأداة في تقرير الملاحظات.',
+  usage: 'Usage: openyida feedback github setup [--install --confirm] [--json]; openyida feedback github <status|star|fork> [--confirm] [--json]',
   confirmation: 'Star or Fork requires the user to explicitly choose that action before --confirm. Neither is required to submit an Issue.',
   failed: 'The GitHub action could not be verified. Inspect its status before retrying; this does not block Issue submission.',
 };

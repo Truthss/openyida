@@ -1373,6 +1373,10 @@ module.exports = {
     lint_setstate_non_timestamp: '偵測到 this.setState 寫入非 timestamp 欄位。業務狀態應寫入 _customState 並呼叫 forceUpdate()/setCustomState() 觸發重繪；this.setState 僅用於 timestamp 契約欄位',
     lint_self_binding_missing: 'renderJsx 內使用了 this 但未宣告 var self = this;。請在 renderJsx 開頭加入 var self = this;，閉包/回呼內改用 self，避免 this 指向遺失',
     lint_echarts_dom_ready: 'echarts.init 未包裹在 setTimeout 中，容器可能尚未掛載導致圖表不渲染。建議 setTimeout(function(){ /* echarts.init */ }, 300)',
+    lint_resize_observer_cleanup: 'ResizeObserver 缺少 disconnect()/unobserve() 清理，頁面卸載後可能繼續量度。請在清理函式中釋放 observer。',
+    lint_responsive_viewport_only: '版面只依據視口寬度變化，窄側欄、抽屜或 iframe 可能無法降級。請以 @container 或有清理的 ResizeObserver 量度內容容器；視口行為可加 openyida-responsive-viewport-ok。',
+    lint_responsive_fixed_width: '固定寬度 %spx 可能在窄容器中溢出。請用 max-width、minmax(0, 1fr) 或局部捲動；固定畫布可加 openyida-responsive-fixed-width-ok。',
+    lint_responsive_page_scale: '偵測到整頁 scale/zoom。應重排內容並保留可讀字體與操作區；局部視覺化可加 openyida-responsive-scale-ok。',
     lint_yida_api_catch: 'this.utils.yida API 調用未偵測到 .catch()，請補充錯誤處理並 toast 給用戶',
     lint_echarts_legacy_map_china: 'ECharts 5 已廢棄 echarts/map/js/china.js，請載入 DataV GeoJSON 後調用 echarts.registerMap("china", geoJson)',
     lint_echarts_rich_label_formatter: 'ECharts label.formatter 返回 rich text 模板在宜搭自定義頁面環境不穩定，建議使用普通 formatter 字串或預先拼好的標籤文字',
@@ -2282,6 +2286,26 @@ Object.assign(module.exports.formula_v2, {"parallel_formula": "並行分支使�
 Object.assign(module.exports.formula_v2, {"conversion_empty":"公式結果轉成目標欄位後為空。日期請用 TIMESTAMP(日期公式)，並核對原值與欄位類型。","result_missing":"平台完成請求，但沒有返回目標欄位值。日期通常需要 TIMESTAMP(日期公式)。","conversion_partial":"結果只轉出部分數字或不是有限數值。請返回完整數字或毫秒時間戳。","target_branches":"公式可能返回 {0}，部分結果與 {1} 不相容；請逐一試算各分支。","date_timestamp":"日期物件與欄位保存值不同。通常用 TIMESTAMP(日期公式) 返回毫秒時間戳。","numeric_result_text":"公式可能返回文字；請用 --field 試算，核對是否轉成空值或部分數字。"});
 
 module.exports.feedback_report = {
+  body: {
+    summary: '想完成甚麼',
+    actual: '實際發生了甚麼',
+    expected: '希望看到甚麼結果',
+    incident: '問題發生時的環境',
+    command: '相關操作',
+    steps: '怎樣重現',
+    impact: '影響',
+    evidence: '已觀察的證據',
+    attempts: '嘗試過的方法與結果',
+    cause: '可能原因及確認程度',
+    cause_evidence: '判斷依據',
+    next: '下一步驗證',
+    screenshots: '問題截圖',
+    review_image: '公開前請檢查圖片',
+    limitations: '尚未驗證的範圍',
+    generator: '報告產生環境（不代表問題發生時）',
+    unknown: '未知 / 尚未確認',
+    draft: '本機草稿，尚未提交。請檢查文字和截圖，確認沒有客戶資料、憑證或內部資訊後再公開。',
+  },
   comparison: 'Test pass/fail requires a command, actual result and evidence.',
   screenshots: 'Choose at most five PNG/JPEG/WebP screenshots of at most 10 MiB each.',
   text: 'Feedback text fields must be strings of at most 12000 characters.',
@@ -2369,7 +2393,16 @@ module.exports.task_center = {
 };
 
 module.exports.feedback_github = {
-  usage: 'Usage: openyida feedback github <status|star|fork> [--confirm] [--json]',
+  setup_inspect_installation: '安裝結果尚未核實。先檢查 gh --version、套件管理器狀態或重新開啟終端，再決定是否重試；保留草稿。',
+  setup_check_execution: 'gh 暫時無法執行。請檢查執行權限或本機環境；不要重複安裝或更換帳戶。',
+  setup_confirm_install: '可以安裝 GitHub CLI。先說明計劃並取得同意，再執行 openyida feedback github setup --install --confirm --json；也可使用網頁。',
+  setup_manual_install: '目前沒有可用的自動安裝方式。可查看官方安裝說明、使用已有連接器或網頁，並保留草稿。',
+  setup_ready: 'GitHub CLI 與目前帳戶已核實。繼續原草稿，提交前仍需確認公開內容與所需權限。',
+  setup_browser_login: 'GitHub CLI 已可用，需要登入。取得同意後引導瀏覽器授權，完成後再次執行 setup --json 核實。',
+  setup_check_account: 'GitHub CLI 已可用，但帳戶尚未核實。先檢查網絡、授權或限流；不要判斷為沒有帳戶或要求重新安裝。',
+  setup_consent: '只有使用者同意在套件管理器預設位置安裝 GitHub CLI 及必要依賴後，才使用 --install --confirm。Windows 會接受 WinGet 來源與軟件協議，可能需要使用者批准系統權限。不自動安裝管理器、提升權限或登入。',
+  setup_privacy: '安裝不代表同意公開提交。瀏覽器授權由使用者完成；不索取密碼、驗證碼或 Token。若 gh 無法安全儲存憑證，改用網頁或安全連接器；帳戶與工具診斷不寫入回饋報告。',
+  usage: 'Usage: openyida feedback github setup [--install --confirm] [--json]; openyida feedback github <status|star|fork> [--confirm] [--json]',
   confirmation: 'Star or Fork requires the user to explicitly choose that action before --confirm. Neither is required to submit an Issue.',
   failed: 'The GitHub action could not be verified. Inspect its status before retrying; this does not block Issue submission.',
 };
