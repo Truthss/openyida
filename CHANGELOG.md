@@ -10,8 +10,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 海外版宜搭暂不适用当前 OAuth token 登录与创建应用链路；如需在海外版宜搭创建应用，请使用 `2026.7.14-2` 以前的版本，例如 `npm install -g openyida@2026.7.13`。
 
-## [Unreleased]
-
 ## [2026.10.23-2] - 2026-10-23
 
 完善已有应用单独新增自定义页面的设计流程，明确旧主题应用的页面风格选择与样式范围。
