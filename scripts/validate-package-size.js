@@ -179,7 +179,10 @@ const MAX_TARBALL_BYTES = 2592 * 1024;
 // Node 26 measures 9,768,800 unpacked bytes / 772 files. Next 16 KiB boundary.
 // GitHub setup merged into 10.23: 9,781,786 unpacked bytes / 773 files on Node 26.
 // Retain the next 16 KiB boundary; compressed and per-file caps stay fixed.
-const MAX_UNPACKED_BYTES = 9568 * 1024;
+// Scope-aware native task links and the portable DingTalk opener add two runtime
+// modules and aligned guidance: 9,798,841 unpacked bytes on Node 26.
+// Retain the next 16 KiB boundary; compressed and per-file caps stay fixed.
+const MAX_UNPACKED_BYTES = 9584 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -214,7 +217,8 @@ const MAX_UNPACKED_BYTES = 9568 * 1024;
 // Unpacked and per-file limits remain unchanged.
 // Administrator task transfer adds exactly one runtime module and one skill guide.
 // GitHub setup keeps installation/detection separate from account actions.
-const MAX_ENTRY_COUNT = 773;
+// Shared page navigation and task-center navigation add exactly two packaged files.
+const MAX_ENTRY_COUNT = 775;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
