@@ -26,7 +26,7 @@ openyida sample yida-design application-style --style-id free-creative --output 
 
 绑定前读取目标应用服务端解析的 `appThemeEnable` 与 `appThemeMode`；只有 `y` / `modern` 才沿用新版应用主题上传流程，不能只凭存储的 APP_THEME_MODE、模板或版本号判断。`n`、`legacy` 或无法确认能力时，默认保留平台主题，优先使用自定义页根容器内的局部样式，不向应用写入 `customThemeStyle`，不自动升级主题。页面美化、换颜色或完整应用设计的请求不等于同意旧应用全局 CSS 注入。
 
-旧主题应用单独新增自定义页面时，先按 [单页风格范围](../sub_skill/page-design/SKILL.md#旧主题应用新增页面的风格范围) 复用明确选择，或通过 `ask_human` 确认沿用应用风格还是仅新增页独立设计。页面独立设计的确认仅授权页面局部样式，不包含应用级注入。
+旧主题新增页按 [单页风格范围](../sub_skill/page-design/SKILL.md#旧主题应用新增页面的风格范围) 确认；页面独立设计不包含应用级注入。
 
 旧应用的 `customThemeStyle`（用户也可能称为 `appCustomTheme`）由访问态按当前应用加载，可能覆盖工作台、导航、表单及记录详情；`iframePropagation:false` 不是页面作用域隔离。新版主题文件中的全局变量和选择器不能直接视作旧 Shell/表单的兼容样式。确实需要应用层覆盖时，先核查实际访问页 DOM 与主题消费能力，审阅并缩小 CSS 选择器范围，说明涉及的应用、CSS 文件和影响页面，向用户明确询问：“是否同意将这份 CSS 注入该旧应用的应用层，影响访问页面、导航和表单？”取得该应用的肯定回复后才允许传 `--confirm-legacy-app-style`；不能代替用户确认，也不能遇到阻断后自动追加此参数。没有可用的用户确认通道时停在上传前。
 

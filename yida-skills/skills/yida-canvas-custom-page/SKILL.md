@@ -25,7 +25,7 @@ description: 宜搭自定义页面开发规范，使用 `YidaCodeCanvas` 组件�
 
 先确定控件与动作的接入方式，再写业务 JSX：使用 antd 时先读取并合并 [标准主题桥](references/canvas-theme-provider.md)，所有 Button、Tabs、Segmented、链接与弹层放在同一主题子树；普通 DOM 控件直接消费应用 CSS 变量。需要跨页按钮或链接时，先按 [入口契约](references/navigation-and-entry-guide.md#先建立动作与目标清单) 提取 `canvas-navigation`，填写真实资源 ID 和目标类型。本页 Tab 用状态或 hash；按钮点击和链接 href 共用同一个 URL 构造函数。缺少目标资源时保留布局并禁用该入口，不猜地址。
 
-单独新增自定义页面先执行 [单页设计](../yida-design/sub_skill/page-design/SKILL.md)，形成当前页设计说明。旧主题新增页没有明确风格时先通过 `ask_human` 确认范围；已确认仅本页独立视觉时，按页面局部变量与根选择器实现，保留应用主题及导航。功能验收与视觉验收分别记录，数据和跳转通过不能代替视觉验收。
+单独新增页面先执行 [单页设计](../yida-design/sub_skill/page-design/SKILL.md)，确认旧主题页面的风格范围并形成设计；按该选择实现，分别验收功能与视觉。
 
 新建页面或调整视觉前，完整读取 [canvas-style-implementation-guide.md](references/canvas-style-implementation-guide.md)，结合当前 PRD 和 `design.md` 实现。读取结果被截断时分段读完；同一任务已读完且文件未变时可复用。仅修改数据逻辑时可跳过，并记录原因。
 
@@ -157,7 +157,7 @@ function setNavigationTitle(title) {
 
 ## 主题实现入口
 
-默认由应用统一提供主题；旧主题新增页已确认独立视觉时执行上述页面范围。应用级主题中，已选红色等品牌主色应先写入项目 design.md，由应用主题 CSS 同步到原生导航与表单；自定义页消费同一份变量。不能只写 `const BRAND = '#...'`、复制整套基础色盘或依靠 fallback 形成另一套页面主题。旧主题新增页已确认独立视觉时按上述单页设计范围实现页面局部角色；其他场景缺少应用主题时先核对能力与设计范围，不自行选一个页面默认色掩盖；纯 DOM 使用 CSS 变量，antd 同时接入下述 Provider。
+默认由应用统一提供主题；旧主题新增页已确认独立视觉时执行上述页面范围。应用级主题中，已选红色等品牌主色应先写入项目 design.md，由应用主题 CSS 同步到原生导航与表单；自定义页消费同一份变量。不能只写 `const BRAND = '#...'`、复制整套基础色盘或依靠 fallback 形成另一套页面主题。缺少应用主题时先核对能力与设计范围，不用页面默认色掩盖；纯 DOM 使用 CSS 变量，antd 同时接入下述 Provider。
 
 默认沿用应用主题的纯 DOM 页面直接消费平台 CSS 变量，不必引入 antd 或 Provider。按 [共用主题规则](../yida-design/references/application-theme-consistency.md) 引用画布、卡片、文字与特色角色；风格缺项回写设计源，不在页面根复制固定色盘。
 
