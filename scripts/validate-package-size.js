@@ -69,6 +69,8 @@ const path = require('path');
 // bytes (Node 26 is smaller). Keep the next 16 KiB compression boundary.
 // Main's task-transfer and scheduled-end-condition changes combined with feedback
 // guidance measure 2,634,130 compressed bytes on Node 20; this cap still fits.
+// Node 20 CI measures 2,643,136 compressed bytes for the merged 10.23 package.
+// Retain the next 16 KiB boundary; unpacked, entry and single-file caps stay fixed.
 // Consent-based GitHub setup adds one runtime module and user guidance:
 // Node 20.18.1 measures 2,637,999 compressed bytes; next 16 KiB boundary.
 const MAX_TARBALL_BYTES = 2592 * 1024;
@@ -173,7 +175,11 @@ const MAX_TARBALL_BYTES = 2592 * 1024;
 // Task transfer adds its runtime, guide and 12-locale messages; next 16 KiB boundary.
 // Combined responsive/feedback and main package: 9,733,108 bytes / 769 files
 // on Node 20. Keep the next 16 KiB boundary and the existing single-file cap.
-const MAX_UNPACKED_BYTES = 9520 * 1024;
+// Combined with native form-message management and settings-link delivery:
+// Node 26 measures 9,768,800 unpacked bytes / 772 files. Next 16 KiB boundary.
+// GitHub setup merged into 10.23: 9,781,786 unpacked bytes / 773 files on Node 26.
+// Retain the next 16 KiB boundary; compressed and per-file caps stay fixed.
+const MAX_UNPACKED_BYTES = 9568 * 1024;
 // Plan confirmation payload and explicit part rebase add two runtime modules.
 // app-entry/fix-theme commands and the WAF-safe authoring guidance add three packaged files.
 // Shared source-repair diagnostics and their skill contract add two packaged files.
@@ -202,12 +208,13 @@ const MAX_UNPACKED_BYTES = 9520 * 1024;
 // The combined workflow, data-card and cool-card package contains 738 files.
 // Custom buttons and native report zero-value controls add five packaged files.
 // Include the shared AI application eligibility helper merged from main.
+// Native form-message management adds exactly three packaged files; retain two entries of headroom.
 // Dynamic personnel sources add one runtime module and one skill reference.
 // Account/tool onboarding adds one progressively loaded feedback reference.
 // Unpacked and per-file limits remain unchanged.
 // Administrator task transfer adds exactly one runtime module and one skill guide.
 // GitHub setup keeps installation/detection separate from account actions.
-const MAX_ENTRY_COUNT = 770;
+const MAX_ENTRY_COUNT = 773;
 const MAX_SINGLE_FILE_BYTES = 512 * 1024;
 
 const REQUIRED_PACKAGE_FILES = [
@@ -232,6 +239,9 @@ const REQUIRED_PACKAGE_FILES = [
   'yida-skills/skills/yida-print-template/references/scenarios.md',
   'lib/app/custom-button.js',
   'yida-skills/skills/yida-custom-button/SKILL.md',
+  'lib/app/form-message.js',
+  'yida-skills/skills/yida-form-message/SKILL.md',
+  'yida-skills/skills/yida-form-message/references/guide.md',
   'lib/task-center/workflow.js',
   'lib/task-center/workflow-loader.js',
   'lib/samples/yida-task-center/progress.canvas.jsx',
