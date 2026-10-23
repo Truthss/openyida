@@ -15,7 +15,7 @@ description: 仅在用户明确要求用自定义页面开发待办中心，或�
 
 需要数量、摘要或展开审批进度时，按需读取[流程任务能力与装配](../yida-canvas-data-binding/references/workflow-capabilities.md)；单条业务关联进度仍由数据绑定按需接入，不要求装配任务中心。
 
-1. 复用目标 app/page、现有业务要求和 `design.md`。沿用应用主题、导航、密度与控件风格；不重新选风格、不自动升级主题。
+1. 复用 app/page、业务要求和 `design.md`；旧主题新增页按 [单页风格范围](../yida-design/sub_skill/page-design/SKILL.md#旧主题应用新增页面的风格范围) 确认。沿用该选择，不因接入任务数据重新选风格或升级主题。
 2. 执行 `openyida task-center capabilities --json`，按返回的 specExample 派生配置。`customPage.source` 记录真实选择来源，`confirmed=true` 仅用于明确同意；`designFile` 指向当前应用设计文件。`kinds` 仅填写需求涉及的类型，不自动补齐其他栏目；承载方式沿用当前设计，不因接入任务数据另建页面。
 3. 用 `openyida data query tasks <appType> --type <todo|created|done|cc> --normalized` 核查数据，再执行 `openyida task-center scaffold --spec <配置.json> --output <新文件.canvas.jsx>`。已有页面先备份，把生成的 `TaskInboxSection` 和依赖合并进原页面，已有主题容器和详情容器各保留一份。
 4. 通过 `yida-canvas-custom-page` 的编译检查，再按 `yida-publish-page` 发布回读。检查所选类型的实际数据、分页、详情办理后返回刷新、移动端及应用各页面主题；没有浏览器证据时说明运行态待验。
