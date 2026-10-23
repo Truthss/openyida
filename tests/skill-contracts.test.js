@@ -1890,6 +1890,8 @@ describe('OpenYida skill contracts', () => {
     expect(pageDesign).toContain('单页设计和页面重构先确认当前应用主题');
     expect(pageDesign).toContain('页面重构/局部美化：以当前应用主题为基准');
     expect(pageDesign).toContain('`ask_human`');
+    expect(pageDesign).toContain('新版主题应用的自定义页必须遵循应用层风格和主题');
+    expect(pageDesign).toContain('不提供脱离应用主题的选项');
     expect(pageDesign).toContain('`themeDecision=follow-app`');
     expect(pageDesign).toContain('`themeDecision=page-enhance`');
     expect(pageDesign).toContain('保留现有导航和其他页面');
