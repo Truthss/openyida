@@ -6,7 +6,8 @@
  */
 module.exports = {
   solution_template: {
-    description: 'Discover and inspect Solution Center templates, then use native AI build or direct enable',
+    description: 'Modelos para agentes locais independentes: pesquisa, link de IA na nuvem e ativação',
+    local_agent_only: 'Use um agente local independente reconhecido para estes comandos. Na nuvem, mantenha o fluxo de IA nativo de modelos.',
     usage: "Usage: openyida solution-template search [--query <text>] [--scene <scene>] [--industry <industry>] [--page <n>] [--size <n>] [--json]\n       openyida solution-template detail <TPL_...> [--json]\n       openyida solution-template prepare <TPL_...> --name <appName> [--with-data y|n] [--request-id <id>] [--json]\n       openyida solution-template ai-build <TPL_...> [--json]\n       openyida solution-template enable <TPL_...> --name <appName> [--with-data y|n] [--request-id <id>] [--retry] [--wait <0-60>] [--json]\n       openyida solution-template status <requestId> [--wait <0-60>] [--json]",
     failed: 'Solution Center template operation stopped: {0}',
     ai_build_handoff: 'The template supports native AI build. Add customization requirements and submit them in the native builder. This receipt does not mean an app exists.',
